@@ -18,3 +18,4 @@ __pycache__/
 # Environnement Blender (bpy) du rendu 3D → pixel
 tools/render3d/.venv/
 tools/render3d/*.pkl
+prototypes/*/node_modules
