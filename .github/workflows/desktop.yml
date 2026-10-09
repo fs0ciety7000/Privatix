@@ -1,5 +1,8 @@
 # Construit l'application de bureau Privatix (Electron) pour Windows, macOS et Linux,
 # et publie les exécutables comme artefacts du run (onglet Actions > run > « Artifacts »).
+# Sur un tag v* (ex. v0.2.0), crée en plus une GitHub Release dont les fichiers ont deux noms :
+# versionné (Privatix-0.2.0-setup-x64.exe) et stable (Privatix-Setup.exe), pour que le site
+# pointe toujours vers releases/latest/download/<nom stable>.
 name: Desktop
 
 on:
@@ -118,3 +121,54 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
+
+      - name: Noms stables pour la release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        working-directory: desktop/dist
+        run: |
+          mkdir -p ../release
+          cp *.exe *.dmg *.AppImage ../release/ 2>/dev/null || true
+          for f in *-setup-*.exe; do [ -e "$f" ] && cp "$f" ../release/Privatix-Setup.exe; done
+          for f in *-portable-*.exe; do [ -e "$f" ] && cp "$f" ../release/Privatix-Portable.exe; done
+          for f in *-mac-arm64.dmg; do [ -e "$f" ] && cp "$f" ../release/Privatix-mac-arm64.dmg; done
+          for f in *-mac-x64.dmg; do [ -e "$f" ] && cp "$f" ../release/Privatix-mac-x64.dmg; done
+          for f in *.AppImage; do [ -e "$f" ] && cp "$f" ../release/Privatix.AppImage; done
+          ls -la ../release
+
+      - name: Fichiers de release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-${{ matrix.name }}
+          path: desktop/release/*
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+  release:
+    name: GitHub Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Récupération des fichiers
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: release-*
+          path: release
+          merge-multiple: true
+
+      - name: Publication de la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          ls -la release
+          gh release create "$TAG" release/* \
+            --repo "${{ github.repository }}" \
+            --title "Privatix $TAG" \
+            --notes "Applications de bureau Privatix $TAG (Windows, macOS, Linux). Non signées : avertissement SmartScreen ou Gatekeeper au premier lancement." \
+            --latest
