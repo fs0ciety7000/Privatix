@@ -78,11 +78,11 @@ const EDIT = [
     shot: 's22',
     t: 39.4,
     d: 3.0,
-    anchor: ['enemyKilled:vanderslide', 0, 41.4],
+    anchor: ['enemyKilled:lurcke', 0, 41.4],
     slow: { frames: 24, factor: 2 },
     zoom: [1.15, 1.15, 1, 'none'],
   },
-  { id: '24d', shot: 's22', t: 42.4, d: 2.6, anchor: ['enemyKilled:vanderslide', 0, 41.4], xfade: 12 },
+  { id: '24d', shot: 's22', t: 42.4, d: 2.6, anchor: ['enemyKilled:lurcke', 0, 41.4], xfade: 12 },
   // ACTE IV — fin de service.
   { id: '25', shot: 's25', t: 45.0, d: 3.4, in: 0, zoom: [1, 1.06, 3.4, 'rail'], fadeOut: 6 },
   { id: '26', shot: 's26', t: 48.4, d: 3.2, in: 0, fadeIn: 6, xfade: 8 },

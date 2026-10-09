@@ -371,17 +371,17 @@ export const SHOTS = {
   },
   // 21 — Jean-Cul Lurcke dans son bureau : intro, barre de PV, bullet points.
   s21: {
-    run: (t) => bossEntrance(t, 2, 'vanderslide', 0.42, 330, 'bullets', 210),
+    run: (t) => bossEntrance(t, 2, 'lurcke', 0.42, 330, 'bullets', 210),
   },
   // 22 à 24d — Le combat final d'une traite (copie, phase 2, Préavis, reporting, coup final, défaite).
   s22: {
     run: async (t) => {
-      const { a, boss: b } = await bossRoom(t, 2, 'vanderslide');
+      const { a, boss: b } = await bossRoom(t, 2, 'lurcke');
       await place(t, a, 0.78);
       await t.api('aim', UP);
       await t.skip(200);
       const near = async () => {
-        const e = (await t.api('enemies')).find((x) => x.kind === 'vanderslide');
+        const e = (await t.api('enemies')).find((x) => x.kind === 'lurcke');
         await t.api('teleport', e.x, e.y + 46);
         await t.api('aim', UP);
       };
@@ -421,12 +421,12 @@ export const SHOTS = {
   // 25 — Écran des départs : « À l'heure — Shift tenu ».
   s25: {
     run: async (t) => {
-      const { boss: b } = await bossRoom(t, 2, 'vanderslide');
+      const { boss: b } = await bossRoom(t, 2, 'lurcke');
       await t.skip(200);
       await t.api('hurt', b.id, 0.04);
       await t.skip(30);
       for (let i = 0; i < 6; i += 1) {
-        const e = (await t.api('enemies')).find((x) => x.kind === 'vanderslide');
+        const e = (await t.api('enemies')).find((x) => x.kind === 'lurcke');
         if (!e) break;
         await t.api('teleport', e.x, e.y + 46);
         await t.api('aim', UP);

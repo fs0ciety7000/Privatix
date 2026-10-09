@@ -664,7 +664,8 @@ export class Game3D {
           if (this.phase === 'run')
             this.menus.showBossIntro({
               name: e.name,
-              title: e.title,
+              // Trailer : pas de mention « (version de travail) » à l'écran (SCRIPT § 6.3).
+              title: this.trailer ? e.title.replace(/\s*\(version de travail\)/i, '') : e.title,
               line: e.line,
               fictive: e.fictive,
             });
