@@ -22,3 +22,7 @@ prototypes/*/node_modules
 
 # Worktrees des agents (copies de travail isolées)
 .claude/worktrees/
+
+# Artbook : rendus intermédiaires (tools/artbook/.cache) et archive du press kit (assemblée au build du site)
+tools/artbook/.cache/
+site/public/artbook/presskit/privatix-press-kit.zip

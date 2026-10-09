@@ -1,0 +1,593 @@
+{
+ "_doc": "Model sheets de l'artbook : un personnage par entrée (modèle GLB de public/models). poses : [libellé, clip, temps en s (facultatif : moment clé déduit du manifeste)]. tele : télégraphe magenta allumé sur les poses d'attaque (ennemis).",
+ "characters": [
+  {
+   "id": "hero",
+   "model": "hero",
+   "name": "Léon / Léa",
+   "kind": "Héros",
+   "role": "hero",
+   "title": "Agent·e polyvalent·e en 3x8",
+   "desc": "Neuf ans de 3x8, la clé à tire-fond du grand-père, le gilet orange haute visibilité. Silhouette en triangle, tête lisible de dessus, outil surdimensionné.",
+   "equip": {
+    "casque": "casque_chantier",
+    "gilet": "gilet_hv",
+    "outil": "cle_tire_fond"
+   },
+   "stage": {
+    "rimA": "#ffb347",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Course",
+     "run",
+     0.12
+    ],
+    [
+     "Coup 3",
+     "attack3",
+     0.22
+    ],
+    [
+     "Dash",
+     "dash",
+     0.07
+    ],
+    [
+     "Touché",
+     "hurt",
+     0.1
+    ],
+    [
+     "K.-O.",
+     "death",
+     1.25
+    ]
+   ],
+   "turnZoom": 0.62,
+   "poseZoom": 0.52
+  },
+  {
+   "id": "consultant",
+   "model": "consultant",
+   "name": "Consultant Junior",
+   "kind": "Ennemi",
+   "role": "enemy",
+   "title": "« Slide-Ninja », Synergia Partners",
+   "desc": "Costume cintré trop court, baskets blanches, laptop sous le bras. Mêlée rapide et ruée « Quick win » ; projeté, il « part en réunion ».",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.5
+    ],
+    [
+     "Marche",
+     "walk",
+     0.12
+    ],
+    [
+     "Ruée (télégraphe)",
+     "attack",
+     0.55
+    ],
+    [
+     "Frappe",
+     "attack",
+     0.74
+    ],
+    [
+     "Touché",
+     "hurt",
+     0.1
+    ],
+    [
+     "En réunion",
+     "death",
+     1.05
+    ]
+   ]
+  },
+  {
+   "id": "borne",
+   "model": "borne",
+   "name": "Borne Automatique",
+   "kind": "Ennemi",
+   "role": "enemy",
+   "title": "« Veuillez insérer votre dignité »",
+   "desc": "Borne trapue, écran fissuré, fente à pièces lumineuse. Elle se déplie d'une trappe au sol et tire des tickets à distance.",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Déploiement",
+     "spawn"
+    ],
+    [
+     "Tir de tickets",
+     "attack"
+    ],
+    [
+     "Touché",
+     "hurt",
+     0.1
+    ],
+    [
+     "Hors service",
+     "death"
+    ]
+   ]
+  },
+  {
+   "id": "drone",
+   "model": "drone",
+   "name": "Drone Optimètre",
+   "kind": "Ennemi",
+   "role": "enemy",
+   "title": "« Souriez, vous êtes filmé »",
+   "desc": "Petit quadrirotor violet, œil-objectif, antenne KPI qui clignote. Il marque le héros et perd sa cible dans l'ombre des arcs.",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Vol",
+     "fly",
+     0.3
+    ],
+    [
+     "Arrivée",
+     "spawn"
+    ],
+    [
+     "Marquage",
+     "attack"
+    ],
+    [
+     "Touché",
+     "hurt",
+     0.1
+    ],
+    [
+     "Abattu",
+     "death"
+    ]
+   ]
+  },
+  {
+   "id": "manager",
+   "model": "manager",
+   "name": "Manager KPI",
+   "kind": "Élite",
+   "role": "elite",
+   "title": "« Le Tableur »",
+   "desc": "Chemise rentrée, chronomètre géant au cou, tablette brandie comme un sceptre. Boucliers d'alignement, zone de Ralenti, vague de graphiques.",
+   "stage": {
+    "rimA": "#b05cff",
+    "rimB": "#ffd84a"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.12
+    ],
+    [
+     "Reporting hebdo",
+     "attack-report"
+    ],
+    [
+     "Chronométrage",
+     "attack-chrono"
+    ],
+    [
+     "Réunion d'alignement",
+     "shield"
+    ],
+    [
+     "Indicateurs au rouge",
+     "death"
+    ]
+   ]
+  },
+  {
+   "id": "furet",
+   "model": "furet",
+   "name": "Le Furet putride",
+   "kind": "Ennemi majeur",
+   "role": "elite",
+   "title": "« Solution de tri autonome »",
+   "desc": "Furet énorme au pelage gris-jaune ébouriffé, collier violet à haut-parleur. Nuages d'odeur, roulades, plongée sous les plaques d'égout.",
+   "stage": {
+    "rimA": "#b05cff",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Course",
+     "run",
+     0.1
+    ],
+    [
+     "Morsure",
+     "attack-bite"
+    ],
+    [
+     "Danse de guerre",
+     "war-dance",
+     0.3
+    ],
+    [
+     "Plongée",
+     "burrow"
+    ],
+    [
+     "Tri suspendu",
+     "death"
+    ]
+   ],
+   "turnZoom": 0.6,
+   "poseZoom": 0.55
+  },
+  {
+   "id": "fluidifieur",
+   "model": "fluidifieur",
+   "name": "Le Fluidifieur",
+   "kind": "Ennemi majeur",
+   "role": "elite",
+   "title": "Réorganisateur RH, régisseur de l'inauguration",
+   "desc": "Il ne déteste personne, il fluidifie. Chaise à roulettes, gilet sans manches, classeur des roulements ; il glisse plus qu'il ne marche.",
+   "stage": {
+    "rimA": "#b05cff",
+    "rimB": "#ffd84a"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Glissade",
+     "glide",
+     0.2
+    ],
+    [
+     "Coup de classeur",
+     "attack-binder"
+    ],
+    [
+     "Tourbillon",
+     "attack-spin"
+    ],
+    [
+     "Touché",
+     "hurt",
+     0.1
+    ],
+    [
+     "Vaincu",
+     "defeat"
+    ]
+   ]
+  },
+  {
+   "id": "discosaure",
+   "model": "discosaure",
+   "name": "Le Discosaure",
+   "kind": "Mini-boss",
+   "role": "boss",
+   "title": "Senior Partner fondateur de Synergia",
+   "desc": "Dinosaure en costume trois-pièces, boule à facettes encastrée dans le dos. Il piétine en rythme : le tempo est le télégraphe.",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.6
+    ],
+    [
+     "Marche",
+     "walk",
+     0.3
+    ],
+    [
+     "Piétinement",
+     "attack-stomp"
+    ],
+    [
+     "Charge",
+     "charge",
+     0.2
+    ],
+    [
+     "Étourdi",
+     "stagger",
+     0.4
+    ],
+    [
+     "La musique s'arrête",
+     "death"
+    ]
+   ],
+   "turnZoom": 0.6,
+   "poseZoom": 0.55
+  },
+  {
+   "id": "auditeur",
+   "model": "auditeur",
+   "name": "L'Auditeur des Quais",
+   "kind": "Boss · biome 1",
+   "role": "boss",
+   "title": "Manager KPI suprême",
+   "desc": "Ancien Manager KPI promu, il commande les rames depuis sa tablette. L'écran des départs géant de son arène lui sert d'horloge à télégraphes.",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.2
+    ],
+    [
+     "Coup de tampon",
+     "attack-stamp"
+    ],
+    [
+     "Pluie de tickets",
+     "attack-tickets"
+    ],
+    [
+     "Phase 2",
+     "phase2"
+    ],
+    [
+     "Audit clos",
+     "defeat"
+    ]
+   ]
+  },
+  {
+   "id": "dirupo",
+   "model": "dirupo",
+   "name": "Elio Di Rupo",
+   "kind": "Boss · biome 2",
+   "role": "boss",
+   "title": "« L'Invité d'honneur » (caricature bon enfant)",
+   "desc": "Nœud papillon rouge, mèche impeccable, ciseaux d'inauguration. Caricature autorisée par le porteur du projet, sans citation réelle.",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#ffd84a"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.2
+    ],
+    [
+     "Nœud papillon",
+     "attack-bowtie"
+    ],
+    [
+     "Coup de mèche",
+     "hair-swipe"
+    ],
+    [
+     "Sourire flash",
+     "smile-flash",
+     0.9
+    ],
+    [
+     "Ruban coupé",
+     "defeat"
+    ]
+   ]
+  },
+  {
+   "id": "josiane",
+   "model": "josiane",
+   "name": "Josiane Delhaye",
+   "kind": "PNJ · DPD",
+   "role": "npc",
+   "title": "Accompagnatrice de train, pupitre DPD",
+   "desc": "28 ans de maison, figure maternelle et inflexible. Dans la Cour du BAG, elle range la dotation : « Ce qui est réformé, je le réforme. Proprement. »",
+   "stage": {
+    "rimA": "#ffb347",
+    "rimB": "#ffc27a"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.15
+    ],
+    [
+     "Parle",
+     "talk",
+     0.5
+    ],
+    [
+     "Salue",
+     "wave",
+     0.45
+    ]
+   ]
+  },
+  {
+   "id": "bene",
+   "model": "bene",
+   "name": "Bénédicte « Béné » Wautier",
+   "kind": "PNJ · PACO",
+   "role": "npc",
+   "title": "Guichetière, pupitre PACO",
+   "desc": "Dernier guichet ouvert de la gare, fermé par le PHR-2032. Pince-sans-rire, ne s'énerve jamais : elle tamponne. « Numéro suivant ! »",
+   "stage": {
+    "rimA": "#ffb347",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.15
+    ],
+    [
+     "Parle",
+     "talk",
+     0.5
+    ],
+    [
+     "Salue",
+     "wave",
+     0.45
+    ]
+   ]
+  },
+  {
+   "id": "kevin",
+   "model": "kevin",
+   "name": "Kevin « Kéké » Lambot",
+   "kind": "PNJ · RTS",
+   "role": "npc",
+   "title": "Technicien caténaires « de l'Infra », pupitre RTS",
+   "desc": "Gentil comme un pain, parle à ses outils. Tient le matériel roulant et les Pièces détachées : « C'est pas nous, c'est l'autre boîte. »",
+   "stage": {
+    "rimA": "#ffb347",
+    "rimB": "#6ff3ff"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.15
+    ],
+    [
+     "Parle",
+     "talk",
+     0.6
+    ],
+    [
+     "Salue",
+     "wave",
+     0.45
+    ]
+   ]
+  }
+ ],
+ "tenues": [
+  {
+   "rar": 1,
+   "name": "Réforme",
+   "color": "#8a929a",
+   "equip": {
+    "casque": "casque_chantier",
+    "gilet": "gilet_hv",
+    "outil": "cle_tire_fond"
+   },
+   "items": "Casque de chantier · Gilet HV · Clé à tire-fond"
+  },
+  {
+   "rar": 2,
+   "name": "Réglementaire",
+   "color": "#f2eee3",
+   "equip": {
+    "casque": "casque_antibruit",
+    "gilet": "gilet_hv",
+    "outil": "masse_de_voie"
+   },
+   "items": "Casque antibruit · Gilet HV · Masse de voie"
+  },
+  {
+   "rar": 3,
+   "name": "Homologué",
+   "color": "#3f8cff",
+   "equip": {
+    "casque": "casque_chantier",
+    "gilet": "gilet_porte_outils",
+    "outil": "pince_catenaire"
+   },
+   "items": "Casque de chantier · Gilet porte-outils · Pince caténaire"
+  },
+  {
+   "rar": 4,
+   "name": "Hors-série",
+   "color": "#a86bff",
+   "equip": {
+    "casque": "casque_antibruit",
+    "gilet": "gilet_porte_outils",
+    "outil": "cle_tire_fond_epique"
+   },
+   "items": "Casque antibruit · Gilet porte-outils · Clé à tire-fond hors-série"
+  },
+  {
+   "rar": 5,
+   "name": "Patrimoine",
+   "color": "#ff8c2b",
+   "equip": {
+    "casque": "casque_legendaire",
+    "gilet": "gilet_porte_outils",
+    "outil": "cle_tire_fond_epique"
+   },
+   "items": "Casque « Acquis historique » · Gilet porte-outils · Clé hors-série"
+  }
+ ]
+}

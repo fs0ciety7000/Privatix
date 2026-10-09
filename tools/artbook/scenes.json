@@ -1,0 +1,173 @@
+{
+  "_doc": "Planches composées à partir des captures de game.mjs (stills). crop : fractions (x0, y0, x1, y1) de l'image 1920×1080 ; garder un rapport 16:9 (largeur × 1920 / 16 = hauteur × 1080 / 9).",
+  "planches": [
+    {
+      "id": "decor-quais", "layout": "feature", "accent": "#FFB347",
+      "eyebrow": "Décors · Biome 1", "title": "Quais & Voies", "subtitle": "« Le 7h12 n'est pas venu »",
+      "intro": "Quais 1 à 4 et faisceau de voies, de 4h47 à l'aube. Lampes à sodium en flaques au sol, néons Privatix violets sur la brique, signalétique SNCB. Le décor reste sombre et désaturé : la lumière y dessine des îlots où se lit le combat.",
+      "main": { "src": "decor-b1-quais", "title": "Quai 3, prise de service", "sub": "Salle de combat type : quai, voie, quai. Les rails et la ligne jaune donnent l'horizontale, les piliers cadrent l'arène." },
+      "side": [
+        { "src": "arene-furet", "title": "Le Furet putride sur les voies", "sub": "Élite majeur du biome, sorti des gaines techniques." },
+        { "src": "arene-auditeur", "title": "Arène de l'Auditeur des Quais", "sub": "Quai 2, voie, quai 3, sous l'écran des départs géant." }
+      ],
+      "details_title": "Détails : néons, signalétique, props",
+      "details": [
+        { "src": "decor-b1-quais", "crop": [0.12, 0.0, 0.62, 0.5], "title": "Néon Privatix", "sub": "Émissif magenta sur la brique : la marque s'impose au quai." },
+        { "src": "decor-b1-quais", "crop": [0.5, 0.05, 0.8, 0.35], "title": "Signalétique", "sub": "Panneaux MONS et logo SNCB, écrans de porte « QUAIS & VOIES »." },
+        { "src": "decor-b1-quais", "crop": [0.2, 0.52, 0.6, 0.92], "title": "Banc, voie et ballast", "sub": "Le banc du quai 2, rails et traverses lisibles de dessus." }
+      ]
+    },
+    {
+      "id": "decor-passerelle", "layout": "feature", "accent": "#FFC27A",
+      "eyebrow": "Décors · Biome 2", "title": "La Passerelle « Calatrava »", "subtitle": "« Le vent tourne »",
+      "intro": "La passerelle enjambe les voies comme la colonne vertébrale d'un animal préhistorique. Grands arcs blancs, verrière, vide sous les pieds : le biome le plus aérien, le plus clair, et Privatix y prépare son inauguration.",
+      "main": { "src": "decor-b2-passerelle", "title": "Sous les arcs", "sub": "Dalles de verrière, colonnes blanches, bancs face au vide." },
+      "side": [
+        { "src": "arene-fluidifieur", "title": "Le Fluidifieur, nœud central", "sub": "Élite majeur : vide tout autour, dalles qui roulent." },
+        { "src": "arene-dirupo", "title": "Tapis rouge de l'inauguration", "sub": "Arène d'Elio Di Rupo : estrade, chaises, ruban." }
+      ],
+      "details_title": "Détails",
+      "details": [
+        { "src": "decor-b2-passerelle", "crop": [0.0, 0.0, 0.5, 0.5], "title": "Arcs et verrière", "sub": "Architecture blanche, lumière d'aube." },
+        { "src": "arene-dirupo", "crop": [0.25, 0.1, 0.75, 0.6], "title": "Estrade d'honneur", "sub": "Tapis rouge, pupitre, chaises alignées." },
+        { "src": "decor-b2-passerelle", "crop": [0.3, 0.45, 0.7, 0.85], "title": "Dalles de verrière", "sub": "Le sol vitré annonce le vide." }
+      ]
+    },
+    {
+      "id": "decor-hall", "layout": "feature", "accent": "#FF3EA5",
+      "eyebrow": "Décors · Biome 3", "title": "Hall & BAG", "subtitle": "« Terminus BAG »",
+      "intro": "On redescend dans le hall historique (bois clair, guichets bâchés), puis on passe le portique du BAG : archives, open-space, salle du Conseil. Plus on monte, plus c'est propre, et plus c'est inquiétant.",
+      "main": { "src": "decor-b3-hall-bag", "title": "Archives du BAG", "sub": "Rayonnages de dossiers en couloirs : un labyrinthe de classeurs." },
+      "side": [
+        { "src": "arene-discosaure", "title": "Afterwork de transformation", "sub": "Le Discosaure, mini-boss : seule sa boule éclaire." },
+        { "src": "arene-lurcke", "title": "Bureau de Jean-Cul Lurcke", "sub": "Arène du boss final, moquette et parquet." }
+      ],
+      "details_title": "Détails",
+      "details": [
+        { "src": "arene-lurcke", "crop": [0.25, 0.0, 0.75, 0.5], "title": "Le bureau du Directeur", "sub": "Parquet, moquette et porte capitonnée au fond." },
+        { "src": "decor-b3-hall-bag", "crop": [0.0, 0.3, 0.4, 0.7], "title": "Rayonnages", "sub": "Classeurs colorés, liseré cyan des étagères." },
+        { "src": "arene-discosaure", "crop": [0.25, 0.15, 0.75, 0.65], "title": "La piste", "sub": "Néons éteints, éclats de la boule à facettes." }
+      ]
+    },
+    {
+      "id": "decor-hub", "layout": "feature", "accent": "#FFC27A",
+      "eyebrow": "Décors · Hub", "title": "L'OCC, « Operation Coffee Center »", "subtitle": "Salle des opérations, Cour du BAG, coin poubelles",
+      "intro": "Le centre opérationnel de la gare, au rez-de-chaussée arrière du BAG : le seul étage que Privatix n'a pas pris. Salle de supervision tamisée, bleu ardoise, îlots chauds en tungstène sur les pupitres ; dehors, la Cour intérieure en lumière naturelle.",
+      "main": { "src": "hub-salle-operations", "title": "Salle des opérations", "sub": "Mur synoptique (voies, cantons, trains), pupitres des collègues, la Vieille Dame sur son socle." },
+      "side": [
+        { "src": "hub-cour-bag", "title": "Cour intérieure du BAG", "sub": "Josiane (DPD), casiers, mannequin de formation." },
+        { "src": "hub-coin-poubelles", "title": "Coin poubelles", "sub": "L'antre du Furet putride, sous le pignon." }
+      ],
+      "details_title": "Détails",
+      "details": [
+        { "src": "hub-salle-operations", "crop": [0.25, 0.0, 0.75, 0.5], "title": "Mur synoptique", "sub": "Source principale de lumière, émissif cyan et vert." },
+        { "src": "hub-salle-operations", "crop": [0.55, 0.15, 0.95, 0.55], "title": "Pupitres", "sub": "Lampes de pupitre en tungstène, collègues à leur poste." },
+        { "src": "hub-coin-poubelles", "crop": [0.18, 0.12, 0.62, 0.56], "title": "Conteneurs et sacs", "sub": "Conteneurs le long du pignon, affichette « accès réservé »." }
+      ]
+    },
+    {
+      "id": "decor-arenes", "layout": "grid", "accent": "#FF3EA5",
+      "eyebrow": "Décors · Arènes", "title": "Arènes des boss et Salles gardées", "subtitle": "Où l'on affronte les ressources de Privatix",
+      "blocks": [
+        { "title": "Boss", "cols": 3, "items": [
+          { "src": "arene-auditeur", "title": "L'Auditeur des Quais", "sub": "Biome 1 · quai 2, voie, quai 3" },
+          { "src": "arene-dirupo", "title": "Elio Di Rupo", "sub": "Biome 2 · tapis rouge de l'inauguration" },
+          { "src": "arene-lurcke", "title": "Jean-Cul Lurcke", "sub": "Biome 3 · bureau du Directeur" }
+        ] },
+        { "title": "Salles gardées", "cols": 3, "items": [
+          { "src": "arene-furet", "title": "Le Furet putride", "sub": "Biome 1 · voies" },
+          { "src": "arene-fluidifieur", "title": "Le Fluidifieur", "sub": "Biome 2 · nœud central de la passerelle" },
+          { "src": "arene-discosaure", "title": "Le Discosaure", "sub": "Biome 3 · afterwork du 2e étage" }
+        ] },
+        { "title": "Cartes d'entrée", "cols": 3, "items": [
+          { "src": "ui-intro-auditeur", "title": "« Audit en cours »", "sub": "Intro de l'Auditeur" },
+          { "src": "ui-intro-dirupo", "title": "« Inauguration imminente »", "sub": "Intro d'Elio Di Rupo" },
+          { "src": "ui-intro-lurcke", "title": "« Signature imminente »", "sub": "Intro de Jean-Cul Lurcke" }
+        ] }
+      ]
+    },
+    {
+      "id": "loot", "layout": "grid", "accent": "#FF8C2B",
+      "eyebrow": "Loot & UI", "title": "Le butin qui se voit", "subtitle": "Faisceaux par rareté, carte de comparaison, équipement porté",
+      "intro": "Le butin tombe des sacoches, caisses et colis abandonnés par Privatix, jamais d'un voyageur. Un faisceau vertical à la couleur de la rareté le signale de loin ; de près, la carte compare la pièce à celle qui est portée.",
+      "blocks": [
+        { "cols": 2, "items": [
+          { "src": "loot-faisceaux", "title": "Faisceaux par rareté", "sub": "Réforme gris, Réglementaire crème, Homologué bleu, Hors-série violet, Patrimoine orange." },
+          { "src": "ui-carte-comparaison", "title": "Carte de comparaison", "sub": "Écart de statistiques en vert ou rouge, actions Équiper, Sac, Réformer." }
+        ] },
+        { "cols": 2, "items": [
+          { "src": "loot-heros-equipe", "title": "Équipement sur le héros", "sub": "Casque, gilet et outil ramassés changent la silhouette en jeu." },
+          { "src": "ui-tenue", "title": "Écran Tenue", "sub": "Équipé, sac de service et comparaison, touche I." }
+        ] }
+      ]
+    },
+    {
+      "id": "ui", "layout": "grid", "accent": "#6FF3FF",
+      "eyebrow": "Loot & UI", "title": "HUD et menus", "subtitle": "Interface DOM encrée, lisible d'abord",
+      "intro": "Contour encré de 2 px, liseré coloré, ombre portée dure : l'interface reprend le geste « BD » des figurines. Jauges inclinées, libellés en capitales espacées, deux émissifs au plus par écran.",
+      "blocks": [
+        { "cols": 2, "items": [
+          { "src": "ui-hud-combat", "title": "HUD de combat", "sub": "Énergie, Burnout, dash et Mobilisation à gauche ; horloge du Shift et compteurs à droite." },
+          { "src": "ui-titre", "title": "Écran titre", "sub": "Logotype néon sur le quai, au-dessus du décor vivant." }
+        ] },
+        { "cols": 2, "items": [
+          { "src": "ui-dpd-vestiaire", "title": "DPD · Vestiaire de Josiane", "sub": "Casiers, Paquetage et outils, Atelier." },
+          { "src": "hub-salle-operations-ui", "title": "Hub et invites", "sub": "Ressources de la méta en haut à gauche, invites d'interaction sur place." }
+        ] }
+      ]
+    },
+    {
+      "id": "vfx-heros", "layout": "grid", "accent": "#FF3EA5",
+      "eyebrow": "VFX & télégraphes", "title": "Coups, impacts et télégraphes", "subtitle": "Tout ce qui blesse est magenta et annoncé",
+      "intro": "Smears de la clé, flash d'impact et hitstop côté héros ; côté ennemis, chaque attaque est annoncée au sol en magenta (au moins 300 ms, 500 ms pour un boss) avant de blesser.",
+      "blocks": [
+        { "title": "Le héros", "cols": 2, "items": [
+          { "src": "vfx-smear-coup1", "title": "Smear du coup 1", "sub": "Arc de traînée orange, squash de la figurine." },
+          { "src": "vfx-impact-coup3", "title": "Impact du coup 3", "sub": "Flash, étincelles, hitstop de 110 ms." }
+        ] },
+        { "title": "Télégraphes", "cols": 3, "items": [
+          { "src": "vfx-telegraphes-consultants", "title": "Consultants", "sub": "Ruée « Quick win » et diaporama annoncés au sol." },
+          { "src": "vfx-furet-puanteur", "title": "Nuage du Furet", "sub": "Volutes de puanteur qui font monter le Burnout." },
+          { "src": "vfx-fluidifieur-dalles", "title": "Dalles du Fluidifieur", "sub": "Bandes au sol avant le roulement des dalles." }
+        ] }
+      ]
+    },
+    {
+      "id": "vfx-boss", "layout": "grid", "accent": "#FF3EA5",
+      "eyebrow": "VFX & télégraphes", "title": "Patterns des boss", "subtitle": "Piste de danse, ruban, tampon, bullet points",
+      "blocks": [
+        { "cols": 3, "items": [
+          { "src": "vfx-telegraphe-auditeur-bras", "title": "Auditeur · bras-barrière", "sub": "Balayage annoncé par la barrière." },
+          { "src": "vfx-telegraphe-auditeur-tampon", "title": "Auditeur · tampon", "sub": "Le tampon se verrouille sur la position du héros, puis frappe." },
+          { "src": "vfx-dirupo-noeud-papillon", "title": "Di Rupo · nœud papillon", "sub": "Nœud papillon boomerang : la ligne annonce l'aller et le retour." }
+        ] },
+        { "cols": 3, "items": [
+          { "src": "vfx-dirupo-ruban", "title": "Di Rupo · phase 3", "sub": "Sous 25 % de ses points de vie, les télégraphes en lignes se multiplient." },
+          { "src": "vfx-dirupo-ciseaux", "title": "Di Rupo · ciseaux", "sub": "Les ciseaux d'inauguration : une ligne magenta qui tranche." },
+          { "src": "vfx-discosaure-piste", "title": "Discosaure · piste de danse", "sub": "Les taches de la boule tournent, se figent, se remplissent puis explosent." }
+        ] },
+        { "cols": 3, "items": [
+          { "src": "vfx-discosaure-lasers", "title": "Discosaure · lasers", "sub": "Phase 2 : quatre faisceaux en croix qui tournent 3 s." },
+          { "src": "vfx-lurcke-bullet-points", "title": "Lurcke · bullet points", "sub": "Trois lignes qui balaient la salle, un trou par ligne." },
+          { "src": "vfx-lurcke-graphiques", "title": "Lurcke · graphiques", "sub": "Piliers-graphiques : trois cercles annoncés au sol." }
+        ] }
+      ]
+    },
+    {
+      "id": "perso-lurcke", "layout": "lurcke", "accent": "#FF3EA5",
+      "eyebrow": "Personnages · Boss final · Biome 3", "title": "Jean-Cul Lurcke", "subtitle": "Directeur de la Transformation et de l'Excellence Opérationnelle",
+      "intro": "Fiche de travail : le boss final n'a pas encore de modèle GLB dédié. En jeu, il porte le costume du Manager KPI grandi ×1,4 (actorClips.ts), avec ses propres patterns (bullet points, graphiques, copie, rapport) et sa barre de boss.",
+      "main": { "src": "lurcke-gros-plan", "title": "En jeu, version de travail", "sub": "Silhouette du Manager KPI à l'échelle 1,4." },
+      "side": [
+        { "src": "vfx-lurcke-bullet-points", "title": "« Slide 1 sur 412 »", "sub": "Bullet points : trois lignes qui balaient le bureau, un trou par ligne." },
+        { "src": "vfx-lurcke-graphiques", "title": "Benchmark international", "sub": "Piliers-graphiques annoncés par trois cercles." }
+      ],
+      "notes": [
+        ["Silhouette", "Costume trop ajusté, baskets blanches « pour faire startup », oreillette permanente. Plus grand que le Manager KPI, épaules étroites, tête haute : il regarde au-dessus du terrain."],
+        ["Accessoires", "Tasse « World's Best Disruptor », télécommande de présentation, trottinette électrique de fonction (compteur « 0 km parcourus en train »)."],
+        ["Phases", "1 : Méga-Deck 2032 (écran géant). 2 : Conseil en visio, fusion avec le Contrat. 3 : l'Optimiseur Absolu, fusion avec la photocopieuse."]
+      ],
+      "footer": "pas de GLB dédié · public/models/manager.glb ×1,4 en attendant"
+    }
+  ]
+}
