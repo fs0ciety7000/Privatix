@@ -95,7 +95,10 @@ export class ModelLibrary {
   }
 
   /** Charge un personnage (une seule fois) ; `null` s'il n'existe pas ou si le chargement échoue. */
-  public loadCharacter(name: string, onBytes?: (b: number) => void): Promise<CharacterTemplate | null> {
+  public loadCharacter(
+    name: string,
+    onBytes?: (b: number) => void,
+  ): Promise<CharacterTemplate | null> {
     const done = this.chars.get(name);
     if (done) return Promise.resolve(done);
     const meta = this.manifest.characters[name];

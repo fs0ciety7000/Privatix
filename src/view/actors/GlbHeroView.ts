@@ -10,12 +10,7 @@ import * as THREE from 'three';
 import { DASH, DASH_ATTACK, HERO, PREAVIS, WHISTLE } from '@/config/balance';
 import type { HeroSim } from '@/sim/hero/HeroSim';
 import { pxToM, yawFromAngle } from '@/sim/units';
-import type {
-  ActorFxSink,
-  EquipSlot,
-  HeroActorView,
-  HeroEquipment,
-} from '@/view/actors/ActorView';
+import type { ActorFxSink, EquipSlot, HeroActorView, HeroEquipment } from '@/view/actors/ActorView';
 import { DEFAULT_GEAR } from '@/view/actors/actorClips';
 import { makeFlash } from '@/view/materials/toon';
 import type { Flash } from '@/view/materials/toon';
@@ -141,7 +136,11 @@ export class GlbHeroView implements HeroActorView {
       }
       case 'dashAttack': {
         const s = DASH_ATTACK;
-        m.scrub('attack2', this.aligned('attack2', t, s.startupMs, s.activeMs + s.recoveryMs), 0.04);
+        m.scrub(
+          'attack2',
+          this.aligned('attack2', t, s.startupMs, s.activeMs + s.recoveryMs),
+          0.04,
+        );
         break;
       }
       case 'special': {

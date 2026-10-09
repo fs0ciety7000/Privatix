@@ -53,7 +53,10 @@ export function createProceduralEnemyView(
 }
 
 /** Vue du héros : GLB équipé (casque, gilet, clé) si chargé, sinon le héros procédural. */
-export function createHeroView(reducedMotion: boolean, fx: ActorFxSink | null = null): HeroActorView {
+export function createHeroView(
+  reducedMotion: boolean,
+  fx: ActorFxSink | null = null,
+): HeroActorView {
   const lib = modelLibrary();
   const tpl = lib?.character('hero') ?? null;
   if (lib && tpl) {

@@ -226,7 +226,11 @@ export function glbGlassMaterial(u: GlbUniforms): THREE.ShaderMaterial {
 }
 
 /** Coque inversée (contour) pilotée par l'attribut `_outline`, skinnée comme la normale. */
-export function glbOutlineMaterial(u: GlbUniforms, color: number, widthPx: number): THREE.ShaderMaterial {
+export function glbOutlineMaterial(
+  u: GlbUniforms,
+  color: number,
+  widthPx: number,
+): THREE.ShaderMaterial {
   const m = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     uniforms: {

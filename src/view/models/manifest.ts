@@ -127,7 +127,8 @@ export function parseManifest(raw: unknown): ModelManifest {
       if (!isObj(it) || typeof it.file !== 'string') continue;
       const slot = SLOTS.find((s) => s === it.slot);
       if (!slot) continue;
-      const tip = Array.isArray(it.tip) && it.tip.length === 3 ? it.tip.map((x) => num(x, 0)) : null;
+      const tip =
+        Array.isArray(it.tip) && it.tip.length === 3 ? it.tip.map((x) => num(x, 0)) : null;
       items[name] = {
         file: it.file,
         slot,
@@ -152,7 +153,8 @@ export function withLods(m: ModelManifest, raw: unknown): ModelManifest {
   const cl = isObj(raw.characters) ? raw.characters : {};
   const il = isObj(raw.items) ? raw.items : {};
   const characters: Record<string, CharacterMeta> = {};
-  for (const [k, c] of Object.entries(m.characters)) characters[k] = { ...c, lod: lod(cl[k]) ?? c.lod };
+  for (const [k, c] of Object.entries(m.characters))
+    characters[k] = { ...c, lod: lod(cl[k]) ?? c.lod };
   const items: Record<string, ItemMeta> = {};
   for (const [k, it] of Object.entries(m.items)) items[k] = { ...it, lod: lod(il[k]) ?? it.lod };
   return { ...m, characters, items };

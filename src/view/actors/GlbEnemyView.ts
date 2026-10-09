@@ -99,8 +99,7 @@ export class GlbEnemyView extends ProceduralEnemyView {
 
     if (!this.spawned) {
       this.spawned = true;
-      if (map.spawn && !(sim instanceof BorneSim))
-        m.play(map.spawn, { fade: 0, restart: true });
+      if (map.spawn && !(sim instanceof BorneSim)) m.play(map.spawn, { fade: 0, restart: true });
     }
 
     if (sim instanceof BorneSim && sim.deployMs < BORNE.DEPLOY_MS && map.spawn) {
@@ -134,7 +133,10 @@ export class GlbEnemyView extends ProceduralEnemyView {
 
     if (this.plates.length > 0 && sim instanceof AuditeurSim) {
       // Le blindage tombe à la phase 2 et ne revient pas (les autres clips n'ont pas de piste d'échelle).
-      if (sim.phase >= 2 && (m.playing !== 'phase2' || m.time >= m.eventAt('phase2', 'plates', 0.7)))
+      if (
+        sim.phase >= 2 &&
+        (m.playing !== 'phase2' || m.time >= m.eventAt('phase2', 'plates', 0.7))
+      )
         this.platesOff = true;
     }
     m.update(dt, this.time);
