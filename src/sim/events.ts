@@ -76,6 +76,43 @@ export type SimEvent =
       readonly tone: TextTone;
     }
   | { readonly type: 'wave'; readonly index: number; readonly count: number; readonly room: number }
-  | { readonly type: 'roomCleared'; readonly room: number };
+  | { readonly type: 'roomCleared'; readonly room: number }
+  /** Projectile ennemi tiré, cassé (coup, sifflet, mur) ou arrivé sur le héros. */
+  | { readonly type: 'projectileFired'; readonly x: number; readonly y: number }
+  | {
+      readonly type: 'projectileBroken';
+      readonly x: number;
+      readonly y: number;
+      readonly by: 'wall' | 'hero' | 'weapon';
+    }
+  /** Impact d'une zone de danger (fin du télégraphe), passage d'une rame. */
+  | {
+      readonly type: 'hazardImpact';
+      readonly kind: 'circle' | 'ring' | 'band' | 'line';
+      readonly x: number;
+      readonly y: number;
+      readonly radius: number;
+    }
+  /** Explosion (mort d'une Borne, du boss, récompense qui tombe). */
+  | { readonly type: 'explosion'; readonly x: number; readonly y: number; readonly scale: number }
+  | { readonly type: 'dust'; readonly x: number; readonly y: number; readonly count: number }
+  /** Changement de phase du boss (bandeau). */
+  | { readonly type: 'bossPhase'; readonly phase: number; readonly title: string }
+  /** Ramassage d'une récompense au sol. */
+  | {
+      readonly type: 'pickup';
+      readonly kind: string;
+      readonly x: number;
+      readonly y: number;
+      readonly text: string;
+    }
+  /** Bandeau d'information (équivalent de `pushNotice` de la version Phaser). */
+  | { readonly type: 'notice'; readonly text: string; readonly tone: TextTone }
+  /** Nouvelle salle construite (la vue reconstruit le décor). */
+  | { readonly type: 'roomEntered'; readonly room: number; readonly roomType: string }
+  /** Le héros franchit une porte ouverte (la scène lance le fondu). */
+  | { readonly type: 'doorTaken'; readonly room: number }
+  /** Fin du Shift (mort ou victoire) : la scène affiche l'écran des départs. */
+  | { readonly type: 'shiftEnded'; readonly end: 'victoire' | 'mort' };
 
 export type SimEventType = SimEvent['type'];

@@ -1,0 +1,25 @@
+{
+  "name": "privatix-glb-viewer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Visionneuse autonome des GLB de tools/render3d (hors build du jeu).",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --port 4180",
+    "compress": "node compress.mjs",
+    "shots": "node shots.mjs"
+  },
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@gltf-transform/cli": "4.2.1",
+    "@gltf-transform/core": "4.2.1",
+    "@gltf-transform/extensions": "4.2.1",
+    "@gltf-transform/functions": "4.2.1",
+    "meshoptimizer": "0.22.0",
+    "vite": "7.3.7"
+  }
+}
