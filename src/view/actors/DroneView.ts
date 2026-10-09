@@ -26,7 +26,7 @@ export class DroneView extends ProceduralEnemyView {
     this.lens = this.track(glow(0x6ff3ff, 2.5));
 
     r.joint('core', null, [0, FLY_Y, 0]);
-    r.sphere('core', shell, [0, 0, 0], [0.42, 0.3, 0.42]);
+    r.sphere('core', shell, [0, 0, 0], [0.25, 0.18, 0.25]);
     r.cyl('core', dark, [0, -0.02, 0], 0.23, 0.08, { seg: 18 });
     r.box('core', dark, [0, -0.15, 0.02], [0.18, 0.08, 0.2], 0.03);
     // Objectif (l'œil de l'audit) : un anneau sombre et une lentille émissive à l'avant.

@@ -80,6 +80,8 @@ export class Menus {
     private readonly onPromptTap: () => void,
     onPauseTap: () => void,
   ) {
+    // Temps réel pour les menus : pas de « lissage du retard » (une frame lente ne ralentit pas l'UI).
+    gsap.ticker.lagSmoothing(0);
     this.fader = el('div', 'px-fade', host);
     this.layer = el('div', 'px-layer px-scrim', host);
     this.layer.hidden = true;
