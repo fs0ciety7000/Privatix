@@ -513,16 +513,16 @@ Un manifeste unique, `public/assets/asset-pack.json`, chargé par `PreloaderScen
     "path": "assets/",
     "files": [
       { "type": "image", "key": "img-logo", "url": "images/ui/logo.png" },
-      { "type": "image", "key": "tileset-gare", "url": "tilemaps/tileset-gare.png" },
-      { "type": "spritesheet", "key": "sheet-leon", "url": "images/characters/leon.png",
+      { "type": "image", "key": "tiles-gare", "url": "images/tilesets/tiles-gare.png" },
+      { "type": "spritesheet", "key": "ss-hero-leon", "url": "images/characters/hero-leon.png",
         "frameConfig": { "frameWidth": 16, "frameHeight": 24 } },
       { "type": "atlas", "key": "atlas-enemies",
         "textureURL": "images/atlases/enemies.png", "atlasURL": "images/atlases/enemies.json" },
       { "type": "atlas", "key": "atlas-ui",
         "textureURL": "images/atlases/ui.png", "atlasURL": "images/atlases/ui.json" },
       { "type": "tilemapTiledJSON", "key": "map-gare-mons", "url": "tilemaps/gare-mons.json" },
-      { "type": "audio", "key": "music-gare-mons",
-        "url": ["audio/music/gare-mons.ogg", "audio/music/gare-mons.mp3"] },
+      { "type": "audio", "key": "bgm-gare-mons",
+        "url": ["audio/bgm/bgm-gare-mons.ogg", "audio/bgm/bgm-gare-mons.mp3"] },
       { "type": "audio", "key": "sfx-composteur",
         "url": ["audio/sfx/composteur.ogg", "audio/sfx/composteur.mp3"] },
       { "type": "bitmapFont", "key": "font-pixel-body",
@@ -545,7 +545,7 @@ Toute clé du pack a son entrée dans `AssetKeys` (`src/config/constants.ts`, d�
 
 ```ts
 const map = this.make.tilemap({ key: AssetKeys.MapGareMons });
-const tiles = map.addTilesetImage('tileset-gare', AssetKeys.TilesetGare, 16, 16, 1, 2);
+const tiles = map.addTilesetImage('tiles-gare', AssetKeys.TilesetGare, 16, 16, 1, 2);
 if (!tiles) throw new Error('Tileset introuvable dans la carte');
 map.createLayer('ground', tiles);
 const collision = map.createLayer('collision', tiles)?.setVisible(false);
@@ -555,7 +555,7 @@ const isBlocked: IsBlocked = (tx, ty) =>
 
 ### 6.3 Nommage
 
-Fichiers en kebab-case ASCII sans accents (`gare-mons.json`, `consultant-junior.png`). Clé = **préfixe de type** + nom : `img-`, `sheet-`, `atlas-`, `tileset-`, `map-`, `music-`, `sfx-`, `font-`. Frames d'atlas `{entite}-{action}-{direction}-{index}` (`leon-walk-down-0`), animations `anim-leon-walk-down` créées une seule fois dans le Preloader.
+Fichiers en kebab-case ASCII sans accents (`gare-mons.json`, `consultant-junior.png`). Clé = **préfixe de type** + nom : `img-`, `ss-`, `atlas-`, `tiles-`, `map-`, `bgm-`, `sfx-`, `font-` (référence : docs/ASSETS_GUIDE.md § 4). Frames d'atlas `{entite}-{action}-{direction}-{index}` (`leon-walk-down-0`), animations `anim-leon-walk-down` créées une seule fois dans le Preloader.
 
 ---
 
