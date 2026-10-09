@@ -1,0 +1,91 @@
+{
+  "name": "privatix-desktop",
+  "productName": "Privatix",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Privatix - version de bureau (Electron) du jeu web.",
+  "author": "Privatix",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "main/main.mjs",
+  "scripts": {
+    "prepare-app": "node scripts/prepare-app.mjs",
+    "icon": "node scripts/make-icon.mjs",
+    "assemble": "npm run prepare-app && npm run icon",
+    "start": "npm run assemble && electron .",
+    "start:debug": "npm run assemble && electron . --debug --unlimited-fps",
+    "smoke": "node scripts/smoke-test.mjs",
+    "pack": "npm run assemble && electron-builder --dir --publish never",
+    "dist:linux": "npm run assemble && electron-builder --linux AppImage dir --publish never",
+    "dist:win": "npm run assemble && electron-builder --win nsis portable --x64 --publish never",
+    "dist:mac": "npm run assemble && electron-builder --mac dmg --x64 --arm64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.4.5",
+    "electron-builder": "26.16.1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "build": {
+    "appId": "eu.privatix.desktop",
+    "productName": "Privatix",
+    "copyright": "Privatix",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main/**",
+      "app/**",
+      "package.json",
+      "!**/*.map"
+    ],
+    "asar": true,
+    "electronLanguages": [
+      "fr",
+      "en-US",
+      "nl"
+    ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "publish": [],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Game",
+      "icon": "build/icon.png",
+      "syncDesktopName": true
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.png",
+      "signAndEditExecutable": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "${productName}-${version}-setup-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable-${arch}.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.games",
+      "icon": "build/icon.png",
+      "identity": null,
+      "hardenedRuntime": false
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-mac-${arch}.${ext}"
+    }
+  },
+  "desktopName": "privatix-desktop.desktop"
+}

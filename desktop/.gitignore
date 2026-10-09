@@ -1,0 +1,7 @@
+# Sorties de build et dépendances : jamais versionnées
+node_modules/
+dist/
+# Contenu web embarqué, recopié depuis les builds par scripts/prepare-app.mjs
+app/
+# Icône générée par scripts/make-icon.mjs
+build/

@@ -1,0 +1,7 @@
+{
+  "$comment": "Builds web embarqués dans l'app. 'main' est servi à app://game/, chaque entrée de 'extras' à app://game/<clé>/. Chemins relatifs au dossier desktop/.",
+  "main": "../dist",
+  "extras": {
+    "3d": "../prototypes/proto3d/dist"
+  }
+}

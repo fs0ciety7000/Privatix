@@ -1,0 +1,115 @@
+# Construit l'application de bureau Privatix (Electron) pour Windows, macOS et Linux,
+# et publie les exécutables comme artefacts du run (onglet Actions > run > « Artifacts »).
+name: Desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      main:
+        description: "Build web principal (relatif à desktop/). Ex. ../prototypes/proto3d/dist pour faire de la 3D le jeu principal"
+        required: false
+        default: ""
+      extras:
+        description: 'Builds additionnels "clé=dossier,..." ou "none" (vide = content.config.json)'
+        required: false
+        default: ""
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: windows
+            os: windows-latest
+            script: dist:win
+            files: |
+              desktop/dist/*.exe
+          - name: macos
+            os: macos-latest
+            script: dist:mac
+            files: |
+              desktop/dist/*.dmg
+          - name: linux
+            os: ubuntu-latest
+            script: dist:linux
+            files: |
+              desktop/dist/*.AppImage
+    env:
+      # Pas de certificat : on désactive la recherche automatique d'identité de signature.
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      PRIVATIX_MAIN: ${{ github.event.inputs.main }}
+      ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+      ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            prototypes/proto3d/package-lock.json
+            desktop/package-lock.json
+
+      - name: Build du jeu (racine)
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build du prototype 3D
+        working-directory: prototypes/proto3d
+        run: |
+          npm ci
+          npm run build
+
+      - name: Dépendances desktop
+        working-directory: desktop
+        run: npm ci
+
+      - name: Version depuis le tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: desktop
+        shell: bash
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
+
+      - name: Packaging (${{ matrix.name }})
+        working-directory: desktop
+        shell: bash
+        env:
+          EXTRAS_INPUT: ${{ github.event.inputs.extras }}
+        run: |
+          # PRIVATIX_EXTRAS n'est défini que si l'input est renseigné (sinon content.config.json fait foi).
+          if [ -n "$EXTRAS_INPUT" ]; then export PRIVATIX_EXTRAS="$EXTRAS_INPUT"; fi
+          if [ -z "$PRIVATIX_MAIN" ]; then unset PRIVATIX_MAIN; fi
+          npm run ${{ matrix.script }}
+
+      - name: Smoke test (Linux, écran virtuel)
+        if: matrix.name == 'linux'
+        working-directory: desktop
+        run: xvfb-run -a node scripts/smoke-test.mjs dist/linux-unpacked/privatix-desktop
+
+      - name: Publication des artefacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: privatix-desktop-${{ matrix.name }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
