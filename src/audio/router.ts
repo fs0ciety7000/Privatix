@@ -45,6 +45,51 @@ const STRIKE_SFX: Readonly<Record<string, SfxId>> = {
   stamp: 'bossStamp',
   land: 'bossLand',
   kpi: 'kpi',
+  // Furet putride
+  bite: 'enemyMelee',
+  pounce: 'rush',
+  // Fluidifieur
+  glide: 'rush',
+  slabs: 'chrono',
+  binder: 'tablet',
+  swap: 'kpi',
+  org: 'report',
+  // Discosaure
+  spots: 'droneScan',
+  stomp: 'bossStamp',
+  charge: 'rush',
+  tail: 'bossSweep',
+  lasers: 'kpiZap',
+  // Elio Di Rupo
+  bowtie: 'swingDash',
+  speech: 'report',
+  promises: 'chime',
+  ballots: 'ticketFire',
+  motions: 'bossBarrier',
+  scissors: 'ribbonSnip',
+  // Gontran Vanderslide
+  bullets: 'kpi',
+  charts: 'chrono',
+  copy: 'report',
+};
+
+/** Effets ponctuels (`fx`) des biomes 2 et 3. */
+const FX_SFX: Readonly<Partial<Record<string, SfxId>>> = {
+  promiseKept: 'pickupPs',
+  ribbonCut: 'ribbonSnip',
+  confetti: 'fanfare',
+  stink: 'stinkPuff',
+  burrow: 'hazardThud',
+  emerge: 'bossLand',
+  facets: 'discoShimmer',
+  sequins: 'discoShimmer',
+  discoFreeze: 'whistle',
+  gust: 'ringPulse',
+  heroFell: 'hurt',
+  enemyFell: 'kill',
+  pageTaken: 'pickupGrains',
+  reglement: 'bossPhase',
+  swap: 'kpi',
 };
 
 /** Matière touchée selon l'ennemi : papier, portable, tôle, plastique, costume. */
@@ -57,7 +102,12 @@ export function materialFor(kind: EnemyKind | undefined, heavy: boolean): SfxId 
     case 'manager':
       return 'hitLaptop';
     case 'auditeur':
+    case 'dirupo':
+    case 'vanderslide':
+    case 'fluidifieur':
       return 'hitBoss';
+    case 'discosaure':
+      return 'hitMetal';
     default:
       return heavy ? 'hitLaptop' : 'hitPaper';
   }
@@ -118,7 +168,12 @@ export function routeEvent(e: SimEvent, kindOf: KindOf): SfxCue[] {
     case 'explosion':
       return [{ id: 'explosion', x: e.x, y: e.y, amount: e.scale / 2 }];
     case 'bossPhase':
+    case 'bossIntro':
       return [{ id: 'bossPhase' }];
+    case 'fx': {
+      const id = FX_SFX[e.name];
+      return id ? [{ id, x: e.x, y: e.y }] : [];
+    }
     case 'pickup': {
       const id = PICKUP_SFX[e.kind];
       return id ? [{ id, x: e.x, y: e.y }] : [];

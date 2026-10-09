@@ -52,6 +52,8 @@ export interface SimWorld {
   readonly time: TimeControl;
   /** Équipement porté (modificateurs du héros, pouvoirs Patrimoine). */
   readonly loot: LootSim;
+  /** Réduction des mouvements (accessibilité) : coupe les patterns stroboscopiques (lasers du Discosaure). */
+  readonly reducedMotion: boolean;
   now(): number;
   livingEnemies(): readonly EnemySim[];
   damageHero(amount: number, source: HitSource): boolean;

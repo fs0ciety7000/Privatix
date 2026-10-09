@@ -295,7 +295,12 @@ export class Game3D {
     this.menus.close();
     this.leaveHub();
     this.seed += 1;
-    this.world = new World({ seed: this.seed, meta: this.meta, shift });
+    this.world = new World({
+      seed: this.seed,
+      meta: this.meta,
+      shift,
+      reducedMotion: this.settings.reducedMotion,
+    });
     this.clock = new FixedClock(this.world.time);
     this.rebuildView();
     this.phase = 'run';
@@ -364,6 +369,7 @@ export class Game3D {
     if (next.reducedMotion !== this.settings.reducedMotion)
       this.onReducedMotion(next.reducedMotion);
     this.settings = { quality, reducedMotion: next.reducedMotion };
+    this.world.reducedMotion = next.reducedMotion;
     this.menus.reducedMotion = next.reducedMotion;
     this.hubUi.reducedMotion = next.reducedMotion;
     this.lootCard.reducedMotion = next.reducedMotion;
@@ -635,6 +641,23 @@ export class Game3D {
         case 'bossPhase':
           this.hud.announce(e.title, 2.4, 'danger');
           break;
+        case 'bossIntro':
+          if (this.phase === 'run')
+            this.menus.showBossIntro({
+              name: e.name,
+              title: e.title,
+              line: e.line,
+              fictive: e.fictive,
+            });
+          break;
+        case 'bossLine':
+          if (this.phase === 'run')
+            this.menus.showLine({ speaker: e.speaker, text: e.text, fictive: e.fictive });
+          break;
+        case 'biomeEntered':
+          if (this.phase === 'run' && e.biome > 0)
+            this.hud.announce(`${e.name.toUpperCase()} · ${e.tagline}`, 3, 'gold');
+          break;
         case 'doorTaken':
           this.menus.fade(1, FADE_OUT_MS);
           break;
@@ -645,6 +668,7 @@ export class Game3D {
           this.hud.announce('FIN DE SERVICE', 2.4, 'danger');
           break;
         case 'shiftEnded':
+          this.menus.clearCaptions();
           this.menus.fade(1, END_FADE_MS);
           this.resultsIn = END_FADE_MS + 200;
           if (this.tenueOpen) this.closeTenue();
@@ -747,10 +771,17 @@ export class Game3D {
       const p = this.view.toScreen(prompt.x, prompt.y, prompt.door ? 2.9 : 2.0);
       this.menus.setPrompt(prompt.label, p.x, p.y, !prompt.door && !this.input.touch);
     } else this.menus.setPrompt(null, 0, 0, false);
-    const boss = director.boss;
+    const boss = director.boss ?? director.guardian;
+    const major = director.boss === null;
     this.menus.setBoss(
       boss && !boss.isDead && boss.materialized
-        ? { name: ENEMY_NAMES.auditeur, ratio: boss.hp / boss.maxHp, phase: boss.phase }
+        ? {
+            name: ENEMY_NAMES[boss.kind],
+            ratio: boss.hp / boss.maxHp,
+            phase: boss.phase,
+            phases: major ? 2 : 3,
+            major,
+          }
         : null,
     );
   }
@@ -769,7 +800,8 @@ export class Game3D {
       dashProgress: run.dash.progress,
       mobilisation: run.mobilisation.value,
       gobelets: Math.min(run.gobelets, COFFEE.MAX),
-      room: Math.min(run.room, 10),
+      room: Math.min(d.localRoom, d.biomeRooms + 2),
+      roomTotal: d.biomeRooms + 2,
       wave: d.waves.waveNumber,
       waveCount: d.waves.waveCount,
       kills: run.kills,

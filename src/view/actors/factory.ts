@@ -43,11 +43,16 @@ export function createProceduralEnemyView(
       return new BorneView(scene, reducedMotion);
     case 'drone':
       return new DroneView(scene, reducedMotion);
-    case 'manager':
-      return new ManagerView(scene, reducedMotion);
     case 'auditeur':
+    case 'discosaure':
       return new AuditeurView(scene, reducedMotion);
+    case 'manager':
+    case 'vanderslide':
+      return new ManagerView(scene, reducedMotion);
     case 'consultant':
+    case 'furet':
+    case 'fluidifieur':
+    case 'dirupo':
       return new ConsultantView(scene, reducedMotion);
   }
 }

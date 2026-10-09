@@ -1000,6 +1000,65 @@ export const SFX = {
         decay: 0.08,
       }),
   },
+  // ── Biomes 2 et 3 : ennemis majeurs et boss ───────────────────────────────
+  /** Ciseaux d'inauguration : deux claquements métalliques secs (ruban coupé). */
+  ribbonSnip: {
+    bus: 'sfx',
+    max: 1,
+    gapMs: 250,
+    render: (a) => {
+      metal(a.ctx, lowpass(a.ctx, a.out, 5200), a.t, 1450 * vary(a.r, 0.05), 0.12, 0.09);
+      metal(a.ctx, lowpass(a.ctx, a.out, 5200), a.t + 0.09, 1720 * vary(a.r, 0.05), 0.14, 0.12);
+      return 0.25;
+    },
+  },
+  /** Nuage de puanteur du Furet : bouffée grave et étouffée. */
+  stinkPuff: {
+    bus: 'sfx',
+    max: 2,
+    gapMs: 300,
+    render: (a) =>
+      noise(a.ctx, a.out, a.t, {
+        filter: 'lowpass',
+        freq: 420 * vary(a.r, 0.1),
+        to: 160,
+        gain: 0.22,
+        attack: 0.06,
+        decay: 0.55,
+      }),
+  },
+  /** Boule à facettes : scintillement cristallin doux (filtré, jamais strident). */
+  discoShimmer: {
+    bus: 'sfx',
+    max: 1,
+    gapMs: 400,
+    render: (a) => {
+      const out = lowpass(a.ctx, a.out, 4200);
+      [76, 79, 83, 88].forEach((n, i) => {
+        tone(a.ctx, out, a.t + i * 0.05, mtof(n), { gain: 0.05, attack: 0.004, decay: 0.5 });
+      });
+      return 0.7;
+    },
+  },
+  /** Fanfare d'inauguration (défaite de l'Invité d'honneur) : accord de cuivres doux. */
+  fanfare: {
+    bus: 'sfx',
+    max: 1,
+    gapMs: 2000,
+    spatial: false,
+    render: (a) => {
+      const out = lowpass(a.ctx, a.out, 2600);
+      [60, 64, 67, 72].forEach((n, i) => {
+        tone(a.ctx, out, a.t + i * 0.12, mtof(n), {
+          type: 'sawtooth',
+          gain: 0.045,
+          attack: 0.03,
+          decay: 1.1,
+        });
+      });
+      return 1.6;
+    },
+  },
   // ── Salles, portes, récompenses ───────────────────────────────────────────
   /** Annonce de gare : carillon à 3 notes (sans voix). */
   chime: {

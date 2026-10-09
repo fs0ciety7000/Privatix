@@ -2,6 +2,7 @@ import type { EnemyKind } from '@/config/balance';
 import { ENEMY_RULES } from '@/config/balance';
 import type { Wave } from '@/systems/procedural/Waves';
 import { shouldSendNextWave } from '@/systems/procedural/Waves';
+import type { Vec2 } from '@/utils/math';
 import type { Rng } from '@/utils/rng';
 import type { SimWorld } from '@/sim/SimWorld';
 
@@ -11,6 +12,8 @@ export const FIRST_WAVE_DELAY_MS = 700;
 interface PendingSpawn {
   readonly at: number;
   readonly kind: EnemyKind;
+  /** Point d'apparition imposé (ennemi majeur d'une Salle gardée). */
+  readonly anchor?: Vec2;
 }
 
 /**
@@ -28,6 +31,7 @@ export class WaveDirector {
   private done = false;
   private startAt = 0;
   private rng: Rng;
+  private anchor: Vec2 | null = null;
 
   public constructor(
     private readonly world: SimWorld,
@@ -49,9 +53,13 @@ export class WaveDirector {
     return this.active && !this.done;
   }
 
-  /** Prépare les vagues d'une salle ; la première part après `FIRST_WAVE_DELAY_MS`. */
-  public start(waves: Wave[], rng: Rng): void {
+  /**
+   * Prépare les vagues d'une salle ; la première part après `FIRST_WAVE_DELAY_MS`. `anchor` : point
+   * d'apparition du premier ennemi de la première vague (Salle gardée : la marque « B » du gabarit).
+   */
+  public start(waves: Wave[], rng: Rng, anchor: Vec2 | null = null): void {
     this.waves = waves;
+    this.anchor = anchor;
     this.rng = rng;
     this.waveIndex = 0;
     this.waveSize = 0;
@@ -74,6 +82,15 @@ export class WaveDirector {
     this.killedInWave += 1;
   }
 
+  /** Escorte hors vague (Salle gardée) : apparitions échelonnées, la salle attend leur mort. */
+  public addEscort(kinds: readonly EnemyKind[]): void {
+    if (!this.active || this.done) return;
+    const now = this.world.now();
+    kinds.forEach((kind, i) => {
+      this.pending.push({ at: now + i * ENEMY_RULES.SPAWN_STAGGER_MS, kind });
+    });
+  }
+
   public update(): void {
     if (!this.active || this.done) return;
     const now = this.world.now();
@@ -81,7 +98,7 @@ export class WaveDirector {
       const p = this.pending[i];
       if (!p || p.at > now) continue;
       this.pending.splice(i, 1);
-      this.spawnOne(p.kind);
+      this.spawnOne(p.kind, p.anchor);
     }
     if (this.pending.length > 0 || now < this.startAt) return;
     const alive = this.world.livingEnemies().length;
@@ -112,8 +129,10 @@ export class WaveDirector {
     this.waveSize = wave.length;
     this.killedInWave = 0;
     const now = this.world.now();
+    const anchor = this.waveIndex === 1 ? this.anchor : null;
     wave.forEach((kind, i) => {
-      this.pending.push({ at: now + i * ENEMY_RULES.SPAWN_STAGGER_MS, kind });
+      const at = now + i * ENEMY_RULES.SPAWN_STAGGER_MS;
+      this.pending.push(i === 0 && anchor ? { at, kind, anchor } : { at, kind });
     });
     this.world.emit({
       type: 'wave',
@@ -123,7 +142,11 @@ export class WaveDirector {
     });
   }
 
-  private spawnOne(kind: EnemyKind): void {
+  private spawnOne(kind: EnemyKind, anchor?: Vec2): void {
+    if (anchor) {
+      this.world.spawnEnemy(kind, anchor.x, anchor.y);
+      return;
+    }
     const hero = this.world.hero.body;
     const points = this.world.arena.spawnPoints(hero, ENEMY_RULES.SPAWN_MIN_DIST_PX);
     const at = points[Math.floor(this.rng() * points.length)] ?? this.world.arena.playerSpawn;

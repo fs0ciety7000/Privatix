@@ -571,7 +571,379 @@ export const AUDITEUR = {
   KPI_TRAIL_DAMAGE: 6,
 } as const satisfies EnemyStats & Record<string, unknown>;
 
-export type EnemyKind = 'consultant' | 'borne' | 'drone' | 'manager' | 'auditeur';
+// ─── Ennemis majeurs et boss des biomes 2 et 3 (GDD § 7.8, § 7.10 ; game_designer.md § 11) ──────
+
+/**
+ * Élite majeur du biome 1 : le Furet putride (LORE § 6.8). Rapide et fuyant : morsure, bond, nuages de
+ * puanteur (verts, sans dégâts : +Burnout et récupération bloquée), passage sous les quais puis
+ * resurgissement télégraphié 700 ms. Le Sifflet le débusque.
+ */
+export const FURET = {
+  hp: 200,
+  speed: 120,
+  hurtRadius: 12,
+  hurtOffsetY: 10,
+  mass: 0.7,
+  cost: 8,
+  tickets: 15,
+  superArmor: false,
+  /** Phase « Acculé » sous 30 % de PV. */
+  FRENZY_AT: 0.3,
+  FRENZY_SPEED_MULT: 1.25,
+  KEEP_PX: 70,
+  BITE_RANGE: 36,
+  BITE_TELEGRAPH_MS: 700,
+  BITE_ARC_DEG: 70,
+  BITE_REACH: 36,
+  BITE_DAMAGE: 9,
+  BITE_KNOCKBACK: 20,
+  BITE_RECOVERY_MS: 600,
+  BITE_COOLDOWN_MS: 1600,
+  POUNCE_MIN: 80,
+  POUNCE_MAX: 160,
+  POUNCE_TELEGRAPH_MS: 750,
+  POUNCE_DISTANCE: 140,
+  POUNCE_DURATION_MS: 350,
+  POUNCE_LAND_RADIUS: 28,
+  POUNCE_DAMAGE: 11,
+  POUNCE_RECOVERY_MS: 900,
+  POUNCE_RECOVERY_DAMAGE_TAKEN: 0.25,
+  POUNCE_COOLDOWN_MS: 5000,
+  /** Nuage de puanteur : vert, aucun dégât, +6 Burnout/s et récupération passive bloquée. */
+  STINK_TELEGRAPH_MS: 800,
+  STINK_RADIUS: 48,
+  STINK_RADIUS_FRENZY: 64,
+  STINK_LIFE_MS: 6000,
+  STINK_DRIFT: 12,
+  STINK_MAX: 3,
+  STINK_BURNOUT_PER_S: 6,
+  STINK_PERIOD_MS: 7000,
+  STINK_FIRST_AT_MS: 2500,
+  /** Sous les quais : plongée 600 ms, caché 1,5 à 3 s, resurgit sous le héros (télégraphe 700 ms). */
+  BURROW_TELEGRAPH_MS: 600,
+  BURROW_HIDDEN_MIN_MS: 1500,
+  BURROW_HIDDEN_MAX_MS: 3000,
+  BURROW_TRAIL_SPEED: 160,
+  EMERGE_RADIUS: 32,
+  EMERGE_TELEGRAPH_MS: 700,
+  EMERGE_DAMAGE: 12,
+  EMERGE_RECOVERY_MS: 800,
+  BURROW_COOLDOWN_MS: 10000,
+  BURROW_COOLDOWN_FRENZY_MS: 7000,
+  BURROW_FIRST_AT_MS: 5000,
+  /** Le Sifflet : étourdi 1,2 s (débusqué s'il est sous le quai), nuages dispersés (rayon + 24). */
+  WHISTLE_STUN_MS: 1200,
+  WHISTLE_CLEAR_BONUS: 24,
+  /** « Bol d'air » à sa mort : nuages dissipés, −10 Burnout. */
+  DEATH_BURNOUT: -10,
+  /** Part du Furet dans les salles Élite du biome 1 (Nuit : 60 %). */
+  ELITE_SHARE: 0.4,
+  ELITE_SHARE_NIGHT: 0.6,
+} as const satisfies EnemyStats & Record<string, unknown>;
+
+/**
+ * Élite majeur du biome 2 : le Fluidifieur (LORE § 7.2), régisseur de l'inauguration, Salle gardée de
+ * la salle 8. Glissade en chaise à roulettes, changement de roulement (dalles qui s'ouvrent sur le
+ * vide), classeur « Congé en cours de validation », puis (sous 50 %) organigramme et mutation d'office.
+ * Faiblesse « Le Règlement » : 3 pages au vent ; les 3 attrapées, le Sifflet l'étourdit 4 s (×2).
+ */
+export const FLUIDIFIEUR = {
+  hp: 480,
+  speed: 70,
+  hurtRadius: 14,
+  hurtOffsetY: 18,
+  mass: 0,
+  cost: 0,
+  tickets: 30,
+  superArmor: true,
+  PHASE_AT: 0.5,
+  PHASE_TRANSITION_MS: 1200,
+  PATTERN_GAP_MS: [1400, 1100] as const,
+  KEEP_PX: 110,
+  GLIDE_TELEGRAPH_MS: 900,
+  GLIDE_DISTANCE: 220,
+  GLIDE_WIDTH: 28,
+  GLIDE_SPEED: 330,
+  GLIDE_BOUNCES: 2,
+  GLIDE_DAMAGE: 14,
+  GLIDE_RECOVERY_MS: 900,
+  /** Changement de roulement : damier de dalles (cases de 40 u) qui s'ouvrent sur le vide 4 s. */
+  SLABS_TELEGRAPH_MS: 1500,
+  SLABS_HALF: 20,
+  SLABS_COUNT: 8,
+  SLABS_OPEN_MS: 4000,
+  SLABS_DAMAGE: 10,
+  SLABS_COOLDOWN_MS: 9000,
+  /** Classeur lent « Congé en cours de validation » : ralentit 2 s. */
+  BINDER_TELEGRAPH_MS: 800,
+  BINDER_SPEED: 70,
+  BINDER_RADIUS: 9,
+  BINDER_DAMAGE: 10,
+  BINDER_SLOW: 0.4,
+  BINDER_SLOW_MS: 2000,
+  BINDER_COOLDOWN_MS: 7000,
+  /** Mutation d'office (phase 2) : ligne magenta de 1 s, puis échange de positions. */
+  SWAP_TELEGRAPH_MS: 1000,
+  SWAP_WIDTH: 24,
+  SWAP_DAMAGE: 10,
+  SWAP_COOLDOWN_MS: 10000,
+  /** Organigramme (phase 2) : 2 Consultants en renfort. */
+  ORG_COUNT: 2,
+  ORG_COOLDOWN_MS: 16000,
+  ORG_MAX_ALIVE: 3,
+  /** « Le Règlement » : pages au vent, attrapées au contact. */
+  PAGES: 3,
+  PAGE_RADIUS: 14,
+  PAGE_DRIFT: 22,
+  WHISTLE_STUN_MS: 600,
+  REGLEMENT_STUN_MS: 4000,
+  REGLEMENT_DAMAGE_TAKEN: 1,
+} as const satisfies EnemyStats & Record<string, unknown>;
+
+/**
+ * Mini-boss du biome 3 : le Discosaure (LORE § 6.9), Salle gardée « Afterwork de transformation ».
+ * Piste de danse (taches de lumière en orbite qui virent au magenta, se figent puis explosent),
+ * piétinement et onde, charge (étourdi s'il percute un mur), coup de queue, lasers en phase 2 (coupés en
+ * Réduction des mouvements). Dos (boule à facettes) ×1,5.
+ */
+export const DISCOSAURE = {
+  hp: 560,
+  speed: 70,
+  hurtRadius: 22,
+  hurtOffsetY: 24,
+  mass: 0,
+  cost: 0,
+  tickets: 40,
+  superArmor: true,
+  BACK_ARC_DEG: 90,
+  BACK_MULT: 1.5,
+  PHASE_AT: 0.5,
+  PHASE_TRANSITION_MS: 1200,
+  PATTERN_GAP_MS: [1400, 1100] as const,
+  /** Piste de danse : taches en orbite (contour), figées (remplissage magenta), puis explosion. */
+  SPOTS_COUNT: 6,
+  SPOTS_COUNT_P2: 10,
+  SPOTS_RADIUS: 20,
+  SPOTS_ORBIT_MIN: 64,
+  SPOTS_ORBIT_MAX: 160,
+  SPOTS_TURN_DEG_PER_S: 25,
+  SPOTS_TURN_DEG_PER_S_P2: 40,
+  SPOTS_ORBIT_MS: 800,
+  SPOTS_TELEGRAPH_MS: 1400,
+  SPOTS_DAMAGE: 12,
+  SPOTS_PERIOD_MS: 9000,
+  SPOTS_FIRST_AT_MS: 1500,
+  TAIL_TELEGRAPH_MS: 800,
+  TAIL_ARC_DEG: 180,
+  TAIL_RADIUS: 72,
+  TAIL_DAMAGE: 12,
+  TAIL_KNOCKBACK: 48,
+  TAIL_RECOVERY_MS: 700,
+  STOMP_TELEGRAPH_MS: 900,
+  STOMP_RADIUS: 56,
+  STOMP_DAMAGE: 14,
+  STOMP_WAVE_RADIUS: 140,
+  STOMP_WAVE_EXPAND_MS: 700,
+  STOMP_WAVE_THICKNESS: 12,
+  STOMP_WAVE_DAMAGE: 8,
+  STOMP_RECOVERY_MS: 600,
+  CHARGE_TELEGRAPH_MS: 1000,
+  CHARGE_DISTANCE: 240,
+  CHARGE_DURATION_MS: 600,
+  CHARGE_WIDTH: 40,
+  CHARGE_DAMAGE: 14,
+  DIZZY_MS: 1200,
+  DIZZY_DAMAGE_TAKEN: 0.25,
+  CHARGE_COOLDOWN_MS: 6000,
+  LASER_TELEGRAPH_MS: 1000,
+  LASER_COUNT: 4,
+  LASER_LENGTH: 300,
+  LASER_WIDTH: 8,
+  LASER_TURN_DEG_PER_S: 30,
+  LASER_DURATION_MS: 3000,
+  LASER_DAMAGE: 6,
+  LASER_TICK_MS: 600,
+  LASER_COOLDOWN_MS: 12000,
+  /** Escorte au seuil de 50 %. */
+  ESCORT_COUNT: 3,
+  WHISTLE_FREEZE_MS: 3000,
+  PREAVIS_BLACKOUT_MS: 5000,
+  STUN_WHISTLE_MS: 600,
+  STUN_PREAVIS_MS: 1200,
+} as const satisfies EnemyStats & Record<string, unknown>;
+
+/**
+ * Boss obligatoire du biome 2 : Elio Di Rupo, « l'Invité d'honneur » (GDD § 7.8, LORE § 7.5 ;
+ * caricature autorisée, satire bon enfant : vaincu, jamais tué ; répliques fictives). PV fixes.
+ */
+export const DIRUPO = {
+  hp: 2000,
+  speed: 55,
+  hurtRadius: 18,
+  hurtOffsetY: 22,
+  mass: 0,
+  cost: 0,
+  tickets: 60,
+  superArmor: true,
+  SPEEDS: [55, 60, 70] as const,
+  PATTERN_GAP_MS: [1500, 1250, 1050] as const,
+  PHASE_AT: [0.6, 0.25] as const,
+  PHASE_TRANSITION_MS: 1500,
+  /** Phase 3 : télégraphes ×0,85, jamais sous 800 ms. */
+  P3_TELEGRAPH_MULT: 0.85,
+  MIN_TELEGRAPH_MS: 800,
+  KEEP_PX: 120,
+  BOWTIE_TELEGRAPH_MS: 900,
+  BOWTIE_OUT: 220,
+  BOWTIE_SPEED: 260,
+  BOWTIE_RADIUS: 8,
+  BOWTIE_DAMAGE: 12,
+  BOWTIE_RECOVERY_MS: 600,
+  BOWTIE_COOLDOWN_MS: 6000,
+  /** « Et j'ajouterai… » : un anneau par seconde pendant 4 s, avec une brèche de 40° qui tourne. */
+  SPEECH_TELEGRAPH_MS: 1000,
+  SPEECH_MS: 4000,
+  SPEECH_RING_EVERY_MS: 1000,
+  SPEECH_RING_MAX: 200,
+  SPEECH_RING_EXPAND_MS: 1000,
+  SPEECH_RING_THICKNESS: 12,
+  SPEECH_GAP_DEG: 40,
+  SPEECH_GAP_TURN_DEG_PER_S: 45,
+  SPEECH_DAMAGE: 10,
+  SPEECH_BACK_DAMAGE_TAKEN: 0.25,
+  SPEECH_INTERRUPT_STUN_MS: 2000,
+  SPEECH_COOLDOWN_MS: 14000,
+  /** Promesses : 5 bulles qui éclatent (frappées avant : « promesse tenue »). */
+  PROMISES: 5,
+  PROMISE_TELEGRAPH_MS: 1500,
+  PROMISE_RADIUS: 24,
+  PROMISE_BURST_RADIUS: 40,
+  PROMISE_DAMAGE: 14,
+  PROMISE_KEPT_MOBILISATION: 5,
+  PROMISE_KEPT_BURNOUT: -3,
+  PROMISE_COOLDOWN_MS: 10000,
+  /** Pluie de bulletins : 12 cercles dont 3 sous le héros. */
+  BALLOTS: 12,
+  BALLOTS_ON_HERO: 3,
+  BALLOT_TELEGRAPH_MS: 800,
+  BALLOT_RADIUS: 16,
+  BALLOT_DAMAGE: 8,
+  BALLOT_RECOVERY_MS: 700,
+  BALLOT_COOLDOWN_MS: 8000,
+  /** Motions de procédure (phase 2+) : 3 couloirs parallèles de 400 × 24. */
+  MOTIONS_TELEGRAPH_MS: 1000,
+  MOTION_LANES: 3,
+  MOTION_LENGTH: 400,
+  MOTION_WIDTH: 24,
+  MOTION_SPACING: 56,
+  MOTION_DAMAGE: 16,
+  MOTION_RECOVERY_MS: 800,
+  MOTION_COOLDOWN_MS: 9000,
+  /** Ruban d'enceinte (phase 3) : se resserre jusqu'à 200 u en 20 s ; contact 8 dégâts et entrave. */
+  RIBBON_TELEGRAPH_MS: 1200,
+  RIBBON_START: 330,
+  RIBBON_MIN: 200,
+  RIBBON_SHRINK_MS: 20000,
+  RIBBON_WIDTH: 10,
+  RIBBON_DAMAGE: 8,
+  RIBBON_SLOW: 0.5,
+  RIBBON_SLOW_MS: 1000,
+  RIBBON_HIT_GAP_MS: 700,
+  /** Couper le ruban (coup final, dash-attaque, dash parfait) : étourdi 3 s, +25 %, relâché de 120 u. */
+  RIBBON_CUT_STUN_MS: 3000,
+  RIBBON_CUT_DAMAGE_TAKEN: 0.25,
+  RIBBON_CUT_SLACK: 120,
+  RIBBON_CUT_COOLDOWN_MS: 12000,
+  /** Ciseaux d'inauguration (phase 3) : rectangle 240 × 24. */
+  SCISSORS_TELEGRAPH_MS: 1100,
+  SCISSORS_LENGTH: 240,
+  SCISSORS_WIDTH: 24,
+  SCISSORS_DAMAGE: 22,
+  SCISSORS_RECOVERY_MS: 900,
+  SCISSORS_COOLDOWN_MS: 7000,
+  /** Préavis : « Concertation sociale », aucune attaque pendant 4 s, marqué Piquet (+15 %). */
+  PREAVIS_TALKS_MS: 4000,
+  PREAVIS_DAMAGE_TAKEN: 0.15,
+} as const satisfies EnemyStats & Record<string, unknown>;
+
+/**
+ * Boss du biome 3 : Gontran Vanderslide (LORE § 7.3). **Version de travail** (placeholder cohérent,
+ * en attendant la jauge de signature, les Preuves et la Salle du Conseil du GDD § 7.9) : phase 1
+ * « Méga-Deck 2032 » (lignes de bullet points à trou, « Je vous mets en copie », piliers-graphiques),
+ * phase 2 « Conseil d'Administration en visio » (tout plus vite, Reporting géant), coup final
+ * « Mais concrètement, sur le terrain, ça donne quoi ? » sous 5 %.
+ */
+export const VANDERSLIDE = {
+  hp: 1800,
+  speed: 60,
+  hurtRadius: 16,
+  hurtOffsetY: 20,
+  mass: 0,
+  cost: 0,
+  tickets: 80,
+  superArmor: true,
+  PHASE_AT: 0.5,
+  PHASE_TRANSITION_MS: 1500,
+  PATTERN_GAP_MS: [1500, 1150] as const,
+  KEEP_PX: 140,
+  /** Bullet points : lignes horizontales qui balaient la salle, un trou par ligne. */
+  BULLETS_TELEGRAPH_MS: 1000,
+  BULLET_LINES: 3,
+  BULLET_SPACING: 72,
+  BULLET_WIDTH: 16,
+  BULLET_GAP: 80,
+  BULLET_DAMAGE: 12,
+  BULLET_COOLDOWN_MS: 7000,
+  /** Piliers-graphiques : 3 cercles sous et autour du héros. */
+  CHARTS: 3,
+  CHART_TELEGRAPH_MS: 900,
+  CHART_RADIUS: 28,
+  CHART_DAMAGE: 14,
+  CHART_COOLDOWN_MS: 6000,
+  /** « Je vous mets en copie » : 2 Consultants. */
+  COPY_COUNT: 2,
+  COPY_MAX_ALIVE: 4,
+  COPY_COOLDOWN_MS: 14000,
+  /** Reporting géant (phase 2). */
+  REPORT_TELEGRAPH_MS: 1200,
+  REPORT_RADIUS: 260,
+  REPORT_EXPAND_MS: 1200,
+  REPORT_THICKNESS: 16,
+  REPORT_DAMAGE: 16,
+  REPORT_COOLDOWN_MS: 15000,
+  /** Coup final : sous 5 %, il s'arrête, étourdi, et le prochain coup est critique. */
+  FINAL_AT: 0.05,
+  FINAL_STUN_MS: 6000,
+} as const satisfies EnemyStats & Record<string, unknown>;
+
+/** Environnements des biomes 2 et 3 (GDD § 3.1). */
+export const ENVIRONMENT = {
+  /** Vide de la Passerelle : héros −10 % d'Énergie max et retour au bord ; non-élites éliminés. */
+  VOID_FALL_ENERGY_PCT: 0.1,
+  VOID_FALL_INVULN_MS: 800,
+  /** Rafales de vent (biome 2) : 2 s toutes les 6 à 8 s, annoncées 1 s avant. */
+  WIND_PERIOD_MS: [6000, 8000] as const,
+  WIND_WARN_MS: 1000,
+  WIND_MS: 2000,
+  WIND_PUSH: 34,
+  /** Cloisons mobiles (biome 3) : un couloir balayé toutes les 10 s, télégraphe 1,5 s. */
+  PARTITION_PERIOD_MS: 10000,
+  PARTITION_TELEGRAPH_MS: 1500,
+  PARTITION_DAMAGE: 10,
+  PARTITION_SPEED: 420,
+} as const;
+
+export type EnemyKind =
+  | 'consultant'
+  | 'borne'
+  | 'drone'
+  | 'manager'
+  | 'auditeur'
+  | 'furet'
+  | 'fluidifieur'
+  | 'discosaure'
+  | 'dirupo'
+  | 'vanderslide';
 
 export const ENEMY_STATS: Readonly<Record<EnemyKind, EnemyStats>> = {
   consultant: CONSULTANT,
@@ -579,6 +951,11 @@ export const ENEMY_STATS: Readonly<Record<EnemyKind, EnemyStats>> = {
   drone: DRONE,
   manager: MANAGER,
   auditeur: AUDITEUR,
+  furet: FURET,
+  fluidifieur: FLUIDIFIEUR,
+  discosaure: DISCOSAURE,
+  dirupo: DIRUPO,
+  vanderslide: VANDERSLIDE,
 };
 
 export const ENEMY_NAMES: Readonly<Record<EnemyKind, string>> = {
@@ -587,7 +964,26 @@ export const ENEMY_NAMES: Readonly<Record<EnemyKind, string>> = {
   drone: 'Drone Optimètre',
   manager: 'Manager KPI « Le Tableur »',
   auditeur: "L'Auditeur des Quais",
+  furet: 'Le Furet putride',
+  fluidifieur: 'Le Fluidifieur',
+  discosaure: 'Le Discosaure',
+  dirupo: "Elio Di Rupo, l'Invité d'honneur",
+  vanderslide: 'Gontran Vanderslide',
 };
+
+/** Élites et boss : étourdissements réduits, pas de chute dans le vide. */
+export const HEAVY_KINDS: readonly EnemyKind[] = [
+  'manager',
+  'auditeur',
+  'furet',
+  'fluidifieur',
+  'discosaure',
+  'dirupo',
+  'vanderslide',
+];
+
+/** Boss de fin de biome (barre de boss, PV fixes). */
+export const BOSS_KINDS: readonly EnemyKind[] = ['auditeur', 'dirupo', 'vanderslide'];
 
 // ─── Shift (run) ──────────────────────────────────────────────────────────────
 
@@ -658,6 +1054,12 @@ export const SHIFT = {
   PERFECT_DASH_LED_MIN: 15,
   /** Biome 1 (MVP) : salles de combat avant la salle des pauses et le boss. */
   BIOME1_ROOMS: 8,
+  /** Salles générées par biome (GDD § 3.1) : Quais & Voies, Passerelle, Hall & BAG. */
+  BIOME_ROOMS: [8, 8, 9] as const,
+  /** Salle gardée du biome 3 : garantie entre les positions 5 et 7 (35 % par porte avant la 7). */
+  GARDEE_FIRST: 5,
+  GARDEE_LAST: 7,
+  GARDEE_CHANCE: 0.35,
   /** Salle Élite : au moins une entre les salles 5 et 7, au plus deux, jamais deux d'affilée. */
   ELITE_FIRST: 5,
   ELITE_LAST: 7,
@@ -688,6 +1090,15 @@ export const SCALING = {
   /** Composition du biome 1 : parts des archétypes. */
   SHARE_DRONE: 0.15,
   SHARE_BORNE: 0.25,
+  /** Parts (drone, borne) par biome : drones dominants sur la Passerelle, Bornes dans le BAG. */
+  SHARES_BY_BIOME: [
+    { drone: 0.15, borne: 0.25 },
+    { drone: 0.35, borne: 0.2 },
+    { drone: 0.2, borne: 0.3 },
+  ] as const,
+  /** Salle gardée : escorte (budget ×0,6) aux seuils de PV de l'ennemi majeur. */
+  GARDEE_ESCORT_BUDGET: 0.6,
+  GARDEE_ESCORT_AT: [0.66, 0.33] as const,
 } as const;
 
 // ─── Récompenses et économie ──────────────────────────────────────────────────
@@ -697,6 +1108,13 @@ export const REWARDS = {
   PS_ELITE_ROOM: 16,
   PS_REWARD: 8,
   PS_BOSS1: 25,
+  PS_BOSS2: 40,
+  PS_BOSS3: 60,
+  GRAINS_BOSS2: 8,
+  GRAINS_BOSS3: 12,
+  /** Salle gardée : 20 PS et −15 Burnout. */
+  PS_GARDEE: 20,
+  BURNOUT_GARDEE: -15,
   PS_SHIFT_COMPLETE: 50,
   PS_PER_ROOM_REACHED_ON_DEATH: 2,
   GRAINS_REWARD: 3,

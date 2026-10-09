@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import { BORNE } from '@/config/balance';
 import { AuditeurSim } from '@/sim/enemies/AuditeurSim';
 import { BorneSim } from '@/sim/enemies/BorneSim';
+import { DiscosaureSim } from '@/sim/enemies/DiscosaureSim';
 import { DroneSim } from '@/sim/enemies/DroneSim';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import { pxToM } from '@/sim/units';
@@ -24,6 +25,9 @@ import { windupClipTime } from '@/view/models/clipTiming';
 
 /** Pose du drone cloué au sol après un piqué : instant du clip de mort où il est couché. */
 const DRONE_GROUNDED_S = 0.85;
+/** Sortie digne (Di Rupo) : il salue, puis descend de l'estrade à pied pendant ce temps (s). */
+const EXIT_WALK_S = 2.6;
+const EXIT_WALK_SPEED = 1.3;
 
 export class GlbEnemyView extends ProceduralEnemyView {
   private readonly model: GlbRig;
@@ -36,6 +40,7 @@ export class GlbEnemyView extends ProceduralEnemyView {
   private plates: THREE.Object3D[] = [];
   private platesOff = false;
   private readonly attackClips: ReadonlySet<string>;
+  private exitT = 0;
 
   public constructor(
     tpl: CharacterTemplate,
@@ -46,13 +51,17 @@ export class GlbEnemyView extends ProceduralEnemyView {
   ) {
     const meta = tpl.meta;
     const death = tpl.clips.find((c) => c.name === map.death)?.duration ?? 1.2;
+    const scale = map.scale ?? 1;
+    const exit = map.exit === 'walk';
     super(scene, reducedMotion, {
-      barY: meta.height + 0.35,
+      barY: meta.height * scale + 0.35,
       barW: map.barW,
-      spawnR: Math.max(0.4, meta.radius * 1.15),
+      spawnR: Math.max(0.4, meta.radius * 1.15 * scale),
       topple: false,
       animatedDeath: true,
-      deathFallS: Math.max(1.2, death + 0.25),
+      deathFallS: Math.max(1.2, death + 0.25 + (exit ? EXIT_WALK_S : 0)),
+      scale,
+      calmExit: exit,
     });
     this.map = map;
     this.attackClips = new Set(Object.values(map.attacks));
@@ -97,7 +106,11 @@ export class GlbEnemyView extends ProceduralEnemyView {
 
     // Télégraphe : contour et écrans (masque `glow`) passent au magenta pendant l'armé.
     m.uniforms.uTelegraph.value = state === 'windup' ? Math.max(0.05, windup) : 0;
-    m.spinRate = sim instanceof DroneSim && sim.grounded ? 0 : state === 'windup' ? 30 : 22;
+    if (sim instanceof DiscosaureSim) {
+      // La boule tourne lentement, plus vite quand la piste s'allume ; éteinte au Préavis.
+      const spin = sim.blackoutLeft > 0 ? 0 : sim.dancing ? 3.2 : 1.1;
+      m.spinRate = spin * (this.reducedMotion ? 0.5 : 1);
+    } else m.spinRate = sim instanceof DroneSim && sim.grounded ? 0 : state === 'windup' ? 30 : 22;
 
     if (!this.spawned) {
       this.spawned = true;
@@ -115,7 +128,11 @@ export class GlbEnemyView extends ProceduralEnemyView {
       if (m.playing !== 'phase2') m.play('phase2', { fade: 0.1, restart: true });
     } else if (state === 'windup') {
       const rush = map.rushes?.[sim.currentAttack];
-      const clip = rush ? rush.windup : map.attacks[sim.currentAttack];
+      // Une attaque sans correspondance mais homonyme d'un clip (plongée du Furet) joue ce clip.
+      const clip =
+        rush?.windup ??
+        map.attacks[sim.currentAttack] ??
+        (m.has(sim.currentAttack) ? sim.currentAttack : undefined);
       if (clip && m.has(clip)) {
         const active = m.eventAt(clip, 'active', m.duration(clip) * 0.5);
         m.scrub(clip, windupClipTime(windup, active, rush ? rush.reach : 1), 0.08);
@@ -176,6 +193,17 @@ export class GlbEnemyView extends ProceduralEnemyView {
   }
 
   protected override animateDeath(dt: number): void {
+    if (this.map.exit === 'walk') {
+      // Vaincu, jamais tué : après le salut, il descend de l'estrade en marchant.
+      this.exitT += dt;
+      const bow = this.model.duration(this.map.death);
+      if (this.exitT > bow && this.model.has(this.map.move)) {
+        this.model.play(this.map.move, { fade: 0.25 });
+        this.turnTo(Math.PI / 2, dt, 6);
+        this.pos.x += Math.sin(this.yaw) * EXIT_WALK_SPEED * dt;
+        this.pos.z += Math.cos(this.yaw) * EXIT_WALK_SPEED * dt;
+      }
+    }
     this.model.update(dt, this.time);
     if (this.platesOff) for (const p of this.plates) p.scale.setScalar(0.001);
   }

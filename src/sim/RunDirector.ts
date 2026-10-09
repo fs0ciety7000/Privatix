@@ -1,31 +1,51 @@
 import type { EnemyKind } from '@/config/balance';
-import { BURNOUT, COFFEE, REST, REWARDS, SHIFT, SHOP } from '@/config/balance';
+import {
+  BURNOUT,
+  COFFEE,
+  ENEMY_NAMES,
+  ENVIRONMENT,
+  FURET,
+  REST,
+  REWARDS,
+  SCALING,
+  SHOP,
+} from '@/config/balance';
 import { TILE } from '@/config/constants';
 import type { OwnedAvantage } from '@/systems/meta/Avantages';
 import { AVANTAGES_BY_ID, FAMILIES, offerAvantages, RARITIES } from '@/systems/meta/Avantages';
 import type { ShiftEnd, ShiftResult } from '@/systems/meta/RunState';
 import {
   earnPs,
+  enterBiome,
   enterRoom,
   finishRun,
   heal,
   maxEnergy,
   refreshMods,
 } from '@/systems/meta/RunState';
-import type { DoorChoice, RoomType } from '@/systems/procedural/ShiftPlan';
+import type { DoorChoice, DoorReward, RoomType } from '@/systems/procedural/ShiftPlan';
 import {
+  BIOME_COUNT,
   BOSS_ROOM,
+  biomeOf,
+  biomeRoomCount,
+  bossRoomOf,
   clockLabel,
   doorsFor,
+  firstRoomOf,
+  localRoom,
   REST_ROOM,
   roomIndex,
   roomRng,
   templateFor,
 } from '@/systems/procedural/ShiftPlan';
-import type { RoomTemplateId } from '@/systems/procedural/roomTemplates';
-import { wavesFor } from '@/systems/procedural/Waves';
+import type { BiomeIndex, RoomTemplateId } from '@/systems/procedural/roomTemplates';
+import type { Wave } from '@/systems/procedural/Waves';
+import { budgetFor, wavesFor } from '@/systems/procedural/Waves';
 import { randInt } from '@/utils/rng';
-import type { AuditeurSim } from '@/sim/enemies/AuditeurSim';
+import type { BiomeDef } from '@/sim/biomes';
+import { BIOMES } from '@/sim/biomes';
+import type { EnemySim, PhasedEnemy } from '@/sim/enemies/EnemySim';
 import type { TextTone } from '@/sim/events';
 import type { PickupKind, PickupSim } from '@/sim/Pickups';
 import { makePickup, PICKUP_RADIUS } from '@/sim/Pickups';
@@ -36,16 +56,34 @@ import type { World } from '@/sim/World';
 export const ROOM_TYPE_LABEL: Readonly<Record<RoomType, string>> = {
   combat: 'Quais & Voies',
   elite: 'Salle Élite',
+  gardee: 'Salle gardée',
   tresor: 'Machine à café abandonnée',
   boutique: 'Friterie de Raymonde',
   repos: 'Salle des pauses',
   boss: "L'Auditeur des Quais",
 };
 
+/** Libellé d'un type de salle dans son biome (le combat et le boss changent de nom). */
+export function roomTypeLabel(type: RoomType, room: number): string {
+  const biome = BIOMES[biomeOf(room)];
+  switch (type) {
+    case 'combat':
+      return biome.combatLabel;
+    case 'boss':
+      return biome.boss.name;
+    case 'gardee':
+      return biome.gardee?.label ?? ROOM_TYPE_LABEL.gardee;
+    default:
+      return ROOM_TYPE_LABEL[type];
+  }
+}
+
 /** Fondu de sortie d'une salle (version Phaser : 220 ms) avant la reconstruction. */
 export const DOOR_FADE_MS = 220;
-/** Délai entre la mort du boss et la fin du Shift (version Phaser : 2,6 s). */
+/** Délai entre la mort du dernier boss et la fin du Shift (version Phaser : 2,6 s). */
 const VICTORY_DELAY_MS = 2600;
+/** Délai entre deux répliques de défaite d'un boss. */
+const DEFEAT_LINE_GAP_MS = 1500;
 const BOSS_SPAWN_DELAY_MS = 600;
 const REWARD_DROP_DELAY_MS = 500;
 /** Distance d'interaction (u) et d'affichage de l'invite de porte. */
@@ -95,17 +133,73 @@ export interface Prompt {
   readonly door: boolean;
 }
 
+/** Ennemi de fin de biome ou de Salle gardée (barre de boss, musique). */
+export type BossSim = EnemySim & PhasedEnemy;
+
+// ─── Points d'extension (loot, statistiques) ─────────────────────────────────
+
+export interface KillInfo {
+  readonly kind: EnemyKind;
+  readonly x: number;
+  readonly y: number;
+  readonly room: number;
+  readonly roomType: RoomType;
+  readonly biome: BiomeIndex;
+  /** Élite, ennemi majeur ou boss. */
+  readonly heavy: boolean;
+}
+
+export interface RoomInfo {
+  readonly room: number;
+  readonly roomType: RoomType;
+  readonly biome: BiomeIndex;
+  /** Récompense annoncée par la porte (ou `null`). */
+  readonly reward: DoorReward | null;
+  /** Point de la salle où la récompense est posée (u). */
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface BossInfo {
+  readonly kind: EnemyKind;
+  readonly biome: BiomeIndex;
+  /** Dernier boss du Shift (victoire). */
+  readonly final: boolean;
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Crochets du Shift pour les systèmes greffés (loot : drops, butin d'élite et de boss, porte
+ * « Dotation »). Tous facultatifs ; appelés après le traitement standard.
+ */
+export interface RunHooks {
+  /** Un ennemi est mort (Mobilisation, Burnout, Tickets et Grains déjà comptés). */
+  onEnemyKilled?(info: KillInfo): void;
+  /** Salle nettoyée (combat, Élite, Salle gardée, boss). */
+  onRoomCleared?(info: RoomInfo): void;
+  /** Un boss est vaincu (avant la transition de biome ou la victoire). */
+  onBossDefeated?(info: BossInfo): void;
+  /**
+   * Récompense de porte au moment de la poser : renvoyer `true` si le crochet la prend en charge
+   * (le directeur ne pose alors rien).
+   */
+  onReward?(info: RoomInfo): boolean;
+}
+
 interface Timer {
   readonly at: number;
   readonly fn: () => void;
 }
 
 /**
- * Flux d'un Shift complet (port pur de `scenes/RunScene.ts`) : construction de chaque salle depuis son
- * gabarit, portes qui annoncent la récompense, vagues, récompenses, Avantages, Friterie, Salle des
- * pauses, salle café, boss, mort et victoire. Tout passe par le temps de la simulation : même graine et
- * mêmes intentions = même Shift. La scène ne fait qu'afficher (fondus, fenêtres DOM) et répondre aux
- * choix (`choose`).
+ * Flux d'un Shift complet (port pur de `scenes/RunScene.ts`, étendu aux trois biomes du GDD § 3) :
+ * construction de chaque salle depuis son gabarit, portes qui annoncent la récompense, vagues,
+ * Salles gardées (Fluidifieur, Discosaure), récompenses, Avantages, Friterie, Salle des pauses, salle
+ * café, boss de chaque biome (Auditeur des Quais, Elio Di Rupo, Gontran Vanderslide), transitions
+ * de biome, mort et victoire. Environnement : rafales de vent sur la Passerelle, cloisons mobiles dans
+ * le BAG. Tout passe par le temps de la simulation : même graine et mêmes intentions = même Shift. La
+ * scène ne fait qu'afficher (fondus, fenêtres DOM) et répondre aux choix (`choose`).
  */
 export class RunDirector {
   public readonly waves: WaveDirector;
@@ -115,15 +209,27 @@ export class RunDirector {
   public readonly interactables: Interactable[] = [];
   public choice: PendingChoice | null = null;
   public prompt: Prompt | null = null;
-  public boss: AuditeurSim | null = null;
+  /** Boss de fin de biome en cours. */
+  public boss: BossSim | null = null;
+  /** Ennemi majeur de la Salle gardée en cours. */
+  public guardian: BossSim | null = null;
   public result: ShiftResult | null = null;
   /** Porte franchie, en attente de la fin du fondu. */
   public leaving: DoorChoice | null = null;
   /** Invincibilité (raccourci de test G). */
   public godMode = false;
+  /** Crochets des systèmes greffés (loot) : `addHooks`. */
+  public readonly hooks: RunHooks[] = [];
+  /** Rafale de vent en cours (biome 2) : direction (−1 ou 1) ou 0 ; annonce à venir. */
+  public wind = 0;
+  public windWarn = 0;
   private resolver: ((index: number) => void) | null = null;
   private timers: Timer[] = [];
   private nextInteractId = 1;
+  private escortsLeft: number[] = [];
+  private nextGustAt = 0;
+  private gustEndAt = 0;
+  private nextPartitionAt = 0;
 
   public constructor(
     private readonly world: World,
@@ -135,6 +241,10 @@ export class RunDirector {
     });
   }
 
+  public addHooks(h: RunHooks): void {
+    this.hooks.push(h);
+  }
+
   public get ended(): boolean {
     return this.result !== null;
   }
@@ -144,8 +254,26 @@ export class RunDirector {
     return this.leaving !== null || this.result !== null;
   }
 
+  /** Biome de la salle en cours (0 Quais & Voies, 1 Passerelle, 2 Hall & BAG). */
+  public get biome(): BiomeIndex {
+    return biomeOf(this.door.room);
+  }
+
+  public get biomeDef(): BiomeDef {
+    return BIOMES[this.biome];
+  }
+
+  /** Position dans le biome (HUD : « salle 3/8 »). */
+  public get localRoom(): number {
+    return localRoom(this.door.room);
+  }
+
+  public get biomeRooms(): number {
+    return biomeRoomCount(this.door.room);
+  }
+
   public get roomLabel(): string {
-    return ROOM_TYPE_LABEL[this.door.type];
+    return roomTypeLabel(this.door.type, this.door.room);
   }
 
   public get clock(): string {
@@ -177,6 +305,8 @@ export class RunDirector {
     if (this.godMode) this.world.run.energy = maxEnergy(this.world.run);
     if (!this.enabled || this.result) return;
     this.waves.update();
+    this.updateEscorts();
+    this.updateEnvironment();
     this.collectPickups();
     this.updatePrompts();
     const hero = this.world.hero;
@@ -190,60 +320,95 @@ export class RunDirector {
 
   private buildRoom(door: DoorChoice, template?: RoomTemplateId): void {
     const run = this.world.run;
+    const newBiome = biomeOf(door.room) !== biomeOf(this.door.room) || door.room === 1;
+    if (newBiome && door.room > 1) enterBiome(run);
     this.door = door;
     enterRoom(run, door.room, door.type);
     this.world.loadRoom(template ?? templateFor(run.seed, door.room, door.type));
     this.cleared = false;
     this.boss = null;
+    this.guardian = null;
+    this.escortsLeft = [];
     this.interactables.length = 0;
     this.prompt = null;
     this.timers = [];
+    this.wind = 0;
+    this.windWarn = 0;
     this.waves.stop();
-    const choices =
-      door.type === 'boss'
-        ? []
-        : doorsFor(run.seed, door.room + 1, {
-            shopSeen: run.shopSeen,
-            elites: run.elites,
-            tresorSeen: run.tresorSeen,
-            previousType: door.type,
-          });
-    this.doors = assignDoors(this.world.arena.layout.doors, this.world.loot.dressDoors(choices));
+    this.doors = assignDoors(
+      this.world.arena.layout.doors,
+      this.world.loot.dressDoors(this.exitsOf(door)),
+    );
     this.world.emit({ type: 'roomEntered', room: door.room, roomType: door.type });
+    if (newBiome) {
+      const def = BIOMES[biomeOf(door.room)];
+      this.world.emit({
+        type: 'biomeEntered',
+        biome: def.index,
+        name: def.name,
+        tagline: def.tagline,
+      });
+    }
+  }
+
+  /** Portes de sortie : salle suivante du biome, ou première salle du biome suivant après le boss. */
+  private exitsOf(door: DoorChoice): DoorChoice[] {
+    const run = this.world.run;
+    if (door.type === 'boss') {
+      const next = biomeOf(door.room) + 1;
+      return next < BIOME_COUNT
+        ? [{ room: firstRoomOf(next), type: 'combat', reward: 'avantage' }]
+        : [];
+    }
+    return doorsFor(run.seed, door.room + 1, {
+      shopSeen: run.shopSeen,
+      elites: run.elites,
+      tresorSeen: run.tresorSeen,
+      previousType: door.type,
+      gardeeSeen: run.gardeeSeen,
+    });
+  }
+
+  private waveContext(elite: boolean): Parameters<typeof wavesFor>[0] {
+    const run = this.world.run;
+    const door = this.door;
+    const shares = SCALING.SHARES_BY_BIOME[this.biome];
+    const nightFuret = run.shift.id === 'nuit' ? FURET.ELITE_SHARE_NIGHT : FURET.ELITE_SHARE;
+    // Biome 1 : le Furet putride remplace le Manager KPI dans 40 % des salles Élite (60 % la Nuit).
+    const eliteKind: EnemyKind =
+      this.biome === 0 && roomRng(run.seed, door.room, 5)() < nightFuret ? 'furet' : 'manager';
+    return {
+      r: roomIndex(door.room),
+      elite,
+      budgetMult: run.shift.budgetMult,
+      extraDronesPerWave: run.shift.extraDronesPerWave,
+      eliteKind,
+      shares,
+    };
   }
 
   private startRoomContent(): void {
-    const run = this.world.run;
     const door = this.door;
-    this.notice(`${this.clock} · ${ROOM_TYPE_LABEL[door.type]}`, 'info');
+    const run = this.world.run;
+    if (localRoom(door.room) === 1 && door.room > 1) this.notice(this.biomeDef.announce, 'gold');
+    else this.notice(`${this.clock} · ${this.roomLabel}`, 'info');
     if (!this.enabled) return;
+    this.nextGustAt = this.world.now() + 4000;
+    this.nextPartitionAt = this.world.now() + 6000;
     switch (door.type) {
       case 'combat':
       case 'elite':
         this.waves.start(
-          wavesFor(
-            {
-              r: roomIndex(door.room),
-              elite: door.type === 'elite',
-              budgetMult: run.shift.budgetMult,
-              extraDronesPerWave: run.shift.extraDronesPerWave,
-            },
-            roomRng(run.seed, door.room, 2),
-          ),
+          wavesFor(this.waveContext(door.type === 'elite'), roomRng(run.seed, door.room, 2)),
           roomRng(run.seed, door.room, 3),
         );
         break;
+      case 'gardee':
+        this.setupGardee();
+        break;
       case 'boss':
         this.after(BOSS_SPAWN_DELAY_MS, () => {
-          const at = this.world.arena.bossSpawn;
-          const boss = this.world.spawnEnemy('auditeur', at.x, at.y, true);
-          this.boss = boss?.kind === 'auditeur' ? (boss as AuditeurSim) : null;
-          this.world.time.slowmo(0.3, 900, 300);
-          this.world.emit({ type: 'shake', px: 4, ms: 300 });
-          this.notice(
-            "L'AUDITEUR DES QUAIS — « Vous avez mis 4 minutes 12. Je le note. »",
-            'danger',
-          );
+          this.spawnBoss();
         });
         break;
       case 'tresor':
@@ -259,34 +424,112 @@ export class RunDirector {
     }
   }
 
+  private spawnBoss(): void {
+    const def = this.biomeDef.boss;
+    const at = this.world.arena.bossSpawn;
+    const boss = this.world.spawnEnemy(def.kind, at.x, at.y, true);
+    this.boss = boss && isPhased(boss) ? boss : null;
+    this.world.time.slowmo(0.3, 900, 300);
+    this.world.emit({ type: 'shake', px: 4, ms: 300 });
+    this.world.emit({
+      type: 'bossIntro',
+      kind: def.kind,
+      name: def.name,
+      title: def.title,
+      line: def.intro.text,
+      fictive: def.intro.fictive,
+    });
+    if (def.kind === 'auditeur')
+      this.notice("L'AUDITEUR DES QUAIS — « Vous avez mis 4 minutes 12. Je le note. »", 'danger');
+  }
+
+  /** Salle gardée : l'ennemi majeur seul, puis de petites escortes à ses seuils de PV. */
+  private setupGardee(): void {
+    const g = this.biomeDef.gardee;
+    if (!g) {
+      this.clearRoom(false);
+      return;
+    }
+    const run = this.world.run;
+    this.waves.start([[g.kind]], roomRng(run.seed, this.door.room, 3), this.world.arena.bossSpawn);
+    this.escortsLeft = [...SCALING.GARDEE_ESCORT_AT];
+    this.world.emit({
+      type: 'bossIntro',
+      kind: g.kind,
+      name: g.intro.speaker,
+      title: g.label,
+      line: g.intro.text,
+      fictive: g.intro.fictive,
+    });
+  }
+
+  private updateEscorts(): void {
+    if (this.door.type !== 'gardee') return;
+    if (!this.guardian) {
+      const kind = this.biomeDef.gardee?.kind;
+      const g = this.world.enemies.find((e) => e.kind === kind && !e.isDead);
+      if (g && isPhased(g)) this.guardian = g;
+      return;
+    }
+    const g = this.guardian;
+    if (g.isDead) return;
+    const next = this.escortsLeft[0];
+    if (next === undefined || g.hp > g.maxHp * next) return;
+    this.escortsLeft.shift();
+    const ctx = this.waveContext(false);
+    const budget = Math.max(2, Math.round((budgetFor(ctx) * SCALING.GARDEE_ESCORT_BUDGET) / 2));
+    const escort: Wave = wavesFor(
+      { ...ctx, r: Math.max(1, ctx.r) },
+      roomRng(this.world.run.seed, this.door.room, 9),
+    )
+      .flat()
+      .filter((k) => k !== 'manager' && k !== 'furet')
+      .slice(0, Math.max(2, Math.round(budget / 1.5)));
+    this.waves.addEscort(escort);
+    this.notice('Renforts : l’escorte monte sur la piste', 'danger');
+  }
+
   /** Salle nettoyée : ralenti, récompense, portes au vert. */
   public clearRoom(withFanfare: boolean): void {
     if (this.cleared) return;
     this.cleared = true;
     const run = this.world.run;
     const door = this.door;
+    const arena = this.world.arena;
+    const spawn = arena.layout.playerSpawn;
+    const x = Math.min(arena.widthPx - 48, Math.max(48, arena.widthPx / 2));
+    const y = Math.min(spawn.ty * TILE - 48, arena.heightPx / 2);
+    const info: RoomInfo = {
+      room: door.room,
+      roomType: door.type,
+      biome: this.biome,
+      reward: door.reward,
+      x,
+      y,
+    };
     if (withFanfare) {
       this.world.time.slowmo(0.25, 450, 250);
       this.world.emit({ type: 'shake', px: 3, ms: 150 });
       run.burnout.add(BURNOUT.PER_ROOM_CLEARED);
-      const ps = earnPs(
-        run,
-        door.type === 'elite' ? REWARDS.PS_ELITE_ROOM : REWARDS.PS_PER_COMBAT_ROOM,
-      );
+      let base: number = REWARDS.PS_PER_COMBAT_ROOM;
+      if (door.type === 'elite') base = REWARDS.PS_ELITE_ROOM;
+      if (door.type === 'gardee') {
+        base = REWARDS.PS_GARDEE;
+        this.world.hero.addBurnout(REWARDS.BURNOUT_GARDEE);
+      }
+      const ps = earnPs(run, base);
       this.notice(`Salle nettoyée · +${String(ps)} PS`, 'gold');
       const reward = door.reward;
       if (reward) {
-        const arena = this.world.arena;
-        const spawn = arena.layout.playerSpawn;
-        const x = Math.min(arena.widthPx - 48, Math.max(48, arena.widthPx / 2));
-        const y = Math.min(spawn.ty * TILE - 48, arena.heightPx / 2);
         this.after(REWARD_DROP_DELAY_MS, () => {
+          if (this.hooks.some((h) => h.onReward?.(info) === true)) return;
           if (reward === 'dotation') this.world.loot.dropDotation(x, y);
           else this.dropReward(reward, x, y);
         });
       }
     }
     this.world.emit({ type: 'roomCleared', room: door.room });
+    for (const h of this.hooks) h.onRoomCleared?.(info);
   }
 
   /** Porte ouverte sous le héros (il touche le rideau), ou `null`. */
@@ -309,8 +552,70 @@ export class RunDirector {
       this.leaving = null;
       this.buildRoom(door);
       this.startRoomContent();
-      if (door.type === 'boss') this.notice('Écran rouge : SIGNATURE IMMINENTE', 'danger');
+      if (door.type === 'boss')
+        this.notice(
+          this.biome === 1
+            ? 'Écran doré : INAUGURATION IMMINENTE'
+            : 'Écran rouge : SIGNATURE IMMINENTE',
+          'danger',
+        );
     });
+  }
+
+  // ─── Environnement (biomes 2 et 3) ─────────────────────────────────────────
+
+  private updateEnvironment(): void {
+    const type = this.door.type;
+    if (this.cleared || !(type === 'combat' || type === 'elite' || type === 'gardee')) {
+      this.wind = 0;
+      this.windWarn = 0;
+      return;
+    }
+    const now = this.world.now();
+    if (this.biome === 1) {
+      // Rafales : annoncées 1 s avant (feuilles « PROVISOIRE v14 »), 2 s de poussée latérale.
+      if (
+        this.wind === 0 &&
+        this.windWarn === 0 &&
+        now >= this.nextGustAt - ENVIRONMENT.WIND_WARN_MS
+      ) {
+        this.windWarn = this.world.rng() < 0.5 ? -1 : 1;
+        this.world.emit({ type: 'fx', name: 'gustWarn', x: 0, y: 0, value: this.windWarn });
+      }
+      if (this.windWarn !== 0 && now >= this.nextGustAt) {
+        this.wind = this.windWarn;
+        this.windWarn = 0;
+        this.gustEndAt = now + ENVIRONMENT.WIND_MS;
+        this.world.emit({ type: 'fx', name: 'gust', x: 0, y: 0, value: this.wind });
+      }
+      if (this.wind !== 0) {
+        this.world.pushHero((this.wind * ENVIRONMENT.WIND_PUSH) / 60, 0);
+        if (now >= this.gustEndAt) {
+          this.wind = 0;
+          const [lo, hi] = ENVIRONMENT.WIND_PERIOD_MS;
+          this.nextGustAt = now + randInt(this.world.rng, lo, hi);
+        }
+      }
+    } else if (this.biome === 2 && type !== 'gardee' && now >= this.nextPartitionAt) {
+      // Cloison mobile : une bande de deux tuiles balayée à travers la salle.
+      this.nextPartitionAt = now + ENVIRONMENT.PARTITION_PERIOD_MS;
+      const arena = this.world.arena;
+      const h = this.world.hero.body;
+      const rows = Math.floor(arena.heightPx / TILE);
+      const ty = Math.max(2, Math.min(rows - 3, Math.floor(h.y / TILE) - 1));
+      this.world.spawnHazard({
+        kind: 'band',
+        x0: TILE,
+        x1: arena.widthPx - TILE,
+        y: ty * TILE,
+        height: TILE * 2,
+        telegraphMs: ENVIRONMENT.PARTITION_TELEGRAPH_MS,
+        damage: ENVIRONMENT.PARTITION_DAMAGE,
+        owner: 'Une cloison mobile',
+        speed: ENVIRONMENT.PARTITION_SPEED,
+        skin: 'cloison',
+      });
+    }
   }
 
   // ─── Récompenses ───────────────────────────────────────────────────────────
@@ -544,7 +849,7 @@ export class RunDirector {
 
   private setupRest(): void {
     const at = this.world.arena.marks('coffee')[0] ?? this.world.arena.playerSpawn;
-    this.notice('Salle des pauses — « La pause n’est pas du temps de travail effectif. »', 'info');
+    this.notice(this.biomeDef.restNotice, 'info');
     this.addInteractable(at.x, at.y, 'Prendre sa pause', 'coffee', () => {
       const run = this.world.run;
       this.openChoice(
@@ -612,22 +917,57 @@ export class RunDirector {
   // ─── Combat ────────────────────────────────────────────────────────────────
 
   /** Un ennemi est mort (appelé par le monde après Mobilisation, Burnout, tickets). */
-  public onEnemyKilled(kind: EnemyKind, x: number, y: number): void {
+  public onEnemyKilled(kind: EnemyKind, x: number, y: number, heavy = false): void {
     this.waves.onKilled();
-    const elite = kind === 'manager';
-    const chance = elite ? REWARDS.GRAIN_ELITE_CHANCE : REWARDS.GRAIN_KILL_CHANCE;
+    const chance = heavy ? REWARDS.GRAIN_ELITE_CHANCE : REWARDS.GRAIN_KILL_CHANCE;
     if (this.enabled && this.world.rng() < chance) this.dropPickup(x, y, 'grains', 1, false);
-    if (kind === 'auditeur' && this.boss?.isDead) this.onBossDefeated();
+    const info: KillInfo = {
+      kind,
+      x,
+      y,
+      room: this.door.room,
+      roomType: this.door.type,
+      biome: this.biome,
+      heavy,
+    };
+    for (const h of this.hooks) h.onEnemyKilled?.(info);
+    // Boss ou ennemi majeur vaincu : ses zones encore armées disparaissent (rien ne blesse après).
+    if (heavy) {
+      const owner = ENEMY_NAMES[kind];
+      for (const z of this.world.hazards) if (z.spec.owner === owner) z.finish();
+    }
+    if (this.boss?.isDead && kind === this.boss.kind) this.onBossDefeated(this.boss);
   }
 
-  private onBossDefeated(): void {
+  private onBossDefeated(boss: BossSim): void {
     const run = this.world.run;
-    earnPs(run, REWARDS.PS_BOSS1);
-    run.grainsEarned += REWARDS.GRAINS_BOSS1;
+    const biome = this.biome;
+    const def = this.biomeDef.boss;
+    const final = this.door.room === bossRoomOf(BIOME_COUNT - 1) || biome === BIOME_COUNT - 1;
+    run.bossesDefeated += 1;
+    earnPs(run, def.ps);
+    run.grainsEarned += def.grains;
     this.world.time.slowmo(0.2, 1500, 600);
-    this.notice('« … Le train de 7h12, il existe encore ? »', 'gold');
+    def.defeat.forEach((line, i) => {
+      this.after(400 + i * DEFEAT_LINE_GAP_MS, () => {
+        this.world.emit({ type: 'bossLine', ...line });
+      });
+    });
+    if (def.kind === 'auditeur') this.notice('« … Le train de 7h12, il existe encore ? »', 'gold');
+    for (const h of this.hooks)
+      h.onBossDefeated?.({ kind: def.kind, biome, final, x: boss.body.x, y: boss.body.y });
+    this.boss = null;
+    if (final || !this.enabled) {
+      this.after(VICTORY_DELAY_MS + def.defeat.length * 400, () => {
+        this.endShift('victoire');
+      });
+      return;
+    }
+    // Le biome suivant s'ouvre : la porte du fond mène plus haut dans la gare.
+    const next = BIOMES[(biome + 1) as BiomeIndex];
     this.after(VICTORY_DELAY_MS, () => {
-      this.endShift('victoire');
+      this.clearRoom(false);
+      this.notice(`Porte ouverte · ${next.name}`, 'gold');
     });
   }
 
@@ -647,7 +987,7 @@ export class RunDirector {
 
   /** K : élimine tous les ennemis. */
   public cheatKillAll(): number {
-    const living = this.world.livingEnemies().filter((e) => e.isHittable());
+    const living = this.world.livingEnemies().filter((e) => e.isHittable() || e.hidden);
     for (const e of living) e.debugKill();
     return living.length;
   }
@@ -662,9 +1002,22 @@ export class RunDirector {
     if (door) this.goThrough(door);
   }
 
-  /** B : salle du boss. */
+  /** B : salle du boss du biome en cours. */
   public cheatBoss(): void {
-    this.goThrough({ room: BOSS_ROOM, type: 'boss', reward: null });
+    const room = bossRoomOf(this.biome);
+    this.goThrough({ room, type: 'boss', reward: null });
+  }
+
+  /** Salle gardée du biome en cours (outil de capture). */
+  public cheatGardee(): void {
+    const n = biomeRoomCount(this.door.room);
+    this.goThrough({ room: firstRoomOf(this.biome) + n - 1, type: 'gardee', reward: null });
+  }
+
+  /** Première salle d'un biome (outil de capture). */
+  public cheatBiome(biome: number): void {
+    const b = Math.max(0, Math.min(BIOME_COUNT - 1, biome));
+    this.goThrough({ room: firstRoomOf(b), type: 'combat', reward: 'avantage' });
   }
 
   // ─── Utilitaires ───────────────────────────────────────────────────────────
@@ -678,10 +1031,14 @@ export class RunDirector {
   }
 }
 
+function isPhased(e: EnemySim): e is BossSim {
+  return 'phase' in e && typeof (e as { phase?: unknown }).phase === 'number';
+}
+
 /** Texte d'une porte : type de salle et récompense annoncée. */
 export function doorLabel(choice: DoorChoice): string {
   const reward = choice.reward ? ` · ${REWARD_LABEL[choice.reward]}` : '';
-  return `${ROOM_TYPE_LABEL[choice.type]}${reward}`;
+  return `${roomTypeLabel(choice.type, choice.room)}${reward}`;
 }
 
 const REWARD_LABEL: Readonly<Record<NonNullable<DoorChoice['reward']>, string>> = {
@@ -718,5 +1075,9 @@ export function assignDoors(
   });
 }
 
-/** Salle des pauses et boss : indices de salle particuliers (utiles aux tests et à l'UI). */
-export const SPECIAL_ROOMS = { REST_ROOM, BOSS_ROOM, LAST_COMBAT: SHIFT.BIOME1_ROOMS } as const;
+/** Salle des pauses et boss du biome 1 : indices de salle particuliers (utiles aux tests et à l'UI). */
+export const SPECIAL_ROOMS = {
+  REST_ROOM,
+  BOSS_ROOM,
+  LAST_COMBAT: REST_ROOM - 1,
+} as const;

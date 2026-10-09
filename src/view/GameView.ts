@@ -2,6 +2,7 @@
 // Elle lit le monde simulé (interpolé) et consomme ses événements ; elle ne modifie jamais la sim.
 // Rendu (toon, contours, bloom, étalonnage) repris du prototype validé (prototypes/proto3d).
 import * as THREE from 'three';
+import type { EnemyKind } from '@/config/balance';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import type { SimEvent } from '@/sim/events';
 import type { World } from '@/sim/World';
@@ -23,6 +24,7 @@ import { Bursts, Ghosts, Puffs, Rings, Shake, Smear, Sparks } from '@/view/fx/ef
 import { outlineUniforms, PAL, setOutlinesEnabled } from '@/view/materials/toon';
 import { Post } from '@/view/post/Post';
 import type { ViewSettings } from '@/view/quality';
+import { BossPropsView } from '@/view/BossPropsView';
 import { HazardViews } from '@/view/HazardViews';
 import { PickupViews, ProjectileView, PropViews } from '@/view/ItemsView';
 import {
@@ -104,6 +106,9 @@ export class GameView implements ActorFxSink {
   private shownLayout: RoomLayout;
   private readonly hero: HeroActorView;
   private readonly enemies = new Map<number, EnemyView>();
+  /** Type de chaque ennemi affiché (effets de mort et d'impact propres). */
+  private readonly kinds = new Map<number, EnemyKind>();
+  private readonly bossProps: BossPropsView;
   private readonly hazards: HazardViews;
   private readonly projectiles = new ProjectileView();
   private readonly pickups: PickupViews;
@@ -216,6 +221,7 @@ export class GameView implements ActorFxSink {
     this.hero = createHeroView(settings.reducedMotion, this);
     this.scene.add(this.hero.root);
     this.hazards = new HazardViews(this.scene, settings.reducedMotion);
+    this.bossProps = new BossPropsView(this.scene, settings.reducedMotion);
     this.pickups = new PickupViews(this.scene);
     this.props = new PropViews(this.scene);
     this.loot = new LootViews(this.scene, settings.reducedMotion, (p, v, c) => {
@@ -280,7 +286,9 @@ export class GameView implements ActorFxSink {
     }
     for (const v of this.enemies.values()) v.dispose();
     this.enemies.clear();
+    this.kinds.clear();
     this.hazards.clear();
+    this.bossProps.clear();
     this.pickups.clear();
     this.props.build(world.director.interactables);
     const h = world.hero.body;
@@ -292,7 +300,10 @@ export class GameView implements ActorFxSink {
     const make = this.options.room;
     if (make)
       return make(layout, this.settings, { scene: this.scene, sun: this.sun, hemi: this.hemi });
-    return new RoomView(layout, this.settings.quality, this.settings.reducedMotion);
+    return new RoomView(layout, this.settings.quality, this.settings.reducedMotion, {
+      biome: this.world.director.biome,
+      lights: { scene: this.scene, sun: this.sun, hemi: this.hemi },
+    });
   }
 
   /**
@@ -380,6 +391,8 @@ export class GameView implements ActorFxSink {
         this.enemies.get(e.id)?.hit(e.heavy);
         const d = dir(e.angle);
         const p = at(e.x, e.y, 1.0);
+        if (this.kinds.get(e.id) === 'discosaure')
+          this.facets(at(e.x, e.y, 2.1), d, e.heavy ? 4 : 2);
         this.dmg.spawn(
           p.clone().setY(1.7),
           String(e.amount),
@@ -419,6 +432,13 @@ export class GameView implements ActorFxSink {
         this.enemies.get(e.id)?.die(e.angle);
         const d = dir(e.angle);
         const p = at(e.x, e.y, 1);
+        const kind = e.kind ?? this.kinds.get(e.id);
+        // Vaincu, jamais tué : pas d'éclats de combat, des confettis (Di Rupo) ou des paillettes.
+        if (kind === 'dirupo') {
+          this.confetti(at(e.x, e.y, 2.2), 70);
+          break;
+        }
+        if (kind === 'discosaure') this.sequins(at(e.x, e.y, 2.0));
         this.bursts.spawn(p, 0xffffff, e.last ? 4.6 : 3.6, 0.22, 4);
         this.sparks.burst(p, d, 30, PAL.enemy, 11, 1.4, 0.6, 0.04, 5);
         this.sparks.burst(p, d, 16, PAL.danger, 8, 2.5, 0.5, 0.035, 4);
@@ -573,6 +593,9 @@ export class GameView implements ActorFxSink {
       case 'gearFx':
         this.onGearFx(e.kind, e.x, e.y, e.angle, e.size);
         break;
+      case 'fx':
+        this.onFx(e.name, e.x, e.y, e.value ?? 0);
+        break;
       case 'heroDied':
       case 'wave':
       case 'notice':
@@ -580,6 +603,9 @@ export class GameView implements ActorFxSink {
       case 'shiftEnded':
       case 'bossPhase':
       case 'gearChanged':
+      case 'bossIntro':
+      case 'bossLine':
+      case 'biomeEntered':
         break;
     }
   }
@@ -662,6 +688,128 @@ export class GameView implements ActorFxSink {
     }
   }
 
+  /** Effets ponctuels des nouveaux ennemis et des biomes (événement `fx` de la sim). */
+  private onFx(name: string, x: number, y: number, value: number): void {
+    const p = at(x, y);
+    switch (name) {
+      case 'promiseKept':
+        this.bursts.spawn(p.clone().setY(0.9), 0xffd76a, 2.6, 0.2, 3);
+        this.sparks.burst(
+          p.clone().setY(0.9),
+          new THREE.Vector3(0, 1, 0),
+          22,
+          0xffd76a,
+          6,
+          3,
+          0.5,
+          0.04,
+          5,
+        );
+        this.rings.spawn(p, 0xffd200, 0.2, 1.4, 0.3, 0.2, 0.2, 2.2);
+        break;
+      case 'ribbonCut':
+        this.bursts.spawn(p.clone().setY(1), 0xffffff, 3, 0.2, 3);
+        this.confetti(p.clone().setY(1.2), 40);
+        break;
+      case 'ribbonUp':
+        this.puffs.dustRing(p, 16, 2.5, 0x5a5070, 4);
+        break;
+      case 'confetti':
+        this.confetti(p.clone().setY(2.2), 50);
+        break;
+      case 'sequins':
+        this.sequins(p.clone().setY(2));
+        break;
+      case 'facets':
+        this.bursts.spawn(p.clone().setY(2.2), 0xffffff, 2.2, 0.18, 3);
+        break;
+      case 'discoBlackout':
+        this.puffs.dustRing(p, 10, 0.6, 0x14101a, 2);
+        break;
+      case 'discoFreeze':
+        this.rings.spawn(p, 0x6ff3ff, 0.4, 3.5, 0.4, 0.15, 0.2, 2);
+        break;
+      case 'burrow':
+      case 'emerge':
+        this.puffs.dustRing(p, name === 'emerge' ? 18 : 12, 0.5, 0x6a5a44, 4);
+        this.sparks.burst(
+          p.clone().setY(0.2),
+          new THREE.Vector3(0, 1, 0),
+          14,
+          0xc9b48a,
+          5,
+          4,
+          0.5,
+          0.04,
+          4,
+        );
+        break;
+      case 'stink':
+        this.puffs.dustRing(p, 10, 0.4, 0x6f8a2a, 2.5);
+        break;
+      case 'heroFell':
+      case 'enemyFell':
+        this.puffs.dustRing(p, 12, 0.4, 0x50486a, 3);
+        this.rings.spawn(p, 0x6ff3ff, 0.2, 1.2, 0.3, 0.2, 0.2, 2);
+        break;
+      case 'pageTaken':
+        this.sparks.burst(
+          p.clone().setY(0.9),
+          new THREE.Vector3(0, 1, 0),
+          16,
+          0xffd200,
+          5,
+          3,
+          0.5,
+          0.04,
+          4,
+        );
+        this.bursts.spawn(p.clone().setY(0.9), 0xfff2c0, 1.8, 0.16, 3);
+        break;
+      case 'reglement':
+        this.rings.spawn(p, 0xffd200, 0.3, 3, 0.45, 0.25, 0.3, 2.6);
+        this.bursts.spawn(p.clone().setY(1.4), 0xffd200, 3.2, 0.25, 3);
+        break;
+      case 'swap':
+        this.rings.spawn(p, 0xb05cff, 0.2, 1.6, 0.3, 0.2, 0.2, 2.2);
+        break;
+      case 'concertation':
+        this.rings.spawn(p, 0xffd200, 0.3, 2.2, 0.4, 0.2, 0.2, 2.2);
+        break;
+      case 'finalBlow':
+        this.rings.spawn(p, 0xffffff, 0.3, 4, 0.6, 0.15, 0.2, 2.4);
+        break;
+      case 'gust':
+      case 'gustWarn': {
+        // Feuilles « PROVISOIRE v14 » emportées dans le sens du vent (annonce, puis rafale).
+        const h = this.hero.pos;
+        const n = name === 'gust' ? 18 : 10;
+        for (let i = 0; i < n; i += 1) {
+          const from = h
+            .clone()
+            .add(
+              this.tmp.set(
+                -value * (4 + Math.random() * 3),
+                0.6 + Math.random() * 2,
+                (Math.random() - 0.5) * 8,
+              ),
+            );
+          this.puffs.emit(
+            from,
+            new THREE.Vector3(value * (5 + Math.random() * 3), 0.4, (Math.random() - 0.5) * 0.8),
+            0xf4f0e6,
+            1.6 + Math.random(),
+            0.12,
+            { grav: 0.3, drag: 0.4, alpha: 0.9, shape: 1 },
+          );
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
   /**
    * Équipement porté → modèle du héros (GLB) : Casque, Gilet et Outil prennent la pièce de leur base,
    * avec un liseré de rareté (Homologué et au-delà) ; un emplacement vide garde la tenue de départ.
@@ -680,6 +828,62 @@ export class GameView implements ActorFxSink {
       if (this.gearShown.get(slot) === key) continue;
       if (eq.attach(slot, piece, { outline })) this.gearShown.set(slot, key);
     }
+  }
+
+  /** Confettis aux couleurs neutres (inauguration ; jamais de magenta). */
+  private confetti(p: THREE.Vector3, n: number): void {
+    const cols = [0xffd200, 0x6ff3ff, 0xffffff, 0x7dff9a, 0xff9a3a];
+    const k = Math.round(n * (this.settings.reducedMotion ? 0.5 : 1));
+    for (let i = 0; i < k; i += 1) {
+      const v = this.tmp.set(
+        (Math.random() - 0.5) * 6,
+        3 + Math.random() * 5,
+        (Math.random() - 0.5) * 6,
+      );
+      this.puffs.emit(p, v, cols[i % cols.length] ?? 0xffffff, 1.6 + Math.random() * 1.2, 0.09, {
+        grav: 3,
+        drag: 1.6,
+        alpha: 1,
+        shape: 1,
+      });
+    }
+  }
+
+  /** Paillettes et facettes de la boule (mort du Discosaure). */
+  private sequins(p: THREE.Vector3): void {
+    const cols = [0xffffff, 0xdff6ff, 0xffd27a, 0x9dffd0, 0xc8b8ff];
+    for (let i = 0; i < 60; i += 1) {
+      const a = Math.random() * Math.PI * 2;
+      const sp = 2 + Math.random() * 6;
+      this.sparks.emit(
+        p,
+        this.tmp.set(Math.sin(a) * sp, 2 + Math.random() * 6, Math.cos(a) * sp),
+        cols[i % cols.length] ?? 0xffffff,
+        0.7 + Math.random() * 0.6,
+        0.05,
+      );
+    }
+    this.confetti(p, 30);
+    this.bursts.spawn(p, 0xffffff, 4, 0.3, 4);
+  }
+
+  /** Facettes miroir arrachées à la boule par un coup. */
+  private facets(p: THREE.Vector3, d: THREE.Vector3, n: number): void {
+    for (let i = 0; i < n * 3; i += 1) {
+      const v = d
+        .clone()
+        .multiplyScalar(2 + Math.random() * 2)
+        .add(
+          this.tmp.set((Math.random() - 0.5) * 3, 2 + Math.random() * 3, (Math.random() - 0.5) * 3),
+        );
+      this.puffs.emit(p, v, i % 2 === 0 ? 0xe8f4ff : 0xb8c4d8, 1 + Math.random() * 0.5, 0.1, {
+        grav: 9,
+        drag: 0.6,
+        alpha: 1,
+        shape: 1,
+      });
+    }
+    this.bursts.spawn(p, 0xffffff, 1.6, 0.12, 3);
   }
 
   private onSwing(
@@ -816,9 +1020,11 @@ export class GameView implements ActorFxSink {
       if (v.finished) {
         v.dispose();
         this.enemies.delete(id);
+        this.kinds.delete(id);
       }
     }
     this.hazards.sync(world.hazards, this.time);
+    this.bossProps.sync(world.enemies, this.time, simDt);
     this.projectiles.sync(world.projectiles.pool, alpha, simDt);
     this.pickups.sync(world.pickups, simDt, this.settings.reducedMotion);
     this.props.update();
@@ -855,6 +1061,7 @@ export class GameView implements ActorFxSink {
         this.options.enemyView?.(e, this.scene, this.settings.reducedMotion) ??
         createEnemyView(e.kind, this.scene, this.settings.reducedMotion, this);
       this.enemies.set(e.id, v);
+      this.kinds.set(e.id, e.kind);
     }
     return v;
   }
@@ -932,7 +1139,8 @@ export class GameView implements ActorFxSink {
   public dispose(): void {
     for (const v of this.enemies.values()) v.dispose();
     this.enemies.clear();
-    this.hazards.clear();
+    this.hazards.dispose();
+    this.bossProps.dispose();
     this.pickups.clear();
     this.props.dispose();
     this.loot.dispose();

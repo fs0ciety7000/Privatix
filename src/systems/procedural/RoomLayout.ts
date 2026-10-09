@@ -2,7 +2,24 @@ import type { RoomTemplateId } from '@/systems/procedural/roomTemplates';
 import { ROOM_TEMPLATES } from '@/systems/procedural/roomTemplates';
 
 /** Nature d'une tuile, indépendante du tileset (Room la traduit en index de tuile). */
-export type TileKind = 'wall' | 'floor' | 'line' | 'rail' | 'ballast' | 'pillar' | 'bench' | 'door';
+export type TileKind =
+  | 'wall'
+  | 'floor'
+  | 'line'
+  | 'rail'
+  | 'ballast'
+  | 'pillar'
+  | 'bench'
+  | 'door'
+  /** Vide de la Passerelle : on y tombe (héros : retour au bord ; non-élites : éliminés). */
+  | 'void'
+  | 'glass'
+  | 'escalator'
+  | 'desk'
+  | 'shelf'
+  | 'chair'
+  | 'stage'
+  | 'carpet';
 
 export interface TilePos {
   readonly tx: number;
@@ -49,11 +66,32 @@ const CHAR_TILE: Readonly<Record<string, TileKind>> = {
   o: 'pillar',
   b: 'bench',
   D: 'door',
+  v: 'void',
+  g: 'glass',
+  '/': 'escalator',
+  d: 'desk',
+  h: 'shelf',
+  c: 'chair',
+  e: 'stage',
+  k: 'carpet',
 };
 
 /** Tuiles bloquantes (corps Arcade). */
 export function isSolid(kind: TileKind): boolean {
-  return kind === 'wall' || kind === 'pillar' || kind === 'bench' || kind === 'door';
+  return (
+    kind === 'wall' ||
+    kind === 'pillar' ||
+    kind === 'bench' ||
+    kind === 'door' ||
+    kind === 'desk' ||
+    kind === 'shelf' ||
+    kind === 'chair'
+  );
+}
+
+/** Tuile infranchissable pour un ennemi qui marche (le vide en plus des obstacles). */
+export function blocksWalker(kind: TileKind): boolean {
+  return isSolid(kind) || kind === 'void';
 }
 
 /**
@@ -159,7 +197,7 @@ export function spawnableTiles(layout: RoomLayout, from: TilePos, minTiles: numb
       if (Math.hypot(tx - from.tx, ty - from.ty) < minTiles) continue;
       // Une tuile libre tout autour : pas d'apparition collée à un mur.
       const around = [-1, 0, 1].every((dy) =>
-        [-1, 0, 1].every((dx) => !isSolid(tileAt(layout, tx + dx, ty + dy))),
+        [-1, 0, 1].every((dx) => !blocksWalker(tileAt(layout, tx + dx, ty + dy))),
       );
       if (around) out.push({ tx, ty });
     }

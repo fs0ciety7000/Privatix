@@ -256,6 +256,33 @@ describe('audio : routeur événements → sons', () => {
     expect(c?.x).toBe(10);
   });
 
+  it('biomes 2 et 3 : ennemis majeurs, boss et effets ponctuels', () => {
+    const strike = (attack: string): string[] =>
+      ids({ type: 'enemyStrike', id: 9, attack, x: 0, y: 0, angle: 0 });
+    expect(strike('scissors')).toEqual(['ribbonSnip']);
+    expect(strike('stomp')).toEqual(['bossStamp']);
+    expect(strike('bite')).toEqual(['enemyMelee']);
+    const fx = (name: Extract<SimEvent, { type: 'fx' }>['name']): string[] =>
+      ids({ type: 'fx', name, x: 0, y: 0 });
+    expect(fx('ribbonCut')).toEqual(['ribbonSnip']);
+    expect(fx('confetti')).toEqual(['fanfare']);
+    expect(fx('stink')).toEqual(['stinkPuff']);
+    expect(fx('sequins')).toEqual(['discoShimmer']);
+    expect(fx('finalBlow')).toEqual([]);
+    expect(materialFor('discosaure', false)).toBe('hitMetal');
+    expect(materialFor('dirupo', false)).toBe('hitBoss');
+    expect(
+      ids({
+        type: 'bossIntro',
+        kind: 'dirupo',
+        name: 'x',
+        title: 'y',
+        line: 'z',
+        fictive: true,
+      }),
+    ).toEqual(['bossPhase']);
+  });
+
   it('capacités, dégâts, mort, salles et fin du Shift', () => {
     expect(ids({ type: 'dash', x: 0, y: 0, angle: 0 })).toEqual(['dash']);
     expect(ids({ type: 'special', kind: 'whistle', x: 0, y: 0, radius: 9 })).toEqual(['whistle']);

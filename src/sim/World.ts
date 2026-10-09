@@ -1,14 +1,23 @@
 import type { EnemyKind, ShiftId } from '@/config/balance';
-import { BURNOUT, ENEMY_RULES, FEEL, HERO, MOBILISATION, SCALING } from '@/config/balance';
+import {
+  BURNOUT,
+  ENEMY_RULES,
+  ENVIRONMENT,
+  FEEL,
+  FURET,
+  HERO,
+  MOBILISATION,
+  SCALING,
+} from '@/config/balance';
 import { AttackTokens } from '@/systems/combat/AttackTokens';
 import { enemyScale } from '@/systems/combat/damage';
 import type { MetaState } from '@/systems/meta/MetaState';
 import { newMeta } from '@/systems/meta/MetaState';
 import type { RunState } from '@/systems/meta/RunState';
-import { createRun, heal } from '@/systems/meta/RunState';
+import { createRun, heal, maxEnergy } from '@/systems/meta/RunState';
 import { roomIndex } from '@/systems/procedural/ShiftPlan';
 import type { RoomTemplateId } from '@/systems/procedural/roomTemplates';
-import { parseRoom } from '@/systems/procedural/RoomLayout';
+import { blocksWalker, parseRoom, tileAt } from '@/systems/procedural/RoomLayout';
 import type { Rng } from '@/utils/rng';
 import { createRng } from '@/utils/rng';
 import { Arena } from '@/sim/Arena';
@@ -17,15 +26,21 @@ import type { Steppable } from '@/sim/clock/FixedClock';
 import { AuditeurSim } from '@/sim/enemies/AuditeurSim';
 import { BorneSim } from '@/sim/enemies/BorneSim';
 import { ConsultantSim } from '@/sim/enemies/ConsultantSim';
+import { DiRupoSim } from '@/sim/enemies/DiRupoSim';
+import { DiscosaureSim } from '@/sim/enemies/DiscosaureSim';
 import { DroneSim } from '@/sim/enemies/DroneSim';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
+import { FluidifieurSim } from '@/sim/enemies/FluidifieurSim';
+import { FuretSim } from '@/sim/enemies/FuretSim';
 import { ManagerSim } from '@/sim/enemies/ManagerSim';
+import { VanderslideSim } from '@/sim/enemies/VanderslideSim';
 import type { SimEvent } from '@/sim/events';
 import type { HazardHost, HazardSpec } from '@/sim/Hazards';
 import { HazardSim } from '@/sim/Hazards';
 import { HeroSim } from '@/sim/hero/HeroSim';
 import type { PlayerIntent } from '@/sim/intent';
 import { mergeIntent, NO_INTENT, releaseEdges } from '@/sim/intent';
+import type { TileGrid } from '@/sim/physics/collision';
 import { moveCircle } from '@/sim/physics/collision';
 import { LootSim } from '@/sim/loot/LootSim';
 import type { PickupSim } from '@/sim/Pickups';
@@ -47,6 +62,8 @@ export interface WorldOptions {
   readonly loot?: boolean;
   /** Shift à graine saisie : la pitié méta du loot est gelée. */
   readonly fixedSeed?: boolean;
+  /** Réduction des mouvements (coupe les patterns stroboscopiques). */
+  readonly reducedMotion?: boolean;
 }
 
 /**
@@ -69,7 +86,14 @@ export class World implements SimWorld, Steppable {
   public readonly pickups: PickupSim[] = [];
   /** Loot du Shift : équipement porté, sac, objets au sol, pouvoirs Patrimoine. */
   public readonly loot: LootSim;
+  /** Réduction des mouvements (accessibilité) : modifiable en cours de Shift (touche M, options). */
+  public reducedMotion: boolean;
   private timeMs = 0;
+  /** Dernière position sûre du héros (hors du vide), pour la chute. */
+  private safeX = 0;
+  private safeY = 0;
+  /** Grille des ennemis qui marchent : le vide les arrête. */
+  private walkerGrid: TileGrid;
   private events: SimEvent[] = [];
   private intent: PlayerIntent = NO_INTENT;
   private interactPressed = false;
@@ -80,7 +104,9 @@ export class World implements SimWorld, Steppable {
     this.rng = createRng(opts.seed);
     this.run = createRun(opts.meta ?? newMeta(), opts.shift ?? 'matin', opts.seed);
     const shiftFlow = opts.waves ?? true;
+    this.reducedMotion = opts.reducedMotion ?? false;
     this.arena = new Arena(parseRoom(opts.room ?? 'quai-1'));
+    this.walkerGrid = walkerGridOf(this.arena);
     this.tokens = new AttackTokens({
       melee: ENEMY_RULES.MAX_MELEE_TOKENS,
       ranged: ENEMY_RULES.MAX_RANGED_TOKENS,
@@ -98,6 +124,12 @@ export class World implements SimWorld, Steppable {
       slowHero: (factor, ms) => {
         this.hero.applySlow(factor, ms);
       },
+      addBurnout: (points) => {
+        this.hero.addBurnout(points);
+      },
+      fallHero: () => {
+        this.fallHero();
+      },
       emit: (e) => {
         this.emit(e);
       },
@@ -105,6 +137,8 @@ export class World implements SimWorld, Steppable {
         this.emit({ type: 'shake', px, ms });
       },
     };
+    this.safeX = spawn.x;
+    this.safeY = spawn.y;
     this.director = new RunDirector(this, shiftFlow);
     if (shiftFlow) this.director.start(opts.room);
   }
@@ -136,10 +170,120 @@ export class World implements SimWorld, Steppable {
 
   public emit(event: SimEvent): void {
     this.events.push(event);
-    if (event.type === 'heroDied') this.director.onHeroDied();
-    else if (event.type === 'roomEntered') this.loot.onRoomEntered();
-    else if (event.type === 'roomCleared') this.loot.onRoomCleared();
-    else if (event.type === 'shiftEnded') this.loot.onShiftEnded(event.end);
+    switch (event.type) {
+      case 'heroDied':
+        this.director.onHeroDied();
+        break;
+      case 'roomEntered':
+        this.loot.onRoomEntered();
+        break;
+      case 'roomCleared':
+        this.loot.onRoomCleared();
+        break;
+      case 'shiftEnded':
+        this.loot.onShiftEnded(event.end);
+        break;
+      case 'special':
+        this.onHeroSpecial(event.kind, event.x, event.y, event.radius);
+        break;
+      case 'swing':
+        this.onHeroSwing(event);
+        break;
+      case 'perfectDash':
+        for (const e of this.livingEnemies()) e.onPerfectDash(event.x, event.y);
+        break;
+      default:
+        break;
+    }
+  }
+
+  /** Sifflet ou Préavis : les ennemis réagissent, les nuages de puanteur se dispersent. */
+  private onHeroSpecial(kind: 'whistle' | 'preavis', x: number, y: number, radius: number): void {
+    for (const h of this.hazards) {
+      if (h.spec.kind !== 'cloud' || h.done) continue;
+      const reach = radius + FURET.WHISTLE_CLEAR_BONUS + h.cloudRadius;
+      if (kind === 'preavis' || Math.hypot(h.x - x, h.y - y) <= reach) h.finish();
+    }
+    for (const e of this.livingEnemies()) e.onHeroSpecial(kind, x, y, radius);
+  }
+
+  /** Coup du héros : bulles à crever (promesses), ruban à couper. */
+  private onHeroSwing(s: Extract<SimEvent, { type: 'swing' }>): void {
+    const half = s.arcDeg > 0 ? (s.arcDeg * Math.PI) / 360 : 0.45;
+    for (const h of this.hazards) {
+      if (h.done || h.spec.kind !== 'circle' || h.spec.poppable !== true || !h.telegraphing)
+        continue;
+      const d = Math.hypot(h.x - s.x, h.y - s.y);
+      if (d > s.reach + 24) continue;
+      let diff = Math.atan2(h.y - s.y, h.x - s.x) - s.angle;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      if (d < 20 || Math.abs(diff) <= half + 0.35) h.pop();
+    }
+    const info = {
+      x: s.x,
+      y: s.y,
+      angle: s.angle,
+      reach: s.reach,
+      arcDeg: s.arcDeg,
+      finisher: s.finisher,
+      dashAttack: s.dashAttack,
+    };
+    for (const e of this.livingEnemies()) e.onHeroSwing(info);
+  }
+
+  /** Le héros tombe dans le vide : −10 % d'Énergie max et retour à la dernière position sûre. */
+  public fallHero(): void {
+    const hero = this.hero;
+    if (hero.isDead || this.director.frozen) return;
+    const b = hero.body;
+    const fromX = b.x;
+    const fromY = b.y;
+    b.x = this.safeX;
+    b.y = this.safeY;
+    b.prevX = b.x;
+    b.prevY = b.y;
+    b.vx = 0;
+    b.vy = 0;
+    this.emit({ type: 'fx', name: 'heroFell', x: fromX, y: fromY });
+    hero.receiveHit(Math.round(maxEnergy(this.run) * ENVIRONMENT.VOID_FALL_ENERGY_PCT), {
+      x: b.x,
+      y: b.y,
+      name: 'Le vide de la Passerelle',
+      knockbackPx: 0,
+    });
+  }
+
+  /** Le héros (hors dash) au-dessus du vide tombe ; sinon sa position devient la position sûre. */
+  private checkVoid(): void {
+    const hero = this.hero;
+    const b = hero.body;
+    if (hero.isDead || !b.enabled) return;
+    const kind = this.arena.kindAt(b.x, b.y);
+    if (kind === 'void') {
+      if (hero.state !== 'dash') this.fallHero();
+      return;
+    }
+    if (hero.state === 'dash') return;
+    // Position sûre : pas de vide sous les pieds ni juste à côté.
+    const r = b.r + 4;
+    for (const [dx, dy] of [
+      [r, 0],
+      [-r, 0],
+      [0, r],
+      [0, -r],
+    ] as const) {
+      if (this.arena.kindAt(b.x + dx, b.y + dy) === 'void') return;
+    }
+    this.safeX = b.x;
+    this.safeY = b.y;
+  }
+
+  /** Poussée de l'environnement (rafale de vent) : déplace le héros contre le décor. */
+  public pushHero(dx: number, dy: number): void {
+    const b = this.hero.body;
+    if (this.hero.isDead || !b.enabled) return;
+    moveCircle(this.arena, b, dx, dy);
   }
 
   /** Événements publiés depuis le dernier appel (la vue les consomme une fois par frame). */
@@ -154,6 +298,7 @@ export class World implements SimWorld, Steppable {
   /** Construit une salle depuis son gabarit : tout ce qui vivait dans la précédente disparaît. */
   public loadRoom(template: RoomTemplateId): void {
     this.arena = new Arena(parseRoom(template));
+    this.walkerGrid = walkerGridOf(this.arena);
     this.enemies.length = 0;
     this.projectiles.clear();
     this.hazards.length = 0;
@@ -167,6 +312,8 @@ export class World implements SimWorld, Steppable {
     b.prevY = spawn.y;
     b.vx = 0;
     b.vy = 0;
+    this.safeX = spawn.x;
+    this.safeY = spawn.y;
     this.hero.facingAngle = -Math.PI / 2;
   }
 
@@ -183,7 +330,7 @@ export class World implements SimWorld, Steppable {
 
   public onEnemyKilled(enemy: EnemySim): void {
     const run = this.run;
-    const elite = enemy.kind === 'manager';
+    const elite = enemy.isHeavy;
     const last = this.director.waves.isLastKill();
     run.kills += 1;
     run.mobilisation.add(MOBILISATION.PER_KILL + (elite ? MOBILISATION.ELITE_KILL_BONUS : 0));
@@ -198,6 +345,7 @@ export class World implements SimWorld, Steppable {
     this.emit({
       type: 'enemyKilled',
       id: enemy.id,
+      kind: enemy.kind,
       x: enemy.body.x,
       y: enemy.body.y,
       angle: enemy.deathAngle,
@@ -213,12 +361,14 @@ export class World implements SimWorld, Steppable {
       });
     this.emit({ type: 'shake', px: FEEL.KILL_SHAKE_PX, ms: FEEL.KILL_SHAKE_MS });
     this.loot.onKill(enemy);
-    this.director.onEnemyKilled(enemy.kind, enemy.body.x, enemy.body.y);
+    this.director.onEnemyKilled(enemy.kind, enemy.body.x, enemy.body.y, enemy.isHeavy);
   }
 
   public spawnEnemy(kind: EnemyKind, x: number, y: number, immediate = false): EnemySim | null {
     if (this.livingEnemies().length >= ENEMY_RULES.MAX_ALIVE) return null;
     const scale = enemyScale(roomIndex(this.run.room), this.run.shift, SCALING);
+    // Boss : PV et dégâts fixes (pas de r), seuls les modificateurs du roulement (GDD § 3.7).
+    const bossScale = enemyScale(1, this.run.shift, SCALING);
     let enemy: EnemySim;
     switch (kind) {
       case 'borne':
@@ -232,6 +382,21 @@ export class World implements SimWorld, Steppable {
         break;
       case 'auditeur':
         enemy = new AuditeurSim(this, x, y, scale);
+        break;
+      case 'furet':
+        enemy = new FuretSim(this, x, y, scale);
+        break;
+      case 'fluidifieur':
+        enemy = new FluidifieurSim(this, x, y, scale);
+        break;
+      case 'discosaure':
+        enemy = new DiscosaureSim(this, x, y, scale);
+        break;
+      case 'dirupo':
+        enemy = new DiRupoSim(this, x, y, bossScale);
+        break;
+      case 'vanderslide':
+        enemy = new VanderslideSim(this, x, y, bossScale);
         break;
       default:
         enemy = new ConsultantSim(this, x, y, scale);
@@ -281,11 +446,18 @@ export class World implements SimWorld, Steppable {
     if (this.loot.update(intent)) this.interactPressed = false;
     this.intent = releaseEdges(this.intent);
     integrate(this.arena, this.hero.body, dt);
+    this.checkVoid();
 
     for (const e of this.enemies) {
       if (e.removed) continue;
       e.tick(dtMs);
-      integrate(this.arena, e.body, dt);
+      // Le vide arrête ceux qui marchent ; un non-élite projeté dedans est éliminé.
+      const pushed = e.knockedBack && !e.isHeavy;
+      integrate(pushed ? this.arena : this.walkerGrid, e.body, dt);
+      if (pushed && e.body.enabled && this.arena.kindAt(e.body.x, e.body.y) === 'void') {
+        this.emit({ type: 'fx', name: 'enemyFell', x: e.body.x, y: e.body.y });
+        e.debugKill();
+      }
     }
     for (let i = this.enemies.length - 1; i >= 0; i -= 1) {
       if (this.enemies[i]?.removed) this.enemies.splice(i, 1);
@@ -321,12 +493,23 @@ export class World implements SimWorld, Steppable {
   }
 }
 
+/** Grille des marcheurs : le vide (Passerelle) y est plein. */
+function walkerGridOf(arena: Arena): TileGrid {
+  const layout = arena.layout;
+  return {
+    cols: arena.cols,
+    rows: arena.rows,
+    tileSize: arena.tileSize,
+    solidAt: (tx, ty) => blocksWalker(tileAt(layout, tx, ty)),
+  };
+}
+
 function snap(b: Body): void {
   b.prevX = b.x;
   b.prevY = b.y;
 }
 
-function integrate(arena: Arena, b: Body, dt: number): void {
+function integrate(arena: TileGrid, b: Body, dt: number): void {
   if (!b.enabled) {
     b.blocked = false;
     return;
