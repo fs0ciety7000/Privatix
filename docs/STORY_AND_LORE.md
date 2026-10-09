@@ -1,6 +1,6 @@
 # PRIVATIX — Bible narrative et lore
 
-> RPG 2D au tour par tour (Phaser 3). **Gameplay sérieux, lore satirique.**
+> RPG 2D au tour par tour (Phaser 4). **Gameplay sérieux, lore satirique.**
 > Document de référence pour tous les textes du jeu : dialogues, descriptions, noms d'objets, Notes de service.
 > Il respecte le canon validé par la direction créative. En cas de doute sur un chiffre d'équilibrage (Moral, Fatigue, PE, Tickets), le GDD fait foi ; en cas de doute sur un nom, un lieu ou un événement, ce document fait foi.
 > Tous les personnages, entreprises et documents sont **fictifs**. La satire vise le management, le conseil et la logique de privatisation, jamais une personne réelle, un parti, les voyageurs ou les cheminots de terrain.

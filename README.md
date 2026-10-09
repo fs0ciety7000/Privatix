@@ -2,7 +2,7 @@
 
 RPG 2D pixel-art au tour par tour, satirique, sur le rail belge. Un·e agent·e SNCB en horaires 3x8 à la gare de Mons rejoint l'OCC (Operation Coffee Center) pour empêcher la privatisation du rail.
 
-**Stack** : Phaser 3.90 · TypeScript 5.9 strict · Vite 7 · Vitest 4 · déploiement Docker/nginx sur Coolify (`privatix.fs0ciety.org`).
+**Stack** : Phaser 4.2 · TypeScript 5.9 strict · Vite 7 · Vitest 4 · déploiement Docker/nginx sur Coolify (`privatix.fs0ciety.org`).
 
 ```bash
 npm install --legacy-peer-deps

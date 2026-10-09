@@ -12,7 +12,7 @@
 
 | Brique | Version (`package.json`) | Pourquoi |
 |---|---|---|
-| **Phaser** | `^3.90.0` | Dernière v3, gelée et stable : scènes parallèles (exploration + HUD + dialogue), tilemaps Tiled natives, atlas, tweens, audio WebAudio, input clavier/manette/tactile, types TS livrés. Phaser 4 est écarté pour l'instant (écosystème en rattrapage) ; la séparation logique/présentation (§3) rendra une migration peu coûteuse. |
+| **Phaser** | `^4.2.1` | Phaser 4 retenu par le porteur du projet (migration depuis 3.90 faite au démarrage, aucun code à réécrire). Même API de scènes, tilemaps Tiled, atlas, tweens, audio et input que la v3, avec un nouveau renderer WebGL (render nodes) et des filtres à la place des FX. Types TS livrés. Le paquet embarque `changelog/v4/4.0/MIGRATION-GUIDE.md`, `docs/` (guide pixel-art) et `skills/` : à consulter avant d'utiliser une API qui a pu changer. |
 | **Vite** | `^7.3.7` | Serveur de dev instantané, HMR, build Rollup, `public/` copié tel quel (idéal pour les assets du jeu). |
 | **TypeScript** | `^5.9.3` (strict maximal) | Un RPG est fait de données structurées (ennemis, objets, dialogues, sauvegardes) : le compilateur attrape les clés et schémas invalides. |
 | **Vitest** | `^4.1.11` | Réutilise la config Vite (alias `@/`), teste la logique pure **sans Phaser ni DOM** (`environment: 'node'`). |
@@ -497,7 +497,7 @@ Soutien : `FocusManager`, `InputManager`, `VirtualPad`, `FloatingText`, `Toast`,
 
 ### 5.6 Résolution et rendu
 
-Résolution logique **960×540**, `pixelArt: true`, `roundPixels: true`, `scale.mode: FIT` + `CENTER_BOTH` (`src/main.ts`), canvas en `image-rendering: pixelated`. Tuiles de 16 px ; en exploration la caméra de `Game` passe en `setZoom(WORLD_ZOOM)` (≈ 30×17 tuiles visibles) avec `startFollow` et `setBounds` ; les overlays restent en zoom 1. Textes positionnés sur des coordonnées entières. Le zoom entier calculé en pixels physiques proposé par l'UX est une évolution possible, FIT reste la règle tant qu'il n'est pas implémenté.
+Résolution logique **960×540**, `render: { pixelArt: true, roundPixels: true }` (emplacement Phaser 4 ; `roundPixels` vaut `false` par défaut en v4), `scale.mode: FIT` + `CENTER_BOTH` (`src/main.ts`), canvas en `image-rendering: pixelated`. Tuiles de 16 px ; en exploration la caméra de `Game` passe en `setZoom(WORLD_ZOOM)` (≈ 30×17 tuiles visibles) avec `startFollow` et `setBounds` ; les overlays restent en zoom 1. Textes positionnés sur des coordonnées entières. Le zoom entier calculé en pixels physiques proposé par l'UX est une évolution possible, FIT reste la règle tant qu'il n'est pas implémenté. Point d'attention Phaser 4 : l'arrondi des sommets (`vertexRoundMode: 'safeAuto'` par défaut) est ignoré quand la caméra est zoomée ; si des coutures ou un scintillement apparaissent au `WORLD_ZOOM` ×2, passer les sprites du monde en `vertexRoundMode = 'fullAuto'` (voir `node_modules/phaser/docs/Phaser 4 Pixel Art Guide`).
 
 ---
 

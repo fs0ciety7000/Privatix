@@ -2,7 +2,7 @@
   "name": "privatix",
   "version": "0.1.0",
   "private": true,
-  "description": "Privatix - RPG 2D satirique sur le rail belge (gare de Mons). Phaser 3 + TypeScript + Vite.",
+  "description": "Privatix - RPG 2D satirique sur le rail belge (gare de Mons). Phaser 4 + TypeScript + Vite.",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -18,7 +18,7 @@
     "check": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
-    "phaser": "^3.90.0"
+    "phaser": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

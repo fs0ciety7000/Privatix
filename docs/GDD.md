@@ -1,6 +1,6 @@
 # PRIVATIX — Game Design Document
 
-> **Version** : 1.0 (Phase 1, consolidée) · **Rôle** : Game Designer · **Moteur** : Phaser 3.90 + TypeScript 5.9 + Vite 7
+> **Version** : 1.0 (Phase 1, consolidée) · **Rôle** : Game Designer · **Moteur** : Phaser 4.2 + TypeScript 5.9 + Vite 7
 > **Références croisées** : `STORY_AND_LORE.md` (noms, lieux, dialogues : il fait foi sur le récit), `ARCHITECTURE.md` (implémentation), document UX/UI (écrans, HUD, contrôles).
 > **Règle de priorité** : pour tout **chiffre d'équilibrage** (Fatigue, Moral, PE, Tickets, PV, formules), **ce GDD fait foi**. Toutes les valeurs de l'annexe sont transposées telles quelles dans `src/config/balance.ts`.
 > Tous les personnages, entreprises et documents sont fictifs.

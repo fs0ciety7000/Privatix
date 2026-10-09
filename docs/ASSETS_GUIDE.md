@@ -1,7 +1,7 @@
 # Privatix — Guide des assets (direction artistique & pipeline)
 
 > **Auteur** : Art Director / Technical Artist · **Statut** : référence de production
-> **Cible** : Phaser 3.90 + TypeScript + Vite · résolution logique **960×540** · tuiles **16 px** · zoom entier
+> **Cible** : Phaser 4.2 + TypeScript + Vite · résolution logique **960×540** · tuiles **16 px** · zoom entier
 > **Fait foi** : le canon créatif (`CANON`) pour les noms, zones, personnages et ennemis ; la palette UX (`src/config/colors.ts`) pour les couleurs d'interface.
 > **Dossiers réels** : `public/assets/{images,audio,tilemaps,fonts}` · pack : `public/assets/asset-pack.json` chargé par `PreloaderScene` via `this.load.pack(AssetKeys.AssetPack, 'assets/asset-pack.json')`.
 
@@ -466,7 +466,7 @@ aseprite -b art/aseprite/fx/*.aseprite --sheet art/export/fx.png --data art/expo
   --format json-hash --sheet-pack --split-tags --filename-format "{title}-{frame}"
 ```
 
-**Atlas** (UI, objets, props, effets, portraits) — free-tex-packer ou TexturePacker : format **JSON Hash (Phaser 3)**, padding **2 px**, **pas de rotation**, **pas de trim** pour les animations en grille (trim autorisé pour les icônes), extrusion 1 px, taille max 2048, PNG 32 bits.
+**Atlas** (UI, objets, props, effets, portraits) — free-tex-packer ou TexturePacker : format **JSON Hash** (préréglage « Phaser 3 » des outils, chargé tel quel par Phaser 4), padding **2 px**, **pas de rotation**, **pas de trim** pour les animations en grille (trim autorisé pour les icônes), extrusion 1 px, taille max 2048, PNG 32 bits.
 
 **Configuration du pack** (`public/assets/asset-pack.json`, sections chargées par le Preloader) :
 

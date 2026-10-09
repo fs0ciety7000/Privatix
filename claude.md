@@ -5,7 +5,7 @@ Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépô
 ## 1. Le projet en 30 secondes
 
 - **Privatix** : RPG 2D pixel-art au tour par tour. Un·e agent·e SNCB en horaires 3x8 à la gare de Mons rejoint l'OCC (Operation Coffee Center) pour empêcher la privatisation du rail par « Privatix Rail Solutions ». Gameplay sérieux, lore satirique.
-- **Stack** : Phaser **3.90** (pas Phaser 4), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3. Node 22.
+- **Stack** : Phaser **4.2** (API de scènes héritée de Phaser 3, nouveau renderer WebGL), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3. Node 22.
 - **Résolution logique** : 960×540, tuiles 16 px, `pixelArt: true`, `Scale.FIT`.
 - **Déploiement** : image Docker (build Node → nginx) sur Coolify, domaine `privatix.fs0ciety.org`. Le `Dockerfile`, `nginx.conf` et `.dockerignore` à la racine sont la vérité du déploiement.
 - **Langue** : code et identifiants en anglais, commentaires, docs, textes de jeu et messages de commit en français.
@@ -44,7 +44,7 @@ Avant de déclarer une tâche terminée : `npm run check` **et** `npm run build`
 ### Formatage
 - Prettier (`.prettierrc`) est la seule autorité de formatage : single quotes, point-virgules, largeur 100, virgules finales. Ne pas débattre du style, lancer `npm run format`.
 
-## 4. Règles spécifiques à Phaser 3
+## 4. Règles spécifiques à Phaser (v4, API héritée de Phaser 3)
 
 ### Scene Manager, pas de bricolage
 - Toute scène hérite de `Phaser.Scene`, prend sa clé depuis `SceneKeys` et vit dans `src/scenes/`. Elle est enregistrée dans le tableau `scene` de `src/main.ts`.
@@ -72,7 +72,9 @@ Avant de déclarer une tâche terminée : `npm run check` **et** `npm run build`
 ### Divers Phaser
 - Entrées clavier via `KeyboardEvent.code` (ZQSD et WASD fonctionnent sans réglage) ; prévoir le tactile pour chaque action (voir `docs/GDD.md` § contrôles).
 - Positions et tailles entières (`roundPixels`), textes en police pixel, jamais de scale non entier sur un sprite.
-- La version de Phaser reste en **3.x** (`^3.90.0`) : ne pas migrer vers Phaser 4 sans décision explicite.
+- Version : **Phaser 4** (`^4.2.1`), décidée par le porteur du projet. Le paquet embarque sa doc de migration et ses guides : `node_modules/phaser/changelog/v4/4.0/MIGRATION-GUIDE.md`, `node_modules/phaser/docs/` et `node_modules/phaser/skills/`. Les consulter avant d'utiliser une API dont le comportement a pu changer depuis la v3.
+- Pièges v4 à connaître : `setTintFill()` n'existe plus (utiliser `setTint(c).setTintMode(Phaser.TintModes.FILL)`), `Geom.Point` est remplacé par `Math.Vector2`, les FX et masques deviennent des filtres, `Math.TAU` vaut désormais 2π, `Struct.Set/Map` sont des `Set`/`Map` natifs, le renderer Canvas est déprécié (WebGL partout), pas d'appel WebGL direct.
+- Pixel-art : la config est sous `render: { pixelArt: true, roundPixels: true }` (`roundPixels` vaut `false` par défaut en v4). L'arrondi des sommets ne s'applique qu'aux objets ni zoomés ni tournés : avec une caméra zoomée, régler `vertexRoundMode` au besoin (voir le guide pixel-art du paquet).
 
 ## 5. Workflow de développement d'une feature
 

@@ -18,8 +18,11 @@ const config: Phaser.Types.Core.GameConfig = {
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
   backgroundColor: COLORS.sncb.bgDeep,
-  pixelArt: true,
-  roundPixels: true,
+  // Phaser 4 : pixel-art net (antialias coupé + roundPixels). roundPixels vaut false par défaut en v4.
+  render: {
+    pixelArt: true,
+    roundPixels: true,
+  },
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
