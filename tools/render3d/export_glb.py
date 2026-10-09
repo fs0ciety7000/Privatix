@@ -43,6 +43,12 @@ CHARS = {
     "dirupo": ("dirupo", "model", "clips"),
     "borne": ("machines", "borne", "borne_clips"),
     "drone": ("machines", "drone", "drone_clips"),
+    "manager": ("manager", "model", "clips"),
+    "auditeur": ("auditeur", "model", "clips"),
+    "fluidifieur": ("fluidifieur", "model", "clips"),
+    "josiane": ("npcs", "josiane", "josiane_clips"),
+    "bene": ("npcs", "bene", "bene_clips"),
+    "kevin": ("npcs", "kevin", "kevin_clips"),
 }
 
 

@@ -480,6 +480,85 @@
       "bytes": 70500,
       "bytesRaw": 190336,
       "compression": "meshopt"
+    },
+    "manager": {
+      "file": "models/manager.glb",
+      "kind": "elite",
+      "height": 2.05,
+      "radius": 0.55,
+      "outline": "#06302C",
+      "rim": "#FFD84A",
+      "bones": 22,
+      "sockets": [
+        "socket_head",
+        "socket_weapon_R",
+        "socket_weapon_L",
+        "socket_back",
+        "socket_hip",
+        "socket_chest",
+        "socket_vfx",
+        "socket_glove_L",
+        "socket_foot_L",
+        "socket_glove_R",
+        "socket_foot_R",
+        "socket_chrono",
+        "socket_tablet"
+      ],
+      "runtimeBones": [],
+      "triangles": 10604,
+      "clips": {
+        "idle": {
+          "duration": 2.6,
+          "loop": true
+        },
+        "walk": {
+          "duration": 0.6,
+          "loop": true
+        },
+        "attack-report": {
+          "duration": 1.64,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 800,
+            "recovery": 940
+          }
+        },
+        "attack-chrono": {
+          "duration": 1.3,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 650,
+            "recovery": 900
+          }
+        },
+        "shield": {
+          "duration": 1.2,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 350,
+            "recovery": 900
+          }
+        },
+        "hurt": {
+          "duration": 0.32,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.5,
+          "loop": false
+        },
+        "spawn": {
+          "duration": 0.48,
+          "loop": false
+        }
+      },
+      "equipment": {},
+      "bytes": 279920,
+      "bytesRaw": 672080,
+      "compression": "meshopt"
     }
   },
   "items": {
