@@ -1,10 +1,11 @@
 """Scène Blender et rendu des passes (matières, lumière, normales) en basse résolution, sans lissage.
 
 Méthode Dead Cells : un modèle 3D rendu directement à la taille du sprite, puis converti en pixel art
-par post.py. Trois rendus par frame, tous en EXR flottant pour garder des valeurs exactes :
+par post.py. Quatre rendus par frame, tous en EXR flottant pour garder des valeurs exactes :
   - id      : chaque matière émet une couleur unique (1 échantillon, filtre minimal → bords nets) ;
   - light   : tout en blanc mat, éclairé (clé haut-gauche, contre-jour, ambiance) ;
-  - normal  : normales en espace caméra, encodées 0..1.
+  - normal  : normales en espace caméra, encodées 0..1 ;
+  - depth   : profondeur le long de l'axe de vue (m), pour l'encrage des lignes intérieures (style Hades).
 """
 from __future__ import annotations
 
@@ -111,6 +112,20 @@ def normal_material() -> bpy.types.Material:
     return mat
 
 
+def depth_material() -> bpy.types.Material:
+    """Émission = profondeur le long de l'axe de vue (m) : sert à l'encrage des lignes intérieures."""
+    mat = bpy.data.materials.new("depth_cam")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    nt.nodes.clear()
+    out = nt.nodes.new("ShaderNodeOutputMaterial")
+    cam = nt.nodes.new("ShaderNodeCameraData")
+    em = nt.nodes.new("ShaderNodeEmission")
+    nt.links.new(cam.outputs["View Z Depth"], em.inputs["Color"])
+    nt.links.new(em.outputs["Emission"], out.inputs["Surface"])
+    return mat
+
+
 def setup_lights(sc: bpy.types.Scene) -> list[bpy.types.Object]:
     """Clé chaude haut-gauche, contre-jour froid bas-droite, ambiance faible (pour la passe « light »)."""
     lights = []
@@ -162,11 +177,12 @@ class PassRenderer:
                 self.id_mats[mid] = emission_material(f"id_{mid}", (mid / 255.0, 0.0, 0.0))
         self.light_mat = light_material()
         self.normal_mat = normal_material()
+        self.depth_mat = depth_material()
         self.lights = setup_lights(sc)
 
     def _assign(self, which: str) -> None:
         for obj, mid in self.objects:
-            mat = self.id_mats[mid] if which == "id" else self.light_mat if which == "light" else self.normal_mat
+            mat = {"id": self.id_mats[mid], "light": self.light_mat, "normal": self.normal_mat, "depth": self.depth_mat}[which]
             obj.data.materials.clear()
             obj.data.materials.append(mat)
             obj.visible_shadow = which == "light" and not obj.get("no_shadow", False)
@@ -181,6 +197,8 @@ class PassRenderer:
         out["id"] = _render(sc, "id", 1)
         self._assign("normal")
         out["normal"] = _render(sc, "normal", 1)
+        self._assign("depth")
+        out["depth"] = _render(sc, "depth", 1)
         for l in self.lights:
             l.hide_render = False
         _set_world(sc, 0.25)

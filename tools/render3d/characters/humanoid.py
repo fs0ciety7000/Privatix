@@ -119,3 +119,29 @@ def base_pose(t: float = 0.0, breath: float = 1.0, extra: dict | None = None) ->
     }
     rot.update(extra or {})
     return pose(rot, root=(0, 0, -0.01 + 0.01 * s * breath))
+
+
+def arm_ik(body: Body, side: str, target: tuple[float, float, float], swivel: float = 0.0) -> dict:
+    """IK à deux os : rotations d'épaule (XYZ) et de coude (X) pour amener la main `side` sur `target`
+    (repère du buste / articulation chest). `swivel` (degrés) fait tourner le coude autour de l'axe
+    épaule → main (positif = coude vers l'extérieur)."""
+    from mathutils import Quaternion, Vector
+
+    sx = 1 if side == "L" else -1
+    s = Vector((body.shoulder_w * sx, 0.0, body.shoulder_z))
+    t = Vector(target) - s
+    a, b = body.upper, body.fore
+    d = max(1e-4, min(t.length, (a + b) * 0.999))
+    t = t.normalized() * d
+    # Angle intérieur au coude (loi des cosinus) → flexion vers l'avant
+    cos_in = (a * a + b * b - d * d) / (2 * a * b)
+    beta = math.pi - math.acos(max(-1.0, min(1.0, cos_in)))
+    local = Vector((0.0, -b * math.sin(beta), -a - b * math.cos(beta)))
+    q = local.rotation_difference(t)
+    if swivel:
+        q = Quaternion(t.normalized(), math.radians(swivel * sx)) @ q
+    e = q.to_euler("XYZ")
+    return {
+        f"shoulder_{side}": (math.degrees(e.x), math.degrees(e.y), math.degrees(e.z)),
+        f"elbow_{side}": (-math.degrees(beta), 0.0, 0.0),
+    }
