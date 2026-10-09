@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { DASH_ATTACK, HERO, PREAVIS, WHISTLE } from '@/config/balance';
 import type { HeroSim } from '@/sim/hero/HeroSim';
+import type { HeroActorView } from '@/view/actors/ActorView';
 import { pxToM, yawFromAngle } from '@/sim/units';
 import type { Flash } from '@/view/materials/toon';
 import { glow, makeFlash, PAL, sncbLogoTexture, toon } from '@/view/materials/toon';
@@ -32,8 +33,10 @@ const C = {
  */
 const NOMINAL_MS = [310, 310, 600] as const;
 
-export class HeroView {
+export class HeroView implements HeroActorView {
   public readonly rig = new Rig();
+  /** Le héros procédural n'a pas d'équipement interchangeable (voir GlbHeroView). */
+  public readonly equipment = null;
   public readonly flash: Flash = makeFlash();
   /** Position affichée (interpolée), au sol. */
   public readonly pos = new THREE.Vector3();
@@ -243,6 +246,10 @@ export class HeroView {
     r.cyl('hand_R', dark, [0, 0, L - 0.08], 0.095, 0.22, { ...p, rot: [90, 0, 0] });
     r.cyl('hand_R', steel, [0, 0, L + 0.04], 0.105, 0.05, { ...p, rot: [90, 0, 0] });
     return g;
+  }
+
+  public get root(): THREE.Object3D {
+    return this.rig.root;
   }
 
   /** Orientation affichée (rotation Y du modèle). */
