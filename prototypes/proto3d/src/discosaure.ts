@@ -209,6 +209,8 @@ export class Discosaure implements Foe {
       r.j('chest').add(sp);
     }
 
+    this.rig.optimize();
+
     // Socle doré de la boule (anneau + collier)
     const base = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.11, 10, 28), gold);
     base.rotation.x = Math.PI / 2;

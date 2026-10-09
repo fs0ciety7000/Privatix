@@ -217,6 +217,7 @@ export class Hero {
       r.j('hand_R').add(g);
     }
 
+    this.rig.optimize();
     this.addSilhouette();
     this.headLight = new THREE.PointLight(0xffc98a, 5, 7, 1.5);
     this.rig.root.add(this.headLight);

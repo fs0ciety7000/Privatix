@@ -22,6 +22,12 @@ export interface Level {
   wireY: number;
   wireZ: number;
   sparkLight: THREE.PointLight;
+  /** Lampes fixes du décor (ordre = canaux de cuisson). */
+  bakeLights: THREE.PointLight[];
+  /** Maillages statiques éclairés (toon) que l'on peut cuire. */
+  staticMeshes: THREE.Mesh[];
+  /** Coupe le grésillement du néon (réduction des mouvements). */
+  steady: boolean;
   update(t: number, dt: number): void;
 }
 
@@ -29,35 +35,39 @@ interface AddOpts {
   cast?: boolean;
   receive?: boolean;
   outline?: number; // largeur px, 0 = pas de contour
+  uv?: boolean; // garder les UV même sans texture (shaders maison)
+  order?: number; // renderOrder du maillage fusionné
 }
 
 class StaticBatch {
-  private buckets = new Map<string, { mat: THREE.Material; geos: THREE.BufferGeometry[]; cast: boolean; receive: boolean }>();
+  private buckets = new Map<string, { mat: THREE.Material; geos: THREE.BufferGeometry[]; cast: boolean; receive: boolean; order: number }>();
 
   add(geo: THREE.BufferGeometry, mat: THREE.Material, m: THREE.Matrix4, o: AddOpts = {}): void {
     const cast = o.cast ?? true;
     const receive = o.receive ?? true;
-    const key = `${mat.uuid}|${cast}|${receive}`;
+    const order = o.order ?? 0;
+    const key = `${mat.uuid}|${cast}|${receive}|${order}`;
     let b = this.buckets.get(key);
     if (!b) {
-      b = { mat, geos: [], cast, receive };
+      b = { mat, geos: [], cast, receive, order };
       this.buckets.set(key, b);
     }
-    b.geos.push(normalize(geo, m, (mat as THREE.MeshToonMaterial).map != null));
+    b.geos.push(normalize(geo, m, o.uv ?? (mat as THREE.MeshToonMaterial).map != null));
     const ow = o.outline ?? 2.2;
     if (ow > 0) {
       const om = outlineMat(ow);
       const okey = `${om.uuid}|o`;
       let ob = this.buckets.get(okey);
       if (!ob) {
-        ob = { mat: om, geos: [], cast: false, receive: false };
+        ob = { mat: om, geos: [], cast: false, receive: false, order: 0 };
         this.buckets.set(okey, ob);
       }
       ob.geos.push(normalize(outlineGeo(geo), m, false));
     }
   }
 
-  build(parent: THREE.Object3D): void {
+  build(parent: THREE.Object3D): THREE.Mesh[] {
+    const out: THREE.Mesh[] = [];
     for (const b of this.buckets.values()) {
       const g = mergeGeometries(b.geos, false);
       if (!g) continue;
@@ -65,8 +75,12 @@ class StaticBatch {
       const mesh = new THREE.Mesh(g, b.mat);
       mesh.castShadow = b.cast;
       mesh.receiveShadow = b.receive;
+      mesh.renderOrder = b.order;
       parent.add(mesh);
+      out.push(mesh);
     }
+    this.buckets.clear();
+    return out;
   }
 }
 
@@ -380,7 +394,10 @@ export function buildLevel(scene: THREE.Scene): Level {
     batch.add(BOX(1.3, 0.4, 14.2, 0.06), mIron, mat4(sx * 18.2, 0.2, 2.2), { outline: 2.4 });
   }
 
-  batch.build(group);
+  const staticMeshes = batch.build(group);
+  // Second lot : décor posé après coup (panneaux, train, suspensions), fusionné lui aussi.
+  const deco = new StaticBatch();
+  const NO = { cast: false, receive: false, outline: 0 } as const;
 
   // ── Panneaux et néons (émissifs) ──
   const emissivePlane = (tex: THREE.Texture, w: number, h: number, x: number, y: number, z: number, intensity: number, ry = 0, rx = 0) => {
@@ -454,16 +471,20 @@ export function buildLevel(scene: THREE.Scene): Level {
     });
   const adA = ad('PRIVATIX', 'Optimisons vos trajets.*', '* sous réserve de rentabilité', '#5a0f3e', '#ff6ec0', '#ff3ea5');
   const adB = ad('MODERNISATION', 'Votre gare, bientôt plus agile.', 'Plan Mons 2032 · merci de votre patience.', '#0d4a52', '#5ff7e4', '#19c3b1');
+  const adMats = new Map<THREE.Texture, THREE.MeshBasicMaterial>();
   for (const [tex, x] of [
     [adA, -9.5],
     [adB, 9.5],
     [adB, -26],
     [adA, 26],
   ] as const) {
-    const frame = new THREE.Mesh(rboxGeo(4.0, 2.6, 0.18, 0.05), mIronDark);
-    frame.position.set(x, 2.9, WALL_Z + 0.1);
-    group.add(frame);
-    emissivePlane(tex, 3.7, 2.3, x, 2.9, WALL_Z + 0.2, 1.5);
+    deco.add(rboxGeo(4.0, 2.6, 0.18, 0.05), mIronDark, mat4(x, 2.9, WALL_Z + 0.1), NO);
+    let am = adMats.get(tex);
+    if (!am) {
+      am = new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(1.5, 1.5, 1.5), transparent: true });
+      adMats.set(tex, am);
+    }
+    deco.add(new THREE.PlaneGeometry(3.7, 2.3), am, mat4(x, 2.9, WALL_Z + 0.2), NO);
   }
 
   // Panneau de gare « MONS » sur les piliers
@@ -479,17 +500,12 @@ export function buildLevel(scene: THREE.Scene): Level {
     g.textBaseline = 'middle';
     g.fillText('MONS', w / 2, h / 2 + 4);
   });
+  const monsMat = new THREE.MeshBasicMaterial({ map: monsTex, color: new THREE.Color(1.05, 1.05, 1.05) });
+  const pillarLogoMat = new THREE.MeshBasicMaterial({ map: sncbLogoTexture(), transparent: true, color: new THREE.Color(1.3, 1.3, 1.3) });
   for (const x of [-7.5, 7.5]) {
-    const board = new THREE.Mesh(rboxGeo(2.4, 0.66, 0.1, 0.03), mIronDark);
-    board.position.set(x, 3.4, PILLAR_Z + 0.32);
-    board.castShadow = true;
-    group.add(board);
-    const face = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 0.58), new THREE.MeshBasicMaterial({ map: monsTex, color: new THREE.Color(1.05, 1.05, 1.05) }));
-    face.position.set(x, 3.4, PILLAR_Z + 0.38);
-    group.add(face);
-    const logo = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.41), new THREE.MeshBasicMaterial({ map: sncbLogoTexture(), transparent: true, color: new THREE.Color(1.3, 1.3, 1.3) }));
-    logo.position.set(x - 1.65, 3.4, PILLAR_Z + 0.36);
-    group.add(logo);
+    deco.add(rboxGeo(2.4, 0.66, 0.1, 0.03), mIronDark, mat4(x, 3.4, PILLAR_Z + 0.32), { cast: true, receive: false, outline: 0 });
+    deco.add(new THREE.PlaneGeometry(2.3, 0.58), monsMat, mat4(x, 3.4, PILLAR_Z + 0.38), NO);
+    deco.add(new THREE.PlaneGeometry(0.62, 0.41), pillarLogoMat, mat4(x - 1.65, 3.4, PILLAR_Z + 0.36), NO);
   }
 
   // ── Train garé sur la voie (à gauche) ──
@@ -506,43 +522,24 @@ export function buildLevel(scene: THREE.Scene): Level {
       [-23.6, 15],
       [-38.8, 15],
     ] as const;
+    const trainLogoMat = new THREE.MeshBasicMaterial({ map: sncbLogoTexture(), transparent: true });
+    const CAST = { cast: true, receive: false, outline: 0 } as const;
     for (const [cx, L] of cars) {
-      const body = new THREE.Mesh(rboxGeo(L, 2.7, 2.9, 0.35), mWhite);
-      body.position.set(cx, ty + 1.75, tz);
-      body.castShadow = true;
-      group.add(body);
-      const band = new THREE.Mesh(rboxGeo(L + 0.02, 0.5, 2.94, 0.05), mBlue);
-      band.position.set(cx, ty + 0.75, tz);
-      group.add(band);
-      const roof = new THREE.Mesh(rboxGeo(L - 0.6, 0.3, 2.3, 0.12), mRoof);
-      roof.position.set(cx, ty + 3.2, tz);
-      group.add(roof);
+      deco.add(rboxGeo(L, 2.7, 2.9, 0.35), mWhite, mat4(cx, ty + 1.75, tz), CAST);
+      deco.add(rboxGeo(L + 0.02, 0.5, 2.94, 0.05), mBlue, mat4(cx, ty + 0.75, tz), NO);
+      deco.add(rboxGeo(L - 0.6, 0.3, 2.3, 0.12), mRoof, mat4(cx, ty + 3.2, tz), NO);
       for (let i = 0; i < 6; i++) {
         const wx = cx - L / 2 + 1.6 + i * ((L - 3.2) / 5);
-        const win = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.75), i % 2 ? winMat : mGlass);
-        win.position.set(wx, ty + 2.15, tz + 1.46);
-        group.add(win);
+        deco.add(new THREE.PlaneGeometry(1.5, 0.75), i % 2 ? winMat : mGlass, mat4(wx, ty + 2.15, tz + 1.46), NO);
       }
-      const door = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.9), mYellowT);
-      door.position.set(cx + 0.2, ty + 1.45, tz + 1.47);
-      group.add(door);
-      const logo = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 0.76), new THREE.MeshBasicMaterial({ map: sncbLogoTexture(), transparent: true }));
-      logo.position.set(cx + 2.4, ty + 1.3, tz + 1.47);
-      group.add(logo);
+      deco.add(new THREE.PlaneGeometry(0.9, 1.9), mYellowT, mat4(cx + 0.2, ty + 1.45, tz + 1.47), NO);
+      deco.add(new THREE.PlaneGeometry(1.15, 0.76), trainLogoMat, mat4(cx + 2.4, ty + 1.3, tz + 1.47), NO);
     }
     // cabine (nez du train) et phares
-    const nose = new THREE.Mesh(rboxGeo(1.2, 2.5, 2.8, 0.5), mYellowT);
-    nose.position.set(-15.7, ty + 1.65, tz);
-    nose.castShadow = true;
-    group.add(nose);
-    const wind = new THREE.Mesh(rboxGeo(0.3, 0.9, 2.3, 0.1), mGlass);
-    wind.position.set(-15.25, ty + 2.4, tz);
-    group.add(wind);
-    for (const dz of [-0.9, 0.9]) {
-      const hl = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), glow(0xfff2c8, 6));
-      hl.position.set(-15.12, ty + 0.9, tz + dz);
-      group.add(hl);
-    }
+    deco.add(rboxGeo(1.2, 2.5, 2.8, 0.5), mYellowT, mat4(-15.7, ty + 1.65, tz), CAST);
+    deco.add(rboxGeo(0.3, 0.9, 2.3, 0.1), mGlass, mat4(-15.25, ty + 2.4, tz), NO);
+    const hlMat = glow(0xfff2c8, 6);
+    for (const dz of [-0.9, 0.9]) deco.add(new THREE.SphereGeometry(0.14, 10, 8), hlMat, mat4(-15.12, ty + 0.9, tz + dz), NO);
   }
 
   // Tableau des départs suspendu
@@ -566,19 +563,11 @@ export function buildLevel(scene: THREE.Scene): Level {
     const bx = -11.25;
     const by = 3.9;
     const bz = -2.6;
-    const housing = new THREE.Mesh(rboxGeo(5.4, 1.5, 0.3, 0.06), mIronDark);
-    housing.position.set(bx, by, bz);
-    housing.rotation.x = -0.35;
-    housing.castShadow = true;
-    group.add(housing);
+    deco.add(rboxGeo(5.4, 1.5, 0.3, 0.06), mIronDark, mat4(bx, by, bz, 0, -0.35), { cast: true, receive: false, outline: 0 });
     const face = emissivePlane(boardTex, 5.1, 1.28, bx, by, bz, 2.0, 0, -0.35);
     face.position.z += 0.16 * Math.cos(0.35);
     face.position.y += 0.16 * Math.sin(0.35);
-    for (const dx of [-2, 2]) {
-      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 8, 5), mWire);
-      rod.position.set(bx + dx, by + 4.6, bz - 0.2);
-      group.add(rod);
-    }
+    for (const dx of [-2, 2]) deco.add(new THREE.CylinderGeometry(0.03, 0.03, 8, 5), mWire, mat4(bx + dx, by + 4.6, bz - 0.2), NO);
   }
 
   // ── Suspensions (lampes de quai) : abat-jour, ampoule, cône de lumière, flaque au sol ──
@@ -605,35 +594,21 @@ export function buildLevel(scene: THREE.Scene): Level {
     blending: THREE.AdditiveBlending,
   });
   const LAMP_Y = 4.5;
+  const bakeLights: THREE.PointLight[] = [];
+  mLampShade.side = THREE.DoubleSide;
+  const poolMat = new THREE.MeshBasicMaterial({ map: poolTex, color: new THREE.Color(0xffa040).multiplyScalar(0.35), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const poolMatFar = new THREE.MeshBasicMaterial({ map: poolTex, color: new THREE.Color(0xffa040).multiplyScalar(0.25), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
   for (const [x, z] of lampPos) {
-    const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.46, 0.36, 16, 1, true), mLampShade);
-    shade.position.set(x, LAMP_Y + 0.12, z);
-    shade.castShadow = false;
-    (shade.material as THREE.Material).side = THREE.DoubleSide;
-    group.add(shade);
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 0.14, 12), mLampShade);
-    cap.position.set(x, LAMP_Y + 0.38, z);
-    group.add(cap);
-    const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 9, 4), mWire);
-    cord.position.set(x, LAMP_Y + 4.9, z);
-    group.add(cord);
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8), bulbMat);
-    bulb.position.set(x, LAMP_Y - 0.02, z);
-    group.add(bulb);
-    const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 2.9, LAMP_Y, 24, 1, true), coneMat);
-    cone.position.set(x, LAMP_Y / 2, z);
-    cone.renderOrder = 3;
-    group.add(cone);
-    const pool = new THREE.Mesh(
-      new THREE.PlaneGeometry(6.5, 6.5).rotateX(-Math.PI / 2),
-      new THREE.MeshBasicMaterial({ map: poolTex, color: new THREE.Color(0xffa040).multiplyScalar(0.35), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }),
-    );
-    pool.position.set(x, 0.02, z);
-    pool.renderOrder = 2;
-    group.add(pool);
+    deco.add(new THREE.CylinderGeometry(0.16, 0.46, 0.36, 16, 1, true), mLampShade, mat4(x, LAMP_Y + 0.12, z), NO);
+    deco.add(new THREE.CylinderGeometry(0.12, 0.18, 0.14, 12), mLampShade, mat4(x, LAMP_Y + 0.38, z), NO);
+    deco.add(new THREE.CylinderGeometry(0.015, 0.015, 9, 4), mWire, mat4(x, LAMP_Y + 4.9, z), NO);
+    deco.add(new THREE.SphereGeometry(0.16, 12, 8), bulbMat, mat4(x, LAMP_Y - 0.02, z), NO);
+    deco.add(new THREE.CylinderGeometry(0.4, 2.9, LAMP_Y, 24, 1, true), coneMat, mat4(x, LAMP_Y / 2, z), { ...NO, uv: true, order: 3 });
+    deco.add(new THREE.PlaneGeometry(6.5, 6.5).rotateX(-Math.PI / 2), poolMat, mat4(x, 0.02, z), { ...NO, order: 2 });
     const light = new THREE.PointLight(0xffa64d, 40, 14, 1.6);
     light.position.set(x, LAMP_Y - 0.3, z);
     group.add(light);
+    bakeLights.push(light);
     lamps.push(new THREE.Vector3(x, LAMP_Y, z));
   }
 
@@ -642,13 +617,8 @@ export function buildLevel(scene: THREE.Scene): Level {
     const l = new THREE.PointLight(0xffb070, 20, 12, 1.6);
     l.position.set(x, 4.2, 5.2);
     group.add(l);
-    const pool = new THREE.Mesh(
-      new THREE.PlaneGeometry(7, 7).rotateX(-Math.PI / 2),
-      new THREE.MeshBasicMaterial({ map: poolTex, color: new THREE.Color(0xffa040).multiplyScalar(0.25), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }),
-    );
-    pool.position.set(x, 0.02, 5.2);
-    pool.renderOrder = 2;
-    group.add(pool);
+    bakeLights.push(l);
+    deco.add(new THREE.PlaneGeometry(7, 7).rotateX(-Math.PI / 2), poolMatFar, mat4(x, 0.02, 5.2), { ...NO, order: 2 });
   }
 
   // Lumières d'ambiance colorées (néons) sans ombre
@@ -658,6 +628,9 @@ export function buildLevel(scene: THREE.Scene): Level {
   const tealLight = new THREE.PointLight(0x19c3b1, 18, 18, 1.5);
   tealLight.position.set(-16, 3, RAIL_Z);
   group.add(tealLight);
+  bakeLights.push(magentaLight, tealLight);
+
+  staticMeshes.push(...deco.build(group));
 
   // Lumière d'étincelle de caténaire (flash bref)
   const sparkLight = new THREE.PointLight(0x9fe8ff, 0, 10, 1.6);
@@ -666,7 +639,7 @@ export function buildLevel(scene: THREE.Scene): Level {
 
   void R;
 
-  return {
+  const level: Level = {
     group,
     colliders,
     bounds: { minX: -17.2, maxX: 17.2, minZ: EDGE_Z + 0.75, maxZ: 8.6 },
@@ -674,13 +647,17 @@ export function buildLevel(scene: THREE.Scene): Level {
     wireY: WIRE_Y,
     wireZ: RAIL_Z,
     sparkLight,
+    bakeLights,
+    staticMeshes: staticMeshes.filter((m) => m.material instanceof THREE.MeshToonMaterial),
+    steady: false,
     update(t: number) {
-      // néon qui grésille parfois
-      const flick = Math.sin(t * 37) > 0.97 || (Math.sin(t * 0.7) > 0.995 && Math.sin(t * 53) > 0);
+      // néon qui grésille parfois (coupé en réduction des mouvements)
+      const flick = !level.steady && (Math.sin(t * 37) > 0.97 || (Math.sin(t * 0.7) > 0.995 && Math.sin(t * 53) > 0));
       (neon.material as THREE.MeshBasicMaterial).color.setScalar(flick ? 0.6 : 2.6);
       magentaLight.intensity = flick ? 8 : 30;
     },
   };
+  return level;
 }
 
 const toonStore = new Map<string, THREE.MeshToonMaterial>();

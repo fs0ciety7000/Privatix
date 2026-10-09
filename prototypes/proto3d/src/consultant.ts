@@ -150,6 +150,8 @@ export class Consultant implements Foe {
     logo.position.set(0, 0.029, 0.14);
     r.j('lid').add(logo);
 
+    this.rig.optimize();
+
     // Barre de vie flottante
     this.hpBar = new THREE.Group();
     const bg = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.09), new THREE.MeshBasicMaterial({ color: 0x14101a, transparent: true, opacity: 0.85, depthTest: false }));

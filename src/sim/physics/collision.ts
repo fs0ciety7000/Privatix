@@ -27,7 +27,7 @@ export interface MoveResult {
 }
 
 const EPS = 1e-6;
-const MAX_ITER = 4;
+const MAX_ITER = 6;
 
 /**
  * Sort le cercle des tuiles pleines qu'il chevauche. Renvoie la normale cumulée des poussées
@@ -37,8 +37,17 @@ export function resolveCircleGrid(grid: TileGrid, body: CircleBody): { nx: numbe
   let nx = 0;
   let ny = 0;
   const s = grid.tileSize;
+  // On résout d'abord la pénétration la plus profonde : un mur plat se règle par sa face, sans que
+  // le coin d'une tuile voisine ne pousse en biais (accroche aux jointures).
   for (let iter = 0; iter < MAX_ITER; iter += 1) {
-    let moved = false;
+    let best = -1;
+    let bx = 0;
+    let by = 0;
+    let bcx = 0;
+    let bcy = 0;
+    let bInside = false;
+    let bLeft = 0;
+    let bTop = 0;
     const tx0 = Math.floor((body.x - body.r) / s);
     const tx1 = Math.floor((body.x + body.r) / s);
     const ty0 = Math.floor((body.y - body.r) / s);
@@ -54,34 +63,44 @@ export function resolveCircleGrid(grid: TileGrid, body: CircleBody): { nx: numbe
         const dy = body.y - cy;
         const d2 = dx * dx + dy * dy;
         if (d2 >= body.r * body.r - EPS) continue;
-        let px: number;
-        let py: number;
-        if (d2 > EPS) {
-          const d = Math.sqrt(d2);
-          px = dx / d;
-          py = dy / d;
-          body.x = cx + px * body.r;
-          body.y = cy + py * body.r;
-        } else {
-          // Centre dans la tuile : on sort par le côté le plus proche.
-          const outL = body.x - left;
-          const outR = left + s - body.x;
-          const outT = body.y - top;
-          const outB = top + s - body.y;
-          const m = Math.min(outL, outR, outT, outB);
-          px = m === outL ? -1 : m === outR ? 1 : 0;
-          py = px !== 0 ? 0 : m === outT ? -1 : 1;
-          if (px < 0) body.x = left - body.r;
-          else if (px > 0) body.x = left + s + body.r;
-          else if (py < 0) body.y = top - body.r;
-          else body.y = top + s + body.r;
-        }
-        nx += px;
-        ny += py;
-        moved = true;
+        const inside = d2 <= EPS;
+        const depth = inside ? body.r + s : body.r - Math.sqrt(d2);
+        if (depth <= best) continue;
+        best = depth;
+        bx = dx;
+        by = dy;
+        bcx = cx;
+        bcy = cy;
+        bInside = inside;
+        bLeft = left;
+        bTop = top;
       }
     }
-    if (!moved) break;
+    if (best < 0) break;
+    let px: number;
+    let py: number;
+    if (!bInside) {
+      const d = Math.hypot(bx, by);
+      px = bx / d;
+      py = by / d;
+      body.x = bcx + px * body.r;
+      body.y = bcy + py * body.r;
+    } else {
+      // Centre dans la tuile : on sort par le côté le plus proche.
+      const outL = body.x - bLeft;
+      const outR = bLeft + s - body.x;
+      const outT = body.y - bTop;
+      const outB = bTop + s - body.y;
+      const m = Math.min(outL, outR, outT, outB);
+      px = m === outL ? -1 : m === outR ? 1 : 0;
+      py = px !== 0 ? 0 : m === outT ? -1 : 1;
+      if (px < 0) body.x = bLeft - body.r;
+      else if (px > 0) body.x = bLeft + s + body.r;
+      else if (py < 0) body.y = bTop - body.r;
+      else body.y = bTop + s + body.r;
+    }
+    nx += px;
+    ny += py;
   }
   return { nx, ny };
 }

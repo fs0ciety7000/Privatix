@@ -2,18 +2,6 @@
 // ondes de choc, éclairs d'impact, nombres de dégâts.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { fxFlags } from './quality';
-
-/** Éclaircit les émissions selon la densité du preset (accumulateur : répartition régulière). */
-let densityAcc = 0;
-function keepParticle(): boolean {
-  const d = fxFlags.particles;
-  if (d >= 1) return true;
-  densityAcc += d;
-  if (densityAcc < 1) return false;
-  densityAcc -= 1;
-  return true;
-}
 
 // ─── Étincelles (quads étirés le long de la vitesse, additifs) ──────────────────
 
@@ -111,7 +99,6 @@ export class Sparks {
   }
 
   emit(pos: THREE.Vector3, vel: THREE.Vector3, color: THREE.Color | number, life: number, size: number, grav = 9, drag = 1.5, bounce = true): void {
-    if (!keepParticle()) return;
     const s = this.ps[this.next];
     this.next = (this.next + 1) % this.cap;
     s.p.copy(pos);
@@ -256,7 +243,6 @@ export class Puffs {
   }
 
   emit(pos: THREE.Vector3, vel: THREE.Vector3, color: number | THREE.Color, life: number, size: number, o: { grow?: number; grav?: number; drag?: number; alpha?: number; shape?: number } = {}): void {
-    if (!keepParticle()) return;
     const s = this.ps[this.next];
     this.next = (this.next + 1) % this.cap;
     s.p.copy(pos);
@@ -766,8 +752,7 @@ export class Shake {
   readonly offset = new THREE.Vector3();
 
   add(amount: number): void {
-    // réduction des mouvements : secousses nettement atténuées (le retour de coup reste perceptible)
-    this.trauma = Math.min(1, Math.max(this.trauma, amount * fxFlags.shake));
+    this.trauma = Math.min(1, Math.max(this.trauma, amount));
   }
 
   update(dt: number): void {

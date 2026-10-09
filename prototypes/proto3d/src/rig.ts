@@ -4,7 +4,8 @@
 //  - membre pendant (bras, jambe) : X < 0 le porte vers l'avant, Z > 0 l'écarte vers +X ;
 //  - tronc / tête : X > 0 penche vers l'avant ; Y = rotation sur soi (vers sa gauche).
 import * as THREE from 'three';
-import { addOutline, capsuleGeo, cylGeo, hemiGeo, rboxGeo, sphereGeo } from './toon';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { addOutline, capsuleGeo, cylGeo, hemiGeo, outlineGeo, outlineMat, rboxGeo, sphereGeo } from './toon';
 
 export type V3 = [number, number, number];
 
@@ -55,7 +56,11 @@ export class Rig {
     if (opts.scale) m.scale.set(opts.scale[0], opts.scale[1], opts.scale[2]);
     m.castShadow = opts.shadow ?? true;
     m.receiveShadow = true;
-    if (opts.outline !== false) addOutline(m, opts.outlineWidth ?? this.outlineWidth);
+    if (opts.outline !== false) {
+      const w = opts.outlineWidth ?? this.outlineWidth;
+      addOutline(m, w);
+      m.userData.outlineWidth = w;
+    }
     (opts.parent ?? this.j(jointName)).add(m);
     this.meshes.push(m);
     return m;
@@ -88,6 +93,67 @@ export class Rig {
     return m;
   }
 
+  /**
+   * Fusionne les pièces rigides portées par un même parent (articulation ou groupe d'équipement)
+   * qui partagent matériau, ombres et contour : une pièce = 1 appel de rendu + 1 pour sa coque
+   * + 1 dans la passe d'ombre ; après fusion, c'est une fois par matériau et par articulation.
+   * À appeler une fois le personnage construit, avant tout traitement qui parcourt ses maillages.
+   */
+  optimize(): void {
+    const groups = new Map<string, THREE.Mesh[]>();
+    for (const m of this.meshes) {
+      const p = m.parent;
+      if (!p || m.userData.noMerge || (m.material as THREE.MeshToonMaterial).map) continue;
+      // seule la coque de contour est tolérée comme enfant
+      if (m.children.some((c) => !c.userData.outline)) continue;
+      const key = `${p.uuid}|${(m.material as THREE.Material).uuid}|${m.castShadow}|${m.receiveShadow}|${m.userData.outlineWidth ?? 0}|${m.geometry.index ? 1 : 0}`;
+      let g = groups.get(key);
+      if (!g) groups.set(key, (g = []));
+      g.push(m);
+    }
+    const kept: THREE.Mesh[] = [];
+    const merged = new Set<THREE.Mesh>();
+    for (const list of groups.values()) {
+      if (list.length < 2) continue;
+      const parent = list[0].parent as THREE.Object3D;
+      const geos: THREE.BufferGeometry[] = [];
+      const oGeos: THREE.BufferGeometry[] = [];
+      for (const m of list) {
+        m.updateMatrix();
+        geos.push(strip(m.geometry).applyMatrix4(m.matrix));
+        if (m.userData.outlineWidth) oGeos.push(outlineGeo(m.geometry).clone().applyMatrix4(m.matrix));
+      }
+      const g = mergeGeometries(geos, false);
+      if (!g) continue;
+      g.computeBoundingSphere();
+      const first = list[0];
+      const mesh = new THREE.Mesh(g, first.material);
+      mesh.castShadow = first.castShadow;
+      mesh.receiveShadow = first.receiveShadow;
+      const w = first.userData.outlineWidth as number | undefined;
+      if (w) {
+        const og = mergeGeometries(oGeos, false);
+        if (og) {
+          const o = new THREE.Mesh(og, outlineMat(w));
+          o.castShadow = false;
+          o.receiveShadow = false;
+          o.userData.outline = true;
+          o.raycast = () => undefined;
+          mesh.add(o);
+        }
+        mesh.userData.outlineWidth = w;
+      }
+      for (const m of list) {
+        parent.remove(m);
+        merged.add(m);
+      }
+      parent.add(mesh);
+      kept.push(mesh);
+    }
+    for (let i = this.meshes.length - 1; i >= 0; i--) if (merged.has(this.meshes[i])) this.meshes.splice(i, 1);
+    this.meshes.push(...kept);
+  }
+
   /** Applique une pose en amortissant vers elle (k élevé = pose quasi immédiate). */
   apply(p: Pose, dt: number, k: number): void {
     const t = k <= 0 ? 1 : 1 - Math.exp(-k * dt);
@@ -118,6 +184,16 @@ export class Rig {
   punchScale(s: V3): void {
     this.curScale = [s[0], s[1], s[2]];
   }
+}
+
+/** Copie position + normale (+ index) : les UV ne servent pas aux matériaux toon unis. */
+function strip(src: THREE.BufferGeometry): THREE.BufferGeometry {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', src.getAttribute('position').clone());
+  const n = src.getAttribute('normal');
+  if (n) g.setAttribute('normal', n.clone());
+  if (src.index) g.setIndex(src.index.clone());
+  return g;
 }
 
 export interface PartOpts {
