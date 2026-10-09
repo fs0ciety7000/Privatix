@@ -22,3 +22,6 @@ prototypes/*/node_modules
 
 # Worktrees des agents (copies de travail isolées)
 .claude/worktrees/
+
+# Sorties de génération ElevenLabs (tools/elevenlabs/generate.mjs)
+tools/elevenlabs/out/
