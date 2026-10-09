@@ -560,9 +560,10 @@ describe('Elio Di Rupo (boss du biome 2)', () => {
     play(w, DIRUPO.BOWTIE_TELEGRAPH_MS + 300);
     expect(boss.bowtie).not.toBeNull();
     let back = false;
+    const returning = (): boolean => boss.bowtie?.back ?? false;
     for (let t = 0; t < 3000 && boss.bowtie; t += 50) {
       play(w, 50);
-      back ||= boss.bowtie?.back ?? false;
+      back ||= returning();
     }
     expect(back).toBe(true);
     expect(boss.bowtie).toBeNull();
@@ -652,6 +653,18 @@ describe('Elio Di Rupo (boss du biome 2)', () => {
     expect(line?.type === 'bossLine' && line.fictive).toBe(true);
     const later = play(w, DIRUPO.PREAVIS_TALKS_MS - 1200);
     expect(later.some((e) => e.type === 'enemyStrike')).toBe(false);
+  });
+
+  it('vaincu, ses promesses encore armées disparaissent (rien ne blesse après)', () => {
+    const { w, boss } = stage();
+    boss.debugAttack('promises');
+    play(w, 600);
+    expect(w.hazards.some((h) => h.spec.kind === 'circle' && h.spec.skin === 'promise')).toBe(true);
+    boss.debugKill();
+    play(w, 50);
+    expect(w.hazards.some((h) => h.spec.kind === 'circle' && h.spec.skin === 'promise')).toBe(
+      false,
+    );
   });
 
   it('défaite : temps de parole épuisé, confettis (jamais d’explosion)', () => {

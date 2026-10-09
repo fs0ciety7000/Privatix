@@ -34,6 +34,8 @@ export interface RoomTheme {
   readonly neon: string;
   readonly neonColor: string;
   readonly neonLight: number;
+  /** Éclat du néon (émissif) et de sa lumière. */
+  readonly neonGlow: number;
   /** Tube lumineux sous la corniche. */
   readonly tube: number;
   readonly ads: readonly AdSpec[];
@@ -79,6 +81,7 @@ export const ROOM_THEMES: Readonly<Record<BiomeIndex, RoomTheme>> = {
     neon: 'PRIVATIX',
     neonColor: '#ff6ec0',
     neonLight: 0xff3ea5,
+    neonGlow: 2.6,
     tube: 0x19c3b1,
     ads: PRIVATIX_ADS,
     lamp: 0xffa64d,
@@ -109,6 +112,7 @@ export const ROOM_THEMES: Readonly<Record<BiomeIndex, RoomTheme>> = {
     neon: 'MONS 2032',
     neonColor: '#ffd27a',
     neonLight: 0xffb35a,
+    neonGlow: 1.5,
     tube: 0xfff0d8,
     ads: [
       {
@@ -128,11 +132,11 @@ export const ROOM_THEMES: Readonly<Record<BiomeIndex, RoomTheme>> = {
         accent: '#ff7a5a',
       },
     ],
-    lamp: 0xffe2c8,
-    lampIntensity: 14,
-    pool: 0xffc8a0,
-    pillar: 0xd4d8e4,
-    pillarDark: 0x8a92aa,
+    lamp: 0xffd8c0,
+    lampIntensity: 10,
+    pool: 0xb08870,
+    pillar: 0xa8aec2,
+    pillarDark: 0x6a7088,
     pillarH: 4.4,
     lowWall: 0xa8b0c4,
     trim: 0xf4f6fb,
@@ -155,7 +159,8 @@ export const ROOM_THEMES: Readonly<Record<BiomeIndex, RoomTheme>> = {
     wall: 'panel',
     neon: 'PRIVATIX',
     neonColor: '#c89bff',
-    neonLight: 0xb05cff,
+    neonLight: 0x6ff3ff,
+    neonGlow: 1.4,
     tube: 0xe8f0ff,
     ads: [
       {

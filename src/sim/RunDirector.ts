@@ -2,6 +2,7 @@ import type { EnemyKind, RewardKind } from '@/config/balance';
 import {
   BURNOUT,
   COFFEE,
+  ENEMY_NAMES,
   ENVIRONMENT,
   FURET,
   REST,
@@ -926,6 +927,11 @@ export class RunDirector {
       heavy,
     };
     for (const h of this.hooks) h.onEnemyKilled?.(info);
+    // Boss ou ennemi majeur vaincu : ses zones encore armées disparaissent (rien ne blesse après).
+    if (heavy) {
+      const owner = ENEMY_NAMES[kind];
+      for (const z of this.world.hazards) if (z.spec.owner === owner) z.finish();
+    }
     if (this.boss?.isDead && kind === this.boss.kind) this.onBossDefeated(this.boss);
   }
 

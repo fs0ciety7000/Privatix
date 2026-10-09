@@ -422,6 +422,11 @@ export class RoomView {
   private readonly dance: { mat: THREE.MeshBasicMaterial; hue: number }[] = [];
   private neonBright = 2.6;
 
+  /** Puissance de la lumière du néon (22 sur les quais, plus douce ailleurs). */
+  private get neonPower(): number {
+    return (22 * this.neonBright) / 2.6;
+  }
+
   public constructor(
     private readonly layout: RoomLayout,
     quality: QualityPreset,
@@ -431,6 +436,7 @@ export class RoomView {
     this.flickerOn = !reducedMotion;
     const theme = ROOM_THEMES[opts.biome ?? 0];
     this.theme = theme;
+    this.neonBright = theme.neonGlow;
     if (opts.lights) applyAmbience(opts.lights, ambienceFor(theme, layout.id));
     const W = layout.width * T;
     const H = layout.height * T;
@@ -879,12 +885,19 @@ export class RoomView {
       pool.position.set(x, 0.015, z);
       pool.renderOrder = 2;
       this.group.add(pool);
-      const light = new THREE.PointLight(theme.lamp, theme.lampIntensity, 11, 1.6);
+      // Afterwork : néons éteints, seules quelques lampes froides (la boule éclaire le reste).
+      const dark = layout.id === 'afterwork';
+      const light = new THREE.PointLight(
+        dark ? 0x6a7aff : theme.lamp,
+        dark ? theme.lampIntensity * 0.45 : theme.lampIntensity,
+        11,
+        1.6,
+      );
       light.position.set(x, LAMP_Y - 0.3, z);
       this.group.add(light);
     }
     // Lumière magenta du néon (sans ombre), toujours présente : compte dans le budget fixe.
-    this.neonLight = new THREE.PointLight(theme.neonLight, 22, 12, 1.6);
+    this.neonLight = new THREE.PointLight(theme.neonLight, this.neonPower, 12, 1.6);
     this.neonLight.position.set(W / 2, 2.6, wallFace + 1.8);
     this.group.add(this.neonLight);
     this.group.add(this.doorSigns);
@@ -1107,18 +1120,20 @@ export class RoomView {
             batch.add(BOX(T, 0.08, T * 1.4, 0.02), mTable, mat4(cx, 0.76, cz), { outline: 1.8 });
             continue;
           }
-          batch.add(BOX(T * 0.98, 1.05, T * 0.7, 0.02), mShelf, mat4(cx, 0.525, cz), {
-            outline: 2,
-          });
+          // Rayonnage ouvert : montants, deux tablettes, cartons d'archives dessus.
+          for (const dx of [-T * 0.46, T * 0.46])
+            batch.add(BOX(0.05, 1.1, T * 0.7, 0), mShelf, mat4(cx + dx, 0.55, cz), {
+              outline: 1.4,
+            });
+          for (const y of [0.08, 0.55, 1.05])
+            batch.add(BOX(T * 0.98, 0.04, T * 0.7, 0), mShelf, mat4(cx, y, cz), { outline: 1.4 });
           for (let i = 0; i < 2; i += 1) {
             const m = R() < 0.4 ? mBoxA : R() < 0.5 ? mBoxB : mBoxC;
             batch.add(
               BOX(T * 0.42, 0.3, T * 0.5, 0.02),
               m,
-              mat4(cx + (R() - 0.5) * 0.2, 0.25 + i * 0.48, cz),
-              {
-                outline: 1.2,
-              },
+              mat4(cx + (R() - 0.5) * 0.2, 0.25 + i * 0.47, cz),
+              { outline: 1.2 },
             );
           }
         } else if (k === 'chair') {
@@ -1297,7 +1312,7 @@ export class RoomView {
       this.flickerOn &&
       (Math.sin(time * 37) > 0.97 || (Math.sin(time * 0.7) > 0.995 && Math.sin(time * 53) > 0));
     this.neon.color.setScalar(flick ? 0.6 : this.neonBright);
-    this.neonLight.intensity = flick ? 6 : 22;
+    this.neonLight.intensity = flick ? 6 : this.neonPower;
     if (this.dance.length > 0 && this.flickerOn) this.tintDance(time);
   }
 

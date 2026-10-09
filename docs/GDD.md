@@ -771,6 +771,8 @@ Caricature satirique autorisée d'une personnalité réelle. **Cadre obligatoire
 | Coup final | Sous 5 % : invite unique **« Mais concrètement, sur le terrain, ça donne quoi ? »** ; un seul coup, critique garanti, ralenti, silence. |
 | Récompenses | 60 PS, 5 Pièces (1er kill), 12 Grains, Tasse ; « Shift tenu » +50 PS |
 
+**Version de travail (3D, en attendant la v2)** : Vanderslide est déjà le boss du biome 3 dans `src/sim/enemies/VanderslideSim.ts`, sans jauge de signature, Preuves ni Salle du Conseil : PV 1 800 fixes, phase 1 « Méga-Deck 2032 » (bullet points à trou, piliers-graphiques, « Je vous mets en copie »), phase 2 à 50 % « Conseil d'Administration en visio » (télégraphes ×0,85, Reporting géant), coup final sous 5 % ; modèle provisoire : le Manager KPI agrandi. Chiffres : `VANDERSLIDE` dans `balance.ts`.
+
 ### 7.10 Ennemis post-MVP (rappel design)
 **Agent de Sécurité Externalisé** (Tank, 90 PV, coût 3) : Bouclier-badge frontal (100 % bloqué), charge « Contrôle d'accès » de 48 px (télégraphe 700 ms), ouverture 1 s ; le Sifflet lui fait baisser le bouclier · **Pense-bête Vivant** (Essaim invoqué, 5 PV, coût 0) : Se colle : −10 % de vitesse par Pense-bête (3 max) ; décollé par un dash · **Coach Agile « Le Facilitateur »** (Élite invocateur, 140 PV, coût 7) : Kite à 112 px, 4 Pense-bête toutes les 8 s, *Team building* (attire et inverse les commandes 1,5 s), *Rétro positive* (soin 20 %, canalisation 2 s interrompable) · **Certifié (affixe)** (Variante, ×2,5 PV, coût ×2,5) : ISO (armure), En copie (se dédouble), Prioritaire (vitesse ×1,4), Senior Partner (explose en zone).
 

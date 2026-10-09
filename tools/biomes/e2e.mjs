@@ -145,6 +145,8 @@ async function gardee(biome) {
     await advance(500);
     await capture('b2-fluidifieur-glissade');
   } else if (g.kind === 'discosaure') {
+    await api('teleport', me.x, me.y + 140);
+    await advance(200);
     await capture('b3-discosaure');
     await api('attack', me.id, 'spots');
     await advance(950);
@@ -180,7 +182,11 @@ async function boss(biome) {
   const enemies = await api('enemies');
   const me = enemies.find((e) => e.kind === kind);
   if (kind === 'dirupo') {
-    await advance(1600);
+    // Gros plan : le héros monte vers l'estrade.
+    await api('teleport', me.x, me.y + 95);
+    await advance(300);
+    await capture('b2-dirupo-gros-plan', 100);
+    await advance(1300);
     await api('attack', me.id, 'bowtie');
     await advance(1100);
     await capture('b2-dirupo-noeud-papillon');
