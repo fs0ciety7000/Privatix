@@ -36,7 +36,7 @@ const GradeShader = {
       float l = dot(col, vec3(0.299, 0.587, 0.114));
       // virage partiel : ombres violettes, lumières chaudes
       vec3 shadowTint = vec3(0.075, 0.035, 0.14);
-      col += shadowTint * pow(1.0 - l, 3.0) * 0.9;
+      col += shadowTint * pow(clamp(1.0 - l, 0.0, 1.0), 3.0) * 0.9;
       col = mix(col, col * vec3(1.05, 0.99, 0.93), smoothstep(0.5, 1.0, l));
       // saturation et contraste en S
       col = mix(vec3(l), col, 1.14);
@@ -53,16 +53,51 @@ const GradeShader = {
     }`,
 };
 
+// Garde-fou : un seul NaN ou infini dans la scène HDR suffit, une fois étalé par le bloom,
+// à noircir tout l'écran sur certains GPU. On le remplace par du noir et on borne le HDR.
+const SanitizeShader = {
+  name: 'SanitizeShader',
+  uniforms: { tDiffuse: { value: null as THREE.Texture | null } },
+  vertexShader: /* glsl */ `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: /* glsl */ `
+    uniform sampler2D tDiffuse;
+    varying vec2 vUv;
+    void main() {
+      vec4 c = texture2D(tDiffuse, vUv);
+      bool bad = any(isnan(c)) || any(isinf(c));
+      gl_FragColor = bad ? vec4(0.0, 0.0, 0.0, 1.0) : vec4(clamp(c.rgb, 0.0, 32.0), 1.0);
+    }`,
+};
+
 export class Post {
+  /** Faux si le post-traitement a été désactivé (`?safe` ou écran noir détecté) : rendu direct. */
+  enabled = !new URLSearchParams(location.search).has('safe');
+  private checks = 0;
+  private readonly renderer: THREE.WebGLRenderer;
+  private readonly scene: THREE.Scene;
+  private readonly camera: THREE.Camera;
+
   readonly composer: EffectComposer;
   readonly bloom: UnrealBloomPass;
   readonly grade: ShaderPass;
 
   constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, w: number, h: number, msaa: number) {
+    this.renderer = renderer;
+    this.scene = scene;
+    this.camera = camera;
     const pr = renderer.getPixelRatio();
-    const rt = new THREE.WebGLRenderTarget(Math.floor(w * pr), Math.floor(h * pr), { type: THREE.HalfFloatType, samples: msaa });
+    // Cible HDR seulement si le GPU sait y rendre ; sinon 8 bits (bloom moins doux, mais une image).
+    const ext = renderer.extensions;
+    const hdr = ext.has('EXT_color_buffer_float') || ext.has('EXT_color_buffer_half_float');
+    const rt = new THREE.WebGLRenderTarget(Math.floor(w * pr), Math.floor(h * pr), {
+      type: hdr ? THREE.HalfFloatType : THREE.UnsignedByteType,
+      samples: msaa,
+    });
     this.composer = new EffectComposer(renderer, rt);
     this.composer.addPass(new RenderPass(scene, camera));
+    this.composer.addPass(new ShaderPass(SanitizeShader));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.9, 0.55, 0.96);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
@@ -79,6 +114,33 @@ export class Post {
   render(time: number, hurt: number): void {
     this.grade.uniforms.uTime.value = time;
     this.grade.uniforms.uHurt.value = hurt;
+    if (!this.enabled) {
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
     this.composer.render();
+    // Le fond de la scène n'est jamais noir pur : une image entièrement noire après quelques
+    // frames signale un post-traitement que ce GPU ne supporte pas. On bascule en rendu direct.
+    if (this.checks < 3 && ++this.frame % 30 === 0) {
+      this.checks++;
+      if (this.isBlack()) {
+        console.warn('[post] image noire détectée : post-traitement désactivé');
+        this.enabled = false;
+      }
+    }
+  }
+
+  private frame = 0;
+
+  private isBlack(): boolean {
+    const gl = this.renderer.getContext();
+    const w = gl.drawingBufferWidth;
+    const h = gl.drawingBufferHeight;
+    const px = new Uint8Array(4);
+    for (const [fx, fy] of [[0.5, 0.5], [0.25, 0.3], [0.75, 0.7], [0.5, 0.15], [0.3, 0.8]] as const) {
+      gl.readPixels(Math.floor(w * fx), Math.floor(h * fy), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      if (px[0] + px[1] + px[2] > 6) return false;
+    }
+    return true;
   }
 }
