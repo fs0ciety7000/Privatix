@@ -23,7 +23,7 @@
         "socket_foot_R"
       ],
       "runtimeBones": [],
-      "triangles": 12620,
+      "triangles": 9316,
       "clips": {
         "idle": {
           "duration": 2.6,
@@ -81,9 +81,9 @@
         }
       },
       "equipment": {},
-      "bytes": 730168,
-      "bytesRaw": 730168,
-      "compression": "brut"
+      "bytes": 286680,
+      "bytesRaw": 604616,
+      "compression": "meshopt"
     },
     "consultant": {
       "file": "models/consultant.glb",
@@ -107,7 +107,7 @@
         "socket_foot_R"
       ],
       "runtimeBones": [],
-      "triangles": 12368,
+      "triangles": 8376,
       "clips": {
         "idle": {
           "duration": 2.8,
@@ -140,8 +140,8 @@
         }
       },
       "equipment": {},
-      "bytes": 236328,
-      "bytesRaw": 645444,
+      "bytes": 207500,
+      "bytesRaw": 493732,
       "compression": "meshopt"
     },
     "discosaure": {
@@ -160,7 +160,7 @@
       "runtimeBones": [
         "disco_ball"
       ],
-      "triangles": 17304,
+      "triangles": 14320,
       "clips": {
         "idle": {
           "duration": 4.0,
@@ -212,8 +212,8 @@
         }
       },
       "equipment": {},
-      "bytes": 350932,
-      "bytesRaw": 1039176,
+      "bytes": 331928,
+      "bytesRaw": 925780,
       "compression": "meshopt"
     },
     "furet": {
@@ -231,7 +231,7 @@
         "socket_back"
       ],
       "runtimeBones": [],
-      "triangles": 10998,
+      "triangles": 9050,
       "clips": {
         "idle": {
           "duration": 2.0,
@@ -284,8 +284,8 @@
         }
       },
       "equipment": {},
-      "bytes": 329020,
-      "bytesRaw": 730916,
+      "bytes": 313136,
+      "bytesRaw": 656892,
       "compression": "meshopt"
     },
     "dirupo": {
@@ -312,7 +312,7 @@
         "socket_glasses"
       ],
       "runtimeBones": [],
-      "triangles": 17230,
+      "triangles": 14950,
       "clips": {
         "intro": {
           "duration": 2.1,
@@ -380,60 +380,157 @@
         }
       },
       "equipment": {},
-      "bytes": 387876,
-      "bytesRaw": 986404,
+      "bytes": 370384,
+      "bytesRaw": 899760,
+      "compression": "meshopt"
+    },
+    "borne": {
+      "file": "models/borne.glb",
+      "kind": "enemy",
+      "height": 1.3,
+      "radius": 0.5,
+      "outline": "#06302C",
+      "rim": "#6FF3FF",
+      "bones": 7,
+      "sockets": [
+        "socket_vfx",
+        "socket_muzzle"
+      ],
+      "runtimeBones": [],
+      "triangles": 2536,
+      "clips": {
+        "idle": {
+          "duration": 1.6,
+          "loop": true
+        },
+        "spawn": {
+          "duration": 0.9,
+          "loop": false
+        },
+        "attack": {
+          "duration": 1.0,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 660,
+            "recovery": 760
+          }
+        },
+        "hurt": {
+          "duration": 0.25,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.0,
+          "loop": false
+        }
+      },
+      "equipment": {},
+      "bytes": 59020,
+      "bytesRaw": 172628,
+      "compression": "meshopt"
+    },
+    "drone": {
+      "file": "models/drone.glb",
+      "kind": "enemy",
+      "height": 1.2,
+      "radius": 0.45,
+      "outline": "#06302C",
+      "rim": "#6FF3FF",
+      "bones": 10,
+      "sockets": [
+        "socket_vfx",
+        "socket_muzzle"
+      ],
+      "runtimeBones": [
+        "rotor_FL",
+        "rotor_FR",
+        "rotor_BL",
+        "rotor_BR"
+      ],
+      "triangles": 3012,
+      "clips": {
+        "fly": {
+          "duration": 1.2,
+          "loop": true
+        },
+        "attack": {
+          "duration": 1.1,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 500,
+            "recovery": 800
+          }
+        },
+        "hurt": {
+          "duration": 0.25,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.0,
+          "loop": false
+        },
+        "spawn": {
+          "duration": 0.6,
+          "loop": false
+        }
+      },
+      "equipment": {},
+      "bytes": 70500,
+      "bytesRaw": 190336,
       "compression": "meshopt"
     }
   },
   "items": {
     "casque_chantier": {
       "file": "models/items/casque_chantier.glb",
-      "triangles": 1428,
+      "triangles": 1236,
       "slot": "casque",
       "socket": "socket_head",
       "rarity": 1,
-      "bytes": 18676,
-      "bytesRaw": 47228,
+      "bytes": 16832,
+      "bytesRaw": 41852,
       "compression": "meshopt"
     },
     "casque_antibruit": {
       "file": "models/items/casque_antibruit.glb",
-      "triangles": 2412,
+      "triangles": 2220,
       "slot": "casque",
       "socket": "socket_head",
       "rarity": 2,
-      "bytes": 28836,
-      "bytesRaw": 82796,
+      "bytes": 27040,
+      "bytesRaw": 77420,
       "compression": "meshopt"
     },
     "casque_legendaire": {
       "file": "models/items/casque_legendaire.glb",
-      "triangles": 3312,
+      "triangles": 2352,
       "slot": "casque",
       "socket": "socket_head",
       "rarity": 5,
-      "bytes": 37172,
-      "bytesRaw": 102632,
+      "bytes": 28132,
+      "bytesRaw": 75752,
       "compression": "meshopt"
     },
     "gilet_hv": {
       "file": "models/items/gilet_hv.glb",
-      "triangles": 2140,
+      "triangles": 1372,
       "slot": "gilet",
       "skinned": true,
       "rarity": 1,
-      "bytes": 23248,
-      "bytesRaw": 88644,
+      "bytes": 18280,
+      "bytesRaw": 59452,
       "compression": "meshopt"
     },
     "gilet_porte_outils": {
       "file": "models/items/gilet_porte_outils.glb",
-      "triangles": 4676,
+      "triangles": 3140,
       "slot": "gilet",
       "skinned": true,
       "rarity": 3,
-      "bytes": 47344,
-      "bytesRaw": 188548,
+      "bytes": 36984,
+      "bytesRaw": 130176,
       "compression": "meshopt"
     },
     "cle_tire_fond": {
@@ -468,7 +565,7 @@
     },
     "masse_de_voie": {
       "file": "models/items/masse_de_voie.glb",
-      "triangles": 1320,
+      "triangles": 936,
       "slot": "outil",
       "socket": "socket_weapon_R",
       "rarity": 2,
@@ -477,13 +574,13 @@
         0,
         0.93
       ],
-      "bytes": 13956,
-      "bytesRaw": 41624,
+      "bytes": 11552,
+      "bytesRaw": 30872,
       "compression": "meshopt"
     },
     "pince_catenaire": {
       "file": "models/items/pince_catenaire.glb",
-      "triangles": 1996,
+      "triangles": 1420,
       "slot": "outil",
       "socket": "socket_weapon_R",
       "rarity": 3,
@@ -492,8 +589,8 @@
         0,
         1.24
       ],
-      "bytes": 23944,
-      "bytesRaw": 68232,
+      "bytes": 18576,
+      "bytesRaw": 52096,
       "compression": "meshopt"
     }
   },

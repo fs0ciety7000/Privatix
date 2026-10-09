@@ -141,7 +141,7 @@ def model() -> Model:
     m.torus("pelvis", GOLD, (0, 1.5 - 0.82, 0.35), 0.62, 0.11, rot=(90, 0, 0), radial=10, tubular=28, emit=0.25)
     m.cyl("pelvis", GOLD, (0, 1.5 - 0.98, 0.35), 0.4, 0.35, rb=0.6, seg=18, emit=0.25)
     # Boule à facettes : âme sombre (joints) + carreaux miroirs plats
-    m.sphere("disco_ball", 0x0C0A14, (0, 0, 0), (BALL_R * 0.985,) * 3, seg=30)
+    m.sphere("disco_ball", 0x0C0A14, (0, 0, 0), (BALL_R * 0.985,) * 3, seg=20)
     V, F = _ball_tiles()
     m.custom("disco_ball", 0xFFFFFF, V, F, mat="mirror", outline=0, flat=True, facet_ids=True)
     return m

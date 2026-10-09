@@ -517,12 +517,21 @@ class Model:
         return part
 
     def sphere(self, joint, color, pos, scale, rot=None, seg=16, **kw) -> Part:
+        # densité automatique : les petites sphères (yeux, boutons, embouts) n'ont pas besoin de 16 segments
+        big = max(abs(v) for v in scale)
+        if big < 0.05:
+            seg = min(seg, 8)
+        elif big < 0.12:
+            seg = min(seg, 12)
         return self._add(joint, sphere(seg), color, pos, rot, scale, **kw)
 
     def hemi(self, joint, color, pos, scale, rot=None, seg=20, **kw) -> Part:
         return self._add(joint, hemi(seg), color, pos, rot, scale, **kw)
 
     def box(self, joint, color, pos, size, radius=0.0, rot=None, seg=2, **kw) -> Part:
+        # petites boîtes et décors sans contour : un seul pas d'arrondi suffit (108 tris au lieu de 300)
+        if max(size) < 0.16 or kw.get("outline", 1.0) == 0:
+            seg = 1
         return self._add(joint, rbox(size[0], size[1], size[2], radius, seg), color, pos, rot, None, **kw)
 
     def cyl(self, joint, color, pos, r, h, rb=None, rot=None, seg=14, caps=True, **kw) -> Part:
@@ -545,7 +554,7 @@ class Model:
         a = np.array(a, dtype=float)
         b = np.array(b, dtype=float)
         L = float(np.linalg.norm(b - a))
-        VF = capsule(r, L, r2=r2)
+        VF = capsule(r, L, cap_seg=3 if r < 0.1 else 4, radial=10 if r < 0.1 else 12, r2=r2)
         R = align_y(b - a) if L > 1e-6 else np.eye(3)
         return self._add(joint, VF, color, (a + b) / 2, R=R, **kw)
 

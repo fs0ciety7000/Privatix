@@ -33,28 +33,32 @@ from glb.geo import Model  # noqa: E402
 OUT = ROOT / "public" / "models"
 VIEWER = HERE / "viewer"
 
-# entité → module (glb/chars/<module>.py). Ordre = ordre de priorité de production.
+# entité → (module glb/chars/<module>.py, fonction du modèle, fonction des clips).
+# Ordre = ordre de priorité de production.
 CHARS = {
-    "hero": "hero",
-    "consultant": "consultant",
-    "discosaure": "discosaure",
-    "furet": "furet",
-    "dirupo": "dirupo",
+    "hero": ("hero", "model", "clips"),
+    "consultant": ("consultant", "model", "clips"),
+    "discosaure": ("discosaure", "model", "clips"),
+    "furet": ("furet", "model", "clips"),
+    "dirupo": ("dirupo", "model", "clips"),
+    "borne": ("machines", "borne", "borne_clips"),
+    "drone": ("machines", "drone", "drone_clips"),
 }
 
 
 def _mod(name: str):
-    return importlib.import_module(f"glb.chars.{CHARS[name]}")
+    return importlib.import_module(f"glb.chars.{CHARS[name][0]}")
 
 
 def export_character(name: str) -> dict:
     mod = _mod(name)
     blend.reset_scene()
-    model: Model = mod.model()
+    model: Model = getattr(mod, CHARS[name][1])()
     arm = blend.build_armature(model)
     mesh = blend.build_mesh(model, f"{name}_mesh", arm=arm)
-    clips = mod.clips()
-    blend.bake_clips(arm, clips, skip_rot=set(getattr(mod, "RUNTIME_BONES", ())))
+    clips = getattr(mod, CHARS[name][2])()
+    runtime = list(model.meta.get("runtime_bones") or getattr(mod, "RUNTIME_BONES", ()))
+    blend.bake_clips(arm, clips, skip_rot=set(runtime))
     path = OUT / f"{name}.glb"
     blend.export(path)
     del mesh
@@ -68,7 +72,7 @@ def export_character(name: str) -> dict:
         "rim": f"#{model.meta.get('rim', 0x6FF3FF):06X}",
         "bones": len(model.bones) - len(sockets),
         "sockets": sockets,
-        "runtimeBones": list(getattr(mod, "RUNTIME_BONES", ())),
+        "runtimeBones": runtime,
         "triangles": model.tri_count(),
         "clips": {c.name: {"duration": round(c.duration, 4), "loop": c.loop, **({"events": c.events} if c.events else {})} for c in clips},
         "equipment": model.meta.get("equipment", {}),

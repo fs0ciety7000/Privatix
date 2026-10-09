@@ -272,7 +272,7 @@ export function toonify(root, shared, { outlineColor = PAL.outline, outlineWidth
     const src = mesh.material;
     mesh.material = get(src.name || 'toon');
     mesh.castShadow = !(src.name || '').startsWith('glass');
-    mesh.receiveShadow = false; // pas d'auto-ombrage : acné sur les sphères low-poly, et le toon se lit mieux sans
+    mesh.receiveShadow = true;
     mesh.frustumCulled = false;
     calls++;
     if (mesh.geometry.getAttribute('_outline') && !/^(glass|glow|mirror)/.test(src.name || '')) {

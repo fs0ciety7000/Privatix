@@ -1,4 +1,101 @@
-# Pipeline 3D → pixel art (méthode Dead Cells, DA Dead Cells / Celeste / Hades)
+# Pipeline 3D toon → GLB (Three.js)
+
+Les personnages de Privatix sont des modèles **3D toon temps réel**, au style validé du prototype
+`prototypes/proto3d` (cel-shading 4 bandes, liseré coloré, contour en coque inversée, DA « Néon & Ballast »).
+Ils sont **générés par code** dans Blender (`bpy` 5.2, sans interface) et exportés en **GLB** : armature, un
+maillage skinné « rigide par os », clips d'animation et sockets d'équipement. Le contrat que le jeu peut
+supposer (repère, os, sockets, matériaux, clips) est dans **[SKELETON.md](SKELETON.md)**.
+
+```bash
+npm run sprites3d:setup                              # une fois : bpy 5.2 dans tools/render3d/.venv
+cd tools/render3d/viewer && npm install              # une fois : viewer + gltf-transform (compression)
+cd tools/render3d && .venv/bin/python export_glb.py               # tout (≈ 15 s) → public/models/
+cd tools/render3d && .venv/bin/python export_glb.py hero items     # quelques entités
+cd tools/render3d && .venv/bin/python export_glb.py --raw dirupo   # sans compression meshopt
+cd tools/render3d/viewer && npm run dev                            # visionneuse : http://localhost:4180
+cd tools/render3d/viewer && node shots.mjs <dossier> [--only hero] [--spec specs/closeups.json]  # captures
+```
+
+**Script npm racine proposé** (non ajouté au `package.json` racine, à valider par le lead dev) :
+
+```json
+"models3d": "cd tools/render3d && .venv/bin/python export_glb.py",
+"models3d:viewer": "npm --prefix tools/render3d/viewer install && npm --prefix tools/render3d/viewer run dev",
+"models3d:shots": "npm --prefix tools/render3d/viewer run shots -- /tmp/privatix-glb"
+```
+
+## Organisation
+
+| Fichier | Rôle |
+|---|---|
+| `export_glb.py` | CLI : construit chaque entité, l'exporte, compresse (meshopt), écrit `public/models/manifest.json` |
+| `glb/geo.py` | Géométrie procédurale **numpy pur**, dans le repère Three.js (Y haut, +Z avant) : sphère, demi-sphère, boîte arrondie, capsule, cylindre, cône, tore, tour (lathe), prisme, tube Catmull-Rom à poids répartis. `Model` = squelette + pièces |
+| `glb/poses.py` | Poses et clips (port de `rig.ts` : `keyed`, easings, `merge`, `lerp_pose`) |
+| `glb/blend.py` | bpy : armature (os à repère identité), maillage fusionné + groupes de sommets, couleurs de sommet, attribut `_OUTLINE`, actions → pistes NLA, export glTF |
+| `glb/humanoid.py` | Squelette humanoïde du contrat (18 os) + 11 sockets |
+| `glb/chars/hero.py` | Héros (port fidèle de `hero.ts`, modèle et poses) + **équipement** : 3 casques, 2 gilets, 4 outils |
+| `glb/chars/consultant.py` | Consultant Junior (port de `consultant.ts`) |
+| `glb/chars/discosaure.py` | Discosaure (port de `discosaure.ts`), boule à facettes en matériau `mirror` |
+| `glb/chars/furet.py` | Furet putride (fiche art_director § 7.2) |
+| `glb/chars/dirupo.py` | Boss caricature d'Elio Di Rupo (fiche § 7.3), 100 % procédural, aucune photo |
+| `glb/chars/machines.py` | Borne et drone (portés de `characters/borne.py` et `drone.py`) |
+| `viewer/` | Visionneuse Vite + three 0.186.1 autonome (hors build du jeu) : shader toon proche du prototype, clips, équipement, télégraphe, captures Playwright (`shots.mjs`, `specs/`), planche contact (`sheet.py`) |
+
+Méthode d'un personnage : des **articulations** (`m.joint`) et des **pièces** accrochées (`m.sphere`, `m.box`,
+`m.capsule`…), écrites avec les mêmes coordonnées que le prototype TS ; puis des **fonctions de pose**
+`t_ms → pose` assemblées en `Clip`. `blend.py` fusionne tout en un maillage (un poids de 1 par sommet sur l'os
+de sa pièce), échantillonne chaque clip à 30 i/s et exporte.
+
+## Poids et budgets (meshopt, export du 09/10/2026)
+
+| Entité | Triangles | Os | Clips | GLB |
+|---|---|---|---|---|
+| `hero` (corps nu) | 9 316 | 22 + 11 sockets | 9 : idle, run, attack1-3, dash, hurt, death, spawn | 280 Kio (590 brut) |
+| `consultant` | 8 376 | 22 | 6 : idle, walk, attack, hurt, death, spawn | 203 Kio (482 brut) |
+| `discosaure` | 14 320 | 24 | 9 : idle, walk, attack-stomp, charge-windup, charge, stagger, hurt, death, spawn | 324 Kio (904 brut) |
+| `furet` | 9 050 | 31 | 9 : idle, run, attack-bite, attack-spray, war-dance, hurt, death, spawn, burrow | 306 Kio (641 brut) |
+| `dirupo` | 14 950 | 26 | 10 : intro, idle, walk, attack-bowtie, attack-inauguration, hair-swipe, smile-flash, hurt, stagger, defeat | 362 Kio (879 brut) |
+| `borne` | 2 536 | 7 | 5 : idle, spawn, attack, hurt, death | 58 Kio |
+| `drone` | 3 012 | 10 | 5 : fly, attack, hurt, death, spawn | 69 Kio |
+
+| Objet | Slot | Triangles | GLB |
+|---|---|---|---|
+| `casque_chantier` / `casque_antibruit` / `casque_legendaire` | casque | 1 236 / 2 220 / 2 352 | 16 / 26 / 28 Kio |
+| `gilet_hv` / `gilet_porte_outils` (skinnés) | gilet | 1 372 / 3 140 | 18 / 36 Kio |
+| `cle_tire_fond` / `cle_tire_fond_epique` / `masse_de_voie` / `pince_catenaire` | outil | 264 / 1 024 / 936 / 1 420 | 6 / 13 / 11 / 18 Kio |
+
+Total : **≈ 1,7 Mio** pour 7 personnages et 9 objets. Les **animations** pèsent environ 60 % de chaque GLB
+(toutes les rotations d'os échantillonnées à 30 i/s, cf. limites). Appels de rendu : 2 (héros nu : toon +
+contour) à 4 par personnage, +2 par pièce d'équipement.
+
+## Limites connues
+
+- **Triangles au-dessus des budgets de la DA** (art_director § 2.10 et § 7) : héros équipé ≈ 12 k (budget
+  8 à 10 k), Discosaure 14 k (≈ 8 k), furet 9 k (≈ 4,5 k), Di Rupo 15 k (≈ 9 k). Leviers : décimer les grosses
+  sphères (segments), fusionner des pièces sous le même os, LOD simplifié (`gltf-transform simplify`).
+- **Animations lourdes** : toutes les pistes de rotation sont gardées pour éviter qu'un os reste figé quand
+  on change de clip (`AnimationMixer`). Gain possible : 20 i/s, ou `resample` plus agressif.
+- **Morph targets non faits** (expressions de Di Rupo) : sourire, discours et surprise passent par l'os `jaw`
+  et les os `brow_*`. Les décalques d'yeux par atlas ne sont pas faits non plus.
+- **Contour « dentelé » du furet**, **reflet en bande des cheveux** de Di Rupo, **taches de lumière** de la
+  boule à facettes et **traînées d'arme** : effets de shader ou de VFX côté jeu, non inclus dans les GLB
+  (le viewer ne fait qu'une version simple du miroir et du verre).
+- Les **ressorts** (écharpe, cravate, mèche, queue) sont cuits dans les clips ; une chaîne à ressort à
+  l'exécution peut s'y superposer.
+- Le **manager KPI**, l'**Auditeur** et les **PNJ** du hub ne sont pas encore portés (anciens modèles dans
+  `characters/`).
+- Écarts assumés avec le prototype pour le Discosaure : épines turquoise (au lieu de magenta, réservé aux
+  télégraphes) et ventre crème (fiche § 7.1).
+- La compression utilise `viewer/node_modules` (`npm install` dans `viewer/`), sinon `npx @gltf-transform/cli`,
+  sinon le GLB reste brut. Draco et meshopt ne sont pas inclus dans le module `bpy` pip.
+
+---
+
+# (Abandonné) Pipeline 3D → pixel art
+
+> Le rendu en sprites pixel art ci-dessous est **abandonné** au profit de la 3D toon temps réel (section
+> précédente). `build.py`, `render.py`, `post.py` et `characters/` restent fonctionnels mais ne sont plus
+> maintenus ; les poses de `characters/*.py` restent une source d'inspiration.
 
 Les personnages de Privatix (héros, ennemis, boss, PNJ) sont des **modèles 3D low-poly articulés**, rendus
 directement à la taille du sprite, **sans lissage**, puis convertis en pixel art. C'est la technique de
