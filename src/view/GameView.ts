@@ -25,7 +25,19 @@ import { Post } from '@/view/post/Post';
 import type { ViewSettings } from '@/view/quality';
 import { HazardViews } from '@/view/HazardViews';
 import { PickupViews, ProjectileView, PropViews } from '@/view/ItemsView';
+import {
+  gearOutlineFor,
+  gearPieceFor,
+  LootViews,
+  PATRIMOINE_GOLD,
+  rarityHex,
+} from '@/view/LootView';
+import { DEFAULT_GEAR } from '@/view/actors/actorClips';
+import type { EquipSlot } from '@/view/models/manifest';
 import { RoomView } from '@/view/RoomView';
+
+/** Emplacements d'équipement visibles sur le héros. */
+const VISIBLE_SLOTS: readonly EquipSlot[] = ['casque', 'gilet', 'outil'];
 
 /** Caméra 3/4 à la Hades : focale serrée (peu de déformation), tangage d'environ 41°. */
 const CAM_OFFSET = new THREE.Vector3(0, 10.9, 12.3);
@@ -96,6 +108,10 @@ export class GameView implements ActorFxSink {
   private readonly projectiles = new ProjectileView();
   private readonly pickups: PickupViews;
   private readonly props: PropViews;
+  private readonly loot: LootViews;
+  /** Version de l'équipement déjà portée par le modèle du héros, et pièce par emplacement. */
+  private gearVersion = -1;
+  private readonly gearShown = new Map<EquipSlot, string>();
   private readonly sparks: Sparks;
   private readonly puffs: Puffs;
   private readonly glows: Puffs;
@@ -202,6 +218,12 @@ export class GameView implements ActorFxSink {
     this.hazards = new HazardViews(this.scene, settings.reducedMotion);
     this.pickups = new PickupViews(this.scene);
     this.props = new PropViews(this.scene);
+    this.loot = new LootViews(this.scene, settings.reducedMotion, (p, v, c) => {
+      this.glows.emit(p, v, c, 0.9 + Math.random() * 0.6, 0.07 + Math.random() * 0.06, {
+        drag: 0.6,
+        alpha: 0.9,
+      });
+    });
     this.scene.add(this.projectiles.mesh, this.projectiles.halo);
     this.room.setDoors(world.director.doors);
     this.props.build(world.director.interactables);
@@ -344,6 +366,12 @@ export class GameView implements ActorFxSink {
     switch (e.type) {
       case 'swing':
         this.onSwing(e.combo, e.finisher, e.dashAttack, e.x, e.y, e.angle, e.reach);
+        if (e.arcDeg >= 360) {
+          // Cercle d'Outil (Masse, Pelle, Perche) : onde au sol à la forme de la hitbox.
+          const c = at(e.x, e.y).addScaledVector(dir(e.angle), pxToM(e.reach) * 0.45);
+          this.rings.spawn(c, 0xff8a1a, 0.2, pxToM(e.reach) * 0.6, 0.3, 0.22, 0.3, 2.4);
+          this.puffs.dustRing(c, 12, pxToM(e.reach) * 0.4, 0x5a5070, 4);
+        }
         break;
       case 'enemyStrike':
         this.onStrike(e.id, e.attack, e.x, e.y, e.angle);
@@ -531,13 +559,126 @@ export class GameView implements ActorFxSink {
         if (e.text) this.dmg.spawn(p.setY(1.8), e.text, 'gold');
         break;
       }
+      case 'lootDropped':
+        this.onLootDropped(e.x, e.y, e.fromX, e.fromY, e.rank, rarityHex(e.rarity));
+        break;
+      case 'lootTaken': {
+        const p = at(e.x, e.y, 0.5);
+        const c = e.action === 'scrap' ? 0x9aa4b0 : rarityHex(e.rarity);
+        this.sparks.burst(p, new THREE.Vector3(0, 0, 1), 14, c, 5, 3.2, 0.5, 0.035, 5);
+        this.rings.spawn(at(e.x, e.y), c, 0.2, 1.3, 0.35, 0.2, 0.25, 2.4);
+        if (e.action === 'equip') this.hero.punch([1.12, 0.9, 1.12]);
+        break;
+      }
+      case 'gearFx':
+        this.onGearFx(e.kind, e.x, e.y, e.angle, e.size);
+        break;
       case 'heroDied':
       case 'wave':
       case 'notice':
       case 'doorTaken':
       case 'shiftEnded':
       case 'bossPhase':
+      case 'gearChanged':
         break;
+    }
+  }
+
+  /**
+   * Drop d'un objet : mise en scène croissante avec la rareté (narrative_level.md § 3.1). Réforme :
+   * un peu de poussière ; Homologué : anneau bleu ; Hors-série : gerbe violette ; Patrimoine :
+   * éclat d'or, double anneau et pluie d'étincelles (le ralenti est décidé par la scène).
+   */
+  private onLootDropped(
+    x: number,
+    y: number,
+    fromX: number,
+    fromY: number,
+    rank: number,
+    color: number,
+  ): void {
+    const from = at(fromX, fromY, 0.6);
+    const land = at(x, y);
+    this.sparks.burst(from, new THREE.Vector3(0, 0, 1), 4 + rank * 4, color, 4, 3.2, 0.4, 0.03, 4);
+    if (rank <= 0) {
+      this.puffs.dustRing(land, 5, 0.2, 0x5a5070, 1.5);
+      return;
+    }
+    this.rings.spawn(land, color, 0.2, 0.8 + rank * 0.45, 0.45, 0.22, 0.2, 1.6 + rank * 0.4);
+    if (rank >= 3) this.bursts.spawn(at(x, y, 1.2), color, 1.4 + rank * 0.5, 0.25, 3);
+    if (rank >= 4) {
+      const gold = PATRIMOINE_GOLD;
+      this.rings.spawn(land, gold, 0.4, 3.2, 0.9, 0.18, 0.12, 2);
+      this.bursts.spawn(at(x, y, 2.4), gold, 3, 0.35, 2.5);
+      for (let i = 0; i < 40; i += 1) {
+        const a = Math.random() * Math.PI * 2;
+        const sp = 1 + Math.random() * 3;
+        this.sparks.emit(
+          at(x, y, 0.3 + Math.random() * 3),
+          this.tmp.set(Math.cos(a) * sp, 2 + Math.random() * 5, Math.sin(a) * sp),
+          gold,
+          0.8 + Math.random() * 0.8,
+          0.04,
+          4,
+          1.2,
+          false,
+        );
+      }
+    }
+  }
+
+  /** Effets des pouvoirs Patrimoine (faille, soupape, taches de lumière, promesse). */
+  private onGearFx(kind: string, x: number, y: number, angle: number, size: number): void {
+    const p = at(x, y);
+    switch (kind) {
+      case 'rift': {
+        // Faille de la Dernière Traverse : sillon (size > 0), puis éclatement (size < 0).
+        const len = pxToM(Math.abs(size));
+        const fwd = dir(angle);
+        const bang = size < 0;
+        for (let i = 0; i <= 8; i += 1) {
+          const q = p.clone().addScaledVector(fwd, (i / 8) * len);
+          if (bang) {
+            this.rings.spawn(q, 0xff8c2b, 0.1, 0.7, 0.3, 0.3, 0.3, 2.6);
+            this.sparks.burst(q.setY(0.2), new THREE.Vector3(0, 1, 0), 4, 0xffb347, 5, 2, 0.4);
+          } else this.puffs.dustRing(q, 2, 0.1, 0x6a4a3a, 1);
+        }
+        break;
+      }
+      case 'valve':
+        this.rings.spawn(p, 0xfff2c0, 0.2, pxToM(size), 0.35, 0.25, 0.3, 2.6);
+        this.puffs.dustRing(p, 14, pxToM(size) * 0.5, 0xd8d0e0, 4);
+        break;
+      case 'spot':
+        this.rings.spawn(p, 0xff8c2b, 0.1, pxToM(size), 0.5, 0.4, 0.5, 2.8);
+        break;
+      case 'promise':
+        this.rings.spawn(p, 0xffffff, 0.2, 1.2, 0.3, 0.3, 0.2, 2.6);
+        this.bursts.spawn(at(x, y, 1.1), 0xfff2c0, 1.6, 0.2, 3);
+        break;
+      case 'promiseKept':
+        this.rings.spawn(p, PATRIMOINE_GOLD, 0.2, 1.6, 0.5, 0.2, 0.2, 2.6);
+        break;
+    }
+  }
+
+  /**
+   * Équipement porté → modèle du héros (GLB) : Casque, Gilet et Outil prennent la pièce de leur base,
+   * avec un liseré de rareté (Homologué et au-delà) ; un emplacement vide garde la tenue de départ.
+   */
+  private syncGear(): void {
+    const loot = this.world.loot;
+    if (loot.version === this.gearVersion) return;
+    this.gearVersion = loot.version;
+    const eq = this.hero.equipment;
+    if (!eq) return;
+    for (const slot of VISIBLE_SLOTS) {
+      const item = loot.loadout.equipped[slot];
+      const piece = (item ? gearPieceFor(item) : null) ?? DEFAULT_GEAR[slot];
+      const outline = item ? gearOutlineFor(item) : null;
+      const key = `${piece}|${String(outline)}`;
+      if (this.gearShown.get(slot) === key) continue;
+      if (eq.attach(slot, piece, { outline })) this.gearShown.set(slot, key);
     }
   }
 
@@ -681,6 +822,9 @@ export class GameView implements ActorFxSink {
     this.projectiles.sync(world.projectiles.pool, alpha, simDt);
     this.pickups.sync(world.pickups, simDt, this.settings.reducedMotion);
     this.props.update();
+    const loot = world.loot;
+    this.loot.sync(loot.ground, simNow, simDt, loot.near?.id ?? null, loot.canTake);
+    this.syncGear();
 
     // Effets (gelés pendant le hitstop, sauf secousse et nombres)
     this.sparks.update(simDt);
@@ -791,6 +935,7 @@ export class GameView implements ActorFxSink {
     this.hazards.clear();
     this.pickups.clear();
     this.props.dispose();
+    this.loot.dispose();
     this.projectiles.dispose();
     this.hero.dispose();
     this.room.dispose();

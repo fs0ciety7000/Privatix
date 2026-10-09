@@ -475,7 +475,9 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
         const x = Math.min(this.room.widthPx - 48, Math.max(48, this.room.widthPx / 2));
         const y = Math.min(c.ty * TILE - 48, this.room.heightPx / 2);
         this.time.delayedCall(500, () => {
-          this.dropReward(door.reward ?? 'tickets', x, y);
+          // La porte « Dotation » n'existe qu'en 3D (sim/loot) : repli sur des Tickets.
+          const reward = door.reward;
+          this.dropReward(reward && reward !== 'dotation' ? reward : 'tickets', x, y);
         });
       }
     }

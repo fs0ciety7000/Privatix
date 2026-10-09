@@ -7,11 +7,12 @@
 // actif du clip (événement `active` du manifeste) tombe donc sur le premier frame actif de la sim,
 // quelle que soit la vitesse d'attaque (`sim.timing`).
 import * as THREE from 'three';
-import { DASH, DASH_ATTACK, HERO, PREAVIS, WHISTLE } from '@/config/balance';
+import { DASH, HERO, PREAVIS, WHISTLE } from '@/config/balance';
 import type { HeroSim } from '@/sim/hero/HeroSim';
 import { pxToM, yawFromAngle } from '@/sim/units';
 import type { ActorFxSink, EquipSlot, HeroActorView, HeroEquipment } from '@/view/actors/ActorView';
 import { DEFAULT_GEAR } from '@/view/actors/actorClips';
+import { glbOutlineMaterial } from '@/view/materials/glbToon';
 import { makeFlash } from '@/view/materials/toon';
 import type { Flash } from '@/view/materials/toon';
 import { alignedClipTime } from '@/view/models/clipTiming';
@@ -131,13 +132,13 @@ export class GlbHeroView implements HeroActorView {
     this.lastState = state;
     switch (state) {
       case 'attack': {
-        const clip = COMBO_CLIPS[sim.combo] ?? 'attack1';
+        const clip = COMBO_CLIPS[sim.animCombo] ?? 'attack1';
         const tm = sim.timing;
         m.scrub(clip, this.aligned(clip, t, tm.startupMs, tm.activeMs + tm.recoveryMs), 0.04);
         break;
       }
       case 'dashAttack': {
-        const s = DASH_ATTACK;
+        const s = sim.timing;
         m.scrub(
           'attack2',
           this.aligned('attack2', t, s.startupMs, s.activeMs + s.recoveryMs),
@@ -216,6 +217,9 @@ interface Worn {
 export class HeroGear implements HeroEquipment {
   private readonly worn = new Map<EquipSlot, Worn>();
   private readonly wanted = new Map<EquipSlot, string>();
+  private readonly outlines = new Map<EquipSlot, number | null>();
+  /** Contours colorés (liseré de rareté du loot), partagés par couleur. */
+  private readonly rimMats = new Map<number, THREE.ShaderMaterial>();
   private disposed = false;
 
   public constructor(
@@ -231,10 +235,15 @@ export class HeroGear implements HeroEquipment {
     };
   }
 
-  public attach(slot: EquipSlot, pieceId: string): boolean {
+  public attach(
+    slot: EquipSlot,
+    pieceId: string,
+    opts: { readonly outline?: number | null } = {},
+  ): boolean {
     const meta = this.lib.manifest.items[pieceId];
     if (meta?.slot !== slot) return false;
     this.wanted.set(slot, pieceId);
+    this.outlines.set(slot, opts.outline ?? null);
     const tpl = this.lib.item(pieceId);
     if (tpl) return this.mount(slot, tpl);
     void this.lib.loadItem(pieceId).then((t) => {
@@ -291,6 +300,20 @@ export class HeroGear implements HeroEquipment {
       objects.push(obj);
     }
     if (objects.length === 0) return false;
+    const rim = this.outlines.get(slot) ?? null;
+    if (rim !== null) {
+      // Liseré de rareté : seul le contour de la pièce change (même programme, autre uniforme).
+      let mat = this.rimMats.get(rim);
+      if (!mat) {
+        mat = glbOutlineMaterial(m.uniforms, rim, 3.4);
+        this.rimMats.set(rim, mat);
+      }
+      const rimMat = mat;
+      for (const o of objects)
+        o.traverse((c) => {
+          if (c instanceof THREE.Mesh && c.userData.outline === true) c.material = rimMat;
+        });
+    }
     const tip = objects[0]?.getObjectByName('tip') ?? null;
     this.worn.set(slot, { id: tpl.id, objects, skeletons, tip });
     return true;
@@ -307,5 +330,7 @@ export class HeroGear implements HeroEquipment {
   public dispose(): void {
     this.disposed = true;
     for (const slot of [...this.worn.keys()]) this.unmount(slot);
+    for (const mat of this.rimMats.values()) mat.dispose();
+    this.rimMats.clear();
   }
 }

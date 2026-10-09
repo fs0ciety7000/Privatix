@@ -1,6 +1,7 @@
 import '@/ui/hud/hud3d.css';
 import '@/ui/menus/menus.css';
 import '@/ui/hub/hub.css';
+import '@/ui/loot/loot.css';
 import { browserStorage } from '@/platform/storage';
 import { Game3D, storedQuality } from '@/scenes3d/Game3D';
 import { Loop } from '@/engine/Loop';

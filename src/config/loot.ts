@@ -2158,3 +2158,24 @@ export const VESTIAIRE = {
   CONSIGN_VICTORY: 2,
   CONSIGN_PER_RANK: 1,
 } as const;
+
+// ─── Ramassage en jeu (3D) ────────────────────────────────────────────────────
+
+/** Ramassage et mise en scène des objets au sol (GDD § 9 bis.6, proposition § 6). */
+export const LOOT_PICKUP = {
+  /** Distance d'affichage de la carte de comparaison et d'interaction (px). */
+  RANGE: 24,
+  /** Maintien d'Interagir pour mettre au sac (ms). */
+  BAG_HOLD_MS: 400,
+  /** Maintien de Démonter (ms). */
+  SCRAP_HOLD_MS: 500,
+  /** Éjection : distance au point de drop (px), entre ces bornes. */
+  EJECT_MIN: 24,
+  EJECT_MAX: 48,
+  /** Durée de l'arc d'éjection (ms), purement visuelle. */
+  EJECT_MS: 420,
+  /** Écart entre les deux objets d'une Dotation (px). */
+  DOTATION_SPREAD: 40,
+  /** Ralenti d'un Patrimoine tombé dans une salle vide (coupé en Réduction des mouvements). */
+  PATRIMOINE_SLOWMO: { scale: 0.3, ms: 600, easeMs: 200 },
+} as const;

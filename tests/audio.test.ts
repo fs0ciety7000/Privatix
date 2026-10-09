@@ -299,6 +299,27 @@ describe('audio : routeur événements → sons', () => {
     expect(new Set(loot).size).toBe(5);
     expect(lootSfx(9)).toBe('loot4');
     expect(lootSfx(-1)).toBe('loot0');
+    const taken = (action: 'equip' | 'bag' | 'scrap'): string[] =>
+      ids({ type: 'lootTaken', action, x: 0, y: 0, rarity: 'homologue', slot: 'casque', name: '' });
+    expect(taken('equip')).toEqual(['lootEquip']);
+    expect(taken('bag')).toEqual(['lootBag']);
+    expect(taken('scrap')).toEqual(['lootScrap']);
+    // Le drop passe par AudioDirector.loot (la scène), pas par le routeur : pas de doublon.
+    expect(
+      ids({
+        type: 'lootDropped',
+        id: 1,
+        x: 0,
+        y: 0,
+        fromX: 0,
+        fromY: 0,
+        rarity: 'patrimoine',
+        rank: 4,
+        slot: 'outil',
+        name: '',
+        quiet: true,
+      }),
+    ).toEqual([]);
   });
 });
 

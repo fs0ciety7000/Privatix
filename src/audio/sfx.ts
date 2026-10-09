@@ -1140,6 +1140,48 @@ export const SFX = {
     spatial: false,
     render: (a) => RARITY_STAMPS[4]?.(a) ?? 0,
   },
+  /** Équiper une pièce : boucle de sangle + « clac » de mousqueton métallique. */
+  lootEquip: {
+    bus: 'sfx',
+    max: 1,
+    gapMs: 120,
+    render: (a) => {
+      noise(a.ctx, a.out, a.t, { filter: 'bandpass', freq: 900, q: 1.2, gain: 0.07, decay: 0.08 });
+      metal(a.ctx, a.out, a.t + 0.06, 520 * vary(a.r, 0.03), 0.08, 0.18);
+      return thud(a, 180, 0.12, 0.08, a.t + 0.06) + 0.06;
+    },
+  },
+  /** Mettre au sac : tissu froissé + fermeture éclair courte. */
+  lootBag: {
+    bus: 'sfx',
+    max: 1,
+    gapMs: 120,
+    render: (a) => {
+      noise(a.ctx, a.out, a.t, { filter: 'bandpass', freq: 1400, q: 0.9, gain: 0.06, decay: 0.12 });
+      return (
+        noise(a.ctx, a.out, a.t + 0.08, {
+          filter: 'bandpass',
+          freq: 2400,
+          to: 3400,
+          q: 3,
+          gain: 0.05,
+          attack: 0.02,
+          decay: 0.12,
+        }) + 0.08
+      );
+    },
+  },
+  /** Démonter en Ferraille : ferraille qui tombe dans un bac. */
+  lootScrap: {
+    bus: 'sfx',
+    max: 1,
+    gapMs: 120,
+    render: (a) => {
+      for (let i = 0; i < 3; i += 1)
+        metal(a.ctx, a.out, a.t + i * 0.05, (700 + a.r() * 500) * (1 - i * 0.12), 0.05, 0.12);
+      return thud(a, 120, 0.1, 0.1, a.t + 0.12) + 0.12;
+    },
+  },
   // ── Interface ─────────────────────────────────────────────────────────────
   uiHover: {
     bus: 'ui',

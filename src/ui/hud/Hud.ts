@@ -104,7 +104,7 @@ export class Hud {
     help.innerHTML =
       '<span><kbd>ZQSD</kbd>/<kbd>WASD</kbd> bouger</span><span><kbd>Clic</kbd>/<kbd>J</kbd> frapper</span>' +
       '<span><kbd>Espace</kbd> dash</span><span><kbd>F</kbd> sifflet</span><span><kbd>R</kbd> café</span>' +
-      '<span><kbd>E</kbd> interagir</span><span><kbd>Échap</kbd> pause</span><span><kbd>F3</kbd> perf</span>';
+      '<span><kbd>E</kbd> interagir / équiper</span><span><kbd>I</kbd> tenue</span><span><kbd>Échap</kbd> pause</span><span><kbd>F3</kbd> perf</span>';
   }
 
   private set(key: string, value: string, apply: (v: string) => void): void {

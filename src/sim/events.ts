@@ -2,6 +2,7 @@
  * Événements publiés par la simulation pour la vue (effets, sons, HUD). La simulation ne connaît jamais
  * la vue : elle remplit une file que la vue vide à chaque frame. Coordonnées en unités logiques.
  */
+import type { ItemRarity, SlotId } from '@/config/loot';
 
 export type TextTone = 'info' | 'danger' | 'gold' | 'hero';
 
@@ -113,6 +114,45 @@ export type SimEvent =
   /** Le héros franchit une porte ouverte (la scène lance le fondu). */
   | { readonly type: 'doorTaken'; readonly room: number }
   /** Fin du Shift (mort ou victoire) : la scène affiche l'écran des départs. */
-  | { readonly type: 'shiftEnded'; readonly end: 'victoire' | 'mort' };
+  | { readonly type: 'shiftEnded'; readonly end: 'victoire' | 'mort' }
+  /**
+   * Un objet d'équipement tombe au sol (loot) : éjecté de `from` vers `(x, y)`. `rank` : 0 (Réforme)
+   * à 4 (Patrimoine) ; `quiet` : aucun ennemi vivant (mise en scène complète du Patrimoine).
+   */
+  | {
+      readonly type: 'lootDropped';
+      readonly id: number;
+      readonly x: number;
+      readonly y: number;
+      readonly fromX: number;
+      readonly fromY: number;
+      readonly rarity: ItemRarity;
+      readonly rank: number;
+      readonly slot: SlotId;
+      readonly name: string;
+      readonly quiet: boolean;
+    }
+  /** Objet ramassé (équipé, mis au sac) ou démonté en Ferraille. */
+  | {
+      readonly type: 'lootTaken';
+      readonly action: 'equip' | 'bag' | 'scrap';
+      readonly x: number;
+      readonly y: number;
+      readonly rarity: ItemRarity;
+      readonly slot: SlotId;
+      readonly name: string;
+    }
+  /** L'équipement porté a changé (vue du héros, HUD). */
+  | { readonly type: 'gearChanged' }
+  /** Effet d'un pouvoir Patrimoine (faille, soupape, taches de lumière, promesse). */
+  | {
+      readonly type: 'gearFx';
+      readonly kind: 'rift' | 'valve' | 'spot' | 'promise' | 'promiseKept';
+      readonly x: number;
+      readonly y: number;
+      readonly angle: number;
+      /** Rayon ou longueur (px). */
+      readonly size: number;
+    };
 
 export type SimEventType = SimEvent['type'];

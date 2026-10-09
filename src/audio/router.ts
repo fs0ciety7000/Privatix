@@ -123,6 +123,14 @@ export function routeEvent(e: SimEvent, kindOf: KindOf): SfxCue[] {
       const id = PICKUP_SFX[e.kind];
       return id ? [{ id, x: e.x, y: e.y }] : [];
     }
+    case 'lootTaken':
+      return [
+        {
+          id: e.action === 'equip' ? 'lootEquip' : e.action === 'bag' ? 'lootBag' : 'lootScrap',
+          x: e.x,
+          y: e.y,
+        },
+      ];
     case 'roomEntered':
       return [{ id: 'chime' }];
     case 'roomCleared':

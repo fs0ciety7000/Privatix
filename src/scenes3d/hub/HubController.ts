@@ -238,8 +238,12 @@ export class HubController {
   }
 
   private openService(id: 'dpd' | 'paco'): void {
+    const sim = this.sim;
     this.ui.openService(id, {
-      meta: this.sim.meta,
+      // Lu à chaque (re)construction du panneau : `refresh` montre la méta après `commit`.
+      get meta() {
+        return sim.meta;
+      },
       commit: (next) => {
         this.sim.commit(next);
         this.afterStep();

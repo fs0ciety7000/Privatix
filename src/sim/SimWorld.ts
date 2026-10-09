@@ -8,6 +8,7 @@ import type { EnemySim } from '@/sim/enemies/EnemySim';
 import type { SimEvent } from '@/sim/events';
 import type { HazardSim, HazardSpec } from '@/sim/Hazards';
 import type { HeroSim } from '@/sim/hero/HeroSim';
+import type { LootSim } from '@/sim/loot/LootSim';
 import type { ProjectileSim, ProjectileSpec } from '@/sim/Projectiles';
 
 /** Corps d'un acteur : cercle aux pieds, vitesse, état précédent (interpolation), contact du pas. */
@@ -49,6 +50,8 @@ export interface SimWorld {
   readonly tokens: AttackTokens;
   readonly arena: Arena;
   readonly time: TimeControl;
+  /** Équipement porté (modificateurs du héros, pouvoirs Patrimoine). */
+  readonly loot: LootSim;
   now(): number;
   livingEnemies(): readonly EnemySim[];
   damageHero(amount: number, source: HitSource): boolean;

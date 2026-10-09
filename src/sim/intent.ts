@@ -16,6 +16,10 @@ export interface PlayerIntent {
   readonly specialHeld: boolean;
   /** Interagir (machine à café, étal, socle) : appui. */
   readonly interact?: boolean;
+  /** Interagir maintenu (objet au sol : maintien 400 ms = mettre au sac). */
+  readonly interactHeld?: boolean;
+  /** Démonter maintenu (objet au sol : maintien 500 ms = Ferraille). */
+  readonly scrapHeld?: boolean;
 }
 
 export const NO_INTENT: PlayerIntent = {
@@ -36,6 +40,8 @@ export function mergeIntent(pending: PlayerIntent, next: PlayerIntent): PlayerIn
     moveY: next.moveY,
     aim: next.aim,
     specialHeld: next.specialHeld,
+    interactHeld: next.interactHeld ?? false,
+    scrapHeld: next.scrapHeld ?? false,
     attack: pending.attack || next.attack,
     dash: pending.dash || next.dash,
     special: pending.special || next.special,
