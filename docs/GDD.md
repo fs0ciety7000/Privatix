@@ -210,7 +210,7 @@ Plafond        = 24 ennemis vivants simultanément (l'excédent passe à la vagu
 | Combat (biome 3) | 27 | **49** | 3 | 20 / 17 / 12 points |
 
 - **Apparitions diégétiques** télégraphiées **600 ms** (cercle au sol magenta qui se remplit) : les consultants descendent d'une rame ou d'un escalator, les drones tombent de la verrière, les bornes se déplient d'une trappe. Invulnérables pendant le télégraphe, inactifs **400 ms** après. Jamais à moins de **96 px** (6 tuiles) du héros ni de la porte d'entrée. Les apparitions d'une vague sont décalées de **150 ms** chacune.
-- **Salle nettoyée** : slow-mo, carillon, portes au vert, récompense posée sur le socle, **−10 Burnout**.
+- **Salle nettoyée** : slow-mo, carillon, portes au vert, récompense posée sur le socle, **−10 Burnout**. Les autocollants Privatix qui recouvrent la signalétique SNCB de la salle se décollent et tombent, et le logo SNCB réapparaît (motif « signalétique libérée », LORE §1.4).
 
 ### 3.7 Scaling (formules du canon)
 ```

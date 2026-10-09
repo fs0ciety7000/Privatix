@@ -58,12 +58,18 @@ Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ram�
 - **Vaincus, pas morts** : un ennemi « part en réunion », « se met en mute », « s'effondre de honte » ou s'éteint (« HORS SERVICE »). Les automates se désactivent. Pas de sang, pas de cadavre.
 
 **Interdits (non négociables)**
-- **Aucune personne réelle** : ni dirigeant, ni ministre, ni syndicaliste, ni journaliste, ni célébrité, ni sosie reconnaissable. Aucun architecte nommé : on montre la passerelle, jamais son auteur.
-- **Aucune marque réelle** : ni opérateur ferroviaire, ni gestionnaire d'infrastructure, ni marque de café, de capsules ou de logiciel. On détourne : « l'autre boîte », « l'Infra », « capsules premium », « machine à 47 recettes », « le Sondage ».
+- **Aucune personne réelle** (sauf exception ci-dessous) : ni dirigeant, ni ministre, ni syndicaliste, ni journaliste, ni célébrité, ni sosie reconnaissable. Aucun architecte nommé : on montre la passerelle, jamais son auteur.
+- **Aucune marque réelle** (sauf exception ci-dessous) : ni opérateur ferroviaire, ni gestionnaire d'infrastructure, ni marque de café, de capsules ou de logiciel. On détourne : « l'autre boîte », « l'Infra », « capsules premium », « machine à 47 recettes », « le Sondage ».
 - **Aucun parti politique**, aucun slogan ou logo politique réel. La satire vise une logique (la rentabilité contre le service public), pas une formation.
 
 **Exceptions explicitement autorisées par le porteur du projet** (il déclare en détenir les droits ; aucune autre exception sans son accord écrit) :
-1. **« SNCB »**, uniquement dans le nom du dash **« Retard SNCB »**. On ne fait pas apparaître l'opérateur comme personnage ou faction : Privatix reste le seul adversaire.
+1. **SNCB : le nom et le logo** (le B bleu dans une ellipse bleue, sur fond blanc ; référence : `docs/references/sncb_logo.png`). La SNCB est le **service public que l'on défend**, jamais un adversaire ni une cible de moquerie ; Privatix reste le seul adversaire. Usages prévus :
+   - le nom du dash **« Retard SNCB »** ;
+   - la **signalétique** des gares et des quais (panneaux, écrans, totems) ;
+   - les **trains** (livrées des rames et automotrices) ;
+   - les **tenues** des cheminots, dont le **gilet du héros** ;
+   - l'**écran de titre**.
+   **Motif visuel** : le bleu et blanc SNCB contre les néons magenta et turquoise de Privatix. Dans chaque salle, Privatix a recouvert la signalétique SNCB d'autocollants violets (« Votre quai, votre expérience », « Propriété de Privatix Rail Solutions ») ; quand le joueur nettoie la salle, les autocollants se décollent et tombent, et le logo réapparaît. Cette « libération » de la signalétique devient le signal visuel d'une salle tenue.
 2. **« Calatrava »**, surnom de la passerelle (« le Calatrava »). Le surnom est autorisé ; l'architecte lui-même n'apparaît toujours pas comme personnage.
 3. **Elio Di Rupo**, personnalité politique belge et ancien bourgmestre de Mons, en **caricature satirique bon enfant**, comme boss optionnel (§7.5). Cadre obligatoire :
    - l'humour porte sur son **image publique** (nœud papillon bordeaux, lunettes sans monture, mèche brune, costume bleu marine, attachement à Mons) et sur la **posture politique** (grands discours, inaugurations, rubans) ;
@@ -520,7 +526,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
 
 - **Ambiance** : quais 1 à 4 et faisceau de voies, de 4h47 à l'aube. Brouillard bas, lampes à sodium, annonces dont la fin est toujours coupée (« Le train de 7h12 à destination de… »). Un « ding-dong » ponctue chaque salle nettoyée. Odeur de ballast mouillé et de café froid.
 - **Histoire du lieu** : le cœur battant de la gare depuis plus d'un siècle. C'est ici que Marcel a conduit son premier train, que Josiane a fait descendre son sanglier, que la grand-mère dit bonjour au conducteur. Le **banc du quai 2** est le banc de Marcel ; la **voie 4**, désaffectée, est celle où stationnait le wagon-bar.
-- **Ce que Privatix y a fait** : installé des **portiques de rentabilité** (accès au quai facturé à la minute), remplacé les panneaux d'information par des écrans « Expérience Quai », lâché des **Drones Optimètres** « pour la qualité de service », déployé des **Bornes Automatiques** à la place des agents d'accueil. Les rames sont pilotées par l'Auditeur depuis son tableau de bord.
+- **Ce que Privatix y a fait** : couvert la signalétique SNCB d'autocollants violets (ils tombent quand la salle est nettoyée, §1.4), installé des **portiques de rentabilité** (accès au quai facturé à la minute), remplacé les panneaux d'information par des écrans « Expérience Quai », lâché des **Drones Optimètres** « pour la qualité de service », déployé des **Bornes Automatiques** à la place des agents d'accueil. Les rames sont pilotées par l'Auditeur depuis son tableau de bord.
 - **Roulements** : *Matin* néons froids et brouillard (drones plus nombreux) ; *Après-midi* lumière orangée et foules de navetteurs à contourner ; *Nuit* bleu profond, caténaires qui grésillent, Agents de sécurité et Wagon-Bar plus fréquent.
 - **Détails à placer dans le décor** :
   - Écrans des départs au-dessus des portes de salle : `IC 0712 → Avantage : Josiane — À L'HEURE` ; `L 4211 → Élite — RETARD +5`.
