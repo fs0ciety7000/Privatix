@@ -26,3 +26,24 @@ export function updateGameState(
   registry.set(RegistryKeys.GameState, next);
   return next;
 }
+
+/** Bandeau d'information (« Victoire contre … », nom de zone, objectif). `seq` distingue deux textes identiques. */
+export interface Notice {
+  readonly seq: number;
+  readonly text: string;
+}
+
+export function isNotice(value: unknown): value is Notice {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Partial<Notice>).seq === 'number' &&
+    typeof (value as Partial<Notice>).text === 'string'
+  );
+}
+
+/** Publie un bandeau ; l'UIScene l'affiche quand le registry émet `changedata`. */
+export function pushNotice(registry: DataStore, text: string): void {
+  const previous = registry.get(RegistryKeys.Notice);
+  registry.set(RegistryKeys.Notice, { seq: isNotice(previous) ? previous.seq + 1 : 1, text });
+}

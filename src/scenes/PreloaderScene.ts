@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { AssetKeys, GAME_HEIGHT, GAME_WIDTH, SceneKeys } from '@/config/constants';
 import { COLORS } from '@/config/colors';
+import { createPlaceholderTextures } from '@/ui/PlaceholderTextures';
 
 /**
  * Preloader : seule scène autorisée à appeler `this.load.*`.
@@ -32,6 +33,7 @@ export class PreloaderScene extends Phaser.Scene {
   }
 
   public create(): void {
+    createPlaceholderTextures(this);
     this.scene.start(SceneKeys.MainMenu);
   }
 }

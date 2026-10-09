@@ -1,60 +1,85 @@
 import Phaser from 'phaser';
-import { PLAYER_SPEED, TILE_SIZE } from '@/config/constants';
-import { COLORS } from '@/config/colors';
+import { RUN_STEP_DURATION_MS, STEP_DURATION_MS, TILE_SIZE } from '@/config/constants';
+import type { Facing } from '@/data/types';
+import type { GridPos, IsBlocked } from '@/systems/movement/GridMovement';
+import { step } from '@/systems/movement/GridMovement';
+import { characterTextureKey } from '@/ui/PlaceholderTextures';
+
+/** Coordonnées écran d'un personnage posé sur une case (ancré en bas au centre de la tuile). */
+export function tileToWorld(tileX: number, tileY: number): { x: number; y: number } {
+  return { x: tileX * TILE_SIZE + TILE_SIZE / 2, y: (tileY + 1) * TILE_SIZE };
+}
 
 /**
- * Joueur en exploration. Placeholder : un rectangle tant que le spritesheet n'est pas intégré.
- * Contrôles : ZQSD / flèches.
+ * Héros en exploration : déplacement case par case (GridMovement pur) interpolé par un tween.
+ * Pas de moteur physique : les collisions viennent de la carte (`IsBlocked`).
  */
-export class Player extends Phaser.GameObjects.Rectangle {
-  private readonly keys: {
-    up: Phaser.Input.Keyboard.Key;
-    down: Phaser.Input.Keyboard.Key;
-    left: Phaser.Input.Keyboard.Key;
-    right: Phaser.Input.Keyboard.Key;
-  } | null;
+export class Player extends Phaser.GameObjects.Sprite {
+  private pos: GridPos;
+  private moving = false;
 
-  public constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, TILE_SIZE, TILE_SIZE * 1.5, COLORS.sncb.accent);
+  public constructor(scene: Phaser.Scene, pos: GridPos) {
+    const { x, y } = tileToWorld(pos.tileX, pos.tileY);
+    super(scene, x, y, characterTextureKey('heros', pos.facing));
+    this.pos = pos;
+    this.setOrigin(0.5, 1);
+    this.setDepth(y);
     scene.add.existing(this);
-    scene.physics.add.existing(this);
-
-    const keyboard = scene.input.keyboard;
-    this.keys = keyboard
-      ? {
-          up: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
-          down: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-          left: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
-          right: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
-        }
-      : null;
-    if (keyboard) {
-      // Les flèches en plus de ZQSD.
-      const cursors = keyboard.createCursorKeys();
-      this.cursors = cursors;
-    }
   }
 
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
+  public get gridPos(): GridPos {
+    return this.pos;
+  }
 
-  public override update(_delta: number): void {
-    const body = this.body as Phaser.Physics.Arcade.Body | null;
-    if (!body) return;
+  public isMoving(): boolean {
+    return this.moving;
+  }
 
-    const left = (this.keys?.left.isDown ?? false) || (this.cursors?.left.isDown ?? false);
-    const right = (this.keys?.right.isDown ?? false) || (this.cursors?.right.isDown ?? false);
-    const up = (this.keys?.up.isDown ?? false) || (this.cursors?.up.isDown ?? false);
-    const down = (this.keys?.down.isDown ?? false) || (this.cursors?.down.isDown ?? false);
+  /** Place le héros immédiatement (chargement de carte, téléportation). */
+  public placeAt(pos: GridPos): void {
+    this.scene.tweens.killTweensOf(this);
+    this.moving = false;
+    this.pos = pos;
+    const { x, y } = tileToWorld(pos.tileX, pos.tileY);
+    this.setPosition(x, y).setDepth(y);
+    this.setTexture(characterTextureKey('heros', pos.facing));
+  }
 
-    const vx = (right ? 1 : 0) - (left ? 1 : 0);
-    const vy = (down ? 1 : 0) - (up ? 1 : 0);
-    const norm = vx !== 0 && vy !== 0 ? Math.SQRT1_2 : 1;
+  /**
+   * Tente un pas : se tourne toujours, avance si la case est libre.
+   * `onArrive` est appelé à la fin du pas (pas appelé si le héros n'a fait que se tourner).
+   */
+  public tryStep(
+    dir: Facing,
+    isBlocked: IsBlocked,
+    run: boolean,
+    onArrive: (pos: GridPos) => void,
+  ): void {
+    if (this.moving) return;
+    const next = step(this.pos, dir, isBlocked);
+    this.setTexture(characterTextureKey('heros', dir));
+    const moved = next.tileX !== this.pos.tileX || next.tileY !== this.pos.tileY;
+    this.pos = next;
+    if (!moved) return;
 
-    body.setVelocity(vx * PLAYER_SPEED * norm, vy * PLAYER_SPEED * norm);
+    const { x, y } = tileToWorld(next.tileX, next.tileY);
+    this.moving = true;
+    this.setDepth(Math.max(this.depth, y));
+    this.scene.tweens.add({
+      targets: this,
+      x,
+      y,
+      duration: run ? RUN_STEP_DURATION_MS : STEP_DURATION_MS,
+      onComplete: () => {
+        this.moving = false;
+        this.setDepth(y);
+        onArrive(this.pos);
+      },
+    });
   }
 
   public override destroy(fromScene?: boolean): void {
-    this.cursors = null;
+    this.scene.tweens.killTweensOf(this);
     super.destroy(fromScene);
   }
 }
