@@ -67,7 +67,7 @@ export type LootAction = 'equip' | 'bag' | 'scrap';
 
 /** Ennemis « Salle gardée » et boss à venir (biomes 2 et 3), reconnus par leur nom de type. */
 const GUARDED_KINDS: ReadonlySet<string> = new Set(['discosaure', 'fluidifieur']);
-const BOSS_KINDS: ReadonlySet<string> = new Set(['auditeur', 'gontran', 'boss2', 'boss3']);
+const BOSS_KINDS: ReadonlySet<string> = new Set(['auditeur', 'lurcke', 'boss2', 'boss3']);
 const ELITE_KINDS: ReadonlySet<string> = new Set(['manager', 'furet']);
 
 /** Tache de lumière de la Boule à facettes (L12). */

@@ -2120,7 +2120,7 @@ export const KILL_DROP_CHANCE: Readonly<Record<LootEnemyKind, number>> = {
   fluidifieur: 0,
   discosaure: 0,
   dirupo: 0,
-  vanderslide: 0,
+  lurcke: 0,
 };
 
 /** Nombre d'objets par source (§ 5.2 et GDD § 9 bis.5). */

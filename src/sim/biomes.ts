@@ -134,22 +134,22 @@ export const BIOMES: Readonly<Record<BiomeIndex, BiomeDef>> = {
     combatLabel: 'Hall & BAG',
     announce: 'HALL & BAG · PORTIQUE À BADGE',
     boss: {
-      kind: 'vanderslide',
-      name: 'Gontran Vanderslide',
+      kind: 'lurcke',
+      name: 'Jean-Cul Lurcke',
       title: 'Directeur de la Transformation (version de travail)',
       intro: {
-        speaker: 'Gontran Vanderslide',
+        speaker: 'Jean-Cul Lurcke',
         text: 'Ah. L’équipe terrain. Entrez. Je lance la présentation. Quatre cent douze slides.',
         fictive: false,
       },
       defeat: [
         {
-          speaker: 'Gontran Vanderslide',
+          speaker: 'Jean-Cul Lurcke',
           text: '… Concrètement ? Je n’ai pas de slide pour ça.',
           fictive: false,
         },
         {
-          speaker: 'Gontran Vanderslide',
+          speaker: 'Jean-Cul Lurcke',
           text: 'Bon. Soyons adultes. Une phase pilote. Une seule ligne.',
           fictive: false,
         },
@@ -200,9 +200,9 @@ export const PHASE_LINES: Readonly<Partial<Record<EnemyKind, readonly Line[]>>> 
       fictive: false,
     },
   ],
-  vanderslide: [
+  lurcke: [
     {
-      speaker: 'Gontran Vanderslide',
+      speaker: 'Jean-Cul Lurcke',
       text: 'Mesdames et messieurs du Conseil, vous m’entendez ? … Vous êtes en mute.',
       fictive: false,
     },

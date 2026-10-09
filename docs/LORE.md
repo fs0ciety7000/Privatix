@@ -11,7 +11,7 @@
 > - **Ce qu'on signe** : le **Contrat-cadre de libéralisation** (au lieu de la cession de la ligne, de la gare et du café). La signature au 3e étage du BAG, la jauge de signature et le **Sondage éternel** restent : la boucle ne change pas.
 > - **Le PHR-2032** garde ses phases 1 et 2 ; la **phase 3** devient « **Libéralisation** » (ouverture, découpage, cession progressive). La **Preuve n° 3** s'appelle désormais « Phase 3 : Libéralisation » et prouve un appel d'offres à candidat unique, jamais soumis à concertation.
 > - **Nouveau gag de canon** : la « concurrence » se résume à trois filiales du même groupe (**Privatix Rail Solutions**, **Privatix Rail Mobility**, **Privatix Rail Experience**). « C'est pas nous, c'est l'autre boîte » devient le slogan officieux du rail découpé.
-> - **Ajustés en conséquence** : pitchs (§1.1, §1.2, avec la nouvelle accroche officielle), thèmes (§1.3), situation initiale et boucle (§2.1, §2.2), jalons J7 bis et J11, fin mitigée, veillée, vraie fin et épilogue (§2.7 à §2.9), Vanderslide (§7.3), plaque et défaite de l'Invité d'honneur (§7.5), Note de service n° 13, glossaire. Personnages, factions, biomes, boss, OCC et pupitres, loot, Discosaure, Furet putride et horizon 2032 : **inchangés**.
+> - **Ajustés en conséquence** : pitchs (§1.1, §1.2, avec la nouvelle accroche officielle), thèmes (§1.3), situation initiale et boucle (§2.1, §2.2), jalons J7 bis et J11, fin mitigée, veillée, vraie fin et épilogue (§2.7 à §2.9), Lurcke (§7.3), plaque et défaite de l'Invité d'honneur (§7.5), Note de service n° 13, glossaire. Personnages, factions, biomes, boss, OCC et pupitres, loot, Discosaure, Furet putride et horizon 2032 : **inchangés**.
 
 **Conventions d'écriture du document**
 - `HÉROS` = Léon ou Léa (prénom modifiable, `{prénom}` dans les répliques). Formulations épicènes autant que possible.
@@ -28,7 +28,7 @@ Mons, 4h47, quai 2. L'écran des départs annonce que le **train de 7h12**, celu
 
 Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») et son cabinet de conseil, **Synergia Partners**, ont un plan : **libéraliser et privatiser le rail**. Ouvrir le réseau « à la concurrence », le découper en lots rentables et céder les lots un par un, en exécution du **Plan Horizon Rentabilité 2032 (PHR-2032)**. Mons est le **lot n° 1**, la gare pilote de « **Mons 2032** » : si elle tombe, le reste du réseau suit. La signature du **Contrat-cadre de libéralisation** est prévue « à la fin du service », au dernier étage du **BAG**, dont Privatix a pris les étages un par un.
 
-Léon (ou Léa), agent·e polyvalent·e en 3x8 depuis neuf ans, prend la **clé à tire-fond** de son grand-père et remonte la gare à contre-courant : les **Quais & Voies**, la **Passerelle** que les navetteurs appellent « le Calatrava », puis le **Hall & BAG**, jusqu'au bureau où **Gontran Vanderslide** tient le stylo.
+Léon (ou Léa), agent·e polyvalent·e en 3x8 depuis neuf ans, prend la **clé à tire-fond** de son grand-père et remonte la gare à contre-courant : les **Quais & Voies**, la **Passerelle** que les navetteurs appellent « le Calatrava », puis le **Hall & BAG**, jusqu'au bureau où **Jean-Cul Lurcke** tient le stylo.
 
 Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ramènent par le couloir technique jusqu'à l'**OCC**, le centre opérationnel de la gare, au rez-de-chaussée arrière du BAG : le seul étage que Privatix n'a pas encore pris, parce qu'on ne coupe pas un centre opérationnel sans arrêter les trains. Ses agents l'ont rebaptisé **« Operation Coffee Center »**. Et la signature est reportée, encore et encore : le **Sondage de Privatix** n'arrive jamais à trouver un créneau.
 
@@ -118,7 +118,7 @@ Une seule réponse « non » : on réécrit.
 
 Le plan n'a jamais été soumis à concertation, et l'appel d'offres a été rédigé par celui qui le remporte. C'est sa faille : la **Preuve** que tout le jeu cherche à rendre inattaquable.
 
-**La signature.** Elle doit avoir lieu « à la fin du service », au 3e étage du BAG, dans le bureau de **Gontran Vanderslide**, Directeur de la Transformation et de l'Excellence Opérationnelle. Le stylo est posé sur le **Contrat-cadre de libéralisation** (en annexe : la concession du lot n° 1, Mons, à Privatix). Le PDG de Privatix, **Hubert Rentabilis**, assistera en visio, caméra éteinte. Mons signé, le modèle sera « dupliqué sur l'ensemble du réseau » : c'est pour ça que tout se joue ici, et ce matin.
+**La signature.** Elle doit avoir lieu « à la fin du service », au 3e étage du BAG, dans le bureau de **Jean-Cul Lurcke**, Directeur de la Transformation et de l'Excellence Opérationnelle. Le stylo est posé sur le **Contrat-cadre de libéralisation** (en annexe : la concession du lot n° 1, Mons, à Privatix). Le PDG de Privatix, **Hubert Rentabilis**, assistera en visio, caméra éteinte. Mons signé, le modèle sera « dupliqué sur l'ensemble du réseau » : c'est pour ça que tout se joue ici, et ce matin.
 
 ### 2.2 La boucle justifiée : le « Sondage éternel »
 
@@ -126,13 +126,13 @@ Pas de magie, pas de boucle temporelle : **de la bureaucratie**.
 
 Privatix ne signe rien sans « aligner toutes les parties prenantes ». Pour chaque signature, un **Sondage** est envoyé : juristes, traiteur, photographe, Conseil d'administration, Hubert Rentabilis, et les **trois candidats** de l'appel d'offres, qui doivent tous être présents pour que la concurrence « soit constatée ». Il manque toujours quelqu'un (souvent Privatix Rail Mobility, qui « ne peut que le jeudi », alors que Privatix Rail Experience est en séminaire le jeudi). Chaque fois que le héros tombe, *ou* chaque fois qu'il gagne, la date est reprogrammée « à la fin de votre prochain service ». Le traiteur est validé, le diaporama est validé, mais le créneau, jamais.
 
-- **Quand le héros tombe** (« Mise à pied ») : les collègues le ramènent à l'OCC par le couloir technique. Pendant ce temps, Vanderslide ne peut pas signer : « Je ne libéralise pas un réseau avec un incident voyageur en cours, ça fait mauvais genre dans le reporting. » Sondage relancé.
-- **Quand le héros gagne** (« Shift tenu ») : Vanderslide est vaincu, la séance est levée « pour raisons d'agenda ». Hubert Rentabilis : « Bon. On reprogramme. Envoyez un Sondage. »
+- **Quand le héros tombe** (« Mise à pied ») : les collègues le ramènent à l'OCC par le couloir technique. Pendant ce temps, Lurcke ne peut pas signer : « Je ne libéralise pas un réseau avec un incident voyageur en cours, ça fait mauvais genre dans le reporting. » Sondage relancé.
+- **Quand le héros gagne** (« Shift tenu ») : Lurcke est vaincu, la séance est levée « pour raisons d'agenda ». Hubert Rentabilis : « Bon. On reprogramme. Envoyez un Sondage. »
 - **L'annonce de Rudy** ouvre chaque Shift, par l'écran des départs de l'OCC : « Attention, attention… la signature du Contrat-cadre de libéralisation, initialement prévue ce matin, est reprogrammée à la fin de votre service. Privatix vous remercie pour votre flexibilité. »
 
 Le Sondage a son propre petit fil comique : le nombre de participants « disponibles » change à chaque Shift sur l'écran de Rudy (`Sondage — Signature libéralisation — 11 participants — 0 créneau commun`), et ses commentaires évoluent (« Le traiteur ne peut que le jeudi », « Le photographe est en séminaire », « Le stylo est en révision annuelle »).
 
-**Pourquoi le héros se souvient-il ?** Parce qu'il n'y a rien à oublier : c'est le même roulement qui recommence, comme dans la vraie vie en 3x8. Les collègues aussi se souviennent ; les ennemis, eux, « repartent de zéro à chaque réunion » (et c'est précisément ce que les collègues leur reprochent). Seuls Vanderslide et Hubert Rentabilis gardent une mémoire : ils deviennent de plus en plus désespérés au fil des victoires.
+**Pourquoi le héros se souvient-il ?** Parce qu'il n'y a rien à oublier : c'est le même roulement qui recommence, comme dans la vraie vie en 3x8. Les collègues aussi se souviennent ; les ennemis, eux, « repartent de zéro à chaque réunion » (et c'est précisément ce que les collègues leur reprochent). Seuls Lurcke et Hubert Rentabilis gardent une mémoire : ils deviennent de plus en plus désespérés au fil des victoires.
 
 ### 2.3 Structure d'un Shift (rappel narratif)
 
@@ -142,7 +142,7 @@ Le Sondage a son propre petit fil comique : le nombre de participants « disponi
 | Départ | **Cour intérieure, couloir technique** | Le héros traverse la Cour intérieure ; le couloir technique l'emmène vers les quais. Rudy fait l'annonce du Sondage. |
 | Biome 1 | **Quais & Voies** (8 salles + Salle des pauses + Boss) | « Le 7h12 n'est pas venu. » On défend le terrain. Élite majeur : **le Furet putride**. Boss : **l'Auditeur des Quais**. |
 | Biome 2 | **La Passerelle « Calatrava »** (8 salles + Salle des pauses + Boss) | « Le vent tourne. » On remonte la colonne vertébrale de la gare, fermée « pour cérémonie ». Élite majeur, en dernière salle : **le Fluidifieur**, régisseur de l'inauguration. Boss : **l'Invité d'honneur (Elio Di Rupo)**, qui inaugure « Mons 2032 » au belvédère. |
-| Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui découpent le réseau. Mini-boss : **le Discosaure**. Boss final : **Gontran Vanderslide**. |
+| Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui découpent le réseau. Mini-boss : **le Discosaure**. Boss final : **Jean-Cul Lurcke**. |
 | Retour | **OCC** | Mort ou victoire, on rentre. Les collègues ont quelque chose de neuf à dire. |
 
 L'horloge diégétique du Shift avance de **30 minutes par salle** : un Shift complet dure « une journée de travail et demie », ce que Fatou fait remarquer à chaque victoire (« Quatorze heures de service. Je fais un signalement. »).
@@ -164,9 +164,9 @@ L'histoire avance par **trois fils** : **le Dossier** (les 3 Preuves du PHR-2032
 | J7 bis | Premier kill de l'Invité d'honneur | La plaque se dévoile : « Mons 2032 — Lot n° 1. Privatix Rail Solutions — Phase 3 : Libéralisation ». « Je n'inaugure pas une vente à la découpe. » Il tend les **Ciseaux d'inauguration** au héros. | Béné archive les Ciseaux et ouvre au pupitre PACO une « correspondance directe » vers la Passerelle (raccourci). Sur l'écran de Rudy, le Sondage affiche « Participant d'honneur : indisponible ». |
 | J8 | Shifts 4 à ~8, avant la 1re victoire | **Indices sur Jean-Mi** : notes « pour le registre », téléphone neuf, absences « en récup ». Les ennemis du Shift suivant portent l'affixe **« Briefé »**. | Les joueurs attentifs soupçonnent. |
 | J9 | Premier kill du Fluidifieur ET passage à l'OCC | Le casier de Jean-Mi est entrouvert : **Note de service n° 11** (logo Privatix). | Indice ferme. Aucun personnage ne réagit encore (Fatou lève un sourcil). |
-| J10 | **Première victoire sur Vanderslide** | Hubert Rentabilis : « On reprogramme. » Le héros rentre… **l'OCC a été envahie** : stickers « Propriété de Privatix », Vieille Dame renversée. **Combat-défense dans le hub** (3 vagues), puis le Fluidifieur revient, « simple formalité ». **Révélation de Jean-Mi.** | **Choix moral** (§2.5). Le code devient **2-2-4-7**. Plan d'Économies débloqué. Fin « mitigée » affichée (§2.7). |
+| J10 | **Première victoire sur Lurcke** | Hubert Rentabilis : « On reprogramme. » Le héros rentre… **l'OCC a été envahie** : stickers « Propriété de Privatix », Vieille Dame renversée. **Combat-défense dans le hub** (3 vagues), puis le Fluidifieur revient, « simple formalité ». **Révélation de Jean-Mi.** | **Choix moral** (§2.5). Le code devient **2-2-4-7**. Plan d'Économies débloqué. Fin « mitigée » affichée (§2.7). |
 | J11 | Run suivant la révélation | **Preuve n° 3 « Phase 3 : Libéralisation »** : salle-événement garantie des **Archives du BAG**. Elle exige d'avoir **Le Règlement** (Béné, relation niveau 2) pour retrouver le procès-verbal d'absence de concertation, agrafé au cahier des charges de l'appel d'offres, en-tête Privatix compris. Béné : « Ils ont écrit la question et la réponse. Même au guichet, on n'osait pas. » | Preuve 3 archivable. |
-| J12 | Victoires 2 à 5 | **Les reprogrammations** : à chaque victoire, une nouvelle réplique d'Hubert, une nouvelle tentative de Vanderslide (phase pilote, comité de suivi, « charte des valeurs ») et une scène d'OCC qui fait avancer une relation. | Vanderslide gagne de nouvelles répliques ; sa phase 3 se durcit. |
+| J12 | Victoires 2 à 5 | **Les reprogrammations** : à chaque victoire, une nouvelle réplique d'Hubert, une nouvelle tentative de Lurcke (phase pilote, comité de suivi, « charte des valeurs ») et une scène d'OCC qui fait avancer une relation. | Lurcke gagne de nouvelles répliques ; sa phase 3 se durcit. |
 | J13 | Les 4 conditions de la vraie fin cochées | Hubert : « La prochaine date est **définitive**. » Rudy : « Attention, attention… dernier Shift avant signature définitive. Tout le monde a pris sa pause ? » | Lance **le Shift du 7h12** (§2.6). |
 | J14 | Vraie fin vue | Générique, puis post-générique « Plan Horizon 2040 ». | Mode **Plan Horizon 2040** ; les collègues commentent la victoire. |
 
@@ -210,7 +210,7 @@ MARCEL : *(redressant la Vieille Dame)* On change le code. Ce soir. Et on reste 
 
 ### 2.7 La fin « mitigée » (chaque victoire avant la vraie fin)
 
-Vanderslide vaincu propose un compromis : une **« phase pilote »**, une seule ligne libéralisée « à titre expérimental », l'OCC « préservée et officialisée ». Rien n'est signé, mais rien n'est gagné. Écran final : **« Cette fin peut être améliorée. Comme le service. »** Le joueur comprend qu'il manque quelque chose ; le **Cahier de revendications** punaisé à côté du Tableau de Marcel le guide sans tout dire (cases à cocher aux libellés volontairement syndicaux : « Dossier complet », « Quorum atteint », « Question interne réglée », « Six reprogrammations obtenues »).
+Lurcke vaincu propose un compromis : une **« phase pilote »**, une seule ligne libéralisée « à titre expérimental », l'OCC « préservée et officialisée ». Rien n'est signé, mais rien n'est gagné. Écran final : **« Cette fin peut être améliorée. Comme le service. »** Le joueur comprend qu'il manque quelque chose ; le **Cahier de revendications** punaisé à côté du Tableau de Marcel le guide sans tout dire (cases à cocher aux libellés volontairement syndicaux : « Dossier complet », « Quorum atteint », « Question interne réglée », « Six reprogrammations obtenues »).
 
 ### 2.8 La vraie fin : « Le Shift du 7h12 »
 
@@ -218,7 +218,7 @@ Vanderslide vaincu propose un compromis : une **« phase pilote »**, une seule 
 1. **Dossier complet** : les 3 Preuves archivées.
 2. **Quorum atteint** : 6 collègues au niveau de relation 2 ou plus.
 3. **Question interne réglée** : Jean-Mi épargné *et* racheté, ou livré.
-4. **Six reprogrammations obtenues** : Vanderslide vaincu au moins 6 fois. À la 6e, Hubert lâche : « La prochaine date est définitive. »
+4. **Six reprogrammations obtenues** : Lurcke vaincu au moins 6 fois. À la 6e, Hubert lâche : « La prochaine date est définitive. »
 
 **La veillée.** Avant le dernier Shift, scène unique à l'OCC : tout le monde est là, debout autour de la Vieille Dame. Rituel de la Tasse de Relève collective.
 ```text
@@ -234,7 +234,7 @@ MARCEL : Bien reçu. On prend la voie.
 
 **Le dernier Shift.** Les biomes sont normaux, mais chaque collègue intervient **en personne une fois** (un Appel radio gratuit et scénarisé) : Josiane tient le quai 2 contre une vague entière, Rudy siffle le départ d'une rame qui balaie une salle, Kevin coupe la caténaire du BAG, Béné bloque l'ascenseur avec Le Règlement, le Fantôme sert une tournée générale dans la Salle des pauses.
 
-**Après Vanderslide.** Hubert Rentabilis **rallume enfin sa caméra**. On ne voit qu'un bureau vide et une plante verte ; sa voix, calme : « Bon. Signez sans lui. » Des **automates de signature** déferlent de tous les ascenseurs : horde finale.
+**Après Lurcke.** Hubert Rentabilis **rallume enfin sa caméra**. On ne voit qu'un bureau vide et une plante verte ; sa voix, calme : « Bon. Signez sans lui. » Des **automates de signature** déferlent de tous les ascenseurs : horde finale.
 
 **La défense.** Le héros doit **tenir 90 secondes** dans la Salle du Conseil pendant que Yasmina diffuse le PHR-2032 (et la carte du réseau découpé en lots) sur tous les écrans et toutes les annonces de la gare. La radio égrène les postes tenus : « Béné au hall. Rudy sur les quais. Kevin sur l'armoire. Josiane à la passerelle. Fatou à l'OCC. Marcel… Marcel, t'es où ? » — MARCEL : « Au banc du quai 2. Quelqu'un doit attendre le train. » Pas de boss : la solidarité est la mécanique.
 
@@ -245,7 +245,7 @@ VOYAGEUSE : … Ils voulaient découper la ligne en lots ? Et nous faire payer l
 VOYAGEUR : Trois « concurrents », et c'est trois fois la même boîte ?
 VOYAGEUSE : Et fermer le guichet ? C'est la seule qui sait vendre un billet sans faire pleurer personne !
 HUBERT RENTABILIS : … Bon. On en reparlera au prochain plan stratégique. *(Déconnexion.)*
-VANDERSLIDE : Mon oreillette… n'a plus de réseau.
+LURCKE : Mon oreillette… n'a plus de réseau.
 JOSIANE (radio) : Bienvenue sur le terrain.
 ```
 Écran : **« Contrat-cadre de libéralisation : NON SIGNÉ. Lot n° 1 : retiré. Sondage clôturé. »**
@@ -358,7 +358,7 @@ Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le
 | **L'équipe s'étoffe** | Shifts 2 à 3 | Fatou rallume le pupitre RCCA et installe la salle de repos de nuit (canapé, trousse) ; Béné rallume le pupitre PACO et y visse l'hygiaphone de son guichet. |
 | **Le RTS reprend** | 1er kill du boss 1 | Yasmina et Kevin rallument les deux postes du pupitre RTS : le mur d'écrans affiche enfin tout le réseau, la radio grésille. |
 | **Le Dossier** | Chaque Preuve archivée | Une Preuve de plus photocopiée et punaisée au Tableau de la Salle photocopieuse, reliée par des fils rouges ; la Vieille Dame siffle. |
-| **Le saccage** | 1re victoire sur Vanderslide | Stickers violets « Propriété de Privatix Rail Solutions » partout, Vieille Dame renversée, lanternes brisées, registre arraché, écrans des pupitres basculés sur une mire « IA prédictive — bêta », QR code sur la plaque des commandements, casiers de la Cour forcés. Combat-défense dans le hub. |
+| **Le saccage** | 1re victoire sur Lurcke | Stickers violets « Propriété de Privatix Rail Solutions » partout, Vieille Dame renversée, lanternes brisées, registre arraché, écrans des pupitres basculés sur une mire « IA prédictive — bêta », QR code sur la plaque des commandements, casiers de la Cour forcés. Combat-défense dans le hub. |
 | **Le chantier** | Shifts suivant le saccage | Les stickers partent un par un (un par retour, Josiane les décolle en grommelant) ; la Vieille Dame redressée garde sa bosse ; la plaque est nettoyée par Béné. |
 | **Les rénovations** | Achats chez le Fantôme (Grains) | Guirlandes de lanternes rallumées dans la Cour, canapé neuf « de deuxième classe, faut pas exagérer », juke-box des annonces au pupitre TLI & AIT, mannequin avancé, auvent refait au-dessus des casiers, 2e emplacement de Souvenir, horloge de gare qui marche, bannière « OCC » brodée par Josiane, wagon-bar reconstitué. |
 | **La veillée** | Conditions de la vraie fin | Toutes les lanternes allumées, tout le monde debout ; la musique se tait. |
@@ -604,7 +604,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
   - Plantes en plastique qui « repoussent » au passage suivant.
   - Paperboard de la salle Synergie : des flèches qui ne mènent nulle part, et « ACTION : ??? » entouré trois fois.
   - Machine à café à 9 000 € qui affiche « Détartrage nécessaire » depuis son installation.
-  - Trottinette électrique de fonction de Vanderslide : compteur « 0 km parcourus en train ».
+  - Trottinette électrique de fonction de Lurcke : compteur « 0 km parcourus en train ».
   - Mur de diplômes de formations « leadership » d'un week-end.
   - Dans le hall historique : la **carte des vins de 1994** (quête du Wagon-Bar), glissée derrière un cadre.
   - Pense-bête collé sur l'ascenseur : « En maintenance. Comme vous. »
@@ -705,7 +705,7 @@ Les ennemis sont les **ressources** de Privatix : des gens payés pour ne pas sa
 
 - **Qui** : un dinosaure massif en costume trois-pièces à larges revers, dont le dos porte, encastrée entre les écailles, une **boule à facettes disco** qui tourne en permanence et jette des éclats de lumière sur les murs. Il avance en rythme. On ne l'a jamais vu s'asseoir.
 - **Origine** : **Senior Partner fondateur** de Synergia Partners. Il vend le même plan de restructuration depuis la soirée de lancement du cabinet, à l'époque des pistes de danse, et n'a fait que changer le logo de la couverture. La boule à facettes date de cette soirée ; il ne l'a jamais retirée, « parce que ça a toujours marché ».
-- **Place dans la hiérarchie** : au-dessus des Coachs Agiles et des Managers KPI, en dessous de Vanderslide sur le papier ; en pratique, Vanderslide l'admire et lui demande son avis avant chaque Comité. Privatix le loue pour ses « soirées de lancement de transformation ».
+- **Place dans la hiérarchie** : au-dessus des Coachs Agiles et des Managers KPI, en dessous de Lurcke sur le papier ; en pratique, Lurcke l'admire et lui demande son avis avant chaque Comité. Privatix le loue pour ses « soirées de lancement de transformation ».
 - **Biome** : **mini-boss du biome 3** (Salle gardée garantie), à l'« Afterwork de transformation » du 2e étage du BAG (open-space aux néons éteints, seule la boule éclaire). Peut apparaître en élite rare dans le hall.
 - **Butin** : au premier kill, le Plan de la **Boule à facettes de poche** (Patrimoine) ; il la laisse sur la piste, « pour la prochaine soirée de lancement ».
 - **Accessibilité** : en « Réduction des mouvements » (GDD §12), sa boule ne clignote plus et ses lasers ne stroboscopent plus ; le combat reste lisible par les contours et les remplissages des télégraphes.
@@ -728,7 +728,7 @@ Les ennemis sont les **ressources** de Privatix : des gens payés pour ne pas sa
 |---|---|---|
 | 1 — Quais & Voies | Le Furet putride (§6.8), élite majeur ; son antre est le coin poubelles du BAG | L'Auditeur des Quais (§7.1) |
 | 2 — La Passerelle « Calatrava » | Le Fluidifieur (§7.2), élite majeur et régisseur de l'inauguration | **Elio Di Rupo, « l'Invité d'honneur »** (§7.5), obligatoire |
-| 3 — Hall & BAG | Le Discosaure (§6.9), mini-boss | Gontran Vanderslide (§7.3) |
+| 3 — Hall & BAG | Le Discosaure (§6.9), mini-boss | Jean-Cul Lurcke (§7.3) |
 
 ### 7.1 Boss 1 — L'Auditeur des Quais (Manager KPI suprême)
 
@@ -771,22 +771,22 @@ RUDY (radio) : Attention, attention… il a le classeur. Méfie-toi du classeur.
 - **Victoire sur le joueur** : « Voilà. Vous êtes en repos. Un repos non prévu, mais le planning s'adaptera. »
 - **Récompense narrative** (1er kill) : **Preuve n° 2 « Suppression des accompagnateurs »**.
 
-### 7.3 Boss final — Gontran Vanderslide
+### 7.3 Boss final — Jean-Cul Lurcke
 
 - **Titre** : Directeur de la Transformation et de l'Excellence Opérationnelle, région « Hainaut Optimisée », futur « Chief Railway Experience Officer » chez Privatix.
 - **Biographie satirique** : costume trop ajusté, baskets blanches « pour faire startup », oreillette permanente, tasse « World's Best Disruptor », trottinette électrique de fonction. **N'a jamais pris le train.** Sincèrement convaincu que le rail serait parfait sans trains, sans voyageurs et sans cheminots. Sa prime dépend du nombre de lots « ouverts au marché » ; Mons doit être le premier. Il a fait toute sa carrière dans des salles sans fenêtre et il a peur du silence : c'est pour ça qu'il parle tout le temps. Il n'est pas le vrai pouvoir : Hubert Rentabilis l'évalue, lui aussi.
 - **Arène** : phase 1 dans le **Bureau du Directeur** ; la cloison s'abat (« Réorganisation ») et l'arène devient la **Salle du Conseil** (table immense, mur de visio aux carrés noirs dont le carré « HR » d'Hubert, photocopieuse monumentale reliée aux annonces de la gare).
 - **La jauge de signature** : en haut de l'écran, le stylo avance sur le Contrat-cadre de libéralisation (7 minutes au total). Pleine : contrat signé, défaite, scène satirique (« Félicitations, le marché est ouvert. Votre poste aussi. Votre badge vous sera envoyé par Sondage. »), retour à l'OCC.
-- **Les Preuves** : chaque **Preuve en main** s'active sur un pupitre-projecteur ; elle fait reculer la jauge de 25 % et étourdit Vanderslide 3 s (« Slide 47 : ce n'est pas la mienne… »). Une fois par phase.
+- **Les Preuves** : chaque **Preuve en main** s'active sur un pupitre-projecteur ; elle fait reculer la jauge de 25 % et étourdit Lurcke 3 s (« Slide 47 : ce n'est pas la mienne… »). Une fois par phase.
 - **Intro** (premier combat) :
 ```text
-VANDERSLIDE : Ah. L'équipe terrain. Entrez. Un café ? La machine fait 47 recettes. Personne ne sait l'allumer.
+LURCKE : Ah. L'équipe terrain. Entrez. Un café ? La machine fait 47 recettes. Personne ne sait l'allumer.
 HÉROS : On vient arrêter la signature.
-VANDERSLIDE : Arrêter ? On ne fait que libérer le marché. Et pour un 7h12 qui transporte quatorze personnes ? Quatorze ! Ce n'est même pas un chiffre significatif.
+LURCKE : Arrêter ? On ne fait que libérer le marché. Et pour un 7h12 qui transporte quatorze personnes ? Quatorze ! Ce n'est même pas un chiffre significatif.
 JOSIANE (radio) : Ces quatorze-là, ils ont un nom.
-VANDERSLIDE : Pas dans le tableur. Je lance la présentation. Quatre cent douze slides. Il n'y a pas de pause prévue.
+LURCKE : Pas dans le tableur. Je lance la présentation. Quatre cent douze slides. Il n'y a pas de pause prévue.
 FATOU (radio) : Ça, monsieur, c'est illégal.
-VANDERSLIDE : C'est agile.
+LURCKE : C'est agile.
 ```
 - **Intros alternatives** (Shifts suivants, une par victoire) : « Encore vous ? J'ai pourtant envoyé un Sondage. » / « Cette fois, j'ai prévu une pause. Pour moi. » / « J'ai benchmarké votre clé. Au Japon, ils utilisent des tablettes. » / *(après 5 victoires, voix cassée)* « Je n'ai plus de slides. J'ai fait les 412. Il ne reste que moi. »
 - **Phase 1 « Méga-Deck 2032 »** (le grand écran annonce chaque attaque par le titre de la slide suivante) :
@@ -795,9 +795,9 @@ VANDERSLIDE : C'est agile.
   - « Je vous mets en copie. Et vous. Et vous. »
   - « Slide 300 : le réseau, en lots. C'est plus lisible, non ? »
 - **Phase 2 « Conseil d'Administration en visio »** (fusion avec le Contrat, Clauses-tentacules ; voix off d'Hubert) :
-  - VANDERSLIDE : « Mesdames et messieurs du Conseil, vous m'entendez ? … Vous êtes en mute. »
-  - HUBERT : « Gontran, on vous entend mal. On vous voit mal. On vous évalue bien. »
-  - VANDERSLIDE : « Article premier : le personnel est un actif variable. Article deux : l'article premier n'est pas négociable ! »
+  - LURCKE : « Mesdames et messieurs du Conseil, vous m'entendez ? … Vous êtes en mute. »
+  - HUBERT : « Jean-Cul, on vous entend mal. On vous voit mal. On vous évalue bien. »
+  - LURCKE : « Article premier : le personnel est un actif variable. Article deux : l'article premier n'est pas négociable ! »
   - *(Preuve activée)* HÉROS : « Ceci a été présenté au comité. Ceci n'a jamais été montré au terrain. »
 - **Phase 3 « L'Optimiseur Absolu »** (fusion avec la photocopieuse ; la Copie conforme du héros rejoue ses 3 dernières secondes) :
   - « Si je ne peux pas vous convaincre, je vais vous dupliquer. »
@@ -806,7 +806,7 @@ VANDERSLIDE : C'est agile.
 - **Coup final** : sous 5 % de ses points de vie, une invite unique s'affiche : **« Mais concrètement, sur le terrain, ça donne quoi ? »** Ralenti, silence, un seul coup, critique garanti.
 ```text
 HÉROS : Mais concrètement, sur le terrain, ça donne quoi ?
-VANDERSLIDE : … Concrètement ? Concrètement… *(long silence)* … je n'ai pas de slide pour ça.
+LURCKE : … Concrètement ? Concrètement… *(long silence)* … je n'ai pas de slide pour ça.
 ```
 - **Défaite** : à genoux, oreillette de travers. « Bon. Soyons adultes. Une phase pilote. Une seule ligne. » (fin mitigée, §2.7). Dans la vraie fin : « Mon oreillette… n'a plus de réseau. »
 - **Victoire sur le joueur** (jauge pleine ou Énergie à zéro) : « Le planning est validé. Le diaporama est validé. Même le traiteur est validé ! » puis, le stylo levé : « … Ah. On me signale un conflit d'agenda. On reprogramme. »
@@ -814,10 +814,10 @@ VANDERSLIDE : … Concrètement ? Concrètement… *(long silence)* … je n'ai 
 ### 7.4 Hubert Rentabilis — PDG de Privatix (jamais combattu)
 
 - Présent uniquement en visio, **caméra éteinte** : un carré noir marqué « HR ». Voix calme, lente, celle de quelqu'un qui n'a jamais attendu un train. Il ne s'énerve jamais ; il **évalue**.
-- **Rôle** : rappeler que Vanderslide n'est qu'un exécutant. La satire vise le système, pas un homme. On ne le combat jamais : on le **déconnecte**, en rendant la vérité publique.
+- **Rôle** : rappeler que Lurcke n'est qu'un exécutant. La satire vise le système, pas un homme. On ne le combat jamais : on le **déconnecte**, en rendant la vérité publique.
 - **Répliques de reprogrammation** (une nouvelle à chaque victoire) :
   1. « … Bon. On reprogramme. Envoyez un Sondage. »
-  2. « Gontran, je vous rappelle que votre prime est indexée sur ce contrat. Pas sur votre dignité. »
+  2. « Jean-Cul, je vous rappelle que votre prime est indexée sur ce contrat. Pas sur votre dignité. »
   3. « Proposez-leur une phase pilote. Les gens adorent les pilotes. »
   4. « Nous allons créer une commission. Elle réfléchira à pourquoi vous échouez. »
   5. « Je commence à trouver ce dossier… peu scalable. »

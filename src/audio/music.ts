@@ -57,6 +57,48 @@ function lcg(seed: number): () => number {
   };
 }
 
+/** Cafetière du hub : gargouillis de bulles graves (aussi joué à la demande par le rendu du trailer). */
+export function coffeeGurgle(
+  ctx: BaseAudioContext,
+  out: AudioNode,
+  t: number,
+  rnd: () => number,
+): void {
+  for (let i = 0; i < 7; i += 1)
+    tone(ctx, out, t + i * 0.09 + rnd() * 0.05, 180 + rnd() * 160, {
+      to: 320 + rnd() * 200,
+      gain: 0.035,
+      attack: 0.01,
+      decay: 0.06,
+    });
+  noise(ctx, out, t, {
+    filter: 'bandpass',
+    freq: 900,
+    q: 1,
+    gain: 0.02,
+    attack: 0.3,
+    hold: 0.4,
+    decay: 0.6,
+  });
+}
+
+/** Crachotement de la radio de bureau du hub. */
+export function radioCrackle(
+  ctx: BaseAudioContext,
+  out: AudioNode,
+  t: number,
+  rnd: () => number,
+): void {
+  for (let i = 0; i < 5; i += 1)
+    noise(ctx, out, t + rnd() * 0.6, {
+      filter: 'bandpass',
+      freq: 2200,
+      q: 1.5,
+      gain: 0.02,
+      decay: 0.03,
+    });
+}
+
 interface Sustained {
   stop(at: number): void;
 }
@@ -77,6 +119,12 @@ export class MusicDirector {
   private ctx: BaseAudioContext | null = null;
   private musicOut: AudioNode | null = null;
   private ambienceOut: AudioNode | null = null;
+  /** Multiplicateur de tempo (1 en jeu ; le rendu du trailer accélère par acte). */
+  public tempoScale = 1;
+  /** Constante de temps (s) du lissage des couches (0,6 en jeu ; plus court pour un « drop »). */
+  public layerTau = 0.6;
+  /** Grille d'accords du hub (celle du jeu par défaut ; le trailer la réharmonise). */
+  public hubChords: readonly (readonly number[])[] = HUB_CHORDS;
 
   public get mode(): MusicMode {
     return this.modeRef;
@@ -153,12 +201,21 @@ export class MusicDirector {
         : this.modeRef === 'hub'
           ? HUB_BPM
           : COMBAT.bpm;
-    const stepDur = 60 / bpm / 4;
+    const stepDur = 60 / (bpm * this.tempoScale) / 4;
     while (this.nextStep < horizon) {
       this.scheduleStep(this.step, this.nextStep, stepDur);
       this.step += 1;
       this.nextStep += stepDur;
     }
+  }
+
+  /**
+   * Recale la grille : le prochain pas (temps fort de la mesure 1) tombera exactement à `at`. Réservé
+   * au rendu hors ligne, appelé quand tous les pas déjà planifiés précèdent `at`.
+   */
+  public resync(at: number): void {
+    this.step = 0;
+    this.nextStep = at;
   }
 
   /** Gains cibles des couches selon le mode et l'intensité. */
@@ -178,7 +235,7 @@ export class MusicDirector {
     if (!this.layers) return;
     const tg = this.layerTargets();
     for (const l of Object.keys(tg) as Layer[])
-      this.layers[l].gain.setTargetAtTime(tg[l], now, 0.6);
+      this.layers[l].gain.setTargetAtTime(tg[l], now, this.layerTau);
   }
 
   private scheduleStep(step: number, t: number, sd: number): void {
@@ -383,9 +440,10 @@ export class MusicDirector {
     const ctx = this.ctx;
     const out = this.musicOut;
     if (!ctx || !out) return;
-    const bar = Math.floor(step / 16) % HUB_CHORDS.length;
+    const chords = this.hubChords;
+    const bar = Math.floor(step / 16) % chords.length;
     const s = step % 16;
-    const chord = HUB_CHORDS[bar] ?? HUB_CHORDS[0] ?? [];
+    const chord = chords[bar] ?? chords[0] ?? [];
     const warm = lowpass(ctx, out, 1500);
     if (s === 0 || s === 10) {
       // Piano électrique : sinus + octave douce, attaque feutrée, trémolo léger.
@@ -438,35 +496,8 @@ export class MusicDirector {
   }
 
   private hubEvent(t: number, ctx: BaseAudioContext, out: AudioNode): void {
-    if (this.rnd() < 0.5) {
-      // Cafetière : gargouillis de bulles graves.
-      for (let i = 0; i < 7; i += 1)
-        tone(ctx, out, t + i * 0.09 + this.rnd() * 0.05, 180 + this.rnd() * 160, {
-          to: 320 + this.rnd() * 200,
-          gain: 0.035,
-          attack: 0.01,
-          decay: 0.06,
-        });
-      noise(ctx, out, t, {
-        filter: 'bandpass',
-        freq: 900,
-        q: 1,
-        gain: 0.02,
-        attack: 0.3,
-        hold: 0.4,
-        decay: 0.6,
-      });
-    } else {
-      // Crachotement de la radio.
-      for (let i = 0; i < 5; i += 1)
-        noise(ctx, out, t + this.rnd() * 0.6, {
-          filter: 'bandpass',
-          freq: 2200,
-          q: 1.5,
-          gain: 0.02,
-          decay: 0.03,
-        });
-    }
+    if (this.rnd() < 0.5) coffeeGurgle(ctx, out, t, this.rnd);
+    else radioCrackle(ctx, out, t, this.rnd);
     this.hubEventAt = t + 12 + this.rnd() * 14;
   }
 

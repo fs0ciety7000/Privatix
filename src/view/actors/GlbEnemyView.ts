@@ -16,7 +16,7 @@ import { DiscosaureSim } from '@/sim/enemies/DiscosaureSim';
 import { DroneSim } from '@/sim/enemies/DroneSim';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import { pxToM } from '@/sim/units';
-import type { ActorFxSink } from '@/view/actors/ActorView';
+import type { ActorFxSink, OccluderShape } from '@/view/actors/ActorView';
 import { ProceduralEnemyView } from '@/view/actors/ProceduralEnemyView';
 import { GlbRig } from '@/view/models/GlbRig';
 import type { CharacterTemplate } from '@/view/models/ModelLibrary';
@@ -28,6 +28,11 @@ const DRONE_GROUNDED_S = 0.85;
 /** Sortie digne (Di Rupo) : il salue, puis descend de l'estrade à pied pendant ce temps (s). */
 const EXIT_WALK_S = 2.6;
 const EXIT_WALK_SPEED = 1.3;
+/** Taille (m) à partir de laquelle un acteur peut masquer le héros (héros : 2 m). */
+const OCCLUDER_MIN_HEIGHT = 2.5;
+/** Opacité tramée d'un acteur qui masque le héros, et vitesse du fondu (1/s). */
+const OCCLUDED_FADE = 0.35;
+const FADE_RATE = 9;
 
 export class GlbEnemyView extends ProceduralEnemyView {
   private readonly model: GlbRig;
@@ -41,6 +46,8 @@ export class GlbEnemyView extends ProceduralEnemyView {
   private platesOff = false;
   private readonly attackClips: ReadonlySet<string>;
   private exitT = 0;
+  public readonly occluder: OccluderShape | null;
+  private fade = 1;
 
   public constructor(
     tpl: CharacterTemplate,
@@ -74,10 +81,22 @@ export class GlbEnemyView extends ProceduralEnemyView {
     });
     this.rig.body.add(this.model.object);
     this.model.play(map.idle, { fade: 0 });
+    const height = meta.height * scale;
+    this.occluder =
+      height >= OCCLUDER_MIN_HEIGHT ? { radius: meta.radius * scale, height } : null;
     if (map.model === 'auditeur')
       this.plates = ['plate_L', 'plate_R']
         .map((n) => this.model.bone(n))
         .filter((b): b is THREE.Object3D => b !== null);
+  }
+
+  public setOccluding(on: boolean, realDt: number): void {
+    const target = on ? OCCLUDED_FADE : 1;
+    if (this.fade === target) return;
+    const k = 1 - Math.exp(-FADE_RATE * realDt);
+    this.fade += (target - this.fade) * k;
+    if (Math.abs(target - this.fade) < 0.01) this.fade = target;
+    this.model.setFade(this.fade);
   }
 
   public override hit(heavy: boolean): void {

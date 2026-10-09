@@ -867,13 +867,13 @@ export const DIRUPO = {
 } as const satisfies EnemyStats & Record<string, unknown>;
 
 /**
- * Boss du biome 3 : Gontran Vanderslide (LORE § 7.3). **Version de travail** (placeholder cohérent,
+ * Boss du biome 3 : Jean-Cul Lurcke (LORE § 7.3). **Version de travail** (placeholder cohérent,
  * en attendant la jauge de signature, les Preuves et la Salle du Conseil du GDD § 7.9) : phase 1
  * « Méga-Deck 2032 » (lignes de bullet points à trou, « Je vous mets en copie », piliers-graphiques),
  * phase 2 « Conseil d'Administration en visio » (tout plus vite, Reporting géant), coup final
  * « Mais concrètement, sur le terrain, ça donne quoi ? » sous 5 %.
  */
-export const VANDERSLIDE = {
+export const LURCKE = {
   hp: 1800,
   speed: 60,
   hurtRadius: 16,
@@ -943,7 +943,7 @@ export type EnemyKind =
   | 'fluidifieur'
   | 'discosaure'
   | 'dirupo'
-  | 'vanderslide';
+  | 'lurcke';
 
 export const ENEMY_STATS: Readonly<Record<EnemyKind, EnemyStats>> = {
   consultant: CONSULTANT,
@@ -955,7 +955,7 @@ export const ENEMY_STATS: Readonly<Record<EnemyKind, EnemyStats>> = {
   fluidifieur: FLUIDIFIEUR,
   discosaure: DISCOSAURE,
   dirupo: DIRUPO,
-  vanderslide: VANDERSLIDE,
+  lurcke: LURCKE,
 };
 
 export const ENEMY_NAMES: Readonly<Record<EnemyKind, string>> = {
@@ -968,7 +968,7 @@ export const ENEMY_NAMES: Readonly<Record<EnemyKind, string>> = {
   fluidifieur: 'Le Fluidifieur',
   discosaure: 'Le Discosaure',
   dirupo: "Elio Di Rupo, l'Invité d'honneur",
-  vanderslide: 'Gontran Vanderslide',
+  lurcke: 'Jean-Cul Lurcke',
 };
 
 /** Élites et boss : étourdissements réduits, pas de chute dans le vide. */
@@ -979,11 +979,11 @@ export const HEAVY_KINDS: readonly EnemyKind[] = [
   'fluidifieur',
   'discosaure',
   'dirupo',
-  'vanderslide',
+  'lurcke',
 ];
 
 /** Boss de fin de biome (barre de boss, PV fixes). */
-export const BOSS_KINDS: readonly EnemyKind[] = ['auditeur', 'dirupo', 'vanderslide'];
+export const BOSS_KINDS: readonly EnemyKind[] = ['auditeur', 'dirupo', 'lurcke'];
 
 // ─── Shift (run) ──────────────────────────────────────────────────────────────
 

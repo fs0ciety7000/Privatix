@@ -44,6 +44,8 @@ const VISIBLE_SLOTS: readonly EquipSlot[] = ['casque', 'gilet', 'outil'];
 /** Caméra 3/4 à la Hades : focale serrée (peu de déformation), tangage d'environ 41°. */
 const CAM_OFFSET = new THREE.Vector3(0, 10.9, 12.3);
 const CAM_LOOK_BACK = 2.5;
+/** Hauteurs (m) visées sur le héros par le test d'occlusion : buste et tête. */
+const OCCLUSION_PROBES = [0.9, 1.75] as const;
 const FOV_LANDSCAPE = 30;
 const FOV_PORTRAIT = 42;
 const ZOOM_PUNCH_DEG = 2;
@@ -143,6 +145,13 @@ export class GameView implements ActorFxSink {
   private readonly camTarget = new THREE.Vector3();
   private readonly aimPoint = new THREE.Vector3();
   private readonly tmp = new THREE.Vector3();
+  private readonly occluding = new Set<EnemyView>();
+  /** Atténuation des gros acteurs qui masquent le héros (coupée seulement pour les captures). */
+  public occlusionFade = true;
+  private readonly occRay = new THREE.Ray();
+  private readonly occBox = new THREE.Box3();
+  private readonly occTarget = new THREE.Vector3();
+  private readonly occHit = new THREE.Vector3();
   private hasAim = false;
   private hurtVignette = 0;
   private zoomPunch = 0;
@@ -294,6 +303,7 @@ export class GameView implements ActorFxSink {
     }
     for (const v of this.enemies.values()) v.dispose();
     this.enemies.clear();
+    this.occluding.clear();
     this.kinds.clear();
     this.hazards.clear();
     this.bossProps.clear();
@@ -1029,6 +1039,7 @@ export class GameView implements ActorFxSink {
       v.update(null, frame);
       if (v.finished) {
         v.dispose();
+        this.occluding.delete(v);
         this.enemies.delete(id);
         this.kinds.delete(id);
       }
@@ -1061,6 +1072,7 @@ export class GameView implements ActorFxSink {
     this.zoomPunch = Math.max(0, this.zoomPunch - realDt * 10);
 
     this.updateCamera(realDt);
+    this.updateOcclusion(realDt);
     this.dmg.update(realDt, this.camera, this.width, this.height);
   }
 
@@ -1074,6 +1086,42 @@ export class GameView implements ActorFxSink {
       this.kinds.set(e.id, e.kind);
     }
     return v;
+  }
+
+  /**
+   * Occlusion du héros : un rayon caméra → héros (buste et tête) contre le cylindre englobant (en
+   * boîte) de chaque gros acteur. Celui qui coupe le rayon devant le héros passe en opacité tramée
+   * (fondu doux, contour conservé) ; la silhouette tramée du héros couvre le reste (décor, petits
+   * ennemis). Aucune passe de rendu en plus : quelques tests rayon / boîte par frame.
+   */
+  private updateOcclusion(realDt: number): void {
+    const cam = this.camera.position;
+    const hero = this.hero.pos;
+    for (const [, v] of this.enemies) {
+      const shape = v.occluder;
+      if (!shape || !v.setOccluding) continue;
+      const was = this.occluding.has(v);
+      // Marge quand il masque déjà : pas de clignotement en bord de volume.
+      const r = shape.radius * (was ? 1.2 : 1);
+      const p = v.pos;
+      this.occBox.min.set(p.x - r, p.y, p.z - r);
+      this.occBox.max.set(p.x + r, p.y + shape.height * (was ? 1.1 : 1), p.z + r);
+      let hit = false;
+      for (const y of this.occlusionFade ? OCCLUSION_PROBES : []) {
+        this.occTarget.set(hero.x, hero.y + y, hero.z);
+        const dist = this.occTarget.distanceTo(cam);
+        this.occRay.origin.copy(cam);
+        this.occRay.direction.copy(this.occTarget).sub(cam).divideScalar(dist);
+        const at = this.occRay.intersectBox(this.occBox, this.occHit);
+        if (at && at.distanceTo(cam) < dist - 0.3) {
+          hit = true;
+          break;
+        }
+      }
+      if (hit) this.occluding.add(v);
+      else this.occluding.delete(v);
+      v.setOccluding(hit, realDt);
+    }
   }
 
   private updateCamera(realDt: number): void {

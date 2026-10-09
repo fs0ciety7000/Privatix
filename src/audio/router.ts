@@ -67,7 +67,7 @@ const STRIKE_SFX: Readonly<Record<string, SfxId>> = {
   ballots: 'ticketFire',
   motions: 'bossBarrier',
   scissors: 'ribbonSnip',
-  // Gontran Vanderslide
+  // Jean-Cul Lurcke
   bullets: 'kpi',
   charts: 'chrono',
   copy: 'report',
@@ -103,7 +103,7 @@ export function materialFor(kind: EnemyKind | undefined, heavy: boolean): SfxId 
       return 'hitLaptop';
     case 'auditeur':
     case 'dirupo':
-    case 'vanderslide':
+    case 'lurcke':
     case 'fluidifieur':
       return 'hitBoss';
     case 'discosaure':
