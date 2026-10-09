@@ -105,6 +105,7 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 - **Rendu** : référence visuelle = `prototypes/proto3d/` (validé par le porteur ; ne pas le modifier depuis `src/`). Toute nouvelle option visuelle respecte le preset de qualité (`view/quality.ts`) et la **Réduction des mouvements** (aucun clignotement ni stroboscope).
 - **Lumières** : nombre fixe par salle (pas de recompilation de shaders) ; émissifs + bloom pour le reste. Libérer géométries, matériaux et textures propres à un objet à sa destruction (`dispose`).
 - **Flux du Shift** : `sim/RunDirector.ts` (port pur de `RunScene`) ; minuteries en temps de sim, fenêtres de choix comme état (`director.choice`) auxquelles l'UI répond. **Personnages** : toujours derrière `view/actors/ActorView` (`createEnemyView`), pour remplacer un modèle procédural par un GLB sans toucher la sim.
+- **Audio** (`src/audio/`, docs/ARCHITECTURE.md § 15.9) : Web Audio, **tout synthétisé par code** (aucun fichier audio, aucune voix enregistrée, aucune marque ni artiste réels). L'audio lit la sim (événements + instantané `probeWorld`) sans jamais la modifier ; il n'importe ni `three`, ni `view/`, `ui/`, `engine/`, scènes (ESLint). Seul `Game3D` le branche (`audio.frame`, `bind`, options). Un nouveau son = une entrée de `SFX` (bus, `max` voix, `gapMs`, `repetitive`, `render`) + sa ligne dans `router.ts` + un cas dans `tests/audio.test.ts`. Pas de son strident ni de pic : aigus filtrés, attaque ≥ 2 ms, vérifier crête/RMS/centroïde avec `node tools/audio/render.mjs <dossier>` (WAV + `levels.json`, échec si écrêtage) ; `node tools/audio/e2e.mjs` vérifie le déverrouillage au clic et l'absence d'erreur console.
 
 ## 6. Workflow d'une feature : 1) logique → 2) placeholders → 3) vrais sprites
 
@@ -148,6 +149,8 @@ src/sim/                    # PUR : World, RunDirector (Shift), HeroSim, enemies
 src/engine/                 # Loop (rAF), Input (clavier, souris, manette, tactile) : DOM, sans three
 src/view/                   # Three.js : GameView, RoomView, actors/ (ActorView, factory), HazardViews, ItemsView, fx/, materials/toon, post/, quality
 src/ui/hud/, src/ui/menus/  # HUD et menus DOM de la 3D (titre, pause, options, choix, départs ; GSAP)
+src/audio/                  # Web Audio procédural : AudioEngine (bus, compresseur, limiteur, voix), sfx, music, router, AudioDirector
+tools/audio/                # render.mjs (WAV + niveaux hors ligne), e2e.mjs (Playwright : clic → audio, console propre)
 src/scenes3d/               # Game3D (titre → Shift → départs, assemble sim + view + engine + ui), demoApi (dev, captures)
 tools/render3d/             # personnages : modèles 3D → pixel art (Blender/bpy), manifest.json prioritaire
 tools/pixelart/             # décor, props, VFX, UI (générateur 2D) + manifest.json, planches de contrôle

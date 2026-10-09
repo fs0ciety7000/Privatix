@@ -388,3 +388,27 @@
   cursor: pointer;
   z-index: 12;
 }
+
+/* Curseurs de volume (options, section Son). */
+.px-range {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr 3.5rem;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-text);
+  font-size: var(--fs-sm);
+  color: var(--px-text-soft);
+}
+.px-range input[type='range'] {
+  width: 100%;
+  accent-color: var(--px-hero);
+}
+.px-range input[type='range']:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+.px-range output {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--px-text-mute);
+}

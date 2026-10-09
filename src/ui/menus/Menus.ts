@@ -14,6 +14,21 @@ export interface OptionsState {
   readonly reducedMotion: boolean;
 }
 
+/** Réglages du son affichés dans les options (fournis par `src/audio`, sans dépendance). */
+export interface AudioOptionValues {
+  readonly master: number;
+  readonly music: number;
+  readonly sfx: number;
+  readonly muted: boolean;
+  readonly reduceRepetitive: boolean;
+}
+
+/** Branchement du son dans les options : lecture et écriture immédiate. */
+export interface AudioOptionsHook {
+  readonly get: () => AudioOptionValues;
+  readonly set: (next: Partial<AudioOptionValues>) => void;
+}
+
 export interface ChoiceView {
   readonly title: string;
   readonly options: readonly {
@@ -218,6 +233,7 @@ export class Menus {
     state: OptionsState,
     onChange: (next: OptionsState) => void,
     onBack: () => void,
+    audio?: AudioOptionsHook,
   ): void {
     this.mount('options', (layer) => {
       const panel = el('div', 'px-panel', layer);
@@ -245,12 +261,57 @@ export class Menus {
         'p',
         'px-sub',
         stack,
-        'Aucun clignotement, secousses divisées par deux, pas de zoom sur le coup 3. Pas encore de son : le volume arrivera avec lui.',
+        'Aucun clignotement, secousses divisées par deux, pas de zoom sur le coup 3.',
       );
+      if (audio) this.audioOptions(stack, audio);
       button(stack, 'Retour', 'px-btn--primary', onBack);
       this.onEscape = onBack;
       return panel;
     });
+  }
+
+  /** Section « Son » des options : volumes (maître, musique, effets), coupure, sons répétitifs. */
+  private audioOptions(stack: HTMLElement, audio: AudioOptionsHook): void {
+    el('div', 'px-label', stack, 'Son');
+    const sliders: [keyof AudioOptionValues, string][] = [
+      ['master', 'Volume général'],
+      ['music', 'Musique'],
+      ['sfx', 'Effets'],
+    ];
+    for (const [key, label] of sliders) {
+      const row = el('label', 'px-range', stack);
+      el('span', '', row, label);
+      const input = el('input', '', row);
+      input.type = 'range';
+      input.min = '0';
+      input.max = '100';
+      input.step = '5';
+      const value = el('output', '', row);
+      const sync = (): void => {
+        const v = Number(audio.get()[key]);
+        input.value = String(Math.round(v * 100));
+        value.textContent = `${String(Math.round(v * 100))} %`;
+      };
+      sync();
+      input.addEventListener('input', () => {
+        audio.set({ [key]: Number(input.value) / 100 });
+        sync();
+      });
+    }
+    const toggle = (key: 'muted' | 'reduceRepetitive', label: string): void => {
+      const b = button(stack, '', '', () => {
+        audio.set({ [key]: !audio.get()[key] });
+        sync();
+      });
+      const sync = (): void => {
+        const on = audio.get()[key];
+        b.textContent = `${label} : ${on ? 'oui' : 'non'}`;
+        b.setAttribute('aria-pressed', String(on));
+      };
+      sync();
+    };
+    toggle('muted', 'Couper le son');
+    toggle('reduceRepetitive', 'Réduire les sons répétitifs');
   }
 
   /** Fenêtre de choix (Avantages, machine à café, salle des pauses) : touches 1 à 3 ou clic. */
@@ -372,6 +433,8 @@ export class Menus {
 
   private onKey(e: KeyboardEvent): void {
     if (this.screen === 'none' || e.repeat) return;
+    // Un curseur focalisé garde ses flèches (réglage du volume au clavier).
+    if (e.target instanceof HTMLInputElement && e.code.startsWith('Arrow')) return;
     const n = this.focusables.length;
     switch (e.code) {
       case 'ArrowDown':

@@ -1,3 +1,5 @@
+import { AudioDirector } from '@/audio/AudioDirector';
+import { probeWorld } from '@/audio/probe';
 import { COFFEE, ENEMY_NAMES } from '@/config/balance';
 import type { EnemyKind } from '@/config/balance';
 import { loadMeta } from '@/platform/save';
@@ -63,6 +65,8 @@ export class Game3D {
   private readonly cheats: boolean;
   private cheatQueue: string[] = [];
   private readonly cheatHandler: (e: KeyboardEvent) => void;
+  /** Audio (src/audio) : s'abonne aux événements de la sim, déverrouillé au premier geste. */
+  public readonly audio = new AudioDirector({ storage: browserStorage() });
 
   public constructor(
     private readonly dom: SceneDom,
@@ -90,6 +94,7 @@ export class Game3D {
       },
     );
     this.menus.reducedMotion = settings.reducedMotion;
+    this.audio.bind(document, dom.ui);
     this.cheatHandler = (e) => {
       if (!e.repeat && ['KeyK', 'KeyG', 'KeyN', 'KeyB'].includes(e.code))
         this.cheatQueue.push(e.code.slice(3));
@@ -124,6 +129,7 @@ export class Game3D {
 
   public setHidden(hidden: boolean): void {
     this.hidden = hidden;
+    this.audio.setHidden(hidden);
   }
 
   /** Décor du titre : la salle de départ, sans vagues, le héros au repos. */
@@ -206,6 +212,12 @@ export class Game3D {
         this.openOptions(back);
       },
       back,
+      {
+        get: () => this.audio.settings,
+        set: (next) => {
+          this.audio.setSettings(next);
+        },
+      },
     );
   }
 
@@ -315,6 +327,7 @@ export class Game3D {
   private afterStep(realMs: number): void {
     const events = this.world.drainEvents();
     this.view.applyEvents(events);
+    this.hearEvents(events);
     this.announce(events);
     const director = this.world.director;
     if (this.phase === 'run' && director.choice && !this.menus.open) {
@@ -327,6 +340,11 @@ export class Game3D {
       this.resultsIn -= realMs;
       if (this.resultsIn < 0) this.showResults();
     }
+  }
+
+  private hearEvents(events: readonly SimEvent[]): void {
+    const menu = this.menus.current;
+    this.audio.frame(events, probeWorld(this.world, this.phase, menu, this.world.time.paused));
   }
 
   /**
@@ -467,7 +485,9 @@ export class Game3D {
   private rebuildView(): void {
     this.view.dispose();
     this.view = new GameView(this.dom.app, this.dom.floats, this.world, this.settings, this.safe);
-    this.view.applyEvents(this.world.drainEvents());
+    const events = this.world.drainEvents();
+    this.view.applyEvents(events);
+    this.hearEvents(events);
   }
 
   // ─── Outils de test (dev) ──────────────────────────────────────────────────
@@ -496,6 +516,7 @@ export class Game3D {
     this.hud.dispose();
     this.menus.dispose();
     this.view.dispose();
+    this.audio.dispose();
   }
 }
 
