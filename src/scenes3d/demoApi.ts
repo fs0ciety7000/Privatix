@@ -1,5 +1,7 @@
 import type { EnemyKind } from '@/config/balance';
 import type { Game3D } from '@/scenes3d/Game3D';
+import type { HubDoorId, HubStationId } from '@/sim/hub/stations';
+import { HUB_DOORS, HUB_STATIONS_BY_ID } from '@/sim/hub/stations';
 
 /**
  * Outil de pilotage de l'entrée 3D pour les captures automatisées (Playwright). Chargé uniquement en
@@ -95,6 +97,49 @@ export function installDemoApi(game: Game3D): void {
       game.choose(i);
     },
     stats: () => game.gameView.stats(),
+    /** Progression (méta) courante. */
+    progress: () => {
+      const m = game.progress;
+      return { ps: m.ps, grains: m.grains, pieces: m.pieces, upgrades: m.upgrades, stats: m.stats };
+    },
+    /** État du hub (phase `hub`), sinon `null`. */
+    hub: () => {
+      const h = game.hubController;
+      if (!h) return null;
+      return {
+        zone: h.sim.zone,
+        shift: h.sim.shift,
+        prompt: h.sim.prompt?.label ?? null,
+        frozen: h.sim.frozen,
+        dummy: h.sim.dummy ? { dps: h.sim.dummy.dps, total: h.sim.dummy.total } : null,
+      };
+    },
+    /** Place le héros devant une station du hub (changement de zone direct si besoin). */
+    hubGoto: (id: HubStationId) => {
+      const h = game.hubController;
+      const s = HUB_STATIONS_BY_ID.get(id);
+      if (!h || !s) return false;
+      if (h.sim.zone !== s.zone) h.sim.enterZone(s.zone, null);
+      const b = game.simWorld.hero.body;
+      b.x = s.at.x;
+      b.y = s.at.y;
+      b.prevX = b.x;
+      b.prevY = b.y;
+      return true;
+    },
+    /** Place le héros à 40 u d'une porte du hub (il suffit ensuite de marcher vers elle). */
+    hubDoor: (id: HubDoorId) => {
+      const h = game.hubController;
+      const d = HUB_DOORS.find((x) => x.id === id);
+      if (!h || !d) return false;
+      if (h.sim.zone !== d.zone) h.sim.enterZone(d.zone, null);
+      const b = game.simWorld.hero.body;
+      b.x = d.at.x;
+      b.y = d.at.y - d.side * 40;
+      b.prevX = b.x;
+      b.prevY = b.y;
+      return true;
+    },
     advance: (ms: number) => {
       game.fastForward(ms);
     },

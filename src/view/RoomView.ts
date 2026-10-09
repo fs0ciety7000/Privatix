@@ -56,8 +56,8 @@ interface Bucket {
   readonly receive: boolean;
 }
 
-/** Regroupe les géométries statiques par matériau, puis les fusionne (un appel de rendu par seau). */
-class StaticBatch {
+/** Regroupe les géométries statiques par matériau, puis les fusionne (un appel de rendu par seau). Partagé avec le décor du hub. */
+export class StaticBatch {
   private readonly buckets = new Map<string, Bucket>();
 
   public add(
@@ -127,7 +127,7 @@ function normalize(
   return out;
 }
 
-function mat4(
+export function mat4(
   x: number,
   y: number,
   z: number,
