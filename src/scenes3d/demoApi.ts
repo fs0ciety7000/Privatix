@@ -24,8 +24,23 @@ export function installDemoApi(game: Game3D): void {
           type: d.choice?.type,
           reward: d.choice?.reward,
         })),
+      biome: game.simWorld.director.biome,
+      localRoom: game.simWorld.director.localRoom,
       boss: game.simWorld.director.boss
-        ? { hp: game.simWorld.director.boss.hp, phase: game.simWorld.director.boss.phase }
+        ? {
+            kind: game.simWorld.director.boss.kind,
+            hp: game.simWorld.director.boss.hp,
+            maxHp: game.simWorld.director.boss.maxHp,
+            phase: game.simWorld.director.boss.phase,
+            state: game.simWorld.director.boss.state,
+          }
+        : null,
+      guardian: game.simWorld.director.guardian
+        ? {
+            kind: game.simWorld.director.guardian.kind,
+            hp: game.simWorld.director.guardian.hp,
+            phase: game.simWorld.director.guardian.phase,
+          }
         : null,
       result: game.simWorld.director.result,
       kills: game.simWorld.run.kills,
@@ -92,6 +107,41 @@ export function installDemoApi(game: Game3D): void {
     },
     cheat: (key: 'K' | 'G' | 'N' | 'B') => {
       game.cheat(key);
+    },
+    /** Salle gardée du biome en cours, ou première salle d'un biome (captures). */
+    gardee: () => {
+      game.simWorld.director.cheatGardee();
+    },
+    biome: (b: number) => {
+      game.simWorld.director.cheatBiome(b);
+    },
+    /** Force une attaque d'un ennemi (captures des télégraphes). */
+    attack: (id: number, attack: string) => {
+      game.simWorld.enemies.find((e) => e.id === id)?.debugAttack(attack);
+    },
+    /** Met les PV d'un ennemi à une fraction (phases des boss, captures). */
+    hurt: (id: number, ratio: number) => {
+      const e = game.simWorld.enemies.find((x) => x.id === id);
+      if (!e) return;
+      const target = Math.max(1, Math.round(e.maxHp * ratio));
+      e.takeHit({
+        amount: Math.max(1, e.hp - target),
+        crit: false,
+        fromX: e.body.x,
+        fromY: e.body.y + 30,
+        knockbackAngle: 0,
+        knockbackPx: 0,
+        knockbackMs: 0,
+        stunMs: 0,
+        slow: 0,
+        slowMs: 0,
+        vulnerable: 0,
+        meltdownStun: false,
+        heavy: false,
+      });
+    },
+    mobilisation: (v: number) => {
+      game.simWorld.run.mobilisation.add(v);
     },
     choose: (i: number) => {
       game.choose(i);

@@ -23,6 +23,8 @@ export interface HudSnapshot {
   /** Heure du Shift (« 06:30 »), type de salle, monnaies du run. */
   readonly clock: string;
   readonly roomLabel: string;
+  /** Salles du biome en cours, pauses et boss compris (défaut : 10, biome 1). */
+  readonly roomTotal?: number;
   readonly tickets: number;
   readonly ps: number;
   /** Héros marqué par un drone (+25 % de dégâts subis). */
@@ -145,7 +147,7 @@ export class Hud {
     });
     const waves =
       s.waveCount > 0 ? ` · VAGUE ${String(Math.max(1, s.wave))}/${String(s.waveCount)}` : '';
-    const wave = `${s.clock} · ${s.roomLabel.toUpperCase()} · SALLE ${String(s.room)}/10${waves}`;
+    const wave = `${s.clock} · ${s.roomLabel.toUpperCase()} · SALLE ${String(s.room)}/${String(s.roomTotal ?? 10)}${waves}`;
     this.set('wv', wave, (v) => (this.wave.textContent = v));
     const purse = `${String(s.tickets)} TICKETS · ${String(s.ps)} PS · ${String(s.kills)} K.O.${s.marked ? ' · SIGNALÉ' : ''}`;
     this.set('pu', purse, (v) => {

@@ -33,6 +33,8 @@ export interface EnemyLook {
   readonly animatedDeath?: boolean;
   /** Durée avant la dissolution du corps (s, défaut 1,2). */
   readonly deathFallS?: number;
+  /** Défaite digne (boss « vaincu, jamais tué ») : ni projection ni rebond du corps. */
+  readonly calmExit?: boolean;
 }
 
 export abstract class ProceduralEnemyView implements EnemyView {
@@ -126,10 +128,11 @@ export abstract class ProceduralEnemyView implements EnemyView {
     this.deathT = 0;
     this.hpBar.visible = false;
     this.tele.hide();
+    const calm = this.look.calmExit === true;
     this.deathKb
       .set(Math.cos(angle), 0, Math.sin(angle))
-      .multiplyScalar(this.look.topple ? 4.5 : 1.5);
-    this.deathVel.set(0, this.look.topple ? 5.5 : 2, 0);
+      .multiplyScalar(calm ? 0 : this.look.topple ? 4.5 : 1.5);
+    this.deathVel.set(0, calm ? 0 : this.look.topple ? 5.5 : 2, 0);
     this.onDeath();
   }
 

@@ -371,6 +371,98 @@
   text-align: center;
 }
 
+.px-boss.is-major .px-boss-name {
+  color: #fff2c0;
+  text-shadow:
+    0 0 12px var(--px-gold),
+    0 2px 0 #000;
+}
+.px-boss.is-major .px-boss-fill {
+  background: linear-gradient(90deg, #b07a00, var(--px-gold));
+}
+
+/* ─── Entrée en scène d'un boss, sous-titres ─── */
+.px-intro {
+  position: fixed;
+  top: max(84px, calc(env(safe-area-inset-top) + 72px));
+  left: 50%;
+  width: min(640px, calc(100% - 32px));
+  transform: translateX(-50%);
+  padding: var(--sp-4) var(--sp-5);
+  border: var(--bd);
+  border-radius: var(--r-md);
+  outline: 2px solid var(--px-danger);
+  background: linear-gradient(180deg, var(--px-panel-top), var(--px-panel-bottom));
+  box-shadow: var(--sh-card);
+  text-align: center;
+  pointer-events: none;
+  z-index: 16;
+}
+.px-intro[hidden] {
+  display: none;
+}
+.px-intro-name {
+  color: #ffffff;
+  font: 900 var(--fs-xl) / 1.05 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: var(--glow-magenta);
+}
+.px-intro-title {
+  margin-top: var(--sp-1);
+  color: var(--px-label);
+  font: 700 var(--fs-sm) / 1.2 var(--font-text);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+.px-intro-line {
+  margin-top: var(--sp-3);
+  color: var(--px-text-soft);
+  font: italic 600 var(--fs-md) / 1.35 var(--font-text);
+}
+.px-fictive {
+  display: inline-block;
+  margin-left: var(--sp-2);
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--r-sm);
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) / 1.4 var(--font-text);
+  font-style: normal;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.px-captions {
+  position: fixed;
+  left: 50%;
+  bottom: max(118px, calc(env(safe-area-inset-bottom) + 104px));
+  width: min(720px, calc(100% - 32px));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  align-items: center;
+  pointer-events: none;
+  z-index: 15;
+}
+.px-caption {
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-sm);
+  background: rgba(10, 8, 24, 0.78);
+  color: var(--px-text);
+  font: 600 var(--fs-sm) / 1.35 var(--font-text);
+  text-align: center;
+}
+.px-caption-who {
+  margin-right: var(--sp-2);
+  color: var(--px-hero-hi);
+  font-weight: 900;
+}
+.px-caption-who::after {
+  content: ' :';
+}
+
 /* ─── Bouton pause (tactile) ─── */
 .px-pause-btn {
   position: fixed;

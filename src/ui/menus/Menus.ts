@@ -64,6 +64,35 @@ export interface SavedTotals {
 
 type Screen = 'none' | 'title' | 'pause' | 'options' | 'choice' | 'results' | 'panel';
 
+/** Barre d'un boss ou d'un ennemi majeur. */
+export interface BossBarInfo {
+  readonly name: string;
+  readonly ratio: number;
+  readonly phase: number;
+  /** Nombre de phases (3 pour les boss, 2 pour les ennemis majeurs). */
+  readonly phases?: number;
+  /** Ennemi majeur (Salle gardée) : barre dorée. */
+  readonly major?: boolean;
+}
+
+/** Entrée en scène d'un boss : nom, titre, réplique (fictive : personne réelle, LORE § 1.4). */
+export interface BossIntroView {
+  readonly name: string;
+  readonly title: string;
+  readonly line: string;
+  readonly fictive: boolean;
+}
+
+/** Réplique en sous-titre. */
+export interface LineView {
+  readonly speaker: string;
+  readonly text: string;
+  readonly fictive: boolean;
+}
+
+/** Mention affichée à côté de toute réplique prêtée à une personne réelle. */
+export const FICTIVE_TAG = 'réplique fictive';
+
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   cls: string,
@@ -97,6 +126,9 @@ export class Menus {
   private readonly bossFill: HTMLDivElement;
   private readonly bossPhase: HTMLDivElement;
   private readonly bossName: HTMLDivElement;
+  private readonly intro: HTMLDivElement;
+  private readonly captions: HTMLDivElement;
+  private introTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly pauseBtn: HTMLButtonElement;
   private screen: Screen = 'none';
   /** Boutons navigables de l'écran courant et sélection clavier. */
@@ -130,6 +162,11 @@ export class Menus {
     const bar = el('div', 'px-boss-bar', this.boss);
     this.bossFill = el('div', 'px-boss-fill', bar);
     this.bossPhase = el('div', 'px-boss-phase', this.boss);
+    this.intro = el('div', 'px-intro', host);
+    this.intro.hidden = true;
+    this.intro.setAttribute('role', 'status');
+    this.captions = el('div', 'px-captions', host);
+    this.captions.setAttribute('aria-live', 'polite');
     this.pauseBtn = el('button', 'px-pause-btn', host, 'II');
     this.pauseBtn.type = 'button';
     this.pauseBtn.setAttribute('aria-label', 'Pause');
@@ -485,16 +522,85 @@ export class Menus {
     this.promptEl.style.top = `${y.toFixed(0)}px`;
   }
 
-  public setBoss(info: { name: string; ratio: number; phase: number } | null): void {
+  public setBoss(info: BossBarInfo | null): void {
     if (!info) {
       this.boss.hidden = true;
       return;
     }
     this.boss.hidden = false;
+    this.boss.classList.toggle('is-major', info.major === true);
     if (this.bossName.textContent !== info.name) this.bossName.textContent = info.name;
     this.bossFill.style.transform = `scaleX(${Math.max(0, Math.min(1, info.ratio)).toFixed(3)})`;
-    const phase = `Phase ${String(info.phase)} / 3`;
+    const phase = `Phase ${String(info.phase)} / ${String(info.phases ?? 3)}`;
     if (this.bossPhase.textContent !== phase) this.bossPhase.textContent = phase;
+  }
+
+  /**
+   * Carte d'entrée en scène d'un boss (nom, titre, réplique), quelques secondes, sans bloquer le jeu.
+   * Une réplique prêtée à une personne réelle porte la mention « réplique fictive ».
+   */
+  public showBossIntro(v: BossIntroView, seconds = 3.2): void {
+    const box = this.intro;
+    box.innerHTML = '';
+    el('div', 'px-intro-name', box, v.name);
+    el('div', 'px-intro-title', box, v.title);
+    const q = el('div', 'px-intro-line', box, `« ${v.line} »`);
+    if (v.fictive) el('span', 'px-fictive', q, FICTIVE_TAG);
+    box.hidden = false;
+    gsap.killTweensOf(box);
+    if (this.reduced) gsap.set(box, { opacity: 1, y: 0 });
+    else
+      gsap.fromTo(
+        box,
+        { opacity: 0, y: -16 },
+        { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' },
+      );
+    if (this.introTimer) clearTimeout(this.introTimer);
+    this.introTimer = setTimeout(() => {
+      this.introTimer = null;
+      if (this.reduced) {
+        box.hidden = true;
+        return;
+      }
+      gsap.to(box, {
+        opacity: 0,
+        duration: 0.4,
+        onComplete: () => {
+          box.hidden = true;
+        },
+      });
+    }, seconds * 1000);
+  }
+
+  /** Réplique en sous-titre (au plus trois à l'écran) ; « réplique fictive » si c'est le cas. */
+  public showLine(v: LineView, seconds = 3.6): void {
+    const row = el('div', 'px-caption', this.captions);
+    el('span', 'px-caption-who', row, v.speaker);
+    el('span', 'px-caption-text', row, v.text);
+    if (v.fictive) el('span', 'px-fictive', row, FICTIVE_TAG);
+    while (this.captions.children.length > 3) this.captions.firstElementChild?.remove();
+    if (!this.reduced) gsap.fromTo(row, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.25 });
+    setTimeout(() => {
+      if (this.reduced) {
+        row.remove();
+        return;
+      }
+      gsap.to(row, {
+        opacity: 0,
+        duration: 0.35,
+        onComplete: () => {
+          row.remove();
+        },
+      });
+    }, seconds * 1000);
+  }
+
+  /** Efface la carte d'intro et les sous-titres (changement d'écran). */
+  public clearCaptions(): void {
+    if (this.introTimer) clearTimeout(this.introTimer);
+    this.introTimer = null;
+    this.intro.hidden = true;
+    this.captions.innerHTML = '';
   }
 
   // ─── Clavier ───────────────────────────────────────────────────────────────
@@ -556,6 +662,9 @@ export class Menus {
     this.fader.remove();
     this.promptEl.remove();
     this.boss.remove();
+    if (this.introTimer) clearTimeout(this.introTimer);
+    this.intro.remove();
+    this.captions.remove();
     this.pauseBtn.remove();
   }
 
