@@ -79,11 +79,23 @@ export class Rig {
     return m;
   }
 
-  public sphere(joint: string, mat: THREE.Material, pos: V3, scale: V3, opts: PartOpts = {}): THREE.Mesh {
+  public sphere(
+    joint: string,
+    mat: THREE.Material,
+    pos: V3,
+    scale: V3,
+    opts: PartOpts = {},
+  ): THREE.Mesh {
     return this.attach(joint, sphereGeo(18), mat, pos, { ...opts, scale });
   }
 
-  public hemi(joint: string, mat: THREE.Material, pos: V3, scale: V3, opts: PartOpts = {}): THREE.Mesh {
+  public hemi(
+    joint: string,
+    mat: THREE.Material,
+    pos: V3,
+    scale: V3,
+    opts: PartOpts = {},
+  ): THREE.Mesh {
     return this.attach(joint, hemiGeo(20), mat, pos, { ...opts, scale });
   }
 
@@ -191,7 +203,11 @@ export function lerpPose(a: Pose, b: Pose, t: number): Pose {
   for (const k of keys) {
     const ra = a.rot[k] ?? ZERO;
     const rb = b.rot[k] ?? ZERO;
-    rot[k] = [ra[0] + (rb[0] - ra[0]) * t, ra[1] + (rb[1] - ra[1]) * t, ra[2] + (rb[2] - ra[2]) * t];
+    rot[k] = [
+      ra[0] + (rb[0] - ra[0]) * t,
+      ra[1] + (rb[1] - ra[1]) * t,
+      ra[2] + (rb[2] - ra[2]) * t,
+    ];
   }
   const lr = (x: V3 | undefined, y: V3 | undefined, d: V3): V3 => {
     const p = x ?? d;

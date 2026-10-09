@@ -42,13 +42,26 @@ export class ConsultantView {
   private materialized = false;
   private spawnT = 0;
 
+  /** Géométries propres à cette instance (les autres viennent des caches partagés). */
+  private readonly ownGeos: THREE.BufferGeometry[] = [];
+
   public constructor(
-    private readonly scene: THREE.Scene,
+    scene: THREE.Scene,
     private readonly reducedMotion: boolean,
   ) {
     const f = this.flash;
-    const m = (c: number, rim = 0.9, o: { rim?: number; emissive?: number; emissiveIntensity?: number } = {}): THREE.MeshToonMaterial =>
-      toon(c, { rimStrength: rim, rim: o.rim ?? 0xff7ac8, flash: f, emissive: o.emissive ?? 0, emissiveIntensity: o.emissiveIntensity ?? 1 });
+    const m = (
+      c: number,
+      rim = 0.9,
+      o: { rim?: number; emissive?: number; emissiveIntensity?: number } = {},
+    ): THREE.MeshToonMaterial =>
+      toon(c, {
+        rimStrength: rim,
+        rim: o.rim ?? 0xff7ac8,
+        flash: f,
+        emissive: o.emissive ?? 0,
+        emissiveIntensity: o.emissiveIntensity ?? 1,
+      });
     const suit = m(0x19c3b1, 1.0);
     const suitDark = m(0x0f7f7a, 0.6);
     const shirt = m(0xf2f4fa, 0.4);
@@ -88,7 +101,9 @@ export class ConsultantView {
       r.capsule(`knee_${s}`, suit, [0, 0, 0], [0, -0.14, 0], 0.076);
       r.capsule(`knee_${s}`, socks, [0, -0.16, 0], [0, -0.24, 0], 0.058);
       r.box(`foot_${s}`, sneaker, [0, 0.035, 0.05], [0.16, 0.13, 0.3], 0.055);
-      r.box(`foot_${s}`, m(0xff3ea5, 0.2), [0, -0.025, 0.05], [0.165, 0.03, 0.305], 0.01, { outline: false });
+      r.box(`foot_${s}`, m(0xff3ea5, 0.2), [0, -0.025, 0.05], [0.165, 0.03, 0.305], 0.01, {
+        outline: false,
+      });
     }
     r.box('pelvis', suit, [0, 0, 0], [0.36, 0.17, 0.24], 0.07);
     r.box('spine', suit, [0, 0.03, 0], [0.37, 0.18, 0.25], 0.08);
@@ -96,11 +111,24 @@ export class ConsultantView {
     r.box('chest', suit, [0, 0.09, 0], [0.48, 0.38, 0.29], 0.1);
     r.box('chest', shirt, [0, 0.14, 0.135], [0.15, 0.24, 0.04], 0.015, { outline: false });
     for (const sx of [1, -1])
-      r.box('chest', suitDark, [0.09 * sx, 0.15, 0.142], [0.07, 0.26, 0.03], 0.012, { rot: [0, 0, 16 * sx], outline: false });
+      r.box('chest', suitDark, [0.09 * sx, 0.15, 0.142], [0.07, 0.26, 0.03], 0.012, {
+        rot: [0, 0, 16 * sx],
+        outline: false,
+      });
     r.box('chest', shirt, [0, 0.27, 0.02], [0.27, 0.06, 0.2], 0.025);
     // Badge (cordon magenta, carte turquoise)
-    r.box('chest', m(0xff3ea5, 0.2), [0.12, 0.12, 0.148], [0.018, 0.2, 0.01], 0.004, { outline: false, rot: [0, 0, 10] });
-    r.box('chest', m(0x5ff7e4, 0.3, { emissive: 0x19c3b1, emissiveIntensity: 0.4 }), [0.14, 0.01, 0.15], [0.07, 0.09, 0.012], 0.008, { outline: false });
+    r.box('chest', m(0xff3ea5, 0.2), [0.12, 0.12, 0.148], [0.018, 0.2, 0.01], 0.004, {
+      outline: false,
+      rot: [0, 0, 10],
+    });
+    r.box(
+      'chest',
+      m(0x5ff7e4, 0.3, { emissive: 0x19c3b1, emissiveIntensity: 0.4 }),
+      [0.14, 0.01, 0.15],
+      [0.07, 0.09, 0.012],
+      0.008,
+      { outline: false },
+    );
     // Cravate
     r.box('tie0', tie, [0, 0.0, 0.0], [0.07, 0.05, 0.05], 0.015, { outline: false });
     r.box('tie0', tie, [0, -0.08, 0.0], [0.075, 0.14, 0.025], 0.01);
@@ -120,18 +148,33 @@ export class ConsultantView {
     r.sphere('head', hair, [0, 0.31, -0.01], [0.22, 0.1, 0.21]);
     r.sphere('head', hair, [0.04, 0.34, 0.13], [0.15, 0.1, 0.11], { rot: [-20, 0, -8] });
     for (const sx of [1, -1]) {
-      r.sphere('head', eyes, [0.085 * sx, 0.17, 0.215], [0.03, 0.04, 0.025], { outline: false, shadow: false });
-      r.box('head', hair, [0.09 * sx, 0.235, 0.22], [0.09, 0.025, 0.03], 0.01, { rot: [0, 0, 14 * sx], outline: false, shadow: false });
+      r.sphere('head', eyes, [0.085 * sx, 0.17, 0.215], [0.03, 0.04, 0.025], {
+        outline: false,
+        shadow: false,
+      });
+      r.box('head', hair, [0.09 * sx, 0.235, 0.22], [0.09, 0.025, 0.03], 0.01, {
+        rot: [0, 0, 14 * sx],
+        outline: false,
+        shadow: false,
+      });
       r.sphere('head', skin, [0.245 * sx, 0.14, 0], [0.045, 0.06, 0.045]);
     }
-    r.box('head', m(0x8a0f52, 0), [0, 0.08, 0.215], [0.11, 0.022, 0.03], 0.01, { rot: [0, 0, 6], outline: false, shadow: false });
+    r.box('head', m(0x8a0f52, 0), [0, 0.08, 0.215], [0.11, 0.022, 0.03], 0.01, {
+      rot: [0, 0, 6],
+      outline: false,
+      shadow: false,
+    });
     const ear = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), glow(PAL.danger, 4));
     ear.position.set(-0.27, 0.14, 0.03);
     r.j('head').add(ear);
+    this.ownGeos.push(ear.geometry);
 
     // Laptop : socle à plat (XZ), charnière à l'arrière (z = -0.14). L'écran sert de télégraphe.
     r.box('laptop', shell, [0, 0, 0], [0.42, 0.03, 0.28], 0.012);
-    r.box('laptop', m(0x1a2140, 0), [0, 0.016, 0.01], [0.36, 0.004, 0.18], 0.0, { outline: false, shadow: false });
+    r.box('laptop', m(0x1a2140, 0), [0, 0.016, 0.01], [0.36, 0.004, 0.18], 0.0, {
+      outline: false,
+      shadow: false,
+    });
     r.box('lid', shell, [0, 0.014, 0.14], [0.42, 0.026, 0.28], 0.012);
     this.screenMat = glow(0x2a3a6a, 1);
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.24), this.screenMat);
@@ -143,29 +186,53 @@ export class ConsultantView {
     logo.rotation.x = -Math.PI / 2;
     logo.position.set(0, 0.029, 0.14);
     r.j('lid').add(logo);
+    this.ownGeos.push(screen.geometry, logo.geometry);
 
     // Barre de vie flottante
     const bg = new THREE.Mesh(
       new THREE.PlaneGeometry(0.9, 0.09),
-      new THREE.MeshBasicMaterial({ color: 0x14101a, transparent: true, opacity: 0.85, depthTest: false }),
+      new THREE.MeshBasicMaterial({
+        color: 0x14101a,
+        transparent: true,
+        opacity: 0.85,
+        depthTest: false,
+      }),
     );
     this.hpFill = new THREE.Mesh(
       new THREE.PlaneGeometry(0.86, 0.055).translate(0.43, 0, 0),
-      new THREE.MeshBasicMaterial({ color: new THREE.Color(PAL.danger).multiplyScalar(1.6), depthTest: false }),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(PAL.danger).multiplyScalar(1.6),
+        depthTest: false,
+      }),
     );
     this.hpFill.position.set(-0.43, 0, 0.001);
     bg.renderOrder = 30;
     this.hpFill.renderOrder = 31;
     this.hpBar.add(bg, this.hpFill);
+    this.ownGeos.push(bg.geometry, this.hpFill.geometry);
     this.hpBar.visible = false;
 
     // Télégraphes : formes exactes des attaques logiques (m).
-    this.arcTele = new ArcTelegraph(pxToM(CONSULTANT.MELEE_REACH), CONSULTANT.MELEE_ARC_DEG, PAL.danger);
-    this.lineTele = new RectTelegraph(pxToM(CONSULTANT.QW_WIDTH), pxToM(CONSULTANT.QW_DISTANCE), PAL.danger);
+    this.arcTele = new ArcTelegraph(
+      pxToM(CONSULTANT.MELEE_REACH),
+      CONSULTANT.MELEE_ARC_DEG,
+      PAL.danger,
+    );
+    this.lineTele = new RectTelegraph(
+      pxToM(CONSULTANT.QW_WIDTH),
+      pxToM(CONSULTANT.QW_DISTANCE),
+      PAL.danger,
+    );
     this.spawnTele = new DiscTelegraph(0.45, PAL.danger);
     this.rig.root.scale.setScalar(0.01);
     this.rig.root.visible = false;
-    scene.add(this.rig.root, this.hpBar, this.arcTele.mesh, this.lineTele.mesh, this.spawnTele.mesh);
+    scene.add(
+      this.rig.root,
+      this.hpBar,
+      this.arcTele.mesh,
+      this.lineTele.mesh,
+      this.spawnTele.mesh,
+    );
   }
 
   public get isDying(): boolean {
@@ -202,11 +269,22 @@ export class ConsultantView {
   }
 
   /** Pose d'après l'ennemi simulé (ou poursuit l'animation de mort si `sim` a disparu). */
-  public sync(sim: EnemySim | null, alpha: number, simDt: number, realDt: number, cam: THREE.Camera, time: number): void {
+  public sync(
+    sim: EnemySim | null,
+    alpha: number,
+    simDt: number,
+    realDt: number,
+    cam: THREE.Camera,
+    time: number,
+  ): void {
     this.time += simDt;
     if (sim && !this.dead) {
       const b = sim.body;
-      this.pos.set(pxToM(b.prevX + (b.x - b.prevX) * alpha), 0, pxToM(b.prevY + (b.y - b.prevY) * alpha));
+      this.pos.set(
+        pxToM(b.prevX + (b.x - b.prevX) * alpha),
+        0,
+        pxToM(b.prevY + (b.y - b.prevY) * alpha),
+      );
       this.syncAlive(sim, simDt, time);
     } else {
       this.syncDeath(simDt);
@@ -311,8 +389,22 @@ export class ConsultantView {
       case 'windup': {
         const total = rush ? CONSULTANT.QW_TELEGRAPH_MS : CONSULTANT.MELEE_TELEGRAPH_MS;
         pose = rush
-          ? keyed([[0, idle(time)], [total * 0.5, CROUCH, easeOut], [total, CROUCH]], t)
-          : keyed([[0, idle(time)], [total * 0.45, RAISE(0), easeOut], [total, RAISE(1)]], t);
+          ? keyed(
+              [
+                [0, idle(time)],
+                [total * 0.5, CROUCH, easeOut],
+                [total, CROUCH],
+              ],
+              t,
+            )
+          : keyed(
+              [
+                [0, idle(time)],
+                [total * 0.45, RAISE(0), easeOut],
+                [total, RAISE(1)],
+              ],
+              t,
+            );
         k = 18;
         break;
       }
@@ -322,12 +414,34 @@ export class ConsultantView {
           pose = RUSH(this.walkPhase);
           k = 30;
         } else {
-          pose = keyed([[0, RAISE(1)], [70, SLAM, easeIn], [120, SLAM]], t);
+          pose = keyed(
+            [
+              [0, RAISE(1)],
+              [70, SLAM, easeIn],
+              [120, SLAM],
+            ],
+            t,
+          );
           k = 45;
         }
         break;
       case 'recover':
-        pose = rush ? keyed([[0, STUMBLE], [CONSULTANT.QW_RECOVERY_MS, idle(time)]], t) : keyed([[0, SLAM], [330, SLAM], [CONSULTANT.MELEE_RECOVERY_MS, idle(time)]], t);
+        pose = rush
+          ? keyed(
+              [
+                [0, STUMBLE],
+                [CONSULTANT.QW_RECOVERY_MS, idle(time)],
+              ],
+              t,
+            )
+          : keyed(
+              [
+                [0, SLAM],
+                [330, SLAM],
+                [CONSULTANT.MELEE_RECOVERY_MS, idle(time)],
+              ],
+              t,
+            );
         k = 14;
         break;
       case 'stagger':
@@ -342,7 +456,11 @@ export class ConsultantView {
     const tv = sim.state === 'stagger' ? 1.4 : sp;
     this.tieV += (tv - this.tieV) * (1 - Math.exp(-6 * dt));
     const p = editable(pose);
-    p.rot.tie0 = [-8 - this.tieV * 30 + Math.sin(time * 9) * 6 * this.tieV, 0, Math.sin(time * 7) * 8 * this.tieV];
+    p.rot.tie0 = [
+      -8 - this.tieV * 30 + Math.sin(time * 9) * 6 * this.tieV,
+      0,
+      Math.sin(time * 7) * 8 * this.tieV,
+    ];
     p.rot.tie1 = [-6 - this.tieV * 30 + Math.sin(time * 11 + 1) * 10 * this.tieV, 0, 0];
     this.rig.apply(p, dt, k);
     // Tremblement de fin de télégraphe (coupé en réduction des mouvements)
@@ -351,12 +469,20 @@ export class ConsultantView {
   }
 
   public dispose(): void {
+    // Matériaux propres à l'instance (toon et émissifs) ; les contours partagent un matériau en cache.
+    this.rig.root.traverse((o) => {
+      if (o instanceof THREE.Mesh && o.userData.outline !== true)
+        (o.material as THREE.Material).dispose();
+    });
+    this.hpBar.traverse((o) => {
+      if (o instanceof THREE.Mesh) (o.material as THREE.Material).dispose();
+    });
+    for (const g of this.ownGeos) g.dispose();
     this.rig.dispose();
     this.hpBar.removeFromParent();
     this.arcTele.dispose();
     this.lineTele.dispose();
     this.spawnTele.dispose();
-    void this.scene;
   }
 }
 

@@ -4,7 +4,7 @@
 //  - membre pendant (bras, jambe) : X < 0 le porte vers l'avant, Z > 0 l'écarte vers +X ;
 //  - tronc / tête : X > 0 penche vers l'avant ; Y = rotation sur soi (vers sa gauche).
 import * as THREE from 'three';
-import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { addOutline, capsuleGeo, cylGeo, hemiGeo, outlineGeo, outlineMat, rboxGeo, sphereGeo } from './toon';
 
 export type V3 = [number, number, number];
@@ -94,33 +94,98 @@ export class Rig {
   }
 
   /**
-   * Fusionne les pièces rigides portées par un même parent (articulation ou groupe d'équipement)
-   * qui partagent matériau, ombres et contour : une pièce = 1 appel de rendu + 1 pour sa coque
-   * + 1 dans la passe d'ombre ; après fusion, c'est une fois par matériau et par articulation.
-   * À appeler une fois le personnage construit, avant tout traitement qui parcourt ses maillages.
+   * Réduit les appels de rendu d'un personnage, une fois celui-ci construit (avant tout traitement
+   * qui parcourt ses maillages) :
+   *  - les pièces portées par les articulations deviennent UN maillage skinné par matériau (poids 1
+   *    sur l'articulation porteuse : rigide, aucune déformation), coques de contour comprises ;
+   *  - les pièces des groupes d'équipement (casques, clés) sont fusionnées par groupe et par matériau.
+   * Avant : 1 appel par pièce + 1 par coque + 1 dans la passe d'ombre ; après : 1 par matériau.
    */
   optimize(): void {
-    const groups = new Map<string, THREE.Mesh[]>();
-    for (const m of this.meshes) {
+    this.root.updateMatrixWorld(true);
+    const bones = [...this.joints.values()];
+    const boneIdx = new Map<THREE.Object3D, number>(bones.map((b, i) => [b, i]));
+    const candidates = new Set<THREE.Mesh>(this.meshes);
+    // pièces ajoutées directement sur les articulations (dents, griffes, yeux…)
+    for (const j of bones)
+      for (const c of j.children)
+        if (c instanceof THREE.Mesh && !c.userData.outline) {
+          const mt = c.material;
+          if ((mt instanceof THREE.MeshToonMaterial || mt instanceof THREE.MeshBasicMaterial) && !mt.transparent && !mt.map) candidates.add(c);
+        }
+    const skinGroups = new Map<string, THREE.Mesh[]>();
+    const plainGroups = new Map<string, THREE.Mesh[]>();
+    for (const m of candidates) {
       const p = m.parent;
-      if (!p || m.userData.noMerge || (m.material as THREE.MeshToonMaterial).map) continue;
-      // seule la coque de contour est tolérée comme enfant
+      if (!p || m.userData.noMerge || !m.visible || (m.material as THREE.MeshToonMaterial).map || Array.isArray(m.material)) continue;
       if (m.children.some((c) => !c.userData.outline)) continue;
-      const key = `${p.uuid}|${(m.material as THREE.Material).uuid}|${m.castShadow}|${m.receiveShadow}|${m.userData.outlineWidth ?? 0}|${m.geometry.index ? 1 : 0}`;
-      let g = groups.get(key);
-      if (!g) groups.set(key, (g = []));
+      const key = `${(m.material as THREE.Material).uuid}|${m.castShadow}|${m.receiveShadow}|${m.userData.outlineWidth ?? 0}|${m.userData.noGhost ? 1 : 0}`;
+      const skinned = boneIdx.has(p);
+      const map = skinned ? skinGroups : plainGroups;
+      const k = skinned ? key : `${p.uuid}|${key}`;
+      let g = map.get(k);
+      if (!g) map.set(k, (g = []));
       g.push(m);
     }
     const kept: THREE.Mesh[] = [];
-    const merged = new Set<THREE.Mesh>();
-    for (const list of groups.values()) {
+    const gone = new Set<THREE.Mesh>();
+    // 1) pièces des articulations → maillages skinnés rigides
+    if (skinGroups.size > 0) {
+      const skeleton = new THREE.Skeleton(bones as unknown as THREE.Bone[]);
+      const bodyInv = this.body.matrixWorld.clone().invert();
+      const bind = this.body.matrixWorld.clone();
+      const M = new THREE.Matrix4();
+      for (const list of skinGroups.values()) {
+        const geos: THREE.BufferGeometry[] = [];
+        const oGeos: THREE.BufferGeometry[] = [];
+        for (const m of list) {
+          m.updateMatrix();
+          const bi = boneIdx.get(m.parent as THREE.Object3D) ?? 0;
+          M.multiplyMatrices(bodyInv, (m.parent as THREE.Object3D).matrixWorld).multiply(m.matrix);
+          geos.push(withSkin(strip(m.geometry).applyMatrix4(M), bi));
+          if (m.userData.outlineWidth) oGeos.push(withSkin(outlineGeo(m.geometry).clone().applyMatrix4(M), bi));
+        }
+        const g = mergeGeometries(geos, false);
+        if (!g) continue;
+        const first = list[0];
+        const mesh = new THREE.SkinnedMesh(g, first.material);
+        mesh.castShadow = first.castShadow;
+        mesh.receiveShadow = first.receiveShadow;
+        mesh.frustumCulled = false;
+        mesh.userData.noGhost = !!first.userData.noGhost;
+        this.body.add(mesh);
+        mesh.bind(skeleton, bind);
+        const w = first.userData.outlineWidth as number | undefined;
+        if (w && oGeos.length) {
+          const og = mergeGeometries(oGeos, false);
+          if (og) {
+            const o = new THREE.SkinnedMesh(og, outlineMat(w));
+            o.castShadow = false;
+            o.receiveShadow = false;
+            o.frustumCulled = false;
+            o.userData.outline = true;
+            o.raycast = () => undefined;
+            mesh.add(o);
+            o.bind(skeleton, bind);
+          }
+          mesh.userData.outlineWidth = w;
+        }
+        for (const m of list) {
+          m.removeFromParent();
+          gone.add(m);
+        }
+        kept.push(mesh);
+      }
+    }
+    // 2) groupes d'équipement : fusion simple par parent et par matériau
+    for (const list of plainGroups.values()) {
       if (list.length < 2) continue;
       const parent = list[0].parent as THREE.Object3D;
       const geos: THREE.BufferGeometry[] = [];
       const oGeos: THREE.BufferGeometry[] = [];
       for (const m of list) {
         m.updateMatrix();
-        geos.push(strip(m.geometry).applyMatrix4(m.matrix));
+        geos.push(indexed(strip(m.geometry)).applyMatrix4(m.matrix));
         if (m.userData.outlineWidth) oGeos.push(outlineGeo(m.geometry).clone().applyMatrix4(m.matrix));
       }
       const g = mergeGeometries(geos, false);
@@ -130,8 +195,9 @@ export class Rig {
       const mesh = new THREE.Mesh(g, first.material);
       mesh.castShadow = first.castShadow;
       mesh.receiveShadow = first.receiveShadow;
+      mesh.userData.noGhost = !!first.userData.noGhost;
       const w = first.userData.outlineWidth as number | undefined;
-      if (w) {
+      if (w && oGeos.length) {
         const og = mergeGeometries(oGeos, false);
         if (og) {
           const o = new THREE.Mesh(og, outlineMat(w));
@@ -144,13 +210,13 @@ export class Rig {
         mesh.userData.outlineWidth = w;
       }
       for (const m of list) {
-        parent.remove(m);
-        merged.add(m);
+        m.removeFromParent();
+        gone.add(m);
       }
       parent.add(mesh);
       kept.push(mesh);
     }
-    for (let i = this.meshes.length - 1; i >= 0; i--) if (merged.has(this.meshes[i])) this.meshes.splice(i, 1);
+    for (let i = this.meshes.length - 1; i >= 0; i--) if (gone.has(this.meshes[i])) this.meshes.splice(i, 1);
     this.meshes.push(...kept);
   }
 
@@ -186,13 +252,32 @@ export class Rig {
   }
 }
 
-/** Copie position + normale (+ index) : les UV ne servent pas aux matériaux toon unis. */
+/** Copie position + normale, toujours indexée : les UV ne servent pas aux matériaux unis. */
 function strip(src: THREE.BufferGeometry): THREE.BufferGeometry {
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', src.getAttribute('position').clone());
   const n = src.getAttribute('normal');
   if (n) g.setAttribute('normal', n.clone());
   if (src.index) g.setIndex(src.index.clone());
+  return indexed(g);
+}
+
+/** Les géométries non indexées (RoundedBox…) sont soudées pour pouvoir être fusionnées avec les autres. */
+function indexed(g: THREE.BufferGeometry): THREE.BufferGeometry {
+  return g.index ? g : mergeVertices(g, 1e-5);
+}
+
+/** Attache tous les sommets à une seule articulation (poids 1). */
+function withSkin(g: THREE.BufferGeometry, bone: number): THREE.BufferGeometry {
+  const n = g.getAttribute('position').count;
+  const si = new Uint16Array(n * 4);
+  const sw = new Float32Array(n * 4);
+  for (let i = 0; i < n; i++) {
+    si[i * 4] = bone;
+    sw[i * 4] = 1;
+  }
+  g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4));
+  g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
   return g;
 }
 

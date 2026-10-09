@@ -69,13 +69,17 @@ export class Sparks {
 
   public constructor(private readonly cap = 700) {
     const g = new THREE.InstancedBufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute([-1, 0, 0, 1, 0, 0, 1, 1, 0, -1, 1, 0], 3));
+    g.setAttribute(
+      'position',
+      new THREE.Float32BufferAttribute([-1, 0, 0, 1, 0, 0, 1, 1, 0, -1, 1, 0], 3),
+    );
     g.setIndex([0, 1, 2, 0, 2, 3]);
     this.iPos = new THREE.InstancedBufferAttribute(new Float32Array(cap * 3), 3);
     this.iVel = new THREE.InstancedBufferAttribute(new Float32Array(cap * 3), 3);
     this.iColor = new THREE.InstancedBufferAttribute(new Float32Array(cap * 4), 4);
     this.iSize = new THREE.InstancedBufferAttribute(new Float32Array(cap), 1);
-    for (const a of [this.iPos, this.iVel, this.iColor, this.iSize]) a.setUsage(THREE.DynamicDrawUsage);
+    for (const a of [this.iPos, this.iVel, this.iColor, this.iSize])
+      a.setUsage(THREE.DynamicDrawUsage);
     g.setAttribute('iPos', this.iPos);
     g.setAttribute('iVel', this.iVel);
     g.setAttribute('iColor', this.iColor);
@@ -153,7 +157,13 @@ export class Sparks {
       const a = base + (Math.random() - 0.5) * spread * 2;
       const sp = speed * (0.35 + Math.random() * 0.9);
       tmpV.set(Math.sin(a) * sp, up * (0.3 + Math.random() * 1.2), Math.cos(a) * sp);
-      this.emit(pos, tmpV, color, life * (0.5 + Math.random() * 0.8), size * (0.6 + Math.random() * 0.8));
+      this.emit(
+        pos,
+        tmpV,
+        color,
+        life * (0.5 + Math.random() * 0.8),
+        size * (0.6 + Math.random() * 0.8),
+      );
     }
   }
 
@@ -329,7 +339,13 @@ export class Puffs {
     s.shape = o.shape ?? 0;
   }
 
-  public dustRing(pos: THREE.Vector3, n: number, radius: number, color = 0x6a6080, speed = 2.5): void {
+  public dustRing(
+    pos: THREE.Vector3,
+    n: number,
+    radius: number,
+    color = 0x6a6080,
+    speed = 2.5,
+  ): void {
     const p = new THREE.Vector3();
     for (let i = 0; i < n; i += 1) {
       const a = (i / n) * Math.PI * 2 + Math.random() * 0.4;
@@ -423,7 +439,10 @@ export class Smear {
   public constructor(core: number, edge: number) {
     this.geo = new THREE.BufferGeometry();
     const n = this.n;
-    this.geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((n + 1) * 2 * 3), 3));
+    this.geo.setAttribute(
+      'position',
+      new THREE.BufferAttribute(new Float32Array((n + 1) * 2 * 3), 3),
+    );
     const uv = new Float32Array((n + 1) * 2 * 2);
     const idx: number[] = [];
     for (let i = 0; i <= n; i += 1) {
@@ -494,8 +513,12 @@ export class Smear {
     pos.needsUpdate = true;
     this.geo.computeBoundingSphere();
     if (colors) {
-      (this.mat.uniforms.uCore as THREE.IUniform<THREE.Color>).value.setHex(colors.core).multiplyScalar(3.2);
-      (this.mat.uniforms.uEdge as THREE.IUniform<THREE.Color>).value.setHex(colors.edge).multiplyScalar(1.6);
+      (this.mat.uniforms.uCore as THREE.IUniform<THREE.Color>).value
+        .setHex(colors.core)
+        .multiplyScalar(3.2);
+      (this.mat.uniforms.uEdge as THREE.IUniform<THREE.Color>).value
+        .setHex(colors.edge)
+        .multiplyScalar(1.6);
     }
     this.t = 0;
     this.dur = dur;
@@ -701,7 +724,11 @@ export interface TelegraphUniforms {
   readonly uTime: THREE.IUniform<number>;
 }
 
-function telegraphMaterial(fs: string, color: number, extra: Record<string, THREE.IUniform>): THREE.ShaderMaterial {
+function telegraphMaterial(
+  fs: string,
+  color: number,
+  extra: Record<string, THREE.IUniform>,
+): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     vertexShader: DECAL_VS,
     fragmentShader: fs,

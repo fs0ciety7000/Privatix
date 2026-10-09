@@ -81,9 +81,9 @@ export interface ViewSettings {
   readonly quality: QualityPreset;
   /**
    * Réduction des mouvements (accessibilité, décision du porteur) : aucun clignotement ni
-   * stroboscope. Concrètement : pas de clignotement d'invulnérabilité (silhouette pâle fixe), néons
-   * stables, pas d'éclair d'étincelle de caténaire, flashs de coup et éclairs d'impact atténués,
-   * vignette de coup reçu sans pulsation, secousses de caméra réduites de moitié.
+   * stroboscope. Concrètement : pas de clignotement d'invulnérabilité (teinte pâle fixe), néons
+   * stables, flashs de coup et éclairs d'impact atténués, vignette de coup reçu atténuée, ni zoom
+   * punch ni tremblement de télégraphe, secousses de caméra réduites de moitié.
    */
   readonly reducedMotion: boolean;
 }

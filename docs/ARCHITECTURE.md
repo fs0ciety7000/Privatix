@@ -5,6 +5,8 @@
 > **Site** : statique, Docker + nginx, déployé par Coolify sur **https://privatix.fs0ciety.org** (inchangé).
 > Toutes les API Phaser citées ont été vérifiées dans `node_modules/phaser` 4.2.1 (types, guide de migration v4 et code source quand la doc ne suffisait pas).
 
+> **Migration 3D en cours (décision du porteur, octobre 2026).** Le jeu passe en **3D temps réel (Three.js)**. La version Phaser décrite dans les §§ 1 à 13 reste **en production** (`index.html`) et doit rester verte, mais elle est **en sursis jusqu'à la parité** (jalon J9 du plan) : on n'y ajoute plus de fonctionnalité. La nouvelle architecture (simulation pure `sim/`, `engine/`, `view/`, `ui/` en DOM), son statut et ses règles sont au **§ 15**. Plan complet : `docs/proposals/revue-3d-loot/lead_developer.md`.
+
 ## 1. Stack, configuration et déploiement
 ### 1.1 Versions
 | Brique | Version (`package.json`) | Rôle et justification |
@@ -16,7 +18,9 @@
 | **ESLint** | `^10` + `typescript-eslint ^8.71` | `strictTypeChecked` + **garde-fous d'architecture** (§ 2.3). |
 | **Node** | 22 LTS | Même version en local, en CI et dans l'image Docker (`node:22-alpine`). |
 
-Aucune dépendance runtime en plus de `phaser`. Toute nouvelle dépendance (runtime ou dev) se discute en revue.
+| **Three.js** | `0.186.1` (exacte) + `@types/three 0.186.0` | Rendu 3D de l'entrée `play3d.html` (migration, § 15). Ajoutée avec l'accord du porteur ; même version que le prototype `prototypes/proto3d`. |
+
+Dépendances runtime : `phaser` (jeu en production, retiré à la bascule) et `three` (migration 3D). Toute nouvelle dépendance (runtime ou dev) se discute en revue.
 
 ### 1.2 Configuration Phaser 4 (`src/main.ts`)
 ```ts
@@ -1191,6 +1195,75 @@ Le RPG au tour par tour (moteur de combat, dialogues, déplacement sur grille, c
 | `vite.config.ts`, `tsconfig.json` strict, `Dockerfile`, `nginx.conf`, Prettier, `utils/rng.ts` (mulberry32) | `eslint.config.js` (dossiers § 2.3), `SaveManager` → `SaveManager<T>` générique, `constants.ts` (640×360, plus de `WORLD_ZOOM`), `balance.ts` (valeurs du GDD), `VirtualPad` → stick + 3 boutons, `Gauge` → barres du HUD | combat au tour par tour, dialogues/objectifs/story, groupe et distributeur, `GridMovement`, `WorldMap`, `FatigueClock` (remplacée par le Burnout), `BattleScene`, `DialogueScene`, `GameScene`, `data/*` du RPG et leurs tests |
 
 Le savoir-faire des cartes ASCII (parse + test d'accessibilité) est réutilisé pour les gabarits de salles ; le patron « fonction pure qui renvoie `{ state, events }` » reste la norme. `GDD.md`, `ASSETS_GUIDE.md` et les consignes du dépôt sont à mettre à jour séparément pour refléter le pivot.
+
+## 15. Migration 3D temps réel (Three.js) : architecture et statut
+
+### 15.1 Principe
+La **logique reste en 2D dans le plan du sol**, dans l'unité de `balance.ts` (le pixel logique `u`). La vue affiche un point `(x, y)` en `(x / 30, 0, y / 30)` mètres (`sim/units.ts`, `toWorld`) : `y` logique (vers le bas de l'écran) devient `+z`. 30 est le `PX_PER_UNIT` de `tools/render3d`. Les angles `atan2(dy, dx)` sont conservés ; un modèle qui regarde vers `+Z` prend `rotation.y = π/2 − angle` (`yawFromAngle`). `balance.ts` ne change pas.
+
+Les deux versions coexistent sans se toucher : **deux entrées Vite**, `index.html` (Phaser, `src/main.ts`) et `play3d.html` (Three.js, `src/main3d.ts`), servies par le même `dist/` (`/` et `/play3d.html`). Phaser et three sont chacun dans leur chunk ; aucune entrée ne charge le moteur de l'autre. Les deux importent les mêmes `systems/` et `config/` : l'équilibrage ne peut pas diverger.
+
+### 15.2 Couches (imposées par ESLint, `eslint.config.js`)
+```
+src/sim/          PUR (ni three, ni Phaser, ni DOM, ni Math.random, ni Date.now) : la partie simulée
+  units.ts          conversion u ↔ m, angles
+  clock/            TimeControl (hitstop, ralenti, pause) + FixedClock (pas fixe 60 Hz, interpolation)
+  physics/          cercle ↔ grille de tuiles (glissement, sous-pas anti-tunnel), cercle ↔ cercle
+  Arena.ts          salle côté sim : grille de collision du RoomLayout, sol lent, points d'apparition
+  World.ts          possède héros, ennemis, RunState, rng seedé, jetons, temps de sim, file d'événements
+  SimWorld.ts       contrat acteurs ↔ monde (équivalent pur de entities/CombatWorld)
+  hero/HeroSim.ts   table d'états de entities/Player.ts, déplacée presque mot pour mot
+  enemies/          EnemySim (base de entities/Enemy.ts), ConsultantSim (Coup de diaporama, Quick win)
+  Weapon.ts         la clé à tire-fond (hitbox géométrique, un impact par cible et par coup)
+  WaveDirector.ts   vagues du GDD (wavesFor, shouldSendNextWave), apparitions échelonnées
+  events.ts         SimEvent : coups, morts, télégraphes, dash, secousses… lus par la vue
+  intent.ts, aim.ts PlayerIntent (même forme que la version Phaser), aide à la visée tactile
+src/engine/       plomberie navigateur sans gameplay ni three : Loop (rAF), Input (clavier, souris, manette, tactile)
+src/view/         three uniquement (n'importe ni ui/ ni les scènes)
+  GameView.ts       renderer, scène, lumières, caméra 3/4, effets, synchronisation interpolée
+  RoomView.ts       salle construite depuis le gabarit réel (quai, voies, piliers, bancs, murs, portes)
+  actors/           HeroView, ConsultantView : modèles procéduraux du prototype, pilotés par l'état de la sim
+  materials/toon.ts toon 4 bandes, liseré, flash, contours en coque inversée
+  post/Post.ts      HDR → bloom → tone mapping → étalonnage + vignette
+  fx/               étincelles, poussières, traînées, fantômes, télégraphes au sol, nombres de dégâts
+  quality.ts        presets bas / moyen / haut + réglage « Réduction des mouvements »
+src/ui/hud/       HUD en DOM (jamais three) : Énergie, Burnout, dash, Mobilisation, Gobelets, bandeau, F3
+src/scenes3d/     scènes minces qui assemblent sim + view + engine + ui (QuaiScene, outil de capture dev)
+src/main3d.ts     bootstrap de play3d.html
+```
+Règles : `sim/` n'importe ni `three`, ni `phaser`, ni `view/`, `ui/`, `engine/`, `scenes*/`, `entities/`, `fx/` ; `view/` n'importe ni `ui/` ni les scènes ; `ui/hud/` et `engine/` n'importent jamais `three`. Seuls `scenes3d/` et `main3d.ts` assemblent les couches. `src/systems/` reste partagé par les deux versions.
+
+### 15.3 Boucle à pas fixe, hitstop et interpolation
+La simulation avance à **60 Hz fixes** (`SIM_DT_MS`), quelle que soit la fréquence de l'écran ; au plus 5 pas par frame (pas de spirale de la mort), frame réelle tronquée à 250 ms. Le temps réel passe par `TimeControl.advance` : **pendant un hitstop il vaut 0, donc aucun pas n'est joué** ; si un pas déclenche un hitstop, les pas restants de la frame sont abandonnés et l'image reste figée sur le coup. Le ralenti (dernier ennemi, dash parfait) multiplie le temps réel. La vue interpole positions (`prevX/prevY` → `x/y`, facteur `FixedClock.alpha`) ; ses animations et particules reçoivent le temps de sim écoulé (gelées pendant le hitstop), la secousse caméra, l'UI et les nombres de dégâts le temps réel. Les appuis (attaque, dash…) sont mémorisés jusqu'au pas suivant (`mergeIntent`) : rien ne se perd entre deux pas ni pendant le hitstop. Même graine + mêmes intentions = même partie (test de rejeu dans `tests/sim.test.ts`).
+
+### 15.4 Collisions (remplacent Arcade)
+Héros et ennemis sont des cercles aux pieds (héros : `HERO.FEET_RADIUS`, ennemis : rayon du corps Arcade de la version Phaser). Contre le décor : grille de tuiles du `RoomLayout` (`isSolid` : murs, piliers, bancs, portes), résolution par **pénétration la plus profonde d'abord** (un mur plat se règle par sa face, sans accroche aux jointures), déplacement en sous-pas plus courts que le rayon (pas de tunnel au dash). `Body.blocked` remplace `body.blocked.none` (ruée du consultant, plaquage contre un mur). Héros ↔ ennemis : jamais de collision, seulement les tests géométriques de `systems/combat/geometry.ts` ; ennemis entre eux : séparation douce (inchangée). Hitboxes, frames actives, hitstop, jetons d'attaque, télégraphes ≥ 300 ms : identiques à la version Phaser (même code ou port mot pour mot).
+
+### 15.5 Rendu
+Rendu, matériaux, contours, bloom, étalonnage et personnages viennent du **prototype validé** `prototypes/proto3d/src/` (copiés et adaptés au TypeScript strict ; le prototype lui-même n'est pas modifié par la migration et ses optimisations perf seront réintégrées). Caméra perspective FOV 30° (42° en portrait), décalage (0 ; 10,9 ; 12,3) m, suivi amorti avec légère avance vers la visée, bornée par la salle, secousse en trauma, « zoom punch » de 2° sur le coup 3. Les piliers entre la caméra et le héros s'effacent ; la silhouette tramée du héros reste visible derrière les obstacles. Télégraphes ennemis : décalques magenta au sol, **à la forme exacte de la hitbox logique** (secteur du Coup de diaporama, couloir du Quick win), avec un front qui avance au rythme du windup.
+
+**Presets de qualité** (`view/quality.ts`, `?q=bas|moyen|haut`, défaut : moyen sur écran tactile, haut sinon) : plafond de pixel ratio, taille de la carte d'ombre (0 = pas d'ombre), MSAA, bloom et sa résolution, nombre **fixe** de lumières de salle (pas de recompilation de shaders), densité de particules, poussières, résolution dynamique. Les valeurs sont un premier jet, affinées par l'ingénieur perf.
+
+**Réduction des mouvements** (accessibilité, décision du porteur ; `?rm=1`, touche **M**, mémorisée dans le navigateur, défaut = `prefers-reduced-motion`) : **aucun clignotement ni stroboscope**. Pas de clignotement d'invulnérabilité (teinte pâle fixe), néon stable, flashs de coup et éclairs d'impact atténués, vignette de coup reçu atténuée, pas de zoom punch ni de tremblement de télégraphe, secousses de caméra divisées par deux.
+
+### 15.6 Statut (jalons du plan, § 5 de la proposition)
+| Jalon | Statut |
+|---|---|
+| J0 Spike / go | **Fait** : `three@0.186.1` validé par le porteur, prototype jouable de référence. |
+| J1 Prototype « Quai » | **Fait** : entrée `play3d.html`, boucle à pas fixe, collisions, salle `quai-1` réelle, héros, caméra 3/4, clavier, souris (visée par rayon sur le sol), manette, tactile. |
+| J2 Combat | **Fait (périmètre Consultant)** : `HeroSim` complet (combo 3 coups, dash 2 charges et dash parfait, dash-attaque, sifflet et préavis, café, coup reçu, mort et reprise), `Weapon`, Burnout, Mobilisation, DashCharges, AttackTokens, Consultant Junior (deux attaques télégraphiées), vagues du GDD en boucle de salles, HUD DOM minimal, presets de qualité, réduction des mouvements. **Reste** : Borne et projectiles en pool, zones de danger, comparaison côte à côte du ressenti avec la version Phaser. |
+| J3 à J10 | À faire (pipeline GLB, RunDirector et Shift complet, UI et menus DOM, Hub, ennemis et boss restants, DA des décors, perf et bascule, loot). |
+
+Budget mesuré (rendu logiciel, à confirmer sur appareil) : environ 600 à 700 appels de rendu en combat, dont l'essentiel vient des personnages procéduraux (une pièce + un contour par membre). C'est le premier chantier perf : fusion des pièces rigides par os ou GLB skinné (J3), contours partagés.
+
+### 15.7 Lancer et tester
+- `npm run dev` puis **http://localhost:5173/play3d.html** (options `?q=bas|moyen|haut`, `?rm=1`, `?safe` sans post-traitement, `?seed=N`). Commandes : ZQSD/WASD, clic ou J (frapper), Espace (dash), F (sifflet, maintenu : préavis), R (café), M (réduction des mouvements), F3 (compteurs).
+- `npm run build` produit les deux entrées (`dist/index.html`, `dist/play3d.html`). L'image Docker sert donc la 3D en `/play3d.html` sans changement de Dockerfile.
+- Tests : `tests/sim.test.ts` (collisions, horloge, combo, dash, dégâts, jetons, rejeu seedé).
+- Captures automatisées (dev) : `play3d.html?demo` expose un outil de pilotage (`src/scenes3d/demoApi.ts`, absent du build) qui avance la simulation sans dessiner, pour Playwright avec SwiftShader.
+
+### 15.8 Bascule (J9)
+`index.html` passe en 3D ; on supprime `phaser`, `src/scenes/`, `src/entities/`, `src/fx/`, `src/ui/Controls.ts` et `placeholders.ts`, `config/assets.ts`, les sprites et tilesets PNG ; `scenes3d/` devient `scenes/`. Les §§ 1 à 13 de ce document et claude.md sont alors réécrits pour la 3D, sans assouplir les règles.
 
 ## Décisions clés
 1. Phaser 4.2.1 + Arcade, WebGL, `pixelArt` + `roundPixels`, **640×360** (×2/×3/×4/×6 exacts), caméra en zoom 1 ; `FIT` par défaut, « pixel parfait » = `NONE` + `MAX_ZOOM` (en `FIT`, `zoom` est ignoré).

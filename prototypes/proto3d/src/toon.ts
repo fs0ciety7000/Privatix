@@ -169,7 +169,11 @@ export function outlineMat(widthPx = 2.6, color = PAL.outline): THREE.MeshBasicM
         sh.vertexShader.replace(
           '#include <fog_vertex>',
           `{
-            vec3 nV = normalize(normalMatrix * normal);
+            #ifdef USE_SKINNING
+              vec3 nV = normalize(normalMatrix * objectNormal);
+            #else
+              vec3 nV = normalize(normalMatrix * normal);
+            #endif
             vec4 nC = projectionMatrix * vec4(nV, 0.0);
             vec2 d = nC.xy;
             float l = length(d);

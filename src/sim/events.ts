@@ -29,7 +29,14 @@ export type SimEvent =
       readonly heavy: boolean;
       readonly angle: number;
     }
-  | { readonly type: 'enemyKilled'; readonly id: number; readonly x: number; readonly y: number; readonly angle: number; readonly last: boolean }
+  | {
+      readonly type: 'enemyKilled';
+      readonly id: number;
+      readonly x: number;
+      readonly y: number;
+      readonly angle: number;
+      readonly last: boolean;
+    }
   | { readonly type: 'enemySpawn'; readonly id: number; readonly x: number; readonly y: number }
   | {
       readonly type: 'enemyStrike';
@@ -40,7 +47,13 @@ export type SimEvent =
       readonly angle: number;
     }
   | { readonly type: 'wallSlam'; readonly x: number; readonly y: number }
-  | { readonly type: 'heroHurt'; readonly x: number; readonly y: number; readonly amount: number; readonly angle: number }
+  | {
+      readonly type: 'heroHurt';
+      readonly x: number;
+      readonly y: number;
+      readonly amount: number;
+      readonly angle: number;
+    }
   | { readonly type: 'heroDied'; readonly x: number; readonly y: number }
   | { readonly type: 'dash'; readonly x: number; readonly y: number; readonly angle: number }
   | { readonly type: 'dashEnd'; readonly x: number; readonly y: number }

@@ -469,11 +469,37 @@ export class Ghosts {
   readonly group = new THREE.Group();
   private items: Array<{ mesh: THREE.Mesh; life: number; max: number; mat: THREE.ShaderMaterial }> = [];
 
+  constructor() {
+    // Gardien invisible jamais libéré : le programme du shader reste en cache après le préchauffage
+    // (sinon chaque fantôme libéré le détruit et le suivant le recompile).
+    this.group.add(keeper(GHOST_VS, GHOST_FS, { uColor: { value: new THREE.Color() }, uAlpha: { value: 0 } }));
+  }
+
   spawn(source: THREE.Object3D, color: number, life = 0.28): void {
     source.updateWorldMatrix(true, true);
     const geos: THREE.BufferGeometry[] = [];
     source.traverse((o) => {
-      if (o instanceof THREE.Mesh && !o.userData.outline && !o.userData.noGhost && o.visible && isVisibleChain(o)) {
+      if (o instanceof THREE.SkinnedMesh && !o.userData.outline && !o.userData.noGhost && isVisibleChain(o)) {
+        // pièces rigides skinnées : on applique la pose courante sur le CPU
+        o.bindMatrixInverse.copy(o.matrixWorld).invert();
+        const src = o.geometry.getAttribute('position');
+        const arr = new Float32Array(src.count * 3);
+        const v = new THREE.Vector3();
+        for (let i = 0; i < src.count; i++) {
+          v.fromBufferAttribute(src, i);
+          o.applyBoneTransform(i, v);
+          arr[i * 3] = v.x;
+          arr[i * 3 + 1] = v.y;
+          arr[i * 3 + 2] = v.z;
+        }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+        if (o.geometry.index) g.setIndex(o.geometry.index.clone());
+        g.computeVertexNormals();
+        const ng = g.index ? g.toNonIndexed() : g;
+        ng.applyMatrix4(o.matrixWorld);
+        geos.push(ng);
+      } else if (o instanceof THREE.Mesh && !o.userData.outline && !o.userData.noGhost && o.visible && isVisibleChain(o)) {
         const g = new THREE.BufferGeometry();
         g.setAttribute('position', o.geometry.getAttribute('position').clone());
         const n = o.geometry.getAttribute('normal');
@@ -516,6 +542,18 @@ export class Ghosts {
       }
     }
   }
+}
+
+/** Maillage invisible qui garde vivant le programme d'un shader éphémère (matériau jamais libéré). */
+function keeper(vs: string, fs: string, uniforms: Record<string, THREE.IUniform> = {}): THREE.Mesh {
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.01, 0.01),
+    new THREE.ShaderMaterial({ vertexShader: vs, fragmentShader: fs, uniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }),
+  );
+  m.visible = false;
+  m.frustumCulled = false;
+  m.userData.noGhost = true;
+  return m;
 }
 
 function isVisibleChain(o: THREE.Object3D): boolean {
@@ -602,6 +640,10 @@ export class Rings {
   readonly group = new THREE.Group();
   private items: Array<{ mesh: THREE.Mesh; mat: THREE.ShaderMaterial; t: number; dur: number; r0: number; r1: number }> = [];
   private geo = new THREE.PlaneGeometry(2, 2).rotateX(-Math.PI / 2);
+
+  constructor() {
+    this.group.add(keeper(DECAL_VS, RING_FS, { uAlpha: { value: 0 }, uWidth: { value: 0.2 }, uFill: { value: 0 }, uColor: { value: new THREE.Color() } }));
+  }
 
   spawn(pos: THREE.Vector3, color: number, r0: number, r1: number, dur: number, width = 0.25, fill = 0.25, intensity = 2): void {
     const mat = new THREE.ShaderMaterial({

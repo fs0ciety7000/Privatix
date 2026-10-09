@@ -47,7 +47,8 @@ export class HeroView {
 
   public constructor(private readonly reducedMotion: boolean) {
     const f = this.flash;
-    const m = (c: number, rim = 0.85): THREE.MeshToonMaterial => toon(c, { rimStrength: rim, flash: f });
+    const m = (c: number, rim = 0.85): THREE.MeshToonMaterial =>
+      toon(c, { rimStrength: rim, flash: f });
     const skin = m(C.skin);
     const cloth = m(C.cloth);
     const clothDark = m(C.clothDark);
@@ -57,7 +58,12 @@ export class HeroView {
     const hair = m(C.hair, 0.5);
     const eyes = m(C.eyes, 0);
     const vest = m(C.vest, 1.0);
-    const stripe = toon(C.stripe, { emissive: 0xb8c8ff, emissiveIntensity: 0.22, flash: f, rimStrength: 0.4 });
+    const stripe = toon(C.stripe, {
+      emissive: 0xb8c8ff,
+      emissiveIntensity: 0.22,
+      flash: f,
+      rimStrength: 0.4,
+    });
     const r = this.rig;
 
     r.joint('pelvis', null, [0, 0.66, 0]);
@@ -87,7 +93,9 @@ export class HeroView {
       r.capsule(`knee_${s}`, cloth, [0, 0, 0], [0, -0.22, 0], 0.096);
       r.box(`knee_${s}`, clothDark, [0, -0.0, 0.07], [0.17, 0.14, 0.06], 0.03);
       r.box(`foot_${s}`, boots, [0, 0.035, 0.05], [0.21, 0.17, 0.34], 0.07);
-      r.box(`foot_${s}`, m(0xff7a1a, 0.4), [0, -0.035, 0.05], [0.22, 0.035, 0.35], 0.012, { outline: false });
+      r.box(`foot_${s}`, m(0xff7a1a, 0.4), [0, -0.035, 0.05], [0.22, 0.035, 0.35], 0.012, {
+        outline: false,
+      });
     }
     r.box('pelvis', cloth, [0, 0, 0], [0.42, 0.2, 0.28], 0.08);
     r.box('pelvis', m(0x3a241c, 0.3), [0, 0.08, 0], [0.44, 0.06, 0.3], 0.025, { outline: false });
@@ -121,7 +129,10 @@ export class HeroView {
     r.sphere('head', hair, [0, 0.2, -0.08], [0.28, 0.22, 0.22]);
     for (const sx of [1, -1]) {
       r.sphere('head', skin, [0.285 * sx, 0.15, -0.0], [0.055, 0.075, 0.05]);
-      r.sphere('head', eyes, [0.1 * sx, 0.2, 0.25], [0.038, 0.058, 0.03], { outline: false, shadow: false });
+      r.sphere('head', eyes, [0.1 * sx, 0.2, 0.25], [0.038, 0.058, 0.03], {
+        outline: false,
+        shadow: false,
+      });
       r.box('head', hair, [0.11 * sx, 0.285, 0.255], [0.12, 0.035, 0.04], 0.012, {
         rot: [0, 0, -12 * sx],
         outline: false,
@@ -138,7 +149,10 @@ export class HeroView {
     r.box('scarf3', scarf, [0, 0, -0.05], [0.13, 0.04, 0.12], 0.02);
 
     r.j('head').add(this.buildHelmet());
-    const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.05, 12).rotateX(Math.PI / 2), glow(0xfff0c0, 1.6));
+    const lamp = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.05, 0.05, 12).rotateX(Math.PI / 2),
+      glow(0xfff0c0, 1.6),
+    );
     lamp.position.set(0, 0.36, 0.31);
     lamp.userData.noGhost = true;
     r.j('head').add(lamp);
@@ -174,7 +188,7 @@ export class HeroView {
         o.userData.noGhost !== true &&
         !(o.material instanceof THREE.MeshBasicMaterial)
       )
-        targets.push(o);
+        targets.push(o as THREE.Mesh);
     });
     this.rig.root.traverse((o) => {
       if (o instanceof THREE.Mesh && o.userData.outline === true) o.renderOrder = 2;
@@ -199,7 +213,14 @@ export class HeroView {
     r.cyl('head', shell, [0, 0.255, 0.0], 0.33, 0.035, { ...p, seg: 22 });
     r.box('head', shell, [0, 0.26, 0.33], [0.34, 0.035, 0.14], 0.015, p);
     r.box('head', shell, [0, 0.47, -0.01], [0.07, 0.07, 0.48], 0.03, p);
-    r.box('head', toon(0x2a2234, { flash: this.flash }), [0, 0.36, 0.29], [0.14, 0.09, 0.07], 0.02, p);
+    r.box(
+      'head',
+      toon(0x2a2234, { flash: this.flash }),
+      [0, 0.36, 0.29],
+      [0.14, 0.09, 0.07],
+      0.02,
+      p,
+    );
     g.traverse((o) => {
       if (o instanceof THREE.Mesh && o.userData.outline !== true) o.castShadow = false;
     });
@@ -217,7 +238,8 @@ export class HeroView {
     // Le manche part vers l'avant de la main (+Z local) ; poignée en T au poing.
     r.cyl('hand_R', steel, [0, 0, L / 2 - 0.12], 0.038, L, { ...p, rot: [90, 0, 0] });
     r.cyl('hand_R', dark, [0, 0, -0.12], 0.034, 0.42, { ...p, rot: [0, 0, 90] });
-    for (const sx of [1, -1]) r.cyl('hand_R', grip, [0.16 * sx, 0, -0.12], 0.048, 0.12, { ...p, rot: [0, 0, 90] });
+    for (const sx of [1, -1])
+      r.cyl('hand_R', grip, [0.16 * sx, 0, -0.12], 0.048, 0.12, { ...p, rot: [0, 0, 90] });
     r.cyl('hand_R', dark, [0, 0, L - 0.08], 0.095, 0.22, { ...p, rot: [90, 0, 0] });
     r.cyl('hand_R', steel, [0, 0, L + 0.04], 0.105, 0.05, { ...p, rot: [90, 0, 0] });
     return g;
@@ -348,7 +370,8 @@ export class HeroView {
     this.scarfV += (targetV - this.scarfV) * (1 - Math.exp(-5 * dt));
     const sv = this.scarfV;
     const time = this.time;
-    const w = (ph: number, a: number): number => Math.sin(time * (6 + sv * 8) + ph) * a * (0.4 + sv);
+    const w = (ph: number, a: number): number =>
+      Math.sin(time * (6 + sv * 8) + ph) * a * (0.4 + sv);
     const p = editable(pose);
     p.rot.scarf0 = [-68 + sv * 52 + w(0, 6), 14 - sv * 10 + w(0.5, 8), 0];
     p.rot.scarf1 = [-12 + sv * 8 + w(1.2, 12), w(1.6, 10), 0];

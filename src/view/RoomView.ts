@@ -9,6 +9,7 @@ import type { RoomLayout, TileKind } from '@/systems/procedural/RoomLayout';
 import { tileAt } from '@/systems/procedural/RoomLayout';
 import { pxToM } from '@/sim/units';
 import {
+  addOutline,
   canvasTexture,
   glow,
   outlineGeo,
@@ -28,6 +29,16 @@ const T = pxToM(TILE);
 const BACK_WALL_H = 4.6;
 const LOW_WALL_H = 0.55;
 const LAMP_Y = 4.2;
+/** Piliers plus bas que la façade : la caméra haute garde le jeu lisible. */
+const PILLAR_H = 3.3;
+
+interface PillarView {
+  readonly x: number;
+  readonly z: number;
+  readonly mats: readonly THREE.MeshToonMaterial[];
+  readonly outlines: readonly THREE.Object3D[];
+  opacity: number;
+}
 
 interface AddOpts {
   readonly cast?: boolean;
@@ -47,7 +58,12 @@ interface Bucket {
 class StaticBatch {
   private readonly buckets = new Map<string, Bucket>();
 
-  public add(geo: THREE.BufferGeometry, mat: THREE.Material, m: THREE.Matrix4, o: AddOpts = {}): void {
+  public add(
+    geo: THREE.BufferGeometry,
+    mat: THREE.Material,
+    m: THREE.Matrix4,
+    o: AddOpts = {},
+  ): void {
     const cast = o.cast ?? true;
     const receive = o.receive ?? true;
     const key = `${mat.uuid}|${String(cast)}|${String(receive)}`;
@@ -56,7 +72,7 @@ class StaticBatch {
       b = { mat, geos: [], cast, receive };
       this.buckets.set(key, b);
     }
-    b.geos.push(normalize(geo, m, (mat as THREE.MeshToonMaterial).map != null));
+    b.geos.push(normalize(geo, m, (mat as THREE.MeshToonMaterial).map !== null));
     const ow = o.outline ?? 2.2;
     if (ow > 0 && outlinesOn()) {
       const om = outlineMat(ow);
@@ -86,7 +102,11 @@ class StaticBatch {
   }
 }
 
-function normalize(geo: THREE.BufferGeometry, m: THREE.Matrix4, keepUv: boolean): THREE.BufferGeometry {
+function normalize(
+  geo: THREE.BufferGeometry,
+  m: THREE.Matrix4,
+  keepUv: boolean,
+): THREE.BufferGeometry {
   const g = new THREE.BufferGeometry();
   const pos = geo.getAttribute('position');
   g.setAttribute('position', pos.clone());
@@ -94,7 +114,10 @@ function normalize(geo: THREE.BufferGeometry, m: THREE.Matrix4, keepUv: boolean)
   if (n) g.setAttribute('normal', n.clone());
   if (keepUv) {
     const uv = geo.getAttribute('uv') as THREE.BufferAttribute | undefined;
-    g.setAttribute('uv', uv ? uv.clone() : new THREE.BufferAttribute(new Float32Array(pos.count * 2), 2));
+    g.setAttribute(
+      'uv',
+      uv ? uv.clone() : new THREE.BufferAttribute(new Float32Array(pos.count * 2), 2),
+    );
   }
   if (geo.index) g.setIndex(geo.index.clone());
   const out = g.index ? g.toNonIndexed() : g;
@@ -112,7 +135,11 @@ function mat4(
   s: readonly [number, number, number] = [1, 1, 1],
 ): THREE.Matrix4 {
   const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz, 'YXZ'));
-  return new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(s[0], s[1], s[2]));
+  return new THREE.Matrix4().compose(
+    new THREE.Vector3(x, y, z),
+    q,
+    new THREE.Vector3(s[0], s[1], s[2]),
+  );
 }
 
 // ─── Textures ──────────────────────────────────────────────────────────────────
@@ -131,8 +158,14 @@ function floorTexture(): THREE.CanvasTexture {
         g.fillRect(x * s + 3, y * s + 3, s - 6, s - 6);
         for (let i = 0; i < 90; i += 1) {
           const a = R() * 0.18;
-          g.fillStyle = R() > 0.5 ? `rgba(255,255,255,${String(a * 0.4)})` : `rgba(10,8,30,${String(a)})`;
-          g.fillRect(x * s + 3 + R() * (s - 8), y * s + 3 + R() * (s - 8), 2 + R() * 3, 2 + R() * 3);
+          g.fillStyle =
+            R() > 0.5 ? `rgba(255,255,255,${String(a * 0.4)})` : `rgba(10,8,30,${String(a)})`;
+          g.fillRect(
+            x * s + 3 + R() * (s - 8),
+            y * s + 3 + R() * (s - 8),
+            2 + R() * 3,
+            2 + R() * 3,
+          );
         }
         g.fillStyle = 'rgba(255,255,255,0.05)';
         g.fillRect(x * s + 3, y * s + 3, s - 6, 4);
@@ -200,7 +233,14 @@ function wallTexture(): THREE.CanvasTexture {
 
 const FONT = '"Arial Black", "Helvetica Neue", Arial, sans-serif';
 
-function wrapText(g: CanvasRenderingContext2D, text: string, x: number, y: number, maxW: number, lh: number): void {
+function wrapText(
+  g: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxW: number,
+  lh: number,
+): void {
   let line = '';
   let yy = y;
   for (const w of text.split(' ')) {
@@ -214,7 +254,14 @@ function wrapText(g: CanvasRenderingContext2D, text: string, x: number, y: numbe
   if (line) g.fillText(line, x, yy);
 }
 
-function adTexture(title: string, line: string, small: string, bg: string, fg: string, accent: string): THREE.CanvasTexture {
+function adTexture(
+  title: string,
+  line: string,
+  small: string,
+  bg: string,
+  fg: string,
+  accent: string,
+): THREE.CanvasTexture {
   return canvasTexture(512, 320, (g) => {
     const gr = g.createLinearGradient(0, 0, 512, 320);
     gr.addColorStop(0, bg);
@@ -301,6 +348,7 @@ export class RoomView {
   private readonly neonLight: THREE.PointLight;
   private readonly doorLamps: THREE.MeshBasicMaterial[] = [];
   private readonly disposables: { dispose(): void }[] = [];
+  private readonly pillars: PillarView[] = [];
   private flickerOn: boolean;
 
   public constructor(
@@ -336,11 +384,11 @@ export class RoomView {
     const mWire = toon(0x1a1626);
     const mWood = toon(0xb8693a);
     const mBenchMetal = toon(0x24315a);
-    const mLampShade = toon(0x26304e, { rimStrength: 0.6 });
     const mShutter = toon(0x3a4266, { rimStrength: 0.5 });
     this.disposables.push(floorMap, ballastMap, wallMap);
 
-    const BOX = (w: number, h: number, d: number, r = 0.02): THREE.BufferGeometry => rboxGeo(w, h, d, r);
+    const BOX = (w: number, h: number, d: number, r = 0.02): THREE.BufferGeometry =>
+      rboxGeo(w, h, d, r);
 
     // ── Sol : une dalle sur tout l'intérieur ──
     {
@@ -359,7 +407,10 @@ export class RoomView {
       const depth = z1 - z0;
       const bal = new THREE.PlaneGeometry(len, depth);
       bal.rotateX(-Math.PI / 2);
-      batch.add(bal, mBallast, mat4((x0 + x1) / 2, 0.006, (z0 + z1) / 2), { cast: false, outline: 0 });
+      batch.add(bal, mBallast, mat4((x0 + x1) / 2, 0.006, (z0 + z1) / 2), {
+        cast: false,
+        outline: 0,
+      });
       for (let x = x0 + 0.3; x < x1 - 0.1; x += 0.72) {
         batch.add(BOX(0.24, 0.07, depth * 0.92, 0.02), mSleeper, mat4(x, 0.035, (z0 + z1) / 2), {
           cast: false,
@@ -371,13 +422,22 @@ export class RoomView {
         const row = layout.tiles[ty] ?? [];
         if (!row.includes('rail')) continue;
         const z = (ty + 0.5) * T;
-        batch.add(BOX(len, 0.1, 0.07, 0), mRail, mat4((x0 + x1) / 2, 0.09, z), { cast: true, outline: 1.6 });
-        batch.add(BOX(len, 0.025, 0.09, 0), mRailTop, mat4((x0 + x1) / 2, 0.15, z), { cast: false, outline: 0 });
+        batch.add(BOX(len, 0.1, 0.07, 0), mRail, mat4((x0 + x1) / 2, 0.09, z), {
+          cast: true,
+          outline: 1.6,
+        });
+        batch.add(BOX(len, 0.025, 0.09, 0), mRailTop, mat4((x0 + x1) / 2, 0.15, z), {
+          cast: false,
+          outline: 0,
+        });
       }
       // Fils de caténaire au-dessus de la voie (fins : ils ne masquent pas le jeu).
       const wire = new THREE.CylinderGeometry(0.02, 0.02, len, 5, 1, true);
       wire.rotateZ(Math.PI / 2);
-      batch.add(wire, mWire, mat4((x0 + x1) / 2, 4.9, (z0 + z1) / 2), { cast: false, outline: 1.2 });
+      batch.add(wire, mWire, mat4((x0 + x1) / 2, 4.9, (z0 + z1) / 2), {
+        cast: false,
+        outline: 1.2,
+      });
     }
 
     // ── Lignes de sécurité : bande jaune côté voie + bande podotactile + margelle ──
@@ -399,7 +459,10 @@ export class RoomView {
       });
       const dots = new THREE.PlaneGeometry(len, 0.2);
       dots.rotateX(-Math.PI / 2);
-      batch.add(dots, mTactile, mat4((x0 + x1) / 2, 0.004, edgeZ + s * 0.38), { cast: false, outline: 0 });
+      batch.add(dots, mTactile, mat4((x0 + x1) / 2, 0.004, edgeZ + s * 0.38), {
+        cast: false,
+        outline: 0,
+      });
     }
 
     // ── Murs : le fond est haut (façade), les autres bas (parapets : la caméra voit par-dessus) ──
@@ -421,30 +484,53 @@ export class RoomView {
             cast: false,
             outline: 2,
           });
-          batch.add(BOX(len, BACK_WALL_H, T * 0.6, 0), mWall, mat4((x0 + x1) / 2, BACK_WALL_H / 2, z - T * 0.2), {
-            cast: false,
-            outline: 0,
-          });
+          batch.add(
+            BOX(len, BACK_WALL_H, T * 0.6, 0),
+            mWall,
+            mat4((x0 + x1) / 2, BACK_WALL_H / 2, z - T * 0.2),
+            {
+              cast: false,
+              outline: 0,
+            },
+          );
         }
       } else {
-        batch.add(BOX(len, LOW_WALL_H, T, 0.05), mConcreteDark, mat4((x0 + x1) / 2, LOW_WALL_H / 2, z), {
-          cast: true,
-          outline: 2.2,
-        });
-        batch.add(BOX(len + 0.02, 0.08, T + 0.04, 0.03), mIron, mat4((x0 + x1) / 2, LOW_WALL_H + 0.04, z), {
-          cast: false,
-          outline: 2,
-        });
+        batch.add(
+          BOX(len, LOW_WALL_H, T, 0.05),
+          mConcreteDark,
+          mat4((x0 + x1) / 2, LOW_WALL_H / 2, z),
+          {
+            cast: true,
+            outline: 2.2,
+          },
+        );
+        batch.add(
+          BOX(len + 0.02, 0.08, T + 0.04, 0.03),
+          mIron,
+          mat4((x0 + x1) / 2, LOW_WALL_H + 0.04, z),
+          {
+            cast: false,
+            outline: 2,
+          },
+        );
       }
     }
 
     // Corniche et pilastres de la façade du fond.
-    batch.add(BOX(W, 0.3, 0.5, 0.05), mConcreteDark, mat4(W / 2, BACK_WALL_H - 0.15, T * 1.6), { cast: false, outline: 2 });
+    batch.add(BOX(W, 0.3, 0.5, 0.05), mConcreteDark, mat4(W / 2, BACK_WALL_H - 0.15, T * 1.6), {
+      cast: false,
+      outline: 2,
+    });
     for (let x = 2.6; x < W - 1; x += 5.3) {
-      batch.add(BOX(0.6, BACK_WALL_H, 0.3, 0.06), mConcreteDark, mat4(x, BACK_WALL_H / 2, T * 1.75), {
-        cast: false,
-        outline: 2,
-      });
+      batch.add(
+        BOX(0.6, BACK_WALL_H, 0.3, 0.06),
+        mConcreteDark,
+        mat4(x, BACK_WALL_H / 2, T * 1.75),
+        {
+          cast: false,
+          outline: 2,
+        },
+      );
     }
 
     // ── Portes de sortie (dans le mur du fond) : rideau métallique fermé, voyant au-dessus ──
@@ -454,13 +540,27 @@ export class RoomView {
       const cx = (x0 + x1) / 2;
       const w = x1 - x0;
       const z = (door.ty + 1) * T;
-      batch.add(BOX(w, 2.3, 0.12, 0.02), mShutter, mat4(cx, 1.15, z - 0.1), { cast: false, outline: 2 });
+      batch.add(BOX(w, 2.3, 0.12, 0.02), mShutter, mat4(cx, 1.15, z - 0.1), {
+        cast: false,
+        outline: 2,
+      });
       for (let i = 0; i < 9; i += 1) {
-        batch.add(BOX(w - 0.04, 0.03, 0.02, 0), mIronDark, mat4(cx, 0.15 + i * 0.25, z - 0.03), { cast: false, outline: 0 });
+        batch.add(BOX(w - 0.04, 0.03, 0.02, 0), mIronDark, mat4(cx, 0.15 + i * 0.25, z - 0.03), {
+          cast: false,
+          outline: 0,
+        });
       }
-      batch.add(BOX(w + 0.3, 0.18, 0.3, 0.03), mIron, mat4(cx, 2.4, z - 0.05), { cast: false, outline: 2 });
+      batch.add(BOX(w + 0.3, 0.18, 0.3, 0.03), mIron, mat4(cx, 2.4, z - 0.05), {
+        cast: false,
+        outline: 2,
+      });
       for (const sx of [-1, 1]) {
-        batch.add(BOX(0.16, 2.5, 0.3, 0.03), mIron, mat4(cx + sx * (w / 2 + 0.08), 1.25, z - 0.05), { cast: false, outline: 2 });
+        batch.add(
+          BOX(0.16, 2.5, 0.3, 0.03),
+          mIron,
+          mat4(cx + sx * (w / 2 + 0.08), 1.25, z - 0.05),
+          { cast: false, outline: 2 },
+        );
       }
       const lampMat = glow(PAL.danger, 3);
       this.doorLamps.push(lampMat);
@@ -469,19 +569,23 @@ export class RoomView {
       this.group.add(lamp);
     }
 
-    // ── Piliers en fonte ──
-    const pillarShaft = new THREE.CylinderGeometry(0.16, 0.2, BACK_WALL_H + 0.6, 12);
-    const pillarCap = new THREE.CylinderGeometry(0.34, 0.18, 0.36, 12);
-    const pillarRing = new THREE.TorusGeometry(0.19, 0.035, 6, 14).rotateX(Math.PI / 2);
+    // ── Piliers en fonte : objets séparés, pour s'effacer quand ils masquent le héros ──
+    const pillarShaft = new THREE.CylinderGeometry(0.15, 0.19, PILLAR_H, 12);
+    const pillarCap = new THREE.CylinderGeometry(0.32, 0.17, 0.32, 12);
+    const pillarBase = rboxGeo(T * 0.95, 0.3, T * 0.95, 0.05);
+    const pillarRing = new THREE.TorusGeometry(0.18, 0.035, 6, 14).rotateX(Math.PI / 2);
+    this.disposables.push(pillarShaft, pillarCap, pillarRing);
     for (let ty = 0; ty < layout.height; ty += 1) {
       for (let tx = 0; tx < layout.width; tx += 1) {
         if (tileAt(layout, tx, ty) !== 'pillar') continue;
-        const x = (tx + 0.5) * T;
-        const z = (ty + 0.5) * T;
-        batch.add(BOX(T * 0.95, 0.3, T * 0.95, 0.05), mIronDark, mat4(x, 0.15, z), { outline: 2.4 });
-        batch.add(pillarShaft, mIron, mat4(x, (BACK_WALL_H + 0.6) / 2, z), { outline: 2.4 });
-        batch.add(pillarCap, mIron, mat4(x, BACK_WALL_H + 0.5, z), { outline: 2.4 });
-        batch.add(pillarRing, mIronDark, mat4(x, 1.1, z), { outline: 0 });
+        this.addPillar(
+          (tx + 0.5) * T,
+          (ty + 0.5) * T,
+          pillarBase,
+          pillarShaft,
+          pillarCap,
+          pillarRing,
+        );
       }
     }
 
@@ -496,10 +600,17 @@ export class RoomView {
         batch.add(BOX(0.08, 0.42, 0.42, 0.02), mBenchMetal, mat4(cx + dx, 0.21, z), { outline: 2 });
       }
       for (let i = 0; i < 3; i += 1) {
-        batch.add(BOX(len, 0.05, 0.12, 0.02), mWood, mat4(cx, 0.44, z - 0.14 + i * 0.14), { outline: 2 });
+        batch.add(BOX(len, 0.05, 0.12, 0.02), mWood, mat4(cx, 0.44, z - 0.14 + i * 0.14), {
+          outline: 2,
+        });
       }
       for (let i = 0; i < 2; i += 1) {
-        batch.add(BOX(len, 0.11, 0.045, 0.02), mWood, mat4(cx, 0.62 + i * 0.15, z - 0.24, 0, -0.15), { outline: 2 });
+        batch.add(
+          BOX(len, 0.11, 0.045, 0.02),
+          mWood,
+          mat4(cx, 0.62 + i * 0.15, z - 0.24, 0, -0.15),
+          { outline: 2 },
+        );
       }
     }
 
@@ -507,10 +618,21 @@ export class RoomView {
 
     // ── Façade du fond : néon PRIVATIX, publicités, panneau MONS ──
     const wallFace = T * 1.62;
-    const emissivePlane = (tex: THREE.Texture, w: number, h: number, x: number, y: number, intensity: number): THREE.Mesh => {
+    const emissivePlane = (
+      tex: THREE.Texture,
+      w: number,
+      h: number,
+      x: number,
+      y: number,
+      intensity: number,
+    ): THREE.Mesh => {
       const m = new THREE.Mesh(
         new THREE.PlaneGeometry(w, h),
-        new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(intensity, intensity, intensity), transparent: true }),
+        new THREE.MeshBasicMaterial({
+          map: tex,
+          color: new THREE.Color(intensity, intensity, intensity),
+          transparent: true,
+        }),
       );
       m.position.set(x, y, wallFace + 0.02);
       this.group.add(m);
@@ -538,7 +660,7 @@ export class RoomView {
       g.lineTo(110, 228);
       g.stroke();
     });
-    const neon = emissivePlane(neonTex, 6, 1.5, W / 2, 3.15, 2.6);
+    const neon = emissivePlane(neonTex, 6, 1.5, W / 2, 2.7, 2.6);
     this.neon = neon.material as THREE.MeshBasicMaterial;
     const neonBack = new THREE.Mesh(
       new THREE.PlaneGeometry(6.6, 1.9),
@@ -550,23 +672,41 @@ export class RoomView {
         depthWrite: false,
       }),
     );
-    neonBack.position.set(W / 2, 3.15, wallFace + 0.01);
+    neonBack.position.set(W / 2, 2.7, wallFace + 0.01);
     neonBack.scale.set(1.5, 1.6, 1);
     this.group.add(neonBack);
-    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, W, 6).rotateZ(Math.PI / 2), glow(PAL.enemy, 3.2));
-    tube.position.set(W / 2, 4.2, wallFace + 0.08);
+    const tube = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, W, 6).rotateZ(Math.PI / 2),
+      glow(PAL.enemy, 3.2),
+    );
+    tube.position.set(W / 2, 3.75, wallFace + 0.08);
     this.group.add(tube);
 
-    const adA = adTexture('PRIVATIX', 'Optimisons vos trajets.*', '* sous réserve de rentabilité', '#5a0f3e', '#ff6ec0', '#ff3ea5');
-    const adB = adTexture('MODERNISATION', 'Votre gare, bientôt plus agile.', 'Plan Mons 2032 · merci de votre patience.', '#0d4a52', '#5ff7e4', '#19c3b1');
+    const adA = adTexture(
+      'PRIVATIX',
+      'Optimisons vos trajets.*',
+      '* sous réserve de rentabilité',
+      '#5a0f3e',
+      '#ff6ec0',
+      '#ff3ea5',
+    );
+    const adB = adTexture(
+      'MODERNISATION',
+      'Votre gare, bientôt plus agile.',
+      'Plan Mons 2032 · merci de votre patience.',
+      '#0d4a52',
+      '#5ff7e4',
+      '#19c3b1',
+    );
     const doorXs = layout.doors.map((d) => (d.tx + d.width / 2) * T);
-    const freeX = (x: number): boolean => doorXs.every((dx) => Math.abs(dx - x) > 2.4) && Math.abs(x - W / 2) > 3.6;
+    const freeX = (x: number): boolean =>
+      doorXs.every((dx) => Math.abs(dx - x) > 2.4) && Math.abs(x - W / 2) > 3.6;
     const adSlots = [W * 0.17, W * 0.33, W * 0.67, W * 0.83].filter(freeX);
     adSlots.forEach((x, i) => {
       const frame = new THREE.Mesh(rboxGeo(3.0, 1.95, 0.14, 0.05), mIronDark);
-      frame.position.set(x, 2.5, wallFace);
+      frame.position.set(x, 2.05, wallFace);
       this.group.add(frame);
-      emissivePlane(i % 2 === 0 ? adA : adB, 2.78, 1.74, x, 2.5, 1.5);
+      emissivePlane(i % 2 === 0 ? adA : adB, 2.78, 1.74, x, 2.05, 1.5);
     });
 
     const monsTex = canvasTexture(512, 128, (g) => {
@@ -593,21 +733,27 @@ export class RoomView {
     const signPillars = pillars.filter((p) => Math.abs(p.z - midZ) < H * 0.25).slice(0, 2);
     for (const p of signPillars) {
       const board = new THREE.Mesh(rboxGeo(1.9, 0.52, 0.08, 0.03), mIronDark);
-      board.position.set(p.x, 3.0, p.z + 0.22);
+      board.position.set(p.x, 2.6, p.z + 0.22);
       this.group.add(board);
-      const face = new THREE.Mesh(new THREE.PlaneGeometry(1.82, 0.46), new THREE.MeshBasicMaterial({ map: monsTex, color: new THREE.Color(1.05, 1.05, 1.05) }));
-      face.position.set(p.x, 3.0, p.z + 0.27);
+      const face = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.82, 0.46),
+        new THREE.MeshBasicMaterial({ map: monsTex, color: new THREE.Color(1.05, 1.05, 1.05) }),
+      );
+      face.position.set(p.x, 2.6, p.z + 0.27);
       this.group.add(face);
       const logo = new THREE.Mesh(
         new THREE.PlaneGeometry(0.5, 0.33),
-        new THREE.MeshBasicMaterial({ map: sncbLogoTexture(), transparent: true, color: new THREE.Color(1.3, 1.3, 1.3) }),
+        new THREE.MeshBasicMaterial({
+          map: sncbLogoTexture(),
+          transparent: true,
+          color: new THREE.Color(1.3, 1.3, 1.3),
+        }),
       );
-      logo.position.set(p.x - 1.3, 3.0, p.z + 0.26);
+      logo.position.set(p.x - 1.3, 2.6, p.z + 0.26);
       this.group.add(logo);
     }
 
     // ── Suspensions : nombre fixe par salle (preset de qualité), pas de recompilation ──
-    const bulbMat = glow(0xffd08a, 6);
     const poolTex = radialTexture();
     const poolMat = new THREE.MeshBasicMaterial({
       map: poolTex,
@@ -618,15 +764,8 @@ export class RoomView {
     });
     const lampSpots = this.lampSpots(quality.roomLights);
     for (const [x, z] of lampSpots) {
-      const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.4, 0.3, 16, 1, true), mLampShade);
-      shade.position.set(x, LAMP_Y + 0.1, z);
-      this.group.add(shade);
-      const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 8), bulbMat);
-      bulb.position.set(x, LAMP_Y - 0.02, z);
-      this.group.add(bulb);
-      const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 3, 4), mWire);
-      cord.position.set(x, LAMP_Y + 1.7, z);
-      this.group.add(cord);
+      // Suspensions hors champ (la caméra haute les verrait flotter au-dessus du combat) :
+      // on ne garde que leur lumière et leur flaque au sol.
       const pool = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 5.5).rotateX(-Math.PI / 2), poolMat);
       pool.position.set(x, 0.015, z);
       pool.renderOrder = 2;
@@ -639,6 +778,41 @@ export class RoomView {
     this.neonLight = new THREE.PointLight(PAL.danger, 22, 12, 1.6);
     this.neonLight.position.set(W / 2, 2.6, wallFace + 1.8);
     this.group.add(this.neonLight);
+  }
+
+  private addPillar(
+    x: number,
+    z: number,
+    base: THREE.BufferGeometry,
+    shaft: THREE.BufferGeometry,
+    cap: THREE.BufferGeometry,
+    ring: THREE.BufferGeometry,
+  ): void {
+    const iron = toon(0x2a3a6a, { rimStrength: 0.7, transparent: true });
+    const dark = toon(0x1a2244, { transparent: true });
+    const g = new THREE.Group();
+    g.position.set(x, 0, z);
+    const parts: [THREE.BufferGeometry, THREE.Material, number, boolean][] = [
+      [base, dark, 0.15, true],
+      [shaft, iron, PILLAR_H / 2, true],
+      [cap, iron, PILLAR_H + 0.1, true],
+      [ring, dark, 1.1, false],
+    ];
+    const outlines: THREE.Object3D[] = [];
+    for (const [geo, mat, y, outlined] of parts) {
+      const m = new THREE.Mesh(geo, mat);
+      m.position.y = y;
+      m.castShadow = true;
+      m.receiveShadow = true;
+      if (outlined) {
+        const o = addOutline(m, 2.4);
+        if (o) outlines.push(o);
+      }
+      g.add(m);
+    }
+    this.group.add(g);
+    this.disposables.push(iron, dark);
+    this.pillars.push({ x, z, mats: [iron, dark], outlines, opacity: 1 });
   }
 
   /** Points des suspensions, répartis sur les quais (rangées de sol libres). */
@@ -676,8 +850,19 @@ export class RoomView {
   }
 
   /** Animation du décor : néon qui grésille (coupé en réduction des mouvements), voyants des portes. */
-  public update(time: number): void {
-    const flick = this.flickerOn && (Math.sin(time * 37) > 0.97 || (Math.sin(time * 0.7) > 0.995 && Math.sin(time * 53) > 0));
+  public update(time: number, hero: THREE.Vector3, dt: number): void {
+    // Occlusion : un pilier entre la caméra (au sud) et le héros s'efface.
+    for (const p of this.pillars) {
+      const dz = p.z - hero.z;
+      const hides = dz > -0.2 && dz < 4.5 && Math.abs(p.x - hero.x) < 0.9 + dz * 0.12;
+      const target = hides ? 0.22 : 1;
+      p.opacity += (target - p.opacity) * (1 - Math.exp(-10 * dt));
+      for (const m of p.mats) m.opacity = p.opacity;
+      for (const o of p.outlines) o.visible = p.opacity > 0.85;
+    }
+    const flick =
+      this.flickerOn &&
+      (Math.sin(time * 37) > 0.97 || (Math.sin(time * 0.7) > 0.995 && Math.sin(time * 53) > 0));
     this.neon.color.setScalar(flick ? 0.6 : 2.6);
     this.neonLight.intensity = flick ? 6 : 22;
   }

@@ -1,0 +1,667 @@
+// Vue 3D d'une partie : renderer, scène, lumières, post-traitement, salle, acteurs, effets et caméra.
+// Elle lit le monde simulé (interpolé) et consomme ses événements ; elle ne modifie jamais la sim.
+// Rendu (toon, contours, bloom, étalonnage) repris du prototype validé (prototypes/proto3d).
+import * as THREE from 'three';
+import type { EnemySim } from '@/sim/enemies/EnemySim';
+import type { SimEvent } from '@/sim/events';
+import type { World } from '@/sim/World';
+import { PX_PER_M, pxToM, yawFromAngle } from '@/sim/units';
+import type { Vec2 } from '@/utils/math';
+import { ConsultantView } from '@/view/actors/ConsultantView';
+import { HeroView } from '@/view/actors/HeroView';
+import type { FloatKind } from '@/view/fx/DamageNumbers';
+import { DamageNumbers } from '@/view/fx/DamageNumbers';
+import { Bursts, Ghosts, Puffs, Rings, Shake, Smear, Sparks } from '@/view/fx/effects';
+import { outlineUniforms, PAL, setOutlinesEnabled } from '@/view/materials/toon';
+import { Post } from '@/view/post/Post';
+import type { ViewSettings } from '@/view/quality';
+import { RoomView } from '@/view/RoomView';
+
+/** Caméra 3/4 à la Hades : focale serrée (peu de déformation), tangage d'environ 41°. */
+const CAM_OFFSET = new THREE.Vector3(0, 10.9, 12.3);
+const CAM_LOOK_BACK = 2.5;
+const FOV_LANDSCAPE = 30;
+const FOV_PORTRAIT = 42;
+const ZOOM_PUNCH_DEG = 2;
+
+export interface ViewStats {
+  readonly fps: number;
+  readonly calls: number;
+  readonly triangles: number;
+  readonly geometries: number;
+  readonly textures: number;
+  readonly pixelRatio: number;
+}
+
+/** Conversion d'un point logique (u) en point 3D (m) à la hauteur `y`. */
+function at(x: number, y: number, height = 0, out = new THREE.Vector3()): THREE.Vector3 {
+  return out.set(x / PX_PER_M, height, y / PX_PER_M);
+}
+
+function dir(angle: number): THREE.Vector3 {
+  return new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));
+}
+
+export class GameView {
+  public readonly renderer: THREE.WebGLRenderer;
+  public readonly scene = new THREE.Scene();
+  public readonly camera: THREE.PerspectiveCamera;
+  private readonly post: Post;
+  private readonly room: RoomView;
+  private readonly hero: HeroView;
+  private readonly enemies = new Map<number, ConsultantView>();
+  private readonly sparks: Sparks;
+  private readonly puffs: Puffs;
+  private readonly glows: Puffs;
+  private readonly ghosts = new Ghosts();
+  private readonly rings = new Rings();
+  private readonly bursts = new Bursts(12);
+  private readonly shake = new Shake();
+  private readonly heroSmear = new Smear(0xfff6d8, 0xff8a1a);
+  private readonly enemySmears = [
+    new Smear(0xffd3ec, PAL.danger),
+    new Smear(0xffd3ec, PAL.danger),
+    new Smear(0xffd3ec, PAL.danger),
+  ];
+  private readonly dmg: DamageNumbers;
+  private readonly sun: THREE.DirectionalLight;
+  private readonly dust: THREE.Points | null;
+  private readonly raycaster = new THREE.Raycaster();
+  private readonly ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  private readonly camTarget = new THREE.Vector3();
+  private readonly aimPoint = new THREE.Vector3();
+  private readonly tmp = new THREE.Vector3();
+  private hasAim = false;
+  private hurtVignette = 0;
+  private zoomPunch = 0;
+  private time = 0;
+  private lastSimTime = 0;
+  private ghostAt = 0;
+  private frames = 0;
+  private fpsT = 0;
+  private fps = 60;
+  private slowFor = 0;
+  private prCap: number;
+  private width = 1;
+  private height = 1;
+
+  public constructor(
+    host: HTMLElement,
+    floatHost: HTMLElement,
+    private readonly world: World,
+    private readonly settings: ViewSettings,
+    safe: boolean,
+  ) {
+    const q = settings.quality;
+    setOutlinesEnabled(q.outlines);
+    this.prCap = q.pixelRatioCap;
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      powerPreference: 'high-performance',
+      stencil: false,
+    });
+    this.renderer.info.autoReset = false;
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, this.prCap));
+    this.renderer.shadowMap.enabled = q.shadowMapSize > 0;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.toneMapping = THREE.NeutralToneMapping;
+    this.renderer.toneMappingExposure = 1.12;
+    host.appendChild(this.renderer.domElement);
+
+    this.scene.background = new THREE.Color(0x0a0818);
+    this.scene.fog = new THREE.FogExp2(0x120c2a, 0.017);
+    this.camera = new THREE.PerspectiveCamera(FOV_LANDSCAPE, 16 / 9, 0.5, 120);
+
+    // Salle réelle, construite depuis le gabarit de la sim.
+    this.room = new RoomView(world.arena.layout, q, settings.reducedMotion);
+    this.scene.add(this.room.group);
+    const W = world.arena.widthPx / PX_PER_M;
+    const H = world.arena.heightPx / PX_PER_M;
+
+    // Lumières : ciel nocturne, lune froide (seule lumière à ombres), lampes chaudes de la salle.
+    this.scene.add(new THREE.HemisphereLight(0x5a5ad0, 0x2a1438, 0.7));
+    this.sun = new THREE.DirectionalLight(0xa8b8ff, 1.9);
+    this.sun.position.set(W / 2 - 8, 20, H / 2 + 10);
+    this.sun.target.position.set(W / 2, 0, H / 2);
+    this.sun.castShadow = q.shadowMapSize > 0;
+    if (this.sun.castShadow) {
+      this.sun.shadow.mapSize.set(q.shadowMapSize, q.shadowMapSize);
+      const sc = this.sun.shadow.camera;
+      const half = Math.max(W, H) / 2 + 2;
+      sc.left = -half;
+      sc.right = half;
+      sc.top = half;
+      sc.bottom = -half;
+      sc.near = 1;
+      sc.far = 60;
+      this.sun.shadow.bias = -0.0006;
+      this.sun.shadow.normalBias = 0.03;
+    }
+    this.scene.add(this.sun, this.sun.target);
+
+    const pk = q.particles;
+    this.sparks = new Sparks(Math.round(900 * pk));
+    this.puffs = new Puffs(Math.round(400 * pk), false);
+    this.glows = new Puffs(Math.round(300 * pk), true);
+    this.bursts.intensityScale = settings.reducedMotion ? 0.45 : 1;
+    this.shake.amplitude = settings.reducedMotion ? 0.5 : 1;
+    this.scene.add(
+      this.sparks.mesh,
+      this.puffs.points,
+      this.glows.points,
+      this.ghosts.group,
+      this.rings.group,
+      this.bursts.group,
+      this.heroSmear.mesh,
+    );
+    for (const s of this.enemySmears) this.scene.add(s.mesh);
+
+    this.hero = new HeroView(settings.reducedMotion);
+    this.scene.add(this.hero.rig.root);
+    this.dmg = new DamageNumbers(floatHost);
+    this.dust = q.dust ? this.makeDust(W, H) : null;
+    if (this.dust) this.scene.add(this.dust);
+
+    const spawn = world.hero.body;
+    this.camTarget.set(pxToM(spawn.x), 0, pxToM(spawn.y));
+    this.post = new Post(this.renderer, this.scene, this.camera, innerWidth, innerHeight, q, safe);
+    this.resize(innerWidth, innerHeight);
+    this.lastSimTime = world.now();
+  }
+
+  // ─── Entrées ───────────────────────────────────────────────────────────────
+
+  /** Point logique (u) visé au sol sous un pointeur (coordonnées normalisées −1..1), ou `null`. */
+  public groundPoint(ndcX: number, ndcY: number): Vec2 | null {
+    this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
+    const hit = this.raycaster.ray.intersectPlane(this.ground, this.aimPoint);
+    this.hasAim = hit !== null;
+    return hit ? { x: hit.x * PX_PER_M, y: hit.z * PX_PER_M } : null;
+  }
+
+  // ─── Taille ────────────────────────────────────────────────────────────────
+
+  public resize(w: number, h: number): void {
+    this.width = w;
+    this.height = h;
+    const pr = Math.min(devicePixelRatio || 1, this.prCap);
+    this.renderer.setPixelRatio(pr);
+    this.renderer.setSize(w, h);
+    this.camera.aspect = w / h;
+    // En portrait / écran étroit : on recule pour garder la lisibilité.
+    this.camera.fov = w / h < 1.2 ? FOV_PORTRAIT : FOV_LANDSCAPE;
+    this.camera.updateProjectionMatrix();
+    this.post.setSize(w, h, pr);
+    outlineUniforms.uRes.value.set(w * pr, h * pr);
+    this.sparks.setAspect(w / h);
+    const scale = (h * pr) / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)));
+    this.puffs.setScale(scale);
+    this.glows.setScale(scale);
+    if (this.dust)
+      (
+        (this.dust.material as THREE.ShaderMaterial).uniforms.uScale as THREE.IUniform<number>
+      ).value = scale;
+  }
+
+  // ─── Événements de la simulation ───────────────────────────────────────────
+
+  public applyEvents(events: readonly SimEvent[]): void {
+    for (const e of events) this.applyEvent(e);
+  }
+
+  private applyEvent(e: SimEvent): void {
+    switch (e.type) {
+      case 'swing':
+        this.onSwing(e.combo, e.finisher, e.dashAttack, e.x, e.y, e.angle, e.reach);
+        break;
+      case 'enemyStrike':
+        this.onStrike(e.id, e.attack, e.x, e.y, e.angle);
+        break;
+      case 'enemyHit': {
+        this.enemies.get(e.id)?.hit(e.heavy);
+        const d = dir(e.angle);
+        const p = at(e.x, e.y, 1.0);
+        this.dmg.spawn(
+          p.clone().setY(1.7),
+          String(e.amount),
+          e.crit ? 'crit' : e.heavy ? 'big' : 'normal',
+        );
+        this.bursts.spawn(
+          p.clone().addScaledVector(d, -0.2),
+          e.crit ? 0xfff0a0 : 0xffffff,
+          e.heavy ? 2.6 : 1.8,
+          0.14,
+          3.2,
+        );
+        this.sparks.burst(p, d, e.heavy ? 22 : 12, 0xffd27a, 9, 0.9, 0.4, 0.035, 3);
+        this.sparks.burst(p, d, 6, 0xffffff, 12, 0.5, 0.25, 0.03, 2);
+        // Feuilles de papier (le rapport du consultant).
+        for (let i = 0; i < (e.heavy ? 8 : 3); i += 1) {
+          const v = d
+            .clone()
+            .multiplyScalar(2 + Math.random() * 3)
+            .add(
+              this.tmp.set(
+                (Math.random() - 0.5) * 2,
+                2 + Math.random() * 3,
+                (Math.random() - 0.5) * 2,
+              ),
+            );
+          this.puffs.emit(p, v, 0xf4f0e6, 1.2 + Math.random() * 0.6, 0.11, {
+            grav: 4,
+            drag: 2.2,
+            alpha: 1,
+            shape: 1,
+          });
+        }
+        break;
+      }
+      case 'enemyKilled': {
+        this.enemies.get(e.id)?.die(e.angle);
+        const d = dir(e.angle);
+        const p = at(e.x, e.y, 1);
+        this.bursts.spawn(p, 0xffffff, e.last ? 4.6 : 3.6, 0.22, 4);
+        this.sparks.burst(p, d, 30, PAL.enemy, 11, 1.4, 0.6, 0.04, 5);
+        this.sparks.burst(p, d, 16, PAL.danger, 8, 2.5, 0.5, 0.035, 4);
+        for (let i = 0; i < 14; i += 1) {
+          const v = this.tmp
+            .set((Math.random() - 0.5) * 5, 3 + Math.random() * 4, (Math.random() - 0.5) * 5)
+            .addScaledVector(d, 3);
+          this.puffs.emit(p, v, 0xf4f0e6, 1.6 + Math.random(), 0.12, {
+            grav: 3.5,
+            drag: 2,
+            alpha: 1,
+            shape: 1,
+          });
+        }
+        break;
+      }
+      case 'enemySpawn': {
+        const p = at(e.x, e.y);
+        this.rings.spawn(p, PAL.enemy, 0.2, 1.6, 0.6, 0.18, 0.4, 2.2);
+        this.rings.spawn(p, PAL.danger, 1.6, 0.2, 0.6, 0.12, 0.0, 2.2);
+        break;
+      }
+      case 'wallSlam': {
+        const p = at(e.x, e.y);
+        this.puffs.dustRing(p, 10, 0.4, 0x4a4466, 2.5);
+        this.sparks.burst(
+          p.setY(0.6),
+          new THREE.Vector3(0, 0, 1),
+          10,
+          0xffd27a,
+          6,
+          3,
+          0.4,
+          0.03,
+          4,
+        );
+        break;
+      }
+      case 'heroHurt': {
+        this.hero.hurt();
+        this.hurtVignette = this.settings.reducedMotion ? 0.5 : 1;
+        const p = at(e.x, e.y, 1.1);
+        this.bursts.spawn(p, PAL.danger, 2.2, 0.16, 3);
+        this.sparks.burst(p, dir(e.angle), 14, PAL.danger, 8, 1.2, 0.35, 0.035, 3);
+        this.dmg.spawn(p.clone().setY(1.6), `-${String(e.amount)}`, 'hurt');
+        break;
+      }
+      case 'dash': {
+        const p = at(e.x, e.y);
+        this.puffs.dustRing(p, 8, 0.3, 0x50486a, 3);
+        this.rings.spawn(p, 0x6ff3ff, 0.3, 1.4, 0.25, 0.2, 0.1, 1.6);
+        this.hero.punch([0.8, 1.15, 1.3]);
+        this.ghostAt = 0;
+        break;
+      }
+      case 'dashEnd':
+        this.puffs.dustRing(at(e.x, e.y), 5, 0.25, 0x50486a, 1.5);
+        break;
+      case 'perfectDash': {
+        const p = at(e.x, e.y);
+        this.rings.spawn(p, 0xffd200, 0.3, 2.2, 0.35, 0.2, 0.2, 2.6);
+        this.bursts.spawn(p.setY(1.1), 0xffd200, 2.4, 0.2, 3);
+        break;
+      }
+      case 'special': {
+        const p = at(e.x, e.y);
+        const r = pxToM(e.radius);
+        const col = e.kind === 'preavis' ? 0xffd200 : 0x6ff3ff;
+        this.rings.spawn(p, col, 0.3, r, 0.35, 0.22, 0.25, 2.6);
+        this.rings.spawn(p, 0xffffff, 0.2, r * 0.7, 0.25, 0.3, 0.4, 2.2);
+        this.bursts.spawn(p.clone().setY(1.2), col, 3.4, 0.25, 3);
+        this.puffs.dustRing(p, 16, r * 0.4, 0x5a5070, 5);
+        break;
+      }
+      case 'shake':
+        this.shake.add(Math.min(1, 0.1 + e.px * 0.105));
+        break;
+      case 'zoomPunch':
+        if (!this.settings.reducedMotion) this.zoomPunch = 1;
+        break;
+      case 'vignette':
+        this.hurtVignette = Math.max(
+          this.hurtVignette,
+          this.settings.reducedMotion ? e.amount * 0.5 : e.amount,
+        );
+        break;
+      case 'text':
+        this.dmg.spawn(at(e.x, e.y, 2.0), e.text, toneToKind(e.tone));
+        break;
+      case 'roomCleared':
+        this.room.setDoorsOpen(true);
+        break;
+      case 'wave':
+        if (e.index === 1) this.room.setDoorsOpen(false);
+        break;
+      case 'heroDied':
+        break;
+    }
+  }
+
+  private onSwing(
+    combo: number,
+    finisher: boolean,
+    dashAttack: boolean,
+    x: number,
+    y: number,
+    angle: number,
+    reach: number,
+  ): void {
+    const yaw = yawFromAngle(angle);
+    const fwd = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw));
+    const left = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+    const pos = at(x, y);
+    const r = pxToM(reach);
+    const colors = { core: 0xfff6d8, edge: 0xff8a1a };
+    if (finisher) {
+      this.hero.punch([0.92, 1.1, 0.92]);
+      const center = pos
+        .clone()
+        .add(this.tmp.set(0, 1.15, 0))
+        .addScaledVector(fwd, 0.15);
+      this.heroSmear.fire(
+        center,
+        new THREE.Vector3(0, 1, 0),
+        fwd,
+        -25,
+        128,
+        0.5,
+        Math.max(1.6, r * 0.95),
+        0.08,
+        0.16,
+        colors,
+      );
+      return;
+    }
+    const center = pos.clone().add(this.tmp.set(0, 1.0, 0));
+    const tilt = combo === 0 ? 0.18 : -0.12;
+    const v = left
+      .clone()
+      .multiplyScalar(Math.cos(tilt))
+      .addScaledVector(new THREE.Vector3(0, 1, 0), Math.sin(tilt));
+    const [p0, p1] = dashAttack ? [-60, 60] : combo === 0 ? [-120, 80] : [110, -85];
+    this.heroSmear.fire(center, fwd, v, p0, p1, 0.45, r * 1.15 + 0.25, 0.08, 0.13, colors);
+  }
+
+  private onStrike(id: number, attack: string, x: number, y: number, angle: number): void {
+    const fwd = dir(angle);
+    if (attack === 'slam') {
+      // Coup 3 du héros : onde de choc, débris et poussière, même à vide.
+      const impact = at(x, y, 0.05);
+      this.rings.spawn(impact, 0xff8a1a, 0.2, 2.6, 0.35, 0.22, 0.35, 2.4);
+      this.rings.spawn(impact, 0xfff2c0, 0.1, 1.5, 0.18, 0.4, 0.6, 2.4);
+      this.puffs.dustRing(impact, 14, 0.5, 0x5a5070, 4.5);
+      for (let i = 0; i < 26; i += 1) {
+        const a = Math.random() * Math.PI * 2;
+        const sp = 3 + Math.random() * 6;
+        this.sparks.emit(
+          impact.clone().setY(0.1),
+          this.tmp.set(Math.sin(a) * sp, 3 + Math.random() * 6, Math.cos(a) * sp),
+          i % 3 === 0 ? 0xffffff : 0xffa040,
+          0.5 + Math.random() * 0.4,
+          0.04,
+        );
+      }
+      this.bursts.spawn(impact.clone().setY(0.5), 0xffd08a, 3.2, 0.2, 3);
+      return;
+    }
+    const pos = at(x, y);
+    if (attack === 'quickwin') {
+      this.puffs.dustRing(pos, 8, 0.3, 0x3a8a8a, 3);
+      this.rings.spawn(pos, PAL.danger, 0.2, 1.0, 0.25, 0.25, 0.2, 2.2);
+      return;
+    }
+    const impact = pos.clone().addScaledVector(fwd, 0.7).setY(0.05);
+    this.rings.spawn(impact, PAL.danger, 0.2, 1.2, 0.28, 0.25, 0.4, 2.6);
+    this.sparks.burst(impact.clone().setY(0.2), fwd, 16, PAL.danger, 7, 1.6, 0.4, 0.035, 4);
+    this.puffs.dustRing(impact, 8, 0.3, 0x5a4a70, 2.5);
+    const center = pos
+      .clone()
+      .add(this.tmp.set(0, 1.25, 0))
+      .addScaledVector(fwd, 0.1);
+    const smear = this.enemySmears[id % this.enemySmears.length] ?? this.enemySmears[0];
+    smear?.fire(center, new THREE.Vector3(0, 1, 0), fwd, -20, 130, 0.4, 1.3, 0.09, 0.14, {
+      core: 0xffd3ec,
+      edge: PAL.danger,
+    });
+  }
+
+  // ─── Synchronisation et rendu ──────────────────────────────────────────────
+
+  /** Met la vue à jour d'après le monde (`alpha` : interpolation entre deux pas). */
+  public sync(alpha: number, realDt: number): void {
+    const world = this.world;
+    const simNow = world.now();
+    const simDt = Math.max(0, (simNow - this.lastSimTime) / 1000);
+    this.lastSimTime = simNow;
+    this.time += simDt;
+
+    // Héros
+    this.hero.sync(world.hero, alpha, simDt, realDt);
+    if (world.hero.state === 'dash') {
+      this.ghostAt -= simDt * 1000;
+      if (this.ghostAt <= 0) {
+        this.ghostAt = 32;
+        this.ghosts.spawn(this.hero.rig.root, 0x6ff3ff, 0.26);
+      }
+      if (Math.random() < 0.6) {
+        const back = dir(world.hero.dashAngle).multiplyScalar(-6);
+        const p = this.hero.pos
+          .clone()
+          .add(
+            this.tmp.set(
+              (Math.random() - 0.5) * 0.5,
+              0.2 + Math.random() * 1.2,
+              (Math.random() - 0.5) * 0.5,
+            ),
+          );
+        this.sparks.emit(p, back, 0x6ff3ff, 0.18, 0.025, 0, 2, false);
+      }
+    }
+
+    // Ennemis : création à la volée, suivi de la sim, fin d'animation de mort après la sim.
+    const alive = new Set<number>();
+    for (const e of world.enemies) {
+      alive.add(e.id);
+      this.enemyView(e).sync(e, alpha, simDt, realDt, this.camera, this.time);
+    }
+    for (const [id, v] of this.enemies) {
+      if (alive.has(id)) continue;
+      v.sync(null, alpha, simDt, realDt, this.camera, this.time);
+      if (v.finished) {
+        v.dispose();
+        this.enemies.delete(id);
+      }
+    }
+
+    // Effets (gelés pendant le hitstop, sauf secousse et nombres)
+    this.sparks.update(simDt);
+    this.puffs.update(simDt);
+    this.glows.update(simDt);
+    this.ghosts.update(simDt);
+    this.rings.update(simDt);
+    this.bursts.update(simDt, this.camera);
+    this.heroSmear.update(simDt);
+    for (const s of this.enemySmears) s.update(simDt);
+    this.shake.update(realDt);
+    this.room.update(this.time, this.hero.pos, realDt);
+    if (this.dust)
+      (
+        (this.dust.material as THREE.ShaderMaterial).uniforms.uTime as THREE.IUniform<number>
+      ).value = this.time;
+    this.hurtVignette = Math.max(0, this.hurtVignette - realDt * 2.2);
+    this.zoomPunch = Math.max(0, this.zoomPunch - realDt * 10);
+
+    this.updateCamera(realDt);
+    this.dmg.update(realDt, this.camera, this.width, this.height);
+  }
+
+  private enemyView(e: EnemySim): ConsultantView {
+    let v = this.enemies.get(e.id);
+    if (!v) {
+      v = new ConsultantView(this.scene, this.settings.reducedMotion);
+      this.enemies.set(e.id, v);
+    }
+    return v;
+  }
+
+  private updateCamera(realDt: number): void {
+    const heroPos = this.hero.pos;
+    const target = this.tmp.copy(heroPos);
+    // Légère avance vers la visée.
+    if (this.hasAim) {
+      const lead = this.aimPoint.clone().sub(heroPos).setY(0).clampLength(0, 3).multiplyScalar(0.3);
+      target.add(lead);
+    }
+    // Bornée par la salle : on ne montre pas le vide au-delà des murs.
+    const b = this.room.bounds;
+    const aspect = this.camera.aspect;
+    const dist = CAM_OFFSET.length();
+    const halfW = dist * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * aspect * 0.92;
+    const minX = b.minX + halfW - 1.2;
+    const maxX = b.maxX - halfW + 1.2;
+    target.x = minX < maxX ? THREE.MathUtils.clamp(target.x, minX, maxX) : (b.minX + b.maxX) / 2;
+    target.z = THREE.MathUtils.clamp(target.z, b.minZ + 2.6, b.maxZ - 2.4);
+    this.camTarget.lerp(target, 1 - Math.exp(-5 * realDt));
+    const off = this.shake.offset;
+    this.camera.position.copy(this.camTarget).add(CAM_OFFSET).add(off);
+    this.camera.lookAt(this.camTarget.x + off.x * 0.5, 0.6, this.camTarget.z - CAM_LOOK_BACK);
+    const baseFov = this.camera.aspect < 1.2 ? FOV_PORTRAIT : FOV_LANDSCAPE;
+    const fov = baseFov - ZOOM_PUNCH_DEG * Math.sin(this.zoomPunch * Math.PI);
+    if (Math.abs(fov - this.camera.fov) > 1e-3) {
+      this.camera.fov = fov;
+      this.camera.updateProjectionMatrix();
+    }
+  }
+
+  public render(realDt: number): void {
+    // Compteurs cumulés sur toutes les passes de la frame (F3).
+    this.renderer.info.reset();
+    this.post.render(this.time, this.hurtVignette);
+    this.frames += 1;
+    this.fpsT += realDt;
+    if (this.fpsT >= 0.5) {
+      this.fps = this.frames / this.fpsT;
+      this.frames = 0;
+      this.fpsT = 0;
+      // Résolution dynamique : sous 50 fps pendant 2 s, on baisse le pixel ratio par paliers.
+      if (this.settings.quality.dynamicResolution && this.time > 3) {
+        this.slowFor = this.fps < 50 ? this.slowFor + 0.5 : 0;
+        const pr = this.renderer.getPixelRatio();
+        if (this.slowFor >= 2 && pr > 0.75) {
+          this.prCap = Math.max(0.75, pr - 0.25);
+          this.slowFor = 0;
+          this.resize(this.width, this.height);
+        }
+      }
+    }
+  }
+
+  public stats(): ViewStats {
+    const info = this.renderer.info;
+    return {
+      fps: this.fps,
+      calls: info.render.calls,
+      triangles: info.render.triangles,
+      geometries: info.memory.geometries,
+      textures: info.memory.textures,
+      pixelRatio: this.renderer.getPixelRatio(),
+    };
+  }
+
+  /** Projette un point logique à l'écran (px CSS), pour l'UI DOM (bulles, marqueurs). */
+  public toScreen(x: number, y: number, height: number): Vec2 {
+    const v = at(x, y, height).project(this.camera);
+    return { x: (v.x * 0.5 + 0.5) * this.width, y: (-v.y * 0.5 + 0.5) * this.height };
+  }
+
+  public dispose(): void {
+    for (const v of this.enemies.values()) v.dispose();
+    this.enemies.clear();
+    this.hero.dispose();
+    this.room.dispose();
+    this.dmg.clear();
+    this.post.dispose();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+    this.renderer.domElement.remove();
+  }
+
+  // ─── Ambiance ──────────────────────────────────────────────────────────────
+
+  /** Poussières en suspension, éclairées sous les suspensions (repris du prototype). */
+  private makeDust(W: number, H: number): THREE.Points {
+    const N = 500;
+    const pos = new Float32Array(N * 3);
+    const seed = new Float32Array(N);
+    for (let i = 0; i < N; i += 1) {
+      pos[i * 3] = Math.random() * W;
+      pos[i * 3 + 1] = 0.2 + Math.random() * 4.5;
+      pos[i * 3 + 2] = Math.random() * H;
+      seed[i] = Math.random() * 100;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { uTime: { value: 0 }, uScale: { value: 400 }, uW: { value: W } },
+      vertexShader: /* glsl */ `
+        attribute float aSeed;
+        uniform float uTime; uniform float uScale; uniform float uW;
+        varying float vB;
+        void main(){
+          vec3 p = position;
+          p.x += sin(uTime * 0.21 + aSeed) * 0.8 + uTime * 0.12;
+          p.y += sin(uTime * 0.33 + aSeed * 1.7) * 0.4;
+          p.z += cos(uTime * 0.17 + aSeed * 2.3) * 0.6;
+          p.x = mod(p.x, uW);
+          vB = 0.12 + 0.5 * fract(aSeed * 7.13);
+          vec4 mv = modelViewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * mv;
+          gl_PointSize = (0.045 + fract(aSeed) * 0.04) * uScale / -mv.z;
+        }`,
+      fragmentShader: /* glsl */ `
+        varying float vB;
+        void main(){
+          float d = length(gl_PointCoord - 0.5) * 2.0;
+          float a = 1.0 - smoothstep(0.3, 1.0, d);
+          vec3 c = mix(vec3(0.45, 0.55, 1.0), vec3(1.0, 0.75, 0.45), vB) * vB;
+          gl_FragColor = vec4(c * a, a);
+        }`,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const p = new THREE.Points(g, mat);
+    p.frustumCulled = false;
+    return p;
+  }
+}
+
+function toneToKind(tone: 'info' | 'danger' | 'gold' | 'hero'): FloatKind {
+  if (tone === 'danger') return 'danger';
+  if (tone === 'gold') return 'gold';
+  return 'info';
+}

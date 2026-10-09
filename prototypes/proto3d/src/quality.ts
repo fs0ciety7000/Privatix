@@ -86,6 +86,8 @@ export class Settings {
   reducedMotion: boolean;
   /** vrai si la réduction vient du système (prefers-reduced-motion) et non d'un choix explicite. */
   rmFromSystem: boolean;
+  /** le joueur a choisi lui-même (F4 ou ?rm=) : on ne suit plus le réglage système. */
+  rmExplicit: boolean;
   gpu = '';
   why = '';
 
@@ -110,6 +112,7 @@ export class Settings {
     const rmUrl = params.get('rm');
     const rmSaved = load('privatix3d.rm');
     const sys = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.rmExplicit = rmUrl !== null || rmSaved !== null;
     if (rmUrl !== null) {
       this.reducedMotion = rmUrl !== '0' && rmUrl !== 'false';
       this.rmFromSystem = false;
@@ -144,6 +147,7 @@ export class Settings {
   toggleReducedMotion(): boolean {
     this.reducedMotion = !this.reducedMotion;
     this.rmFromSystem = false;
+    this.rmExplicit = true;
     store('privatix3d.rm', this.reducedMotion ? '1' : '0');
     return this.reducedMotion;
   }

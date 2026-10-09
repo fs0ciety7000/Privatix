@@ -185,10 +185,15 @@ export class LightBudget {
 
 // Rampe toon (cf. toonGradient) : valeurs linéaires des 4 marches.
 const RAMP = [38 / 255, 92 / 255, 190 / 255, 1];
-const MAX_EDGE = 1.4; // m : longueur max d'arête après subdivision (précision de l'éclairage par sommet)
+// Longueur max d'une arête après subdivision : fine près des lampes, lâche au loin
+// (l'éclairage par sommet est interpolé linéairement entre les sommets).
+const EDGE_MIN = 2;
+const EDGE_REL = 0.6;
 
-function bakeGeometry(src: THREE.BufferGeometry, world: THREE.Matrix4, lights: Array<{ pos: THREE.Vector3; dist: number; decay: number }>): THREE.BufferGeometry {
-  const g = tessellate(src.index ? src.toNonIndexed() : src, MAX_EDGE, world);
+type BakeLight = { pos: THREE.Vector3; dist: number; decay: number };
+
+function bakeGeometry(src: THREE.BufferGeometry, world: THREE.Matrix4, lights: BakeLight[]): THREE.BufferGeometry {
+  const g = tessellate(src.index ? src.toNonIndexed() : src, world, lights);
   const pos = g.getAttribute('position');
   const nor = g.getAttribute('normal');
   const nm = new THREE.Matrix3().getNormalMatrix(world);
@@ -228,73 +233,70 @@ function bakeGeometry(src: THREE.BufferGeometry, world: THREE.Matrix4, lights: A
 }
 
 /**
- * Subdivision conforme : chaque arête plus longue que `maxLen` (mesurée dans le monde) est coupée
- * en son milieu, quel que soit le triangle qui la porte. Deux triangles voisins coupent donc leur
- * arête commune de la même façon (pas de fissure en T). Interpole position, normale et UV.
+ * Subdivision par bissection de l'arête la plus longue, jusqu'à ce que chaque arête soit plus
+ * courte qu'un seuil qui ne dépend QUE de l'arête (longueur et distance de son milieu à la lampe
+ * la plus proche). Une arête partagée est donc coupée aux mêmes milieux des deux côtés : pas de
+ * fissure en T. Interpole position, normale et UV.
  */
-function tessellate(src: THREE.BufferGeometry, maxLen: number, world: THREE.Matrix4): THREE.BufferGeometry {
+function tessellate(src: THREE.BufferGeometry, world: THREE.Matrix4, lights: BakeLight[]): THREE.BufferGeometry {
   const pos = src.getAttribute('position');
   const nor = src.getAttribute('normal');
   const uv = src.getAttribute('uv');
-  const scale = new THREE.Vector3().setFromMatrixScale(world);
-  const s = Math.max(scale.x, scale.y, scale.z);
-  const max2 = (maxLen / s) ** 2;
-  type V = { p: number[]; n: number[]; t: number[] };
+  type V = { p: THREE.Vector3; w: THREE.Vector3; n: number[]; t: number[] };
   const out: V[] = [];
-  const get = (i: number): V => ({
-    p: [pos.getX(i), pos.getY(i), pos.getZ(i)],
-    n: nor ? [nor.getX(i), nor.getY(i), nor.getZ(i)] : [0, 1, 0],
-    t: uv ? [uv.getX(i), uv.getY(i)] : [0, 0],
-  });
+  const get = (i: number): V => {
+    const p = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i));
+    return {
+      p,
+      w: p.clone().applyMatrix4(world),
+      n: nor ? [nor.getX(i), nor.getY(i), nor.getZ(i)] : [0, 1, 0],
+      t: uv ? [uv.getX(i), uv.getY(i)] : [0, 0],
+    };
+  };
   const mid = (a: V, b: V): V => {
     const n = [(a.n[0] + b.n[0]) / 2, (a.n[1] + b.n[1]) / 2, (a.n[2] + b.n[2]) / 2];
     const l = Math.hypot(n[0], n[1], n[2]) || 1;
     return {
-      p: [(a.p[0] + b.p[0]) / 2, (a.p[1] + b.p[1]) / 2, (a.p[2] + b.p[2]) / 2],
+      p: a.p.clone().add(b.p).multiplyScalar(0.5),
+      w: a.w.clone().add(b.w).multiplyScalar(0.5),
       n: [n[0] / l, n[1] / l, n[2] / l],
       t: [(a.t[0] + b.t[0]) / 2, (a.t[1] + b.t[1]) / 2],
     };
   };
-  const long = (a: V, b: V) => (a.p[0] - b.p[0]) ** 2 + (a.p[1] - b.p[1]) ** 2 + (a.p[2] - b.p[2]) ** 2 > max2;
+  const m = new THREE.Vector3();
+  // excès de longueur de l'arête (> 0 : à couper)
+  const excess = (a: V, b: V): number => {
+    const len = a.w.distanceTo(b.w);
+    m.copy(a.w).add(b.w).multiplyScalar(0.5);
+    let dmin = Infinity;
+    for (const l of lights) dmin = Math.min(dmin, l.pos.distanceTo(m));
+    return len - Math.max(EDGE_MIN, dmin * EDGE_REL);
+  };
   const tri = (a: V, b: V, c: V, depth: number): void => {
-    const ab = depth < 12 && long(a, b);
-    const bc = depth < 12 && long(b, c);
-    const ca = depth < 12 && long(c, a);
-    const k = (ab ? 1 : 0) + (bc ? 1 : 0) + (ca ? 1 : 0);
-    if (k === 0) {
+    const eab = excess(a, b);
+    const ebc = excess(b, c);
+    const eca = excess(c, a);
+    if (depth > 20 || (eab <= 0 && ebc <= 0 && eca <= 0)) {
       out.push(a, b, c);
       return;
     }
-    const d = depth + 1;
-    if (k === 3) {
-      const m1 = mid(a, b);
-      const m2 = mid(b, c);
-      const m3 = mid(c, a);
-      tri(a, m1, m3, d);
-      tri(m1, b, m2, d);
-      tri(m3, m2, c, d);
-      tri(m1, m2, m3, d);
-      return;
+    // coupe l'arête la plus longue (à égalité d'excès, la plus longue dans le monde)
+    const lab = a.w.distanceToSquared(b.w);
+    const lbc = b.w.distanceToSquared(c.w);
+    const lca = c.w.distanceToSquared(a.w);
+    if (lab >= lbc && lab >= lca) {
+      const k = mid(a, b);
+      tri(a, k, c, depth + 1);
+      tri(k, b, c, depth + 1);
+    } else if (lbc >= lca) {
+      const k = mid(b, c);
+      tri(a, b, k, depth + 1);
+      tri(a, k, c, depth + 1);
+    } else {
+      const k = mid(c, a);
+      tri(a, b, k, depth + 1);
+      tri(k, b, c, depth + 1);
     }
-    // on ramène le cas à une rotation canonique (a, b, c) où ab est coupée
-    if (k === 1) {
-      if (ab) {
-        const m = mid(a, b);
-        tri(a, m, c, d);
-        tri(m, b, c, d);
-      } else if (bc) tri(b, c, a, depth);
-      else tri(c, a, b, depth);
-      return;
-    }
-    // k === 2 : ab et bc coupées (sinon rotation)
-    if (ab && bc) {
-      const m1 = mid(a, b);
-      const m2 = mid(b, c);
-      tri(m1, b, m2, d);
-      tri(a, m1, m2, d);
-      tri(a, m2, c, d);
-    } else if (bc && ca) tri(b, c, a, depth);
-    else tri(c, a, b, depth);
   };
   for (let i = 0; i + 2 < pos.count; i += 3) tri(get(i), get(i + 1), get(i + 2), 0);
   const g = new THREE.BufferGeometry();
@@ -302,7 +304,9 @@ function tessellate(src: THREE.BufferGeometry, maxLen: number, world: THREE.Matr
   const Nn = new Float32Array(out.length * 3);
   const T = new Float32Array(out.length * 2);
   out.forEach((v, i) => {
-    P.set(v.p, i * 3);
+    P[i * 3] = v.p.x;
+    P[i * 3 + 1] = v.p.y;
+    P[i * 3 + 2] = v.p.z;
     Nn.set(v.n, i * 3);
     T.set(v.t, i * 2);
   });

@@ -125,8 +125,7 @@ export class WaveDirector {
   private spawnOne(kind: EnemyKind): void {
     const hero = this.world.hero.body;
     const points = this.world.arena.spawnPoints(hero, ENEMY_RULES.SPAWN_MIN_DIST_PX);
-    const at =
-      points[Math.floor(this.world.rng() * points.length)] ?? this.world.arena.playerSpawn;
+    const at = points[Math.floor(this.world.rng() * points.length)] ?? this.world.arena.playerSpawn;
     this.world.spawnEnemy(kind, at.x, at.y);
   }
 

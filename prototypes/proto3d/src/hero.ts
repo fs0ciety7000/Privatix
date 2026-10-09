@@ -232,7 +232,16 @@ export class Hero {
    */
   private addSilhouette(): void {
     const mat = new THREE.ShaderMaterial({
-      vertexShader: /* glsl */ `void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      // pièces skinnées (cf. Rig.optimize) : mêmes blocs de skinning que les matériaux standard
+      vertexShader: /* glsl */ `
+        #include <common>
+        #include <skinning_pars_vertex>
+        void main(){
+          #include <skinbase_vertex>
+          #include <begin_vertex>
+          #include <skinning_vertex>
+          #include <project_vertex>
+        }`,
       fragmentShader: /* glsl */ `
         void main(){
           vec2 p = floor(gl_FragCoord.xy / 2.0);
@@ -252,7 +261,13 @@ export class Hero {
     });
     for (const m of targets) {
       m.renderOrder = 2;
-      const s = new THREE.Mesh(m.geometry, mat);
+      let s: THREE.Mesh;
+      if (m instanceof THREE.SkinnedMesh) {
+        const k = new THREE.SkinnedMesh(m.geometry, mat);
+        k.frustumCulled = false;
+        k.bind(m.skeleton, m.bindMatrix);
+        s = k;
+      } else s = new THREE.Mesh(m.geometry, mat);
       s.renderOrder = 1;
       s.castShadow = false;
       s.userData.outline = true;

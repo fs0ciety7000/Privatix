@@ -359,12 +359,15 @@ export class HeroSim {
       return { to: 'dash', payload: { angle: this.moving ? this.moveAngle() : this.facingAngle } };
     }
     if (this.buffer.consume('special', now)) {
-      if (now - this.lastSpecialAt < SPECIAL_RULES.COOLDOWN_MS) this.text('Sifflet en recharge', 'info');
-      else if (!run.mobilisation.canSpend(WHISTLE.cost)) this.text('Mobilisation insuffisante', 'info');
+      if (now - this.lastSpecialAt < SPECIAL_RULES.COOLDOWN_MS)
+        this.text('Sifflet en recharge', 'info');
+      else if (!run.mobilisation.canSpend(WHISTLE.cost))
+        this.text('Mobilisation insuffisante', 'info');
       else return { to: 'charge', payload: null };
     }
     if (this.buffer.consume('attack', now)) {
-      if (now - this.lastDashEnd <= DASH.ATTACK_WINDOW_MS) return { to: 'dashAttack', payload: null };
+      if (now - this.lastDashEnd <= DASH.ATTACK_WINDOW_MS)
+        return { to: 'dashAttack', payload: null };
       const chained = now - this.lastAttackEnd <= COMBO_RULES.CHAIN_GRACE_MS && this.lastCombo >= 0;
       return {
         to: 'attack',

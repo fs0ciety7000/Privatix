@@ -6,13 +6,14 @@ Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépô
 |---|---|
 | `docs/GDD.md` | Règles, chiffres (annexe A → `src/config/balance.ts`), boucle roguelite, ennemis, progression |
 | `docs/LORE.md` | Canon narratif, PNJ de l'OCC, répliques, ton (aucune personne ni marque réelle) |
-| `docs/ARCHITECTURE.md` | Structure du code, scènes, StateMachine, combat Arcade, sauvegarde, performance |
+| `docs/ARCHITECTURE.md` | Structure du code, scènes, StateMachine, combat Arcade, sauvegarde, performance ; **§ 15 : migration 3D** (sim / engine / view / ui) |
 | `docs/PIXEL_ART_GUIDE.md` | Liste exacte des PNG, dimensions, nommage, palette, achat sur itch.io |
 
 ## 1. Le projet en 30 secondes
 
 - **Privatix** : Hack 'n' Slash / Roguelite 2D en vue de dessus. Un cheminot en 3x8, armé d'une **clé à tire-fond**, affronte les consultants et automates de la mégacorporation Privatix dans la gare de Mons. Chaque run est un **Shift** ; après un échec, on revient à l'**OCC** (Operation Coffee Center) dépenser ses **Points de Syndicalisme** au Tableau des revendications.
 - **Stack** : Phaser **4.2.1** (Arcade Physics), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3, Node 22. Sprites générés par `tools/pixelart/` (Python + Pillow).
+- **Migration 3D en cours** (décision du porteur) : **Three.js 0.186.1** (version exacte), entrée `play3d.html`. Le jeu Phaser (`index.html`) reste en production **en sursis jusqu'à la parité** (jalon J9) : on le garde vert, on n'y ajoute plus de fonctionnalité. Toute nouvelle feature se fait côté 3D. Architecture et statut : `docs/ARCHITECTURE.md` § 15 ; plan : `docs/proposals/revue-3d-loot/lead_developer.md`.
 - **Direction artistique** : **pixel art moderne**, références **Dead Cells**, **Celeste** et **Hades** (lumière dynamique, bloom, étalonnage, particules, animation fluide, squash & stretch ; de Hades : contrastes dramatiques, encrage des formes, liserés colorés forts, décors sombres en flaques et rais de lumière). Jamais de rendu rétro « plat ». Voir GDD § 1.3.
 - **Rendu** : 640×360 logiques, mise à l'échelle entière, tuiles 16 px, `pixelArt: true`, `roundPixels: true`, WebGL.
 - **Déploiement** : Docker (build Node → nginx) sur Coolify, `privatix.fs0ciety.org`.
@@ -23,8 +24,9 @@ Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépô
 ```bash
 npm ci                           # installation (npm install exige --legacy-peer-deps)
 npm run dev                      # http://localhost:5173 (ajouter ?debug pour les corps Arcade, ?cheat pour les raccourcis de test)
+                                 # 3D : http://localhost:5173/play3d.html (?q=bas|moyen|haut, ?rm=1, ?safe, ?seed=N)
 npm run check                    # typecheck + lint + tests : DOIT être vert avant tout commit
-npm run build                    # dist/
+npm run build                    # dist/ : les deux entrées (index.html Phaser, play3d.html Three.js)
 npm run assets                   # régénère tilesets, props, VFX, UI depuis tools/pixelart/ (2D)
 npm run sprites3d                # rend les personnages depuis tools/render3d/ (3D → pixel, méthode Dead Cells)
 ```
@@ -94,6 +96,15 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 - Jamais de mise à l'échelle non entière **durable** d'un sprite de jeu ; seule exception : le squash & stretch bref de `GameFeel.squash`. `pixelArt` et `roundPixels` restent activés.
 - **Normal maps** : chaque feuille de personnage, tileset ou prop peut avoir une `<nom>_n.png` de mêmes dimensions (champ `normalMap` du manifeste), chargée avec la feuille pour l'éclairage dynamique.
 
+## 5 bis. Règle 4 — 3D temps réel (entrée `play3d.html`)
+
+- **Couches** (ESLint) : `src/sim/` est **pur** (ni `three`, ni `phaser`, ni DOM, ni `Math.random`, ni `Date.now`) et testé dans `tests/sim.test.ts` ; `src/engine/` (boucle, entrées) et `src/ui/hud/` (HUD DOM) n'importent jamais `three` ; `src/view/` (Three.js) n'importe ni l'UI ni les scènes ; seules `src/scenes3d/` et `src/main3d.ts` assemblent. `src/systems/` et `config/` sont partagés avec la version Phaser.
+- **Plan du sol** : la sim travaille en unités de `balance.ts` ; la vue affiche `(x, y)` u en `(x/30, 0, y/30)` m (`sim/units.ts`). Angles logiques `atan2(dy, dx)` ; un modèle tourné vers +Z prend `yawFromAngle(angle)`.
+- **Pas fixe 60 Hz** (`sim/clock/FixedClock`) : hitstop et ralenti passent par `TimeControl` (jamais de temps réel dans la sim) ; le hitstop donne **zéro pas**. La vue interpole et ne modifie jamais la sim ; la sim publie des `SimEvent` que la vue consomme.
+- **Collisions** : `sim/physics/collision.ts` (cercle ↔ grille, cercle ↔ cercle) remplace Arcade. Les règles 1 (hitboxes géométriques, télégraphes magenta ≥ 300 ms, timings de `balance.ts`, game feel) restent valables mot pour mot.
+- **Rendu** : référence visuelle = `prototypes/proto3d/` (validé par le porteur ; ne pas le modifier depuis `src/`). Toute nouvelle option visuelle respecte le preset de qualité (`view/quality.ts`) et la **Réduction des mouvements** (aucun clignotement ni stroboscope).
+- **Lumières** : nombre fixe par salle (pas de recompilation de shaders) ; émissifs + bloom pour le reste. Libérer géométries, matériaux et textures propres à un objet à sa destruction (`dispose`).
+
 ## 6. Workflow d'une feature : 1) logique → 2) placeholders → 3) vrais sprites
 
 1. **Logique d'abord.** Relire la section du GDD (la compléter s'il manque une règle : le doc précède le code). Ajouter les constantes dans `balance.ts`, les types et le système pur dans `src/systems/`, **avec ses tests**. `npm run test` vert avant d'ouvrir une scène.
@@ -112,7 +123,7 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 
 ## 8. Ce que Claude ne fait pas sans demander
 
-- Changer la stack ou une version majeure, assouplir `tsconfig`/ESLint, ajouter une dépendance runtime (Phaser est la seule).
+- Changer la stack ou une version majeure, assouplir `tsconfig`/ESLint, ajouter une dépendance runtime (Phaser et Three.js sont les seules ; `three` est épinglé en version exacte).
 - Modifier le canon (noms, lieux, fins) ou une formule d'équilibrage sans mettre à jour le GDD.
 - Nommer une personne réelle, reproduire un logo ou une marque, intégrer un asset sans licence compatible (CC0, CC-BY avec crédit, licence commerciale du pack).
 - Supprimer ou désactiver un test, pousser sur une autre branche que celle demandée, créer une PR non demandée.
@@ -130,7 +141,13 @@ src/fx/Atmosphere.ts        # éclairage dynamique, halos, bloom, étalonnage, v
 src/ui/                     # Controls (clavier, souris, manette, tactile), placeholders
 src/platform/               # seul accès au navigateur hors Phaser (localStorage)
 src/utils/                  # rng (graines), math
-tests/                      # Vitest : logique pure et gabarits de salles
+tests/                      # Vitest : logique pure, gabarits de salles, simulation 3D (sim.test.ts)
+play3d.html, src/main3d.ts  # entrée 3D (Three.js) pendant la migration
+src/sim/                    # PUR : World, HeroSim, EnemySim/ConsultantSim, Weapon, WaveDirector, physics/, clock/ (pas fixe, hitstop)
+src/engine/                 # Loop (rAF), Input (clavier, souris, manette, tactile) : DOM, sans three
+src/view/                   # Three.js : GameView, RoomView, actors/, fx/, materials/toon, post/, quality (presets, réduction des mouvements)
+src/ui/hud/                 # HUD DOM de la 3D (+ hud3d.css)
+src/scenes3d/               # QuaiScene (assemble sim + view + engine + ui), demoApi (dev, captures)
 tools/render3d/             # personnages : modèles 3D → pixel art (Blender/bpy), manifest.json prioritaire
 tools/pixelart/             # décor, props, VFX, UI (générateur 2D) + manifest.json, planches de contrôle
 public/assets/              # sprites/{player,enemies,bosses,npcs,vfx,pickups,ui,portraits}, tilesets, audio/{sfx,music}, fonts

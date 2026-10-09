@@ -107,7 +107,7 @@ class Game implements World {
   private perfOpen = params.has('perf');
   private benchT = 0;
   private benchFrames = 0;
-  private benchTime = 0;
+  private benchStart = 0;
   private applied: QualityLevel | null = null;
 
   constructor() {
@@ -178,7 +178,7 @@ class Game implements World {
     // Ombres « blob » (preset Bas, sans shadow map) : un seul appel de rendu instancié
     this.blobs = new THREE.InstancedMesh(
       new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2),
-      new THREE.MeshBasicMaterial({ map: radialTexture(), color: 0x000000, transparent: true, opacity: 0.6, depthWrite: false }),
+      new THREE.MeshBasicMaterial({ map: radialTexture(), color: 0x000000, transparent: true, opacity: 0.8, depthWrite: false }),
       8,
     );
     this.blobs.renderOrder = 1;
@@ -198,12 +198,12 @@ class Game implements World {
     this.applyQuality();
     this.applyReducedMotion();
     window.addEventListener('keydown', (e) => this.onKey(e));
+    // le réglage système suit ses changements tant que le joueur n'a pas choisi lui-même (F4, ?rm=)
     matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
-      if (this.settings.rmFromSystem || e.matches) {
-        this.settings.reducedMotion = e.matches;
-        this.settings.rmFromSystem = true;
-        this.applyReducedMotion();
-      }
+      if (this.settings.rmExplicit) return;
+      this.settings.reducedMotion = e.matches;
+      this.settings.rmFromSystem = e.matches;
+      this.applyReducedMotion();
     });
   }
 
@@ -618,8 +618,8 @@ class Game implements World {
       p.set(x, 0.018, z);
       this.blobs.setMatrixAt(n++, m.compose(p, q, s));
     };
-    put(this.hero.pos.x, this.hero.pos.z, 1.25);
-    for (const e of this.enemies) if (e.alive && !e.spawning) put(e.pos.x, e.pos.z, e.radius * 2.6);
+    put(this.hero.pos.x, this.hero.pos.z, 1.7);
+    for (const e of this.enemies) if (e.alive) put(e.pos.x, e.pos.z, Math.max(1.5, e.radius * 3.2));
     for (let i = n; i < this.blobs.count; i++) this.blobs.setMatrixAt(i, m.makeScale(0, 0, 0));
     this.blobs.instanceMatrix.needsUpdate = true;
   }
@@ -837,12 +837,14 @@ class Game implements World {
     if (FIXED || this.settings.source !== 'auto' || this.benchT < 0) return;
     this.benchT += realDt;
     if (this.benchT < 1) return;
+    // horloge réelle (le dt de la boucle est plafonné à 1/30 s et sous-estimerait la lenteur)
+    const now = performance.now();
+    if (this.benchFrames === 0) this.benchStart = now;
     this.benchFrames++;
-    this.benchTime += realDt;
-    if (this.benchTime < 2.5) return;
-    const fps = this.benchFrames / this.benchTime;
+    const elapsed = (now - this.benchStart) / 1000;
+    if (elapsed < 2.5) return;
+    const fps = (this.benchFrames - 1) / elapsed;
     this.benchFrames = 0;
-    this.benchTime = 0;
     if (fps < 42 && this.settings.stepDown()) {
       this.applyQuality();
       this.benchT = 0; // re-mesure au nouveau preset
@@ -947,7 +949,23 @@ class Game implements World {
       },
       reducedMotion: (v: boolean) => {
         this.settings.reducedMotion = v;
+        this.settings.rmExplicit = true;
         this.applyReducedMotion();
+      },
+      drawStats: () => {
+        const out: Record<string, number> = {};
+        for (const top of this.scene.children) {
+          let n = 0;
+          let sh = 0;
+          top.traverseVisible((o) => {
+            if ((o as THREE.Mesh).isMesh || (o as THREE.Points).isPoints) {
+              n++;
+              if (o.castShadow) sh++;
+            }
+          });
+          if (n) out[`${top.type}:${top.name || top.uuid.slice(0, 4)}`] = n * 1000 + sh;
+        }
+        return out;
       },
       perf: () => {
         const i = this.renderer.info;

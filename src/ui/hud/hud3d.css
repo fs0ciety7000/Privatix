@@ -1,0 +1,407 @@
+/* Entrée 3D : canvas plein écran, HUD et commandes tactiles en DOM (repris du prototype). */
+:root {
+  --ink: #14101a;
+  --hero: #ff7a1a;
+  --enemy: #19c3b1;
+  --danger: #ff3ea5;
+  --rim: #6ff3ff;
+  --gold: #ffd200;
+  --panel: rgba(16, 11, 30, 0.82);
+  --font: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  --text: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0818;
+  color: #fff;
+  font-family: var(--text);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+
+#app canvas {
+  display: block;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  cursor: crosshair;
+}
+
+#ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+#loading {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0a0818;
+  font: 900 42px var(--font);
+  letter-spacing: 0.2em;
+  color: var(--danger);
+  transition: opacity 0.6s;
+}
+#loading.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+#loading.error {
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  padding: 24px;
+  text-align: center;
+}
+
+/* ─── HUD ─── */
+.hud-top {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.5));
+}
+.hud-bars {
+  width: min(300px, 46vw);
+}
+.hud-label {
+  font: 900 11px var(--font);
+  letter-spacing: 0.12em;
+  color: #ffd9b8;
+  margin: 6px 0 3px;
+}
+.hud-value {
+  font-family: var(--text);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+  float: right;
+}
+.hud-bar {
+  position: relative;
+  height: 14px;
+  background: #1c1530;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  overflow: hidden;
+  transform: skewX(-12deg);
+}
+.hud-bar .hud-fill,
+.hud-bar .hud-ghost {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 100%;
+}
+.hud-energy {
+  outline: 2px solid var(--hero);
+  height: 16px;
+}
+.hud-energy .hud-ghost {
+  background: #fff3d8;
+}
+.hud-energy .hud-fill {
+  background: linear-gradient(180deg, #ffb04a 0%, #ff7a1a 45%, #d9481a 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+.hud-burnout {
+  outline: 2px solid #8a4fd8;
+  height: 10px;
+}
+.hud-burnout .hud-fill {
+  background: linear-gradient(90deg, #6d4cff, #c04cff 60%, var(--danger));
+}
+.hud-burnout.meltdown .hud-fill {
+  background: var(--danger);
+  box-shadow: 0 0 12px var(--danger);
+}
+.hud-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.hud-pips {
+  display: flex;
+  gap: 5px;
+}
+.hud-pips i {
+  --p: 0;
+  width: 22px;
+  height: 8px;
+  border: 1.5px solid var(--ink);
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, #3a6a8a calc(var(--p) * 100%), #22304a 0);
+}
+.hud-pips i.on {
+  background: var(--rim);
+  box-shadow: 0 0 8px var(--rim);
+}
+.hud-mob {
+  flex: 1;
+  height: 8px;
+  outline: 1.5px solid var(--gold);
+}
+.hud-mob .hud-fill {
+  background: var(--gold);
+}
+.hud-cups {
+  font: 900 12px var(--font);
+  color: #ffe2b8;
+}
+.hud-wave {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  font: 900 12px var(--font);
+  letter-spacing: 0.16em;
+  color: var(--rim);
+  text-shadow: 0 2px 0 #000;
+}
+.hud-banner {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  font: 900 34px var(--font);
+  letter-spacing: 0.12em;
+  color: #fff3c8;
+  text-shadow:
+    0 0 16px var(--hero),
+    0 4px 0 var(--ink);
+  opacity: 0;
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+  white-space: nowrap;
+}
+.hud-banner[data-tone='danger'] {
+  color: #ffd6ee;
+  text-shadow:
+    0 0 16px var(--danger),
+    0 4px 0 var(--ink);
+}
+.hud-banner[data-tone='gold'] {
+  color: #fff6c0;
+  text-shadow:
+    0 0 16px var(--gold),
+    0 4px 0 var(--ink);
+}
+.hud-banner.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.hud-stats {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  font:
+    700 11px ui-monospace,
+    monospace;
+  color: #bfffd0;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: none;
+}
+.hud-stats.show {
+  display: block;
+}
+.hud-help {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 0 #000;
+  white-space: nowrap;
+}
+kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  margin-right: 2px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-bottom-width: 3px;
+  border-radius: 4px;
+  font: 800 11px var(--text);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* ─── Nombres de dégâts et textes flottants ─── */
+#dmg-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.dmg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font: 900 24px var(--font);
+  color: #fff;
+  -webkit-text-stroke: 1.5px var(--ink);
+  text-shadow: 0 3px 0 var(--ink);
+  will-change: transform, opacity;
+  white-space: nowrap;
+}
+.dmg-big {
+  font-size: 34px;
+  color: #ffd27a;
+}
+.dmg-crit {
+  font-size: 38px;
+  color: #fff07a;
+  text-shadow:
+    0 0 14px #ff8a1a,
+    0 3px 0 var(--ink);
+}
+.dmg-hurt {
+  color: #ff5fb5;
+  font-size: 26px;
+}
+.dmg-info,
+.dmg-gold,
+.dmg-danger {
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  -webkit-text-stroke: 1px var(--ink);
+}
+.dmg-gold {
+  color: var(--gold);
+}
+.dmg-danger {
+  color: #ff8ac8;
+}
+
+/* ─── Tactile ─── */
+#joyzone,
+#joybase,
+#touch-btns {
+  display: none;
+}
+body.touch .hud-help {
+  display: none;
+}
+body.touch #joyzone {
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  height: 70%;
+  pointer-events: auto;
+}
+body.touch #joybase {
+  display: block;
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  left: 110px;
+  top: calc(100% - 130px);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: rgba(10, 8, 24, 0.35);
+  opacity: 0.55;
+}
+body.touch #joybase.on {
+  opacity: 1;
+}
+#joyknob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffb04a, #ff7a1a 60%, #a8360f);
+  border: 2px solid var(--ink);
+  transform: translate(-50%, -50%);
+}
+body.touch #touch-btns {
+  display: block;
+  position: absolute;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 210px;
+  height: 200px;
+}
+#touch-btns button {
+  position: absolute;
+  pointer-events: auto;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  color: #fff;
+  font: 900 13px var(--font);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+  touch-action: none;
+}
+#touch-btns button.down {
+  transform: translateY(3px) scale(0.95);
+}
+#btn-attack {
+  right: 0;
+  bottom: 0;
+  width: 96px;
+  height: 96px;
+  background: radial-gradient(circle at 35% 30%, #ffb04a, #ff7a1a 55%, #b4400f);
+}
+#btn-dash {
+  right: 108px;
+  bottom: 6px;
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle at 35% 30%, #9cf6ff, #2a9ac0 60%, #145070);
+}
+#btn-special {
+  right: 14px;
+  bottom: 112px;
+  width: 64px;
+  height: 64px;
+  font-size: 11px;
+  background: radial-gradient(circle at 35% 30%, #ffe08a, #ffb52e 60%, #a86a10);
+}
+
+@media (max-width: 760px) {
+  .hud-help {
+    display: none;
+  }
+  .hud-wave {
+    top: auto;
+    bottom: max(230px, calc(env(safe-area-inset-bottom) + 230px));
+    right: auto;
+    left: max(16px, env(safe-area-inset-left));
+    font-size: 10px;
+  }
+  .hud-banner {
+    font-size: 22px;
+  }
+}
+
+/* Réduction des mouvements : pas d'animation d'interface. */
+body.reduced-motion .hud-banner {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hud-banner {
+    transition: none;
+  }
+}

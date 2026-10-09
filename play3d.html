@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Privatix 3D (migration en cours) - Hack 'n' Slash roguelite sur le rail belge, en 3D temps réel."
+    />
+    <meta name="theme-color" content="#0a0818" />
+    <title>Privatix 3D</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="ui">
+      <div id="dmg-layer"></div>
+      <div id="joyzone"></div>
+      <div id="joybase"><div id="joyknob"></div></div>
+      <div id="touch-btns">
+        <button id="btn-special" aria-label="Coup de sifflet">SIFFLET</button>
+        <button id="btn-dash" aria-label="Dash">DASH</button>
+        <button id="btn-attack" aria-label="Frapper">
+          <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
+            <rect x="18" y="4" width="4.5" height="26" rx="2" fill="#fff" />
+            <rect x="10" y="4" width="20" height="5" rx="2" fill="#fff" />
+            <rect x="15" y="28" width="10.5" height="9" rx="2" fill="#fff" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="loading">PRIVATIX</div>
+    <script type="module" src="/src/main3d.ts"></script>
+  </body>
+</html>

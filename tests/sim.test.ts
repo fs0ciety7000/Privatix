@@ -12,6 +12,7 @@ import { NO_INTENT } from '@/sim/intent';
 import type { TileGrid } from '@/sim/physics/collision';
 import { moveCircle, resolveCircleGrid, separateCircles } from '@/sim/physics/collision';
 import { pxToM, toWorld, yawFromAngle } from '@/sim/units';
+import { autoAimTarget } from '@/sim/aim';
 import { World } from '@/sim/World';
 
 /** Grille de test : une rangée de murs en y = 0, un pilier en (5, 5), le reste vide. */
@@ -357,5 +358,22 @@ describe('dégâts', () => {
     expect(a.enemies.map((e) => [e.body.x, e.body.y])).toEqual(
       b.enemies.map((e) => [e.body.x, e.body.y]),
     );
+  });
+});
+
+describe('aide à la visée et calage des animations 3D', () => {
+  it('vise l’ennemi touchable le plus proche dans la portée', () => {
+    const from = { x: 0, y: 0 };
+    const targets = [
+      { x: 100, y: 0, hittable: true },
+      { x: 30, y: 0, hittable: false },
+      { x: 0, y: 60, hittable: true },
+    ];
+    expect(autoAimTarget(from, targets, 135)).toEqual({ x: 0, y: 60 });
+    expect(autoAimTarget(from, targets, 50)).toBeNull();
+  });
+
+  it('les poses clés du héros 3D sont calées sur les timings du combo (310, 310, 600 ms)', () => {
+    expect(COMBO.map((s) => s.startupMs + s.activeMs + s.recoveryMs)).toEqual([310, 310, 600]);
   });
 });
