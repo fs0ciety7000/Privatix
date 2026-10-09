@@ -20,6 +20,13 @@ export interface HudSnapshot {
   readonly wave: number;
   readonly waveCount: number;
   readonly kills: number;
+  /** Heure du Shift (« 06:30 »), type de salle, monnaies du run. */
+  readonly clock: string;
+  readonly roomLabel: string;
+  readonly tickets: number;
+  readonly ps: number;
+  /** Héros marqué par un drone (+25 % de dégâts subis). */
+  readonly marked: boolean;
 }
 
 export interface HudStats {
@@ -56,6 +63,7 @@ export class Hud {
   private readonly pips: HTMLDivElement;
   private readonly cups: HTMLSpanElement;
   private readonly wave: HTMLDivElement;
+  private readonly purse: HTMLDivElement;
   private readonly banner: HTMLDivElement;
   private readonly statsBox: HTMLDivElement;
   private readonly cache = new Map<string, string>();
@@ -89,13 +97,14 @@ export class Hud {
     this.cups = el('span', 'hud-cups', row);
 
     this.wave = el('div', 'hud-wave', this.root);
+    this.purse = el('div', 'hud-purse', this.root);
     this.banner = el('div', 'hud-banner', this.root);
     this.statsBox = el('div', 'hud-stats', this.root);
     const help = el('div', 'hud-help', this.root);
     help.innerHTML =
       '<span><kbd>ZQSD</kbd>/<kbd>WASD</kbd> bouger</span><span><kbd>Clic</kbd>/<kbd>J</kbd> frapper</span>' +
       '<span><kbd>Espace</kbd> dash</span><span><kbd>F</kbd> sifflet</span><span><kbd>R</kbd> café</span>' +
-      '<span><kbd>M</kbd> réduire les mouvements</span><span><kbd>F3</kbd> perf</span>';
+      '<span><kbd>E</kbd> interagir</span><span><kbd>Échap</kbd> pause</span><span><kbd>F3</kbd> perf</span>';
   }
 
   private set(key: string, value: string, apply: (v: string) => void): void {
@@ -134,11 +143,15 @@ export class Hud {
         if (i === s.dashCharges) pip.style.setProperty('--p', s.dashProgress.toFixed(2));
       }
     });
-    const wave =
-      s.waveCount > 0
-        ? `QUAI · SALLE ${String(s.room)} · VAGUE ${String(s.wave)}/${String(s.waveCount)} · ${String(s.kills)} K.O.`
-        : '';
+    const waves =
+      s.waveCount > 0 ? ` · VAGUE ${String(Math.max(1, s.wave))}/${String(s.waveCount)}` : '';
+    const wave = `${s.clock} · ${s.roomLabel.toUpperCase()} · SALLE ${String(s.room)}/10${waves}`;
     this.set('wv', wave, (v) => (this.wave.textContent = v));
+    const purse = `${String(s.tickets)} TICKETS · ${String(s.ps)} PS · ${String(s.kills)} K.O.${s.marked ? ' · SIGNALÉ' : ''}`;
+    this.set('pu', purse, (v) => {
+      this.purse.textContent = v;
+      this.purse.classList.toggle('marked', s.marked);
+    });
     if (this.bannerLeft > 0) {
       this.bannerLeft -= realDt;
       if (this.bannerLeft <= 0) this.banner.classList.remove('show');
@@ -170,6 +183,11 @@ export class Hud {
     this.statsBox.textContent =
       `${String(Math.round(s.fps))} fps · ${String(s.calls)} appels · ${(s.triangles / 1000).toFixed(1)} k tri · ` +
       `${String(s.geometries)} géo · ${String(s.textures)} tex · ×${s.pixelRatio.toFixed(2)} · ${s.quality} · ${String(s.enemies)} ennemis`;
+  }
+
+  /** HUD masqué derrière les menus (écran titre, résultats). */
+  public setVisible(on: boolean): void {
+    this.root.hidden = !on;
   }
 
   public dispose(): void {

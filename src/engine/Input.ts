@@ -22,6 +22,9 @@ export interface RawInput {
   readonly touchAttack: boolean;
   readonly toggleStats: boolean;
   readonly toggleReducedMotion: boolean;
+  /** Interagir (E, gâchette gauche) et pause (Échap, P, Start). */
+  readonly interact: boolean;
+  readonly pause: boolean;
 }
 
 const MOVE_KEYS = {
@@ -55,6 +58,8 @@ export class Input {
   private touchSpecialHeld = false;
   private stats = false;
   private reduced = false;
+  private interact = false;
+  private pause = false;
   private joyX = 0;
   private joyY = 0;
   private joyId: number | null = null;
@@ -97,6 +102,13 @@ export class Input {
           break;
         case 'KeyM':
           this.reduced = true;
+          break;
+        case 'KeyE':
+          this.interact = true;
+          break;
+        case 'Escape':
+        case 'KeyP':
+          this.pause = true;
           break;
         default:
           if (k.code.startsWith('Arrow')) k.preventDefault();
@@ -249,6 +261,8 @@ export class Input {
       if (pressed(1) || pressed(7)) this.dash = true;
       if (pressed(3)) this.special = true;
       if (pressed(2)) this.coffee = true;
+      if (pressed(4) || pressed(6)) this.interact = true;
+      if (pressed(9)) this.pause = true;
       padSpecialHeld = pad.buttons[3] ?? false;
       this.padPrev = pad.buttons;
     }
@@ -265,6 +279,8 @@ export class Input {
       touchAttack: this.touchAttack,
       toggleStats: this.stats,
       toggleReducedMotion: this.reduced,
+      interact: this.interact,
+      pause: this.pause,
     };
     this.attack = false;
     this.dash = false;
@@ -273,14 +289,17 @@ export class Input {
     this.touchAttack = false;
     this.stats = false;
     this.reduced = false;
+    this.interact = false;
+    this.pause = false;
     return out;
   }
 
   /** Appuis simulés (captures automatisées, tests de bout en bout). */
-  public press(what: 'attack' | 'dash' | 'special' | 'coffee'): void {
+  public press(what: 'attack' | 'dash' | 'special' | 'coffee' | 'interact'): void {
     if (what === 'attack') this.attack = true;
     else if (what === 'dash') this.dash = true;
     else if (what === 'special') this.special = true;
+    else if (what === 'interact') this.interact = true;
     else this.coffee = true;
   }
 

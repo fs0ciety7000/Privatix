@@ -1,0 +1,215 @@
+[
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_chantier",
+   "gilet": "gilet_hv",
+   "outil": "cle_tire_fond"
+  },
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "file": "equip_chantier_hv_cle"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_chantier",
+   "gilet": "gilet_hv",
+   "outil": "cle_tire_fond"
+  },
+  "clip": "attack3",
+  "t": 0.17,
+  "cam": "threequarter",
+  "yaw": -60,
+  "file": "equip_chantier_hv_cle_attack3"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_antibruit",
+   "gilet": "gilet_porte_outils",
+   "outil": "masse_de_voie"
+  },
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "file": "equip_antibruit_porteoutils_masse"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_antibruit",
+   "gilet": "gilet_porte_outils",
+   "outil": "masse_de_voie"
+  },
+  "clip": "attack3",
+  "t": 0.17,
+  "cam": "threequarter",
+  "yaw": -60,
+  "file": "equip_antibruit_porteoutils_masse_attack3"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_legendaire",
+   "gilet": "gilet_hv",
+   "outil": "cle_tire_fond_epique"
+  },
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "file": "equip_legendaire_hv_cleepique"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_legendaire",
+   "gilet": "gilet_hv",
+   "outil": "cle_tire_fond_epique"
+  },
+  "clip": "attack3",
+  "t": 0.17,
+  "cam": "threequarter",
+  "yaw": -60,
+  "file": "equip_legendaire_hv_cleepique_attack3"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_chantier",
+   "gilet": "gilet_porte_outils",
+   "outil": "pince_catenaire"
+  },
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "file": "equip_chantier_porteoutils_pince"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_chantier",
+   "gilet": "gilet_porte_outils",
+   "outil": "pince_catenaire"
+  },
+  "clip": "attack3",
+  "t": 0.17,
+  "cam": "threequarter",
+  "yaw": -60,
+  "file": "equip_chantier_porteoutils_pince_attack3"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": null,
+   "gilet": null,
+   "outil": null
+  },
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "file": "equip_nu"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": null,
+   "gilet": null,
+   "outil": null
+  },
+  "clip": "attack3",
+  "t": 0.17,
+  "cam": "threequarter",
+  "yaw": -60,
+  "file": "equip_nu_attack3"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_chantier",
+   "gilet": "gilet_hv",
+   "outil": "cle_tire_fond"
+  },
+  "clip": "idle",
+  "t": 0.6,
+  "cam": "front",
+  "zoom": 2.6,
+  "ty": 1.45,
+  "file": "face_hero"
+ },
+ {
+  "model": "hero",
+  "equip": {
+   "casque": "casque_chantier",
+   "gilet": "gilet_hv",
+   "outil": "cle_tire_fond"
+  },
+  "clip": "idle",
+  "t": 0.6,
+  "cam": "threequarter",
+  "zoom": 2.6,
+  "ty": 1.45,
+  "file": "face_hero_34"
+ },
+ {
+  "model": "consultant",
+  "equip": null,
+  "clip": "idle",
+  "t": 0.6,
+  "cam": "front",
+  "zoom": 2.6,
+  "ty": 1.35,
+  "file": "face_consultant"
+ },
+ {
+  "model": "consultant",
+  "equip": null,
+  "clip": "idle",
+  "t": 0.6,
+  "cam": "threequarter",
+  "zoom": 2.6,
+  "ty": 1.35,
+  "file": "face_consultant_34"
+ },
+ {
+  "model": "dirupo",
+  "equip": null,
+  "clip": "idle",
+  "t": 0.6,
+  "cam": "front",
+  "zoom": 2.4,
+  "ty": 2.05,
+  "file": "face_dirupo"
+ },
+ {
+  "model": "dirupo",
+  "equip": null,
+  "clip": "idle",
+  "t": 0.6,
+  "cam": "threequarter",
+  "zoom": 2.4,
+  "ty": 2.05,
+  "file": "face_dirupo_34"
+ },
+ {
+  "model": "furet",
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "zoom": 2.2,
+  "ty": 0.6,
+  "yaw": -20,
+  "file": "face_furet"
+ },
+ {
+  "model": "discosaure",
+  "clip": "idle",
+  "t": 0.3,
+  "cam": "threequarter",
+  "zoom": 1.6,
+  "ty": 2.6,
+  "yaw": -10,
+  "file": "face_discosaure"
+ }
+]

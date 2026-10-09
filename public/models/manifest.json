@@ -1,0 +1,501 @@
+{
+  "version": 1,
+  "characters": {
+    "hero": {
+      "file": "models/hero.glb",
+      "kind": "hero",
+      "height": 2.0,
+      "radius": 0.42,
+      "outline": "#14101A",
+      "rim": "#6FF3FF",
+      "bones": 22,
+      "sockets": [
+        "socket_head",
+        "socket_weapon_R",
+        "socket_weapon_L",
+        "socket_back",
+        "socket_hip",
+        "socket_chest",
+        "socket_vfx",
+        "socket_glove_L",
+        "socket_foot_L",
+        "socket_glove_R",
+        "socket_foot_R"
+      ],
+      "runtimeBones": [],
+      "triangles": 12620,
+      "clips": {
+        "idle": {
+          "duration": 2.6,
+          "loop": true
+        },
+        "run": {
+          "duration": 0.5,
+          "loop": true
+        },
+        "attack1": {
+          "duration": 0.31,
+          "loop": false,
+          "events": {
+            "active": 90,
+            "recovery": 150
+          }
+        },
+        "attack2": {
+          "duration": 0.31,
+          "loop": false,
+          "events": {
+            "active": 80,
+            "recovery": 140
+          }
+        },
+        "attack3": {
+          "duration": 0.6,
+          "loop": false,
+          "events": {
+            "active": 200,
+            "recovery": 280
+          }
+        },
+        "dash": {
+          "duration": 0.16,
+          "loop": false,
+          "events": {
+            "iframes_end": 135
+          }
+        },
+        "hurt": {
+          "duration": 0.28,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.3,
+          "loop": false
+        },
+        "spawn": {
+          "duration": 0.8,
+          "loop": false,
+          "events": {
+            "land": 300
+          }
+        }
+      },
+      "equipment": {},
+      "bytes": 730168,
+      "bytesRaw": 730168,
+      "compression": "brut"
+    },
+    "consultant": {
+      "file": "models/consultant.glb",
+      "kind": "enemy",
+      "height": 1.75,
+      "radius": 0.45,
+      "outline": "#06302C",
+      "rim": "#FF7AC8",
+      "bones": 22,
+      "sockets": [
+        "socket_head",
+        "socket_weapon_R",
+        "socket_weapon_L",
+        "socket_back",
+        "socket_hip",
+        "socket_chest",
+        "socket_vfx",
+        "socket_glove_L",
+        "socket_foot_L",
+        "socket_glove_R",
+        "socket_foot_R"
+      ],
+      "runtimeBones": [],
+      "triangles": 12368,
+      "clips": {
+        "idle": {
+          "duration": 2.8,
+          "loop": true
+        },
+        "walk": {
+          "duration": 0.5,
+          "loop": true
+        },
+        "attack": {
+          "duration": 1.57,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 700,
+            "recovery": 820
+          }
+        },
+        "hurt": {
+          "duration": 0.3,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.1,
+          "loop": false
+        },
+        "spawn": {
+          "duration": 0.45,
+          "loop": false
+        }
+      },
+      "equipment": {},
+      "bytes": 236328,
+      "bytesRaw": 645444,
+      "compression": "meshopt"
+    },
+    "discosaure": {
+      "file": "models/discosaure.glb",
+      "kind": "elite",
+      "height": 3.6,
+      "radius": 1.35,
+      "outline": "#06302C",
+      "rim": "#6FF3FF",
+      "bones": 24,
+      "sockets": [
+        "socket_vfx",
+        "socket_head",
+        "socket_jaw"
+      ],
+      "runtimeBones": [
+        "disco_ball"
+      ],
+      "triangles": 17304,
+      "clips": {
+        "idle": {
+          "duration": 4.0,
+          "loop": true
+        },
+        "walk": {
+          "duration": 1.2,
+          "loop": true
+        },
+        "attack-stomp": {
+          "duration": 2.11,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 1050,
+            "recovery": 1210
+          }
+        },
+        "charge-windup": {
+          "duration": 0.95,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 950
+          }
+        },
+        "charge": {
+          "duration": 0.6,
+          "loop": true
+        },
+        "stagger": {
+          "duration": 1.2,
+          "loop": true
+        },
+        "hurt": {
+          "duration": 0.35,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.6,
+          "loop": false
+        },
+        "spawn": {
+          "duration": 1.5,
+          "loop": false,
+          "events": {
+            "land": 1150
+          }
+        }
+      },
+      "equipment": {},
+      "bytes": 350932,
+      "bytesRaw": 1039176,
+      "compression": "meshopt"
+    },
+    "furet": {
+      "file": "models/furet.glb",
+      "kind": "enemy",
+      "height": 0.9,
+      "radius": 0.5,
+      "outline": "#06302C",
+      "rim": "#6FF3FF",
+      "bones": 31,
+      "sockets": [
+        "socket_vfx",
+        "socket_head",
+        "socket_tail",
+        "socket_back"
+      ],
+      "runtimeBones": [],
+      "triangles": 10998,
+      "clips": {
+        "idle": {
+          "duration": 2.0,
+          "loop": true
+        },
+        "run": {
+          "duration": 0.45,
+          "loop": true
+        },
+        "attack-bite": {
+          "duration": 0.97,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 450,
+            "recovery": 590
+          }
+        },
+        "attack-spray": {
+          "duration": 1.25,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 550,
+            "recovery": 850
+          }
+        },
+        "war-dance": {
+          "duration": 0.6,
+          "loop": true
+        },
+        "hurt": {
+          "duration": 0.32,
+          "loop": false
+        },
+        "death": {
+          "duration": 1.4,
+          "loop": false
+        },
+        "spawn": {
+          "duration": 0.8,
+          "loop": false
+        },
+        "burrow": {
+          "duration": 0.4,
+          "loop": false,
+          "events": {
+            "hidden": 400
+          }
+        }
+      },
+      "equipment": {},
+      "bytes": 329020,
+      "bytesRaw": 730916,
+      "compression": "meshopt"
+    },
+    "dirupo": {
+      "file": "models/dirupo.glb",
+      "kind": "boss",
+      "height": 2.6,
+      "radius": 0.7,
+      "outline": "#06302C",
+      "rim": "#6FF3FF",
+      "bones": 26,
+      "sockets": [
+        "socket_head",
+        "socket_weapon_R",
+        "socket_weapon_L",
+        "socket_back",
+        "socket_hip",
+        "socket_chest",
+        "socket_vfx",
+        "socket_glove_L",
+        "socket_foot_L",
+        "socket_glove_R",
+        "socket_foot_R",
+        "socket_bowtie",
+        "socket_glasses"
+      ],
+      "runtimeBones": [],
+      "triangles": 17230,
+      "clips": {
+        "intro": {
+          "duration": 2.1,
+          "loop": false,
+          "events": {
+            "glint": 1700
+          }
+        },
+        "idle": {
+          "duration": 2.4,
+          "loop": true
+        },
+        "walk": {
+          "duration": 0.9,
+          "loop": true
+        },
+        "attack-bowtie": {
+          "duration": 1.3,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "glint": 250,
+            "active": 700,
+            "recovery": 1000
+          }
+        },
+        "attack-inauguration": {
+          "duration": 1.6,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 1000,
+            "recovery": 1150
+          }
+        },
+        "hair-swipe": {
+          "duration": 0.8,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 430,
+            "recovery": 700
+          }
+        },
+        "smile-flash": {
+          "duration": 1.4,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 800,
+            "recovery": 1100
+          }
+        },
+        "hurt": {
+          "duration": 0.35,
+          "loop": false
+        },
+        "stagger": {
+          "duration": 1.0,
+          "loop": true
+        },
+        "defeat": {
+          "duration": 2.4,
+          "loop": false
+        }
+      },
+      "equipment": {},
+      "bytes": 387876,
+      "bytesRaw": 986404,
+      "compression": "meshopt"
+    }
+  },
+  "items": {
+    "casque_chantier": {
+      "file": "models/items/casque_chantier.glb",
+      "triangles": 1428,
+      "slot": "casque",
+      "socket": "socket_head",
+      "rarity": 1,
+      "bytes": 18676,
+      "bytesRaw": 47228,
+      "compression": "meshopt"
+    },
+    "casque_antibruit": {
+      "file": "models/items/casque_antibruit.glb",
+      "triangles": 2412,
+      "slot": "casque",
+      "socket": "socket_head",
+      "rarity": 2,
+      "bytes": 28836,
+      "bytesRaw": 82796,
+      "compression": "meshopt"
+    },
+    "casque_legendaire": {
+      "file": "models/items/casque_legendaire.glb",
+      "triangles": 3312,
+      "slot": "casque",
+      "socket": "socket_head",
+      "rarity": 5,
+      "bytes": 37172,
+      "bytesRaw": 102632,
+      "compression": "meshopt"
+    },
+    "gilet_hv": {
+      "file": "models/items/gilet_hv.glb",
+      "triangles": 2140,
+      "slot": "gilet",
+      "skinned": true,
+      "rarity": 1,
+      "bytes": 23248,
+      "bytesRaw": 88644,
+      "compression": "meshopt"
+    },
+    "gilet_porte_outils": {
+      "file": "models/items/gilet_porte_outils.glb",
+      "triangles": 4676,
+      "slot": "gilet",
+      "skinned": true,
+      "rarity": 3,
+      "bytes": 47344,
+      "bytesRaw": 188548,
+      "compression": "meshopt"
+    },
+    "cle_tire_fond": {
+      "file": "models/items/cle_tire_fond.glb",
+      "triangles": 264,
+      "slot": "outil",
+      "socket": "socket_weapon_R",
+      "rarity": 1,
+      "tip": [
+        0,
+        0,
+        1.04
+      ],
+      "bytes": 6584,
+      "bytesRaw": 15132,
+      "compression": "meshopt"
+    },
+    "cle_tire_fond_epique": {
+      "file": "models/items/cle_tire_fond_epique.glb",
+      "triangles": 1024,
+      "slot": "outil",
+      "socket": "socket_weapon_R",
+      "rarity": 4,
+      "tip": [
+        0,
+        0,
+        1.1800000000000002
+      ],
+      "bytes": 13772,
+      "bytesRaw": 40484,
+      "compression": "meshopt"
+    },
+    "masse_de_voie": {
+      "file": "models/items/masse_de_voie.glb",
+      "triangles": 1320,
+      "slot": "outil",
+      "socket": "socket_weapon_R",
+      "rarity": 2,
+      "tip": [
+        0,
+        0,
+        0.93
+      ],
+      "bytes": 13956,
+      "bytesRaw": 41624,
+      "compression": "meshopt"
+    },
+    "pince_catenaire": {
+      "file": "models/items/pince_catenaire.glb",
+      "triangles": 1996,
+      "slot": "outil",
+      "socket": "socket_weapon_R",
+      "rarity": 3,
+      "tip": [
+        0,
+        0,
+        1.24
+      ],
+      "bytes": 23944,
+      "bytesRaw": 68232,
+      "compression": "meshopt"
+    }
+  },
+  "skeletonContract": "tools/render3d/SKELETON.md"
+}

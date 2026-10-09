@@ -1,0 +1,17 @@
+:root { --bg: #0a0818; --panel: #151029e6; --fg: #e8e6f4; --muted: #9a94b8; --accent: #ff7a1a; --line: #2c2450; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 13px/1.4 system-ui, sans-serif; overflow: hidden; }
+#app { position: fixed; inset: 0; }
+#panel { position: fixed; top: 12px; left: 12px; width: 260px; max-height: calc(100% - 24px); overflow: auto; padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: flex; flex-direction: column; gap: 8px; }
+body.shot #panel { display: none; }
+h1 { margin: 0 0 4px; font-size: 15px; letter-spacing: .02em; }
+h1 span { color: var(--accent); }
+label { display: flex; flex-direction: column; gap: 3px; color: var(--muted); }
+label.row { flex-direction: row; align-items: center; gap: 6px; }
+select, input[type=range] { width: 100%; }
+select { background: #0f0b20; color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chips button { background: #0f0b20; color: var(--fg); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; cursor: pointer; font: inherit; }
+.chips button.on { background: var(--accent); color: #14101a; border-color: var(--accent); }
+pre { margin: 0; white-space: pre-wrap; color: var(--muted); font-size: 11px; }
+@media (max-width: 600px) { #panel { width: calc(100% - 32px); left: 16px; max-height: 45%; } }

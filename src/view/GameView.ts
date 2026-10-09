@@ -5,9 +5,11 @@ import * as THREE from 'three';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import type { SimEvent } from '@/sim/events';
 import type { World } from '@/sim/World';
+import type { RoomLayout } from '@/systems/procedural/RoomLayout';
 import { PX_PER_M, pxToM, yawFromAngle } from '@/sim/units';
 import type { Vec2 } from '@/utils/math';
-import { ConsultantView } from '@/view/actors/ConsultantView';
+import type { ActorFrame, EnemyView } from '@/view/actors/ActorView';
+import { createEnemyView } from '@/view/actors/factory';
 import { HeroView } from '@/view/actors/HeroView';
 import type { FloatKind } from '@/view/fx/DamageNumbers';
 import { DamageNumbers } from '@/view/fx/DamageNumbers';
@@ -15,6 +17,8 @@ import { Bursts, Ghosts, Puffs, Rings, Shake, Smear, Sparks } from '@/view/fx/ef
 import { outlineUniforms, PAL, setOutlinesEnabled } from '@/view/materials/toon';
 import { Post } from '@/view/post/Post';
 import type { ViewSettings } from '@/view/quality';
+import { HazardViews } from '@/view/HazardViews';
+import { PickupViews, ProjectileView, PropViews } from '@/view/ItemsView';
 import { RoomView } from '@/view/RoomView';
 
 /** Caméra 3/4 à la Hades : focale serrée (peu de déformation), tangage d'environ 41°. */
@@ -47,9 +51,14 @@ export class GameView {
   public readonly scene = new THREE.Scene();
   public readonly camera: THREE.PerspectiveCamera;
   private readonly post: Post;
-  private readonly room: RoomView;
+  private room: RoomView;
+  private shownLayout: RoomLayout;
   private readonly hero: HeroView;
-  private readonly enemies = new Map<number, ConsultantView>();
+  private readonly enemies = new Map<number, EnemyView>();
+  private readonly hazards: HazardViews;
+  private readonly projectiles = new ProjectileView();
+  private readonly pickups: PickupViews;
+  private readonly props: PropViews;
   private readonly sparks: Sparks;
   private readonly puffs: Puffs;
   private readonly glows: Puffs;
@@ -65,7 +74,7 @@ export class GameView {
   ];
   private readonly dmg: DamageNumbers;
   private readonly sun: THREE.DirectionalLight;
-  private readonly dust: THREE.Points | null;
+  private dust: THREE.Points | null;
   private readonly raycaster = new THREE.Raycaster();
   private readonly ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   private readonly camTarget = new THREE.Vector3();
@@ -113,6 +122,7 @@ export class GameView {
     this.camera = new THREE.PerspectiveCamera(FOV_LANDSCAPE, 16 / 9, 0.5, 120);
 
     // Salle réelle, construite depuis le gabarit de la sim.
+    this.shownLayout = world.arena.layout;
     this.room = new RoomView(world.arena.layout, q, settings.reducedMotion);
     this.scene.add(this.room.group);
     const W = world.arena.widthPx / PX_PER_M;
@@ -121,22 +131,13 @@ export class GameView {
     // Lumières : ciel nocturne, lune froide (seule lumière à ombres), lampes chaudes de la salle.
     this.scene.add(new THREE.HemisphereLight(0x5a5ad0, 0x2a1438, 0.7));
     this.sun = new THREE.DirectionalLight(0xa8b8ff, 1.9);
-    this.sun.position.set(W / 2 - 8, 20, H / 2 + 10);
-    this.sun.target.position.set(W / 2, 0, H / 2);
     this.sun.castShadow = q.shadowMapSize > 0;
     if (this.sun.castShadow) {
       this.sun.shadow.mapSize.set(q.shadowMapSize, q.shadowMapSize);
-      const sc = this.sun.shadow.camera;
-      const half = Math.max(W, H) / 2 + 2;
-      sc.left = -half;
-      sc.right = half;
-      sc.top = half;
-      sc.bottom = -half;
-      sc.near = 1;
-      sc.far = 60;
       this.sun.shadow.bias = -0.0006;
       this.sun.shadow.normalBias = 0.03;
     }
+    this.fitSun(W, H);
     this.scene.add(this.sun, this.sun.target);
 
     const pk = q.particles;
@@ -158,6 +159,12 @@ export class GameView {
 
     this.hero = new HeroView(settings.reducedMotion);
     this.scene.add(this.hero.rig.root);
+    this.hazards = new HazardViews(this.scene, settings.reducedMotion);
+    this.pickups = new PickupViews(this.scene);
+    this.props = new PropViews(this.scene);
+    this.scene.add(this.projectiles.mesh, this.projectiles.halo);
+    this.room.setDoors(world.director.doors);
+    this.props.build(world.director.interactables);
     this.dmg = new DamageNumbers(floatHost);
     this.dust = q.dust ? this.makeDust(W, H) : null;
     if (this.dust) this.scene.add(this.dust);
@@ -167,6 +174,60 @@ export class GameView {
     this.post = new Post(this.renderer, this.scene, this.camera, innerWidth, innerHeight, q, safe);
     this.resize(innerWidth, innerHeight);
     this.lastSimTime = world.now();
+  }
+
+  /** Ombres de la lune cadrées sur la salle courante. */
+  private fitSun(W: number, H: number): void {
+    this.sun.position.set(W / 2 - 8, 20, H / 2 + 10);
+    this.sun.target.position.set(W / 2, 0, H / 2);
+    if (!this.sun.castShadow) return;
+    const sc = this.sun.shadow.camera;
+    const half = Math.max(W, H) / 2 + 2;
+    sc.left = -half;
+    sc.right = half;
+    sc.top = half;
+    sc.bottom = -half;
+    sc.near = 1;
+    sc.far = 60;
+    sc.updateProjectionMatrix();
+  }
+
+  /**
+   * Nouvelle salle (événement `roomEntered`) : le décor est reconstruit depuis le gabarit de la sim,
+   * les acteurs et objets de la salle précédente sont libérés, la caméra se recale sur le héros.
+   * Le nombre de lumières est fixe (preset) : aucun shader n'est recompilé.
+   */
+  public setRoom(): void {
+    const world = this.world;
+    if (this.shownLayout === world.arena.layout) return;
+    this.shownLayout = world.arena.layout;
+    this.room.dispose();
+    this.room = new RoomView(
+      world.arena.layout,
+      this.settings.quality,
+      this.settings.reducedMotion,
+    );
+    this.scene.add(this.room.group);
+    this.room.setDoors(world.director.doors);
+    this.room.setDoorsOpen(world.director.cleared);
+    const W = world.arena.widthPx / PX_PER_M;
+    const H = world.arena.heightPx / PX_PER_M;
+    this.fitSun(W, H);
+    if (this.dust) {
+      this.scene.remove(this.dust);
+      this.dust.geometry.dispose();
+      (this.dust.material as THREE.Material).dispose();
+      this.dust = this.settings.quality.dust ? this.makeDust(W, H) : null;
+      if (this.dust) this.scene.add(this.dust);
+    }
+    for (const v of this.enemies.values()) v.dispose();
+    this.enemies.clear();
+    this.hazards.clear();
+    this.pickups.clear();
+    this.props.build(world.director.interactables);
+    const h = world.hero.body;
+    this.camTarget.set(pxToM(h.x), 0, pxToM(h.y));
+    this.hero.sync(world.hero, 1, 0, 0);
   }
 
   // ─── Entrées ───────────────────────────────────────────────────────────────
@@ -352,10 +413,60 @@ export class GameView {
       case 'roomCleared':
         this.room.setDoorsOpen(true);
         break;
-      case 'wave':
-        if (e.index === 1) this.room.setDoorsOpen(false);
+      case 'roomEntered':
+        this.setRoom();
         break;
+      case 'projectileBroken': {
+        const p = at(e.x, e.y, 0.5);
+        this.sparks.burst(p, new THREE.Vector3(0, 0, 1), 8, 0xffd3ec, 5, 3, 0.3, 0.03, 3);
+        if (e.by === 'weapon') this.bursts.spawn(p, PAL.danger, 1.2, 0.12, 2);
+        break;
+      }
+      case 'projectileFired':
+        this.bursts.spawn(at(e.x, e.y, 0.6), PAL.danger, 0.9, 0.1, 2);
+        break;
+      case 'hazardImpact': {
+        const p = at(e.x, e.y);
+        if (e.kind === 'band') break;
+        const r = pxToM(e.radius);
+        this.rings.spawn(p, PAL.danger, r * 0.6, r * 1.1, 0.3, 0.25, 0.3, 2.4);
+        this.puffs.dustRing(p, 10, r * 0.6, 0x5a4a70, 3);
+        break;
+      }
+      case 'explosion': {
+        const p = at(e.x, e.y, 0.8 * e.scale);
+        this.bursts.spawn(p, 0xffb347, 3 * e.scale, 0.3, 4);
+        this.sparks.burst(
+          p,
+          new THREE.Vector3(0, 0, 1),
+          Math.round(26 * e.scale),
+          0xff8a3a,
+          9,
+          3.2,
+          0.6,
+          0.045,
+          6,
+        );
+        this.rings.spawn(at(e.x, e.y), 0xff8a3a, 0.2, 1.8 * e.scale, 0.4, 0.25, 0.3, 2.4);
+        this.puffs.dustRing(at(e.x, e.y), 12, 0.4 * e.scale, 0x3a3048, 3.5);
+        break;
+      }
+      case 'dust':
+        this.puffs.dustRing(at(e.x, e.y), e.count, 0.3, 0x5a5070, 2.5);
+        break;
+      case 'pickup': {
+        const p = at(e.x, e.y, 0.4);
+        this.sparks.burst(p, new THREE.Vector3(0, 0, 1), 10, 0xffd200, 5, 3.2, 0.5, 0.035, 5);
+        this.rings.spawn(at(e.x, e.y), 0xffd200, 0.2, 1.2, 0.3, 0.2, 0.2, 2.2);
+        if (e.text) this.dmg.spawn(p.setY(1.8), e.text, 'gold');
+        break;
+      }
       case 'heroDied':
+      case 'wave':
+      case 'notice':
+      case 'doorTaken':
+      case 'shiftEnded':
+      case 'bossPhase':
         break;
     }
   }
@@ -482,19 +593,24 @@ export class GameView {
     }
 
     // Ennemis : création à la volée, suivi de la sim, fin d'animation de mort après la sim.
+    const frame: ActorFrame = { alpha, simDt, realDt, camera: this.camera, time: this.time };
     const alive = new Set<number>();
     for (const e of world.enemies) {
       alive.add(e.id);
-      this.enemyView(e).sync(e, alpha, simDt, realDt, this.camera, this.time);
+      this.enemyView(e).update(e, frame);
     }
     for (const [id, v] of this.enemies) {
       if (alive.has(id)) continue;
-      v.sync(null, alpha, simDt, realDt, this.camera, this.time);
+      v.update(null, frame);
       if (v.finished) {
         v.dispose();
         this.enemies.delete(id);
       }
     }
+    this.hazards.sync(world.hazards, this.time);
+    this.projectiles.sync(world.projectiles.pool, alpha, simDt);
+    this.pickups.sync(world.pickups, simDt, this.settings.reducedMotion);
+    this.props.update();
 
     // Effets (gelés pendant le hitstop, sauf secousse et nombres)
     this.sparks.update(simDt);
@@ -518,10 +634,10 @@ export class GameView {
     this.dmg.update(realDt, this.camera, this.width, this.height);
   }
 
-  private enemyView(e: EnemySim): ConsultantView {
+  private enemyView(e: EnemySim): EnemyView {
     let v = this.enemies.get(e.id);
     if (!v) {
-      v = new ConsultantView(this.scene, this.settings.reducedMotion);
+      v = createEnemyView(e.kind, this.scene, this.settings.reducedMotion);
       this.enemies.set(e.id, v);
     }
     return v;
@@ -600,6 +716,10 @@ export class GameView {
   public dispose(): void {
     for (const v of this.enemies.values()) v.dispose();
     this.enemies.clear();
+    this.hazards.clear();
+    this.pickups.clear();
+    this.props.dispose();
+    this.projectiles.dispose();
     this.hero.dispose();
     this.room.dispose();
     this.dmg.clear();

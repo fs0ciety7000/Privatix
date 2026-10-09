@@ -4,9 +4,12 @@ Repères : le modèle est décrit en coordonnées Three.js (Y haut, +Z avant). B
 (x, y, z)three → (x, -z, y)blender. L'exporteur glTF (export_yup) refait la conversion inverse,
 on retrouve donc exactement les coordonnées du prototype dans le GLB.
 
-Os : tête à la position de l'articulation, queue le long de +Y Blender, roll 0 → matrice de repos
-identité (comme un Empty). Une rotation de pose Three (x, y, z) en Euler YXZ devient en Blender
-Euler((x, -z, y), 'YXZ').
+Os : tête à la position de l'articulation, queue le long de +Z Blender (vers le haut), roll 0 → le
+repère local de chaque os vaut exactement le repère Three (x = X, y = haut, z = avant). L'exporteur
+glTF n'ajoute donc AUCUNE rotation de repos : tous les nœuds d'os (sockets compris) ont une
+rotation identité dans le GLB, et un objet accroché à un socket garde l'orientation du personnage.
+Une rotation de pose Three (x, y, z) en Euler 'YXZ' (R = Ry·Rx·Rz) devient Euler((x, y, z), 'ZXY')
+en Blender (même produit de matrices) ; décalages et échelles sont recopiés tels quels.
 """
 from __future__ import annotations
 
@@ -76,7 +79,7 @@ def build_armature(model: Model) -> bpy.types.Object:
         eb = arm_data.edit_bones.new(name)
         h = to_b(model.world(name))
         eb.head = h
-        eb.tail = (h[0], h[1] + 0.08, h[2])
+        eb.tail = (h[0], h[1], h[2] + 0.08)
         eb.roll = 0.0
         eb.use_deform = model.bones[name].deform
     for name, b in model.bones.items():
@@ -85,7 +88,7 @@ def build_armature(model: Model) -> bpy.types.Object:
             arm_data.edit_bones[name].use_connect = False
     bpy.ops.object.mode_set(mode="OBJECT")
     for pb in arm.pose.bones:
-        pb.rotation_mode = "YXZ"
+        pb.rotation_mode = "ZXY"
     return arm
 
 
@@ -189,19 +192,18 @@ def _apply_pose(arm: bpy.types.Object, pose: dict, animated_loc: set, animated_s
         if r is None:
             pb.rotation_euler = (0, 0, 0)
         else:
-            pb.rotation_euler = Euler((r[0] * D2R, -r[2] * D2R, r[1] * D2R), "YXZ")
+            pb.rotation_euler = Euler((r[0] * D2R, r[1] * D2R, r[2] * D2R), "ZXY")
         pb.location = (0, 0, 0)
         pb.scale = (1, 1, 1)
     if "root" in pbs:
-        pbs["root"].location = to_b(pose["root"])
-        s = pose["scale"]
-        pbs["root"].scale = (s[0], s[2], s[1])
+        pbs["root"].location = pose["root"]
+        pbs["root"].scale = pose["scale"]
     for b, o in pose.get("loc", {}).items():
         if b in pbs:
-            pbs[b].location = to_b(o)
+            pbs[b].location = o
     for b, s in pose.get("scl", {}).items():
         if b in pbs:
-            pbs[b].scale = (s[0], s[2], s[1])
+            pbs[b].scale = s
 
 
 def bake_clips(arm: bpy.types.Object, clips: list[Clip], skip_rot: set | None = None) -> None:
@@ -254,7 +256,7 @@ def export(path: Path, animations: bool = True, selection: list | None = None) -
         export_format="GLB",
         use_selection=selection is not None,
         export_yup=True,
-        export_apply=True,
+        export_apply=False,
         export_texcoords=False,
         export_normals=True,
         export_tangents=False,

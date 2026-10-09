@@ -1,0 +1,390 @@
+/*
+ * Menus DOM de l'entrée 3D : écran titre, pause, options, fenêtres de choix (Avantages, machine à café,
+ * salle des pauses), écran des départs (résultats), fondu de salle, invite contextuelle, barre du boss.
+ * Tokens copiés du design system « Néon & Ballast » (docs/DESIGN_SYSTEM.md, site/src/styles/tokens.css) :
+ * le jeu ne dépend pas de site/.
+ */
+:root {
+  --px-ink: #14101a;
+  --px-hero: #ff7a1a;
+  --px-hero-hi: #ffb04a;
+  --px-enemy: #19c3b1;
+  --px-danger: #ff3ea5;
+  --px-violet-hi: #b05cff;
+  --px-rim: #6ff3ff;
+  --px-gold: #ffd200;
+  --px-night: #0a0818;
+  --px-shadow-violet: #2a2148;
+  --px-panel: rgba(16, 11, 30, 0.82);
+  --px-panel-top: rgba(30, 20, 52, 0.96);
+  --px-panel-bottom: rgba(12, 8, 24, 0.96);
+  --px-line: rgba(255, 255, 255, 0.12);
+  --px-text: #ffffff;
+  --px-text-soft: #dcd8ef;
+  --px-text-mute: #a9a3c8;
+  --px-label: #ffd9b8;
+  --px-up: #7dff9a;
+  --font-display: 'Arial Black', 'Helvetica Neue', Arial, system-ui, sans-serif;
+  --font-text: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --fs-2xs: 0.6875rem;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.375rem;
+  --fs-xl: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+  --fs-display: clamp(2.75rem, 1rem + 8vw, 6rem);
+  --tracking-label: 0.12em;
+  --tracking-title: 0.18em;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --r-sm: 4px;
+  --r-md: 6px;
+  --bd: 2px solid var(--px-ink);
+  --sh-drop: 0 4px 0 rgba(0, 0, 0, 0.45);
+  --sh-card: 0 8px 0 rgba(0, 0, 0, 0.45);
+  --glow-magenta: 0 0 14px var(--px-danger), 0 0 2px var(--px-danger), 0 2px 0 #000;
+  --focus-ring: 3px solid var(--px-rim);
+  --dur-fast: 150ms;
+  --ease-coup: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-ballast: cubic-bezier(0.16, 1, 0.3, 1);
+  --z-menu: 40;
+}
+
+.reduced-motion {
+  --dur-fast: 0ms;
+}
+
+/* ─── Couches ─── */
+.px-layer {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  z-index: var(--z-menu);
+  pointer-events: auto;
+  overflow-y: auto;
+}
+.px-layer[hidden] {
+  display: none;
+}
+.px-scrim {
+  background: radial-gradient(ellipse at 50% 40%, rgba(42, 33, 72, 0.72), rgba(10, 8, 24, 0.92));
+}
+.px-fade {
+  position: fixed;
+  inset: 0;
+  background: var(--px-night);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+/* ─── Panneau ─── */
+.px-panel {
+  width: min(560px, 100%);
+  padding: var(--sp-5);
+  border: var(--bd);
+  outline: 2px solid var(--px-rim);
+  outline-offset: -8px;
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--px-panel-top), var(--px-panel-bottom));
+  box-shadow: var(--sh-card);
+  color: var(--px-text-soft);
+  font: 400 var(--fs-sm) / 1.5 var(--font-text);
+}
+.px-panel--danger {
+  outline-color: var(--px-danger);
+}
+.px-panel--wide {
+  width: min(880px, 100%);
+}
+.px-title {
+  margin: 0 0 var(--sp-3);
+  color: var(--px-text);
+  font: 900 var(--fs-lg) / 1.1 var(--font-display);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+.px-sub {
+  margin: 0 0 var(--sp-4);
+  color: var(--px-text-mute);
+  font-size: var(--fs-xs);
+}
+.px-stack {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+/* ─── Boutons ─── */
+.px-btn {
+  --btn-bg: var(--px-panel);
+  --btn-fg: var(--px-text);
+  --btn-line: var(--px-rim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 48px;
+  padding: var(--sp-3) var(--sp-5);
+  border: var(--bd);
+  outline: 2px solid var(--btn-line);
+  border-radius: var(--r-sm);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: 900 var(--fs-sm) / 1.15 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: var(--sh-drop);
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease-coup),
+    box-shadow var(--dur-fast) var(--ease-ballast);
+}
+.px-btn:hover,
+.px-btn.is-sel {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 0 rgba(0, 0, 0, 0.45),
+    0 0 18px color-mix(in srgb, var(--btn-line) 55%, transparent);
+}
+.px-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+}
+.px-btn--primary {
+  --btn-bg: radial-gradient(circle at 35% 30%, var(--px-hero-hi), var(--px-hero) 55%, #b4400f);
+  --btn-fg: var(--px-ink);
+  --btn-line: var(--px-hero);
+  outline-offset: 2px;
+}
+.px-btn--ghost {
+  --btn-line: var(--px-line);
+}
+.px-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.px-seg {
+  flex: 1 1 0;
+  min-height: 40px;
+  padding: var(--sp-2) var(--sp-3);
+}
+.px-seg[aria-pressed='true'] {
+  --btn-bg: var(--px-rim);
+  --btn-fg: var(--px-ink);
+}
+.px-label {
+  color: var(--px-label);
+  font: 900 var(--fs-2xs) / 1 var(--font-display);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* ─── Écran titre ─── */
+.px-logo {
+  margin: 0;
+  color: #ffd6ee;
+  font: 900 var(--fs-display) / 1 var(--font-display);
+  letter-spacing: var(--tracking-title);
+  text-align: center;
+  text-shadow: var(--glow-magenta);
+}
+.px-tagline {
+  margin: var(--sp-3) 0 var(--sp-5);
+  color: var(--px-text-soft);
+  text-align: center;
+}
+.px-help {
+  margin-top: var(--sp-4);
+  color: var(--px-text-mute);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+.px-help kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--px-line);
+  border-radius: var(--r-sm);
+  background: var(--px-shadow-violet);
+  color: var(--px-text);
+  font: 700 var(--fs-2xs) var(--font-text);
+}
+
+/* ─── Fenêtre de choix (cartes) ─── */
+.px-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-3);
+}
+.px-card {
+  --rc: var(--px-rim);
+  display: grid;
+  align-content: start;
+  gap: var(--sp-2);
+  min-height: 140px;
+  padding: var(--sp-4);
+  border: var(--bd);
+  outline: 2px solid var(--rc);
+  outline-offset: -6px;
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--px-panel-top), var(--px-panel-bottom));
+  box-shadow: var(--sh-drop);
+  color: var(--px-text-soft);
+  text-align: left;
+  font: 400 var(--fs-sm) / 1.45 var(--font-text);
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease-coup),
+    box-shadow var(--dur-fast) var(--ease-ballast);
+}
+.px-card:hover,
+.px-card.is-sel {
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.45),
+    0 0 28px color-mix(in srgb, var(--rc) 45%, transparent);
+}
+.px-card:focus-visible {
+  outline: var(--focus-ring);
+}
+.px-card b {
+  color: var(--tc, var(--px-text));
+  font: 900 var(--fs-sm) / 1.2 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.px-card .px-key {
+  justify-self: start;
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) var(--font-text);
+}
+
+/* ─── Écran des départs ─── */
+.px-board {
+  width: 100%;
+  border-collapse: collapse;
+  font: 700 var(--fs-sm) / 1.4 var(--font-text);
+}
+.px-board td {
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--px-line);
+}
+.px-board td:last-child {
+  color: var(--px-gold);
+  text-align: right;
+  font-family: var(--font-display);
+}
+.px-status {
+  display: inline-block;
+  margin-bottom: var(--sp-3);
+  padding: 4px 10px;
+  border: var(--bd);
+  border-radius: var(--r-sm);
+  font: 900 var(--fs-xs) / 1 var(--font-display);
+  letter-spacing: var(--tracking-label);
+}
+.px-status--ok {
+  background: #5bd17a;
+  color: var(--px-ink);
+}
+.px-status--ko {
+  background: #ff5a3a;
+  color: var(--px-ink);
+}
+
+/* ─── Invite contextuelle (E / toucher) ─── */
+.px-prompt {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -100%);
+  padding: 6px 12px;
+  border: var(--bd);
+  border-radius: var(--r-sm);
+  background: var(--px-panel);
+  outline: 2px solid var(--px-gold);
+  color: var(--px-gold);
+  font: 900 var(--fs-xs) / 1 var(--font-display);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 20;
+}
+.px-prompt[hidden] {
+  display: none;
+}
+.px-prompt kbd {
+  margin-right: 6px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--px-gold);
+  color: var(--px-ink);
+}
+
+/* ─── Barre du boss ─── */
+.px-boss {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: min(620px, calc(100% - 32px));
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 15;
+}
+.px-boss[hidden] {
+  display: none;
+}
+.px-boss-name {
+  margin-bottom: 4px;
+  color: #ffd6ee;
+  font: 900 var(--fs-sm) / 1 var(--font-display);
+  letter-spacing: 0.22em;
+  text-align: center;
+  text-shadow: var(--glow-magenta);
+}
+.px-boss-bar {
+  height: 14px;
+  border: var(--bd);
+  border-radius: 2px;
+  background: #1c1530;
+  outline: 2px solid var(--px-violet-hi);
+  overflow: hidden;
+  transform: skewX(-12deg);
+}
+.px-boss-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #b0124f, var(--px-danger));
+  transform-origin: left;
+}
+.px-boss-phase {
+  margin-top: 4px;
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) / 1 var(--font-text);
+  text-align: center;
+}
+
+/* ─── Bouton pause (tactile) ─── */
+.px-pause-btn {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border: var(--bd);
+  border-radius: var(--r-sm);
+  background: var(--px-panel);
+  outline: 2px solid var(--px-line);
+  color: var(--px-text);
+  font: 900 16px / 1 var(--font-display);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 12;
+}

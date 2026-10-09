@@ -159,7 +159,7 @@ def cylinder(rt: float, rb: float, h: float, seg: int = 14, caps: bool = True) -
     return lathe([(rb, -h / 2), (rt, h / 2)], seg, caps, caps)
 
 
-def capsule(r: float, length: float, cap_seg: int = 5, radial: int = 12, r2: float | None = None) -> tuple[np.ndarray, list]:
+def capsule(r: float, length: float, cap_seg: int = 4, radial: int = 12, r2: float | None = None) -> tuple[np.ndarray, list]:
     """Capsule le long de Y, centrée (comme CapsuleGeometry), rayon bas r, haut r2."""
     r2 = r if r2 is None else r2
     h = max(0.001, length) / 2
@@ -202,7 +202,7 @@ def torus(R: float, r: float, radial: int = 8, tubular: int = 24) -> tuple[np.nd
     return V, F
 
 
-def rbox(w: float, h: float, d: float, r: float, seg: int = 3) -> tuple[np.ndarray, list]:
+def rbox(w: float, h: float, d: float, r: float, seg: int = 2) -> tuple[np.ndarray, list]:
     """Boîte arrondie (somme de Minkowski boîte intérieure + sphère de rayon r), centrée."""
     r = min(r, w / 2 - 1e-3, h / 2 - 1e-3, d / 2 - 1e-3)
     if r <= 0.004:
@@ -293,11 +293,27 @@ def weld(V: np.ndarray, F: list, eps: float = 1e-6) -> tuple[np.ndarray, list]:
     return V2, F2
 
 
-def tube(points: list, radii: list, seg: int = 10, cap: bool = True, cap_rings: int = 3) -> tuple[np.ndarray, list, np.ndarray]:
+def _catmull(points: np.ndarray, radii: list, sub: int) -> tuple[np.ndarray, list]:
+    """Suréchantillonne une polyligne (Catmull-Rom) et ses rayons : anneaux serrés, courbe lisse."""
+    P = np.array(points, dtype=float)
+    n = len(P)
+    out, rr = [], []
+    for i in range(n - 1):
+        p0, p1, p2, p3 = P[max(0, i - 1)], P[i], P[i + 1], P[min(n - 1, i + 2)]
+        for k in range(sub):
+            t = k / sub
+            t2, t3 = t * t, t * t * t
+            out.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3))
+            rr.append(radii[i] + (radii[i + 1] - radii[i]) * (t * t * (3 - 2 * t)))
+    out.append(P[-1])
+    rr.append(radii[-1])
+    return np.array(out), rr
+
+
+def tube(points: list, radii: list, seg: int = 10, cap: bool = True, cap_rings: int = 3, sub: int = 3) -> tuple[np.ndarray, list, np.ndarray]:
     """Tube lissé le long d'une polyligne (repères à transport parallèle), bouts arrondis.
     Renvoie aussi, pour chaque sommet, son abscisse curviligne normalisée (0..1) le long du tube."""
-    P = np.array(points, dtype=float)
-    R = list(radii)
+    P, R = _catmull(np.array(points, dtype=float), list(radii), sub) if sub > 1 else (np.array(points, dtype=float), list(radii))
     n = len(P)
     T = np.zeros_like(P)
     for i in range(n):
@@ -500,14 +516,14 @@ class Model:
         self.parts.append(part)
         return part
 
-    def sphere(self, joint, color, pos, scale, rot=None, seg=18, **kw) -> Part:
+    def sphere(self, joint, color, pos, scale, rot=None, seg=16, **kw) -> Part:
         return self._add(joint, sphere(seg), color, pos, rot, scale, **kw)
 
     def hemi(self, joint, color, pos, scale, rot=None, seg=20, **kw) -> Part:
         return self._add(joint, hemi(seg), color, pos, rot, scale, **kw)
 
-    def box(self, joint, color, pos, size, radius=0.0, rot=None, **kw) -> Part:
-        return self._add(joint, rbox(size[0], size[1], size[2], radius), color, pos, rot, None, **kw)
+    def box(self, joint, color, pos, size, radius=0.0, rot=None, seg=2, **kw) -> Part:
+        return self._add(joint, rbox(size[0], size[1], size[2], radius, seg), color, pos, rot, None, **kw)
 
     def cyl(self, joint, color, pos, r, h, rb=None, rot=None, seg=14, caps=True, **kw) -> Part:
         return self._add(joint, cylinder(r, r if rb is None else rb, h, seg, caps), color, pos, rot, None, **kw)

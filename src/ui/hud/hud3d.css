@@ -167,11 +167,26 @@ body {
 .hud-wave {
   position: absolute;
   top: max(14px, env(safe-area-inset-top));
-  right: max(18px, env(safe-area-inset-right));
+  right: max(70px, calc(env(safe-area-inset-right) + 70px));
   font: 900 12px var(--font);
   letter-spacing: 0.16em;
   color: var(--rim);
   text-shadow: 0 2px 0 #000;
+}
+.hud-purse {
+  position: absolute;
+  top: max(34px, calc(env(safe-area-inset-top) + 20px));
+  right: max(70px, calc(env(safe-area-inset-right) + 70px));
+  font: 900 11px var(--font);
+  letter-spacing: 0.14em;
+  color: #ffd9b8;
+  text-shadow: 0 2px 0 #000;
+}
+.hud-purse.marked {
+  color: var(--danger);
+}
+.hud[hidden] {
+  display: none;
 }
 .hud-banner {
   position: absolute;
@@ -387,6 +402,13 @@ body.touch #touch-btns {
   .hud-wave {
     top: auto;
     bottom: max(230px, calc(env(safe-area-inset-bottom) + 230px));
+    right: auto;
+    left: max(16px, env(safe-area-inset-left));
+    font-size: 10px;
+  }
+  .hud-purse {
+    top: auto;
+    bottom: max(214px, calc(env(safe-area-inset-bottom) + 214px));
     right: auto;
     left: max(16px, env(safe-area-inset-left));
     font-size: 10px;

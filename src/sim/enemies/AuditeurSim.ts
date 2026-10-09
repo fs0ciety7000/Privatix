@@ -138,7 +138,8 @@ export class AuditeurSim extends EnemySim {
           this.world.emit({ type: 'shake', px: 6, ms: 300 });
           this.say('CORRESPONDANCE !', 'gold');
           this.applyDamage(AUDITEUR.TRAIN_BOSS_DAMAGE, true, true);
-          if (!this.isDead) this.fsm.request({ to: 'stagger', payload: { ms: 1500 } });
+          // applyDamage peut l'avoir tué : on relit ses PV.
+          if (this.hp > 0) this.fsm.request({ to: 'stagger', payload: { ms: 1500 } });
         }
       },
     });
@@ -174,7 +175,7 @@ export class AuditeurSim extends EnemySim {
       stamp: AUDITEUR.STAMP_TELEGRAPH_MS - AUDITEUR.STAMP_LOCK_MS,
       kpi: AUDITEUR.KPI_TELEGRAPH_MS,
     };
-    return (base[attack as AuditeurPattern] ?? 600) / this.tempo;
+    return base[attack as AuditeurPattern] / this.tempo;
   }
 
   protected onWindup(attack: string): void {
@@ -394,8 +395,7 @@ export class AuditeurSim extends EnemySim {
 
   protected override onHurt(): void {
     const ratio = this.hp / this.maxHp;
-    const next =
-      ratio <= (AUDITEUR.PHASE_AT[1] ?? 0.25) ? 3 : ratio <= (AUDITEUR.PHASE_AT[0] ?? 0.6) ? 2 : 1;
+    const next = ratio <= AUDITEUR.PHASE_AT[1] ? 3 : ratio <= AUDITEUR.PHASE_AT[0] ? 2 : 1;
     if (next > this.phase) {
       this.phase = next;
       this.transitionLeft = AUDITEUR.PHASE_TRANSITION_MS;

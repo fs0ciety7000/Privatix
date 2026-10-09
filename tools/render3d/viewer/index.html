@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privatix · Visionneuse GLB</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <aside id="panel">
+      <h1>Privatix <span>GLB</span></h1>
+      <label>Modèle <select id="model"></select></label>
+      <div id="clips" class="chips"></div>
+      <label>Vitesse <input id="speed" type="range" min="0" max="2" step="0.05" value="1" /></label>
+      <div id="equip"></div>
+      <label class="row"><input id="outline" type="checkbox" checked /> Contour</label>
+      <label class="row"><input id="turn" type="checkbox" /> Plateau tournant</label>
+      <label>Télégraphe <input id="tele" type="range" min="0" max="1" step="0.01" value="0" /></label>
+      <label>Caméra
+        <select id="cam">
+          <option value="game">Vue de jeu (41°)</option>
+          <option value="threequarter">Trois-quarts</option>
+          <option value="front">Face</option>
+          <option value="side">Profil</option>
+          <option value="back">Dos</option>
+        </select>
+      </label>
+      <pre id="info"></pre>
+    </aside>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

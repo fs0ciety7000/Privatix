@@ -123,7 +123,7 @@ export default tseslint.config(
   },
   {
     // L'UI DOM de la 3D et la plomberie navigateur n'utilisent jamais three.
-    files: ['src/ui/hud/**/*.ts', 'src/engine/**/*.ts'],
+    files: ['src/ui/hud/**/*.ts', 'src/ui/menus/**/*.ts', 'src/engine/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',

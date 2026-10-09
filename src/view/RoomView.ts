@@ -7,6 +7,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { TILE } from '@/config/constants';
 import type { RoomLayout, TileKind } from '@/systems/procedural/RoomLayout';
 import { tileAt } from '@/systems/procedural/RoomLayout';
+import type { DoorState } from '@/sim/RunDirector';
+import { doorLabel } from '@/sim/RunDirector';
 import { pxToM } from '@/sim/units';
 import {
   addOutline,
@@ -347,6 +349,9 @@ export class RoomView {
   private readonly neon: THREE.MeshBasicMaterial;
   private readonly neonLight: THREE.PointLight;
   private readonly doorLamps: THREE.MeshBasicMaterial[] = [];
+  private readonly doorSigns = new THREE.Group();
+  private doorChoices: readonly (DoorState | undefined)[] = [];
+  private doorsOpen = false;
   private readonly disposables: { dispose(): void }[] = [];
   private readonly pillars: PillarView[] = [];
   private flickerOn: boolean;
@@ -778,6 +783,7 @@ export class RoomView {
     this.neonLight = new THREE.PointLight(PAL.danger, 22, 12, 1.6);
     this.neonLight.position.set(W / 2, 2.6, wallFace + 1.8);
     this.group.add(this.neonLight);
+    this.group.add(this.doorSigns);
   }
 
   private addPillar(
@@ -846,6 +852,9 @@ export class RoomView {
         spots.push([x, (q + 0.5) * T]);
       }
     }
+    // Nombre de lumières fixe quel que soit le gabarit (pas de recompilation de shaders).
+    const H = layout.height * T;
+    for (let k = spots.length; k < n; k += 1) spots.push([(W * (k + 0.5)) / n, H * 0.55]);
     return spots;
   }
 
@@ -867,9 +876,73 @@ export class RoomView {
     this.neonLight.intensity = flick ? 6 : 22;
   }
 
-  /** Salle nettoyée : les voyants des portes passent au vert. */
+  /** Salle nettoyée : les voyants des portes proposées passent au vert (les portes murées restent rouges). */
   public setDoorsOpen(open: boolean): void {
-    for (const m of this.doorLamps) m.color.setHex(open ? 0x5dff8a : PAL.danger).multiplyScalar(3);
+    this.doorsOpen = open;
+    this.doorLamps.forEach((m, i) => {
+      const offered =
+        this.doorChoices.length === 0 || (this.doorChoices[i]?.choice ?? null) !== null;
+      m.color.setHex(open && offered ? 0x5dff8a : PAL.danger).multiplyScalar(offered ? 3 : 0.8);
+    });
+    this.doorSigns.visible = true;
+  }
+
+  /**
+   * Portes proposées (port de `Room.setDoors`) : un panneau lumineux au-dessus de chaque porte annonce
+   * le type de salle et la récompense ; les emplacements sans choix restent murés.
+   */
+  public setDoors(doors: readonly DoorState[]): void {
+    this.doorChoices = doors;
+    for (const c of [...this.doorSigns.children]) {
+      if (c instanceof THREE.Mesh) {
+        (c.geometry as THREE.BufferGeometry).dispose();
+        const m = c.material as THREE.MeshBasicMaterial;
+        m.map?.dispose();
+        m.dispose();
+      }
+      this.doorSigns.remove(c);
+    }
+    for (const d of doors) {
+      if (!d.choice) continue;
+      const choice = d.choice;
+      const text = doorLabel(choice).toUpperCase();
+      const accent =
+        choice.type === 'boss' || choice.type === 'elite'
+          ? '#ff3ea5'
+          : choice.type === 'combat'
+            ? '#ffd200'
+            : '#6ff3ff';
+      const tex = canvasTexture(512, 112, (g) => {
+        g.fillStyle = 'rgba(16,11,30,0.92)';
+        g.fillRect(0, 0, 512, 112);
+        g.strokeStyle = accent;
+        g.lineWidth = 6;
+        g.strokeRect(4, 4, 504, 104);
+        g.fillStyle = accent;
+        g.font = `900 34px ${FONT}`;
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        const words = text.split(' · ');
+        g.fillText(words[0] ?? text, 256, words.length > 1 ? 38 : 56);
+        if (words.length > 1) {
+          g.fillStyle = '#ffffff';
+          g.font = `900 30px ${FONT}`;
+          g.fillText(words.slice(1).join(' · '), 256, 80);
+        }
+      });
+      const w = Math.max(2.4, pxToM(d.width) + 1.2);
+      const sign = new THREE.Mesh(
+        new THREE.PlaneGeometry(w, (w * 112) / 512),
+        new THREE.MeshBasicMaterial({
+          map: tex,
+          transparent: true,
+          color: new THREE.Color(1.4, 1.4, 1.4),
+        }),
+      );
+      sign.position.set(pxToM(d.x + d.width / 2), 3.25, pxToM(d.y + TILE) + 0.05);
+      this.doorSigns.add(sign);
+    }
+    this.setDoorsOpen(this.doorsOpen);
   }
 
   public setReducedMotion(on: boolean): void {
@@ -877,6 +950,7 @@ export class RoomView {
   }
 
   public dispose(): void {
+    this.setDoors([]);
     this.group.removeFromParent();
     this.group.traverse((o) => {
       if (o instanceof THREE.Mesh) (o.geometry as THREE.BufferGeometry).dispose();

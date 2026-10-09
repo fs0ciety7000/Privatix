@@ -1,66 +1,102 @@
-import type { QuaiScene } from '@/scenes3d/QuaiScene';
+import type { EnemyKind } from '@/config/balance';
+import type { Game3D } from '@/scenes3d/Game3D';
 
 /**
  * Outil de pilotage de l'entrée 3D pour les captures automatisées (Playwright). Chargé uniquement en
  * dev avec `?demo` : absent du build de production.
  */
-export function installDemoApi(scene: QuaiScene): void {
+export function installDemoApi(game: Game3D): void {
   const api = {
+    state: () => ({
+      phase: game.state,
+      menu: game.menuScreen,
+      room: game.simWorld.run.room,
+      roomType: game.simWorld.director.door.type,
+      cleared: game.simWorld.director.cleared,
+      choice: game.simWorld.director.choice?.title ?? null,
+      doors: game.simWorld.director.doors
+        .filter((d) => d.choice)
+        .map((d) => ({
+          x: d.x + d.width / 2,
+          y: d.y,
+          type: d.choice?.type,
+          reward: d.choice?.reward,
+        })),
+      boss: game.simWorld.director.boss
+        ? { hp: game.simWorld.director.boss.hp, phase: game.simWorld.director.boss.phase }
+        : null,
+      result: game.simWorld.director.result,
+      kills: game.simWorld.run.kills,
+    }),
+    start: () => {
+      game.startRun();
+    },
     hero: () => {
-      const h = scene.simWorld.hero;
+      const h = game.simWorld.hero;
       return {
         x: h.body.x,
         y: h.body.y,
         state: h.state,
         combo: h.combo,
-        energy: scene.simWorld.run.energy,
+        energy: game.simWorld.run.energy,
       };
     },
     enemies: () =>
-      scene.simWorld.enemies.map((e) => ({
+      game.simWorld.enemies.map((e) => ({
         id: e.id,
+        kind: e.kind,
         x: e.body.x,
         y: e.body.y,
         hp: e.hp,
         state: e.state,
       })),
-    kills: () => scene.simWorld.run.kills,
+    hazards: () => game.simWorld.hazards.map((h) => ({ kind: h.spec.kind, progress: h.progress })),
+    projectiles: () => game.simWorld.projectiles.active().length,
+    /** Va jusqu'au premier objet utilisable de la salle et interagit (repos, café, Friterie). */
+    useProp: () => {
+      const it = game.simWorld.director.interactables.find((i) => !i.used);
+      if (!it) return null;
+      const b = game.simWorld.hero.body;
+      b.x = it.x;
+      b.y = it.y + 10;
+      b.prevX = b.x;
+      b.prevY = b.y;
+      game.controls.press('interact');
+      return it.label;
+    },
     teleport: (x: number, y: number) => {
-      const b = scene.simWorld.hero.body;
+      const b = game.simWorld.hero.body;
       b.x = x;
       b.y = y;
       b.prevX = x;
       b.prevY = y;
     },
     move: (x: number, y: number) => {
-      scene.override = { ...scene.override, moveX: x, moveY: y };
+      game.override = { ...game.override, moveX: x, moveY: y };
     },
     aim: (angle: number | null) => {
-      const { aim: _old, ...rest } = scene.override;
-      scene.override = angle === null ? rest : { ...rest, aim: angle };
+      const { aim: _old, ...rest } = game.override;
+      game.override = angle === null ? rest : { ...rest, aim: angle };
     },
     release: () => {
-      scene.override = {};
+      game.override = {};
     },
-    press: (what: 'attack' | 'dash' | 'special' | 'coffee') => {
-      scene.controls.press(what);
+    press: (what: 'attack' | 'dash' | 'special' | 'coffee' | 'interact') => {
+      game.controls.press(what);
     },
-    spawn: (dx: number, dy: number, immediate = true) => {
-      const h = scene.simWorld.hero.body;
-      return scene.simWorld.spawnEnemy('consultant', h.x + dx, h.y + dy, immediate)?.id ?? -1;
-    },
+    spawn: (kind: EnemyKind, dx: number, dy: number) => game.spawnNear(kind, dx, dy),
     waves: (on: boolean) => {
-      scene.simWorld.director.enabled = on;
+      game.simWorld.director.enabled = on;
     },
-    clear: () => {
-      for (const e of scene.simWorld.enemies) e.debugKill();
+    cheat: (key: 'K' | 'G' | 'N' | 'B') => {
+      game.cheat(key);
     },
-    stats: () => scene.gameView.stats(),
+    choose: (i: number) => {
+      game.choose(i);
+    },
+    stats: () => game.gameView.stats(),
     advance: (ms: number) => {
-      scene.fastForward(ms);
-    },
-    restart: () => {
-      scene.restart();
+      game.fastForward(ms);
     },
   };
   Object.assign(document.defaultView ?? {}, { __privatix3d: api });

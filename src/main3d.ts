@@ -1,15 +1,17 @@
 import '@/ui/hud/hud3d.css';
+import '@/ui/menus/menus.css';
 import { browserStorage } from '@/platform/storage';
-import { QuaiScene } from '@/scenes3d/QuaiScene';
+import { Game3D, storedQuality } from '@/scenes3d/Game3D';
 import { Loop } from '@/engine/Loop';
 import type { QualityId } from '@/view/quality';
 import { isQualityId, QUALITY } from '@/view/quality';
 
 /**
- * Entrée 3D (migration Three.js, jalons J1-J2) : `play3d.html`. Elle coexiste avec le jeu Phaser
- * (`index.html`, en production jusqu'à la parité). Paramètres d'URL :
+ * Entrée 3D (migration Three.js, jalon J4 : un Shift complet) : `play3d.html`. Elle coexiste avec le
+ * jeu Phaser (`index.html`, en production jusqu'à la parité). Paramètres d'URL :
  *   ?q=bas|moyen|haut  preset de qualité      ?rm=1 / ?rm=0  réduction des mouvements
  *   ?safe              sans post-traitement   ?seed=N        graine du Shift
+ *   ?cheat             (dev) K tue tout, G invincible, N salle suivante, B boss
  *   ?demo              (dev) outil de pilotage pour les captures automatisées
  */
 
@@ -33,6 +35,8 @@ function webglAvailable(): boolean {
 function pickQuality(params: URLSearchParams): QualityId {
   const q = params.get('q');
   if (isQualityId(q)) return q;
+  const stored = storedQuality();
+  if (stored) return stored;
   const coarse = matchMedia('(pointer: coarse)').matches;
   return coarse ? 'moyen' : 'haut';
 }
@@ -60,7 +64,7 @@ function boot(): void {
     Number.isFinite(seedParam) && seedParam > 0 ? Math.floor(seedParam) : Date.now() % 100_000;
   const reducedMotion = pickReducedMotion(params);
   document.body.classList.toggle('reduced-motion', reducedMotion);
-  const scene = new QuaiScene(
+  const scene = new Game3D(
     {
       app: byId('app'),
       ui: byId('ui'),
@@ -81,6 +85,7 @@ function boot(): void {
       document.body.classList.toggle('reduced-motion', on);
       browserStorage()?.setItem(REDUCED_KEY, on ? '1' : '0');
     },
+    import.meta.env.DEV && params.has('cheat'),
   );
   addEventListener('resize', () => {
     scene.resize(innerWidth, innerHeight);
@@ -90,7 +95,7 @@ function boot(): void {
       scene.frame(ms);
     },
     (hidden) => {
-      scene.setPaused(hidden);
+      scene.setHidden(hidden);
     },
   );
   loop.start();

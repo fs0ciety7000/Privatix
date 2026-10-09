@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { CONSULTANT } from '@/config/balance';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import { pxToM, yawFromAngle } from '@/sim/units';
+import type { ActorFrame, EnemyView } from '@/view/actors/ActorView';
 import type { GroundTelegraph } from '@/view/fx/effects';
 import { ArcTelegraph, DiscTelegraph, RectTelegraph } from '@/view/fx/effects';
 import type { Flash } from '@/view/materials/toon';
@@ -17,7 +18,7 @@ import { easeIn, easeOut, editable, keyed, Rig } from '@/view/rig';
 const DEATH_FALL_S = 1.5;
 const DEATH_DISSOLVE_S = 0.6;
 
-export class ConsultantView {
+export class ConsultantView implements EnemyView {
   public readonly rig = new Rig();
   public readonly flash: Flash = makeFlash();
   public readonly pos = new THREE.Vector3();
@@ -235,6 +236,14 @@ export class ConsultantView {
     );
   }
 
+  public get root(): THREE.Object3D {
+    return this.rig.root;
+  }
+
+  public update(sim: EnemySim | null, f: ActorFrame): void {
+    this.sync(sim, f.alpha, f.simDt, f.realDt, f.camera, f.time);
+  }
+
   public get isDying(): boolean {
     return this.dead;
   }
@@ -331,7 +340,7 @@ export class ConsultantView {
     this.hpFill.scale.x = Math.max(0.001, sim.hp / sim.maxHp);
 
     // Télégraphe au sol (forme et orientation figées au début du windup).
-    const tele = sim.telegraph;
+    const tele = sim.telegraph?.kind === 'circle' ? null : sim.telegraph;
     const k = sim.windupProgress;
     this.arcTele.mesh.visible = tele?.kind === 'arc';
     this.lineTele.mesh.visible = tele?.kind === 'line';

@@ -69,10 +69,9 @@ export class Projectiles {
 
   /** Réactive un emplacement libre (le plus ancien si le pool est plein). */
   public fire(spec: ProjectileSpec): ProjectileSim {
-    let p = this.pool.find((q) => !q.active);
-    if (!p) {
-      p = this.pool.reduce((a, b) => (a.lifeLeft <= b.lifeLeft ? a : b));
-    }
+    const p =
+      this.pool.find((q) => !q.active) ??
+      this.pool.reduce((a, b) => (a.lifeLeft <= b.lifeLeft ? a : b));
     p.active = true;
     p.x = spec.x;
     p.y = spec.y;
