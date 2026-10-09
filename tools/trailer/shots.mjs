@@ -99,12 +99,10 @@ export const SHOTS = {
       await t.skip(30);
       await t.rec(150, {
         8: async () => {
-          await t.api('spawn', 'consultant', -70, -50);
-          await t.api('spawn', 'consultant', 0, -62);
-          await t.api('spawn', 'consultant', 70, -50);
+          await t.api('spawn', 'consultant', -75, -68);
+          await t.api('spawn', 'consultant', 0, -80);
+          await t.api('spawn', 'consultant', 75, -68);
         },
-        40: () => t.api('move', 0, -0.6),
-        50: () => t.api('release'),
       });
     },
   },
@@ -114,10 +112,10 @@ export const SHOTS = {
       const a = await arena(t);
       await place(t, a, 0.56);
       await t.api('aim', UP);
-      await t.api('spawn', 'consultant', -80, -70);
-      await t.api('spawn', 'consultant', 0, -48);
-      await t.api('spawn', 'consultant', 80, -70);
-      await t.skip(70);
+      await t.api('spawn', 'consultant', -70, -58);
+      await t.api('spawn', 'consultant', 0, -52);
+      await t.api('spawn', 'consultant', 70, -58);
+      await t.skip(36);
       await t.rec(140, combo(t, 12, 14));
     },
   },
@@ -144,9 +142,16 @@ export const SHOTS = {
       const l = await t.api('spawn', 'consultant', -40, -36);
       await t.api('spawn', 'consultant', 46, -30);
       await t.skip(10);
-      await t.api('attack', l, 'quickwin');
-      await t.skip(70);
-      await t.rec(130, { 20: press(t, 'coffee') });
+      // Un seul coup encaissé, puis le café 20 images plus tard (héros intouchable entre-temps).
+      let hitAt = -1;
+      await t.rec(150, { 2: () => t.api('attack', l, 'quickwin') }, async (i) => {
+        if (hitAt < 0) {
+          if ((await t.api('hero')).energy < 100) hitAt = i;
+          return;
+        }
+        if (i === hitAt + 4) await t.api('untouchable', true);
+        if (i === hitAt + 20) await t.api('press', 'coffee');
+      });
     },
   },
   // 8 — Dash parfait à travers le piqué d'un drone : rémanences, ralenti, « +15 min ».
@@ -177,8 +182,8 @@ export const SHOTS = {
         const ang = UP + ((i - 2) * Math.PI) / 3.2;
         await t.api('spawn', 'consultant', Math.cos(ang) * 62, Math.sin(ang) * 62);
       }
-      await t.skip(60);
-      await t.rec(130, { 12: press(t, 'special') });
+      await t.skip(16);
+      await t.rec(130, { 8: press(t, 'special') });
     },
   },
   // 10 — Dernier kill de la salle : ralenti natif (fanfare de salle nettoyée), confettis, carillon.
@@ -201,16 +206,20 @@ export const SHOTS = {
   },
   // 11 — Drop Patrimoine : faisceau cuivre, mini ralenti, carillon.
   s11: {
+    // Graine 12 : le Patrimoine tombé est un casque de chantier (visible sur la figurine).
+    seed: 12,
     run: async (t) => {
       const a = await arena(t);
       await place(t, a, 0.6);
       await t.api('aim', UP);
       await t.skip(30);
-      await t.rec(130, { 10: () => t.api('lootDrop', 'wagon-bar', 0, -52) });
+      await t.rec(130, { 10: () => t.api('lootDrop', 'wagon-bar', 0, -72) });
     },
   },
   // 12 — Le héros équipe la pièce et frappe avec.
   s12: {
+    // Graine 12 : le Patrimoine tombé est un casque de chantier (visible sur la figurine).
+    seed: 12,
     run: async (t) => {
       const a = await arena(t);
       await place(t, a, 0.56);
@@ -222,8 +231,8 @@ export const SHOTS = {
       t.log(JSON.stringify((await t.api('loot')).ground));
       await t.rec(130, {
         4: async () => t.log('équipé', await t.api('lootAct', 'equip')),
-        24: () => t.api('spawn', 'consultant', 0, -44),
-        ...combo(t, 40, 14),
+        20: () => t.api('spawn', 'consultant', 0, -60),
+        ...combo(t, 44, 14),
       });
       t.log(JSON.stringify((await t.api('loot')).pieces));
     },
@@ -269,13 +278,13 @@ export const SHOTS = {
   },
   // 15 — Elio Di Rupo sur son estrade : intro, « Je serai bref. ».
   s15: {
-    run: (t) => bossEntrance(t, 1, 'dirupo', 0.84, 320, 'speech', 200),
+    run: (t) => bossEntrance(t, 1, 'dirupo', 0.42, 320, 'speech', 200),
   },
   // 16 — Phase « Le Ruban » : les ciseaux géants tranchent ; dash entre les lames.
   s16: {
     run: async (t) => {
       const { a, boss: b } = await bossRoom(t, 1, 'dirupo');
-      await place(t, a, 0.75);
+      await place(t, a, 0.5);
       await t.skip(200);
       await t.api('hurt', b.id, 0.3);
       await t.skip(150);
@@ -297,7 +306,8 @@ export const SHOTS = {
       await place(t, a, 0.75);
       await t.skip(200);
       await t.api('hurt', b.id, 0.01);
-      await t.skip(30);
+      // Passage en phase 3 (invulnérable pendant la transition), puis le coup de grâce.
+      await t.skip(220);
       const e = (await t.api('enemies')).find((x) => x.kind === 'dirupo');
       await t.api('teleport', e.x, e.y + 50);
       await t.api('aim', UP);
@@ -308,52 +318,60 @@ export const SHOTS = {
   // 18 — Le Discosaure sur sa piste : il piétine en rythme.
   s18: {
     run: async (t) => {
-      const { a, boss: b } = await bossRoom(t, 2, 'discosaure', true);
-      await place(t, a, 0.84);
-      await t.api('aim', UP);
-      await t.skip(120);
-      await t.rec(130, { 4: () => t.api('attack', b.id, 'stomp') });
+      const { boss: b } = await bossRoom(t, 2, 'discosaure', true);
+      // Le héros de côté (le Discosaure ne le masque pas), une fois l'intro passée.
+      await t.skip(200);
+      const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
+      await t.api('teleport', e.x + 130, e.y + 40);
+      await t.api('aim', Math.PI);
+      await t.rec(130, { 2: () => t.api('attack', b.id, 'stomp') });
     },
   },
   // 19 — Lasers et spots : le héros slalome en deux dashs.
   s19: {
     run: async (t) => {
-      const { a, boss: b } = await bossRoom(t, 2, 'discosaure', true);
-      await place(t, a, 0.76);
-      await t.skip(120);
+      const { boss: b } = await bossRoom(t, 2, 'discosaure', true);
+      // Le héros de côté (le Discosaure ne le masque pas), une fois l'intro passée.
+      await t.skip(200);
+      const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
+      await t.api('teleport', e.x - 130, e.y + 40);
+      await t.api('aim', 0);
       await t.rec(110, {
         2: () => t.api('attack', b.id, 'lasers'),
         30: async () => {
-          await t.api('move', -0.7, -0.7);
+          await t.api('move', 0.7, -0.7);
           await t.api('press', 'dash');
         },
         44: async () => {
-          await t.api('move', 0.7, -0.7);
+          await t.api('move', 0.7, 0.7);
           await t.api('press', 'dash');
         },
         60: () => t.api('release'),
       });
     },
   },
-  // 20 — On casse la boule : la salle s'éteint (passage « Boule en surchauffe »).
+  // 20 — On coupe le courant : la boule s'éteint, la salle aussi (Préavis de grève).
   s20: {
     run: async (t) => {
-      const { a, boss: b } = await bossRoom(t, 2, 'discosaure', true);
-      await place(t, a, 0.8);
-      await t.skip(120);
+      const { boss: b } = await bossRoom(t, 2, 'discosaure', true);
+      // Le héros de côté (le Discosaure ne le masque pas), une fois l'intro passée.
+      await t.skip(200);
       const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
-      await t.api('teleport', e.x, e.y - 50);
-      await t.api('aim', Math.PI / 2);
-      await t.skip(2);
-      await t.rec(110, {
-        ...combo(t, 4, 14),
-        34: () => t.api('hurt', b.id, 0.45),
+      await t.api('teleport', e.x + 96, e.y + 40);
+      await t.api('aim', Math.PI);
+      // Préavis de grève (sifflet maintenu) : « coupure de courant », la boule s'éteint.
+      await t.api('mobilisation', 100);
+      await t.rec(120, {
+        ...combo(t, 2, 14),
+        40: () => t.page.keyboard.down('KeyF'),
+        80: () => t.page.keyboard.up('KeyF'),
       });
+      t.log(b.id);
     },
   },
   // 21 — Jean-Cul Lurcke dans son bureau : intro, barre de PV, bullet points.
   s21: {
-    run: (t) => bossEntrance(t, 2, 'vanderslide', 0.84, 330, 'bullets', 210),
+    run: (t) => bossEntrance(t, 2, 'vanderslide', 0.42, 330, 'bullets', 210),
   },
   // 22 à 24d — Le combat final d'une traite (copie, phase 2, Préavis, reporting, coup final, défaite).
   s22: {

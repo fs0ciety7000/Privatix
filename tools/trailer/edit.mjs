@@ -51,15 +51,15 @@ const EDIT = [
   { id: '03', shot: 's03', t: 5.5, d: 2.5, in: 20 },
   // ACTE II — premier train supprimé (Quais & Voies).
   { id: '04', shot: 's04', t: 8.0, d: 2.0, anchor: ['enemySpawn', 0, 8.55] },
-  { id: '05', shot: 's05', t: 10.0, d: 1.8, anchor: ['swing:3', 0, 11.52] },
+  { id: '05', shot: 's05', t: 10.0, d: 1.8, anchor: ['swing:2', 0, 11.52] },
   { id: '06', shot: 's06', t: 11.8, d: 1.4, anchor: ['projectileFired', 0, 11.9] },
-  { id: '07', shot: 's07', t: 13.2, d: 1.4, anchor: ['text:+', 0, 13.7], zoom: [1.1, 1.1, 1, 'none'] },
+  { id: '07', shot: 's07', t: 13.2, d: 1.4, anchor: ['text:Gorg', 0, 13.7], zoom: [1.1, 1.1, 1, 'none'] },
   { id: '08', shot: 's08', t: 14.6, d: 1.6, anchor: ['perfectDash', 0, 15.4] },
   { id: '09', shot: 's09', t: 16.2, d: 1.8, anchor: ['special:whistle', 0, 16.4] },
   { id: '10', shot: 's10', t: 18.0, d: 2.0, anchor: ['roomCleared', 0, 18.2] },
   // ACTE III — le Shift déborde.
   { id: '11', shot: 's11', t: 20.0, d: 1.6, anchor: ['lootDropped', 0, 20.0], zoom: [1, 1.15, 0.4, 'ballast'], fy: 0.45 },
-  { id: '12', shot: 's12', t: 21.6, d: 1.2, anchor: ['swing:3', 0, 22.25] },
+  { id: '12', shot: 's12', t: 21.6, d: 1.2, anchor: ['swing:2', 0, 22.25] },
   { id: '13', shot: 's13', t: 22.8, d: 1.6, anchor: ['fx:burrow', 0, 22.85] },
   { id: '14', shot: 's14', t: 24.4, d: 1.2, anchor: ['dash', 0, 24.5] },
   { id: '15', shot: 's15', t: 25.6, d: 2.0, anchor: ['bossIntro', 0, 25.6] },
@@ -67,9 +67,9 @@ const EDIT = [
   { id: '17', shot: 's17', t: 29.0, d: 1.4, anchor: ['enemyKilled:dirupo', 0, 29.1] },
   { id: '18', shot: 's18', t: 30.4, d: 1.6, anchor: ['hazardImpact', 0, 30.4] },
   { id: '19', shot: 's19', t: 32.0, d: 1.2, anchor: ['dash', 0, 32.25] },
-  { id: '20', shot: 's20', t: 33.2, d: 1.0, anchor: ['bossPhase', 0, 33.6] },
+  { id: '20', shot: 's20', t: 33.2, d: 1.0, anchor: ['fx:discoBlackout', 0, 33.6] },
   { id: '21', shot: 's21', t: 34.2, d: 2.2, anchor: ['bossIntro', 0, 34.2] },
-  { id: '22', shot: 's22', t: 36.4, d: 0.8, anchor: ['swing:3', 0, 36.78] },
+  { id: '22', shot: 's22', t: 36.4, d: 0.8, anchor: ['swing:2', 0, 36.78] },
   { id: '23', shot: 's22', t: 37.2, d: 0.7, anchor: ['bossPhase', 0, 37.2] },
   { id: '24a', shot: 's22', t: 37.9, d: 0.7, anchor: ['special:preavis', 0, 37.9] },
   { id: '24b', shot: 's22', t: 38.6, d: 0.8, anchor: ['dash', 1, 38.9] },
@@ -135,7 +135,8 @@ function findEvent(shot, tag, n) {
 
 /** Liste des images source d'un plan (indices), longueur exacte, avec ralenti éventuel. */
 function frameList(seg, head, tail) {
-  const total = Math.round(seg.d * FPS) + head + tail;
+  // Carte de fin : synoptique ralenti 0,5 (images doublées), donc deux fois moins d'images source.
+  const total = Math.round((seg.endcard ? seg.d / 2 : seg.d) * FPS) + head + tail;
   const count = frameCount(seg.shot);
   let first = seg.in ?? 0;
   let list;
@@ -217,7 +218,7 @@ function renderSegment(seg, i) {
       '-filter_complex',
       `[0]fps=${FPS},${videoFilter({ ...seg, fadeIn: 0 }, list.length).replace(',format=yuv420p', '')},gblur=sigma=${14 * scale}[g];` +
         `[1][g]blend=all_mode=normal:all_opacity=0.25,fade=t=in:s=0:n=12,format=yuv420p[v]`,
-      '-map', '[v]', '-frames:v', String(list.length), '-c:v', 'libx264', '-preset', 'fast', '-crf', '10', '-r', String(FPS), out,
+      '-map', '[v]', '-frames:v', String(Math.round(seg.d * FPS)), '-c:v', 'libx264', '-preset', 'fast', '-crf', '10', '-r', String(FPS), out,
     ]);
   } else {
     ff([
@@ -227,7 +228,7 @@ function renderSegment(seg, i) {
     ]);
   }
   rmSync(tmp, { recursive: true, force: true });
-  return { out, frames: list.length, head, tail };
+  return { out, frames: seg.endcard ? Math.round(seg.d * FPS) : list.length, head, tail, list };
 }
 
 console.log(`montage ${format}${preview ? ' (aperçu)' : ''} : ${String(OW)}×${String(OH)}`);
@@ -310,4 +311,15 @@ ff([
 ]);
 console.log(`  livrable : ${final}`);
 if (!flag('keep')) for (const s of segs) rmSync(s.out, { force: true });
-writeFileSync(path.join(outDir, `edl-${format}.json`), JSON.stringify(segs.map(({ out: _o, ...s }) => s), null, 1));
+writeFileSync(
+  path.join(outDir, `edl-${format}.json`),
+  JSON.stringify(segs.map(({ out: _o, list: _l, ...s }) => s), null, 1),
+);
+// Images utiles par plan (avec 4 images de marge) : `shoot.mjs --need` ne dessine que celles-là.
+const need = {};
+for (const s of segs) {
+  const lo = Math.max(0, Math.min(...s.list) - 4);
+  const hi = Math.max(...s.list) + 4;
+  (need[s.shot] ??= []).push([lo, hi]);
+}
+writeFileSync(path.join(outDir, `need-${source}.json`), JSON.stringify(need, null, 1));

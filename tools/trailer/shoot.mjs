@@ -9,7 +9,7 @@
 //            montage dans le master 16:9 (même hauteur de 1080 px : aucune perte de définition).
 // --preview  tiers de la résolution (repérage rapide) ; --jobs N : plans tournés en parallèle.
 // Sortie : <out>/<format>[-preview]/<plan>/00000.jpg… et un fichier `done` par plan terminé.
-import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
@@ -43,6 +43,11 @@ const scale = preview ? 1 / 3 : 1;
 const W = Math.round(fw * scale);
 const H = Math.round(fh * scale);
 const outDir = `${outRoot}/${format}${preview ? '-preview' : ''}`;
+// --need fichier.json : images réellement montées par plan ({ plan: [[début, fin], …] }, issu de
+// l'EDL d'un montage d'aperçu) ; les autres sont jouées sans être dessinées (tournage plus court).
+const needFile = opt('need', null);
+const NEED = needFile ? JSON.parse(readFileSync(needFile, 'utf8')) : null;
+const needed = (shot, i) => !NEED?.[shot] || NEED[shot].some(([a, b]) => i >= a && i <= b);
 mkdirSync(outDir, { recursive: true });
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
@@ -99,13 +104,15 @@ async function shoot(name) {
         const ev = events[i];
         if (ev) await ev();
         if (each) await each(i);
-        const ev2 = await api('frame');
+        const wanted = needed(name, n);
+        const ev2 = await api('frame', W, H, wanted);
         if (Array.isArray(ev2) && ev2.length > 0) log[n] = ev2;
-        await page.screenshot({
-          path: `${dir}/${String(n).padStart(5, '0')}.jpg`,
-          type: 'jpeg',
-          quality: 94,
-        });
+        if (wanted)
+          await page.screenshot({
+            path: `${dir}/${String(n).padStart(5, '0')}.jpg`,
+            type: 'jpeg',
+            quality: 94,
+          });
         n += 1;
       }
     },

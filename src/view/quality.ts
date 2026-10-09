@@ -104,7 +104,7 @@ export const CAPTURE_FRAMING = {
   '16x9': { fov: 25, lookBack: 2.2 },
   '3x2': { fov: 32, lookBack: 2.3 },
   '1x1': { fov: 36, lookBack: 1.8 },
-  '9x16': { fov: 50, lookBack: 1.2 },
+  '9x16': { fov: 40, lookBack: 1.6 },
 } as const satisfies Record<string, CaptureFraming>;
 
 /** Cadrage du mode capture pour `?aspect=` (16:9 par défaut). */

@@ -1056,6 +1056,46 @@ code {
   }
 }
 
+/* Trailer : bouton « Regarder avec le son » du hero et lecteur plein cadre (élément <dialog> natif). */
+.hero__trailer {
+  margin: var(--sp-4) 0 0;
+}
+.hero__trailer svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.trailer {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #000;
+  color: var(--px-text);
+  overflow: hidden;
+}
+.trailer::backdrop {
+  background: rgba(6, 5, 18, 0.94);
+}
+.trailer__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.trailer__close {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 1;
+  min-height: 44px;
+  padding: 0 var(--sp-3);
+}
+
 /* Révélations au scroll : l'état initial n'est posé que par motion.ts (contenu visible sans JS). */
 
 @media (max-width: 640px) {
