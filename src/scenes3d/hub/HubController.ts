@@ -20,6 +20,8 @@ import { HubRoomView } from '@/view/hub/HubRoomView';
 const DEPART_FADE_MS = 450;
 /** Distance (u) au-delà de laquelle la bulle d'un PNJ se ferme. */
 const BUBBLE_RANGE = 110;
+/** Pas de temps maximal des minuteries de l’UI (s). */
+const MAX_UI_DT = 0.1;
 
 const PLACE: Readonly<Record<'co' | 'cour', string>> = {
   co: 'OCC · Salle des opérations',
@@ -262,7 +264,9 @@ export class HubController {
   // ─── Superposition DOM ─────────────────────────────────────────────────────
 
   /** Invite, bulle, étiquette du mannequin ; départ après le fondu. */
-  public overlay(realDt: number): void {
+  public overlay(frameDt: number): void {
+    // Une frame très longue (onglet masqué, rendu logiciel) ne consomme pas d’un coup une bulle.
+    const realDt = Math.min(frameDt, MAX_UI_DT);
     const menus = this.host.menus;
     const sim = this.sim;
     const prompt = sim.prompt;
