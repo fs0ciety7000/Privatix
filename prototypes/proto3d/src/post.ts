@@ -123,7 +123,7 @@ export class Post {
     this.size = { w, h, pr };
     this.composer.setPixelRatio(pr);
     this.composer.setSize(w, h);
-    // bloom à résolution réduite (Moyen : moitié, Bas : quart) — le flou reste aussi large à l'écran
+    // bloom à demi-résolution hors preset Haut : chaîne de flou 4× moins de pixels, halo à peine plus large
     if (this.bloomScale !== 1) this.bloom.setSize(Math.max(2, Math.round(w * pr * this.bloomScale)), Math.max(2, Math.round(h * pr * this.bloomScale)));
     (this.grade.uniforms.uRes.value as THREE.Vector2).set(w * pr, h * pr);
   }

@@ -52,7 +52,8 @@ export class LightBudget {
   ) {
     this.bakeLights = bakeLights.slice(0, BAKE_CHANNELS);
     this.bakeLights.forEach((l, i) => this.sources.push({ light: l, channel: i, priority: 1, real: 1 }));
-    for (const l of dynamicLights) this.sources.push({ light: l, channel: -1, priority: 9, real: 1 });
+    // butin : lumière faible mais au plus près du héros (sa lueur reste portée par le faisceau et le disque)
+    for (const l of dynamicLights) this.sources.push({ light: l, channel: -1, priority: 5, real: 1 });
   }
 
   /** Enregistre un maillage statique du décor (matériau toon) à cuire. */

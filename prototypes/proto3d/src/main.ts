@@ -198,6 +198,7 @@ class Game implements World {
     this.applyQuality();
     this.applyReducedMotion();
     window.addEventListener('keydown', (e) => this.onKey(e));
+    this.ui.perf.classList.toggle('show', this.perfOpen);
     // le réglage système suit ses changements tant que le joueur n'a pas choisi lui-même (F4, ?rm=)
     matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
       if (this.settings.rmExplicit) return;
@@ -229,6 +230,8 @@ class Game implements World {
       this.sun.shadow.map = null;
     }
     this.blobs.visible = sm === 0;
+    // sans ombre portée, la lune éclaire aussi ce qui serait à l'ombre : on la baisse un peu
+    this.sun.intensity = sm > 0 ? 1.9 : 1.55;
     this.post.configure({ msaa: this.msaaFor(p.msaa), fxaa: p.fxaa, bloomScale: p.bloomScale });
     this.lights.setMode(p.dynLights);
     fxFlags.particles = p.particles;

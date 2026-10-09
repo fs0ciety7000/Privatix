@@ -28,7 +28,7 @@ export interface Preset {
 export const PRESETS: Record<QualityLevel, Preset> = {
   high: { label: 'HAUT', prCap: 2, prMin: 1, msaa: 4, fxaa: false, shadowSize: 2048, bloomScale: 1, dynLights: null, particles: 1 },
   med: { label: 'MOYEN', prCap: 1.5, prMin: 1, msaa: 0, fxaa: true, shadowSize: 1024, bloomScale: 0.5, dynLights: 3, particles: 0.7 },
-  low: { label: 'BAS', prCap: 1, prMin: 0.75, msaa: 0, fxaa: false, shadowSize: 0, bloomScale: 0.25, dynLights: 1, particles: 0.45 },
+  low: { label: 'BAS', prCap: 1, prMin: 0.75, msaa: 0, fxaa: false, shadowSize: 0, bloomScale: 0.5, dynLights: 1, particles: 0.45 },
 };
 
 const params = new URLSearchParams(location.search);
