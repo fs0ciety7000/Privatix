@@ -16,7 +16,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run typecheck && npm run lint && npm run test",
-    "assets": "python3 tools/pixelart/build.py"
+    "assets": "python3 tools/pixelart/build.py",
+    "sprites3d": "cd tools/render3d && .venv/bin/python build.py",
+    "sprites3d:setup": "cd tools/render3d && uv venv .venv --python python3.13 && uv pip install --python .venv/bin/python bpy==5.2.2 pillow numpy"
   },
   "dependencies": {
     "phaser": "^4.2.1"

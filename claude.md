@@ -25,7 +25,8 @@ npm ci                           # installation (npm install exige --legacy-peer
 npm run dev                      # http://localhost:5173 (ajouter ?debug pour les corps Arcade, ?cheat pour les raccourcis de test)
 npm run check                    # typecheck + lint + tests : DOIT être vert avant tout commit
 npm run build                    # dist/
-npm run assets                   # régénère les sprites et tilesets depuis tools/pixelart/
+npm run assets                   # régénère tilesets, props, VFX, UI depuis tools/pixelart/ (2D)
+npm run sprites3d                # rend les personnages depuis tools/render3d/ (3D → pixel, méthode Dead Cells)
 ```
 
 Raccourcis `?cheat` (dev uniquement, absents du build) : **K** élimine les ennemis, **G** invincibilité, **N** salle suivante (ou un Avantage si la salle n'est pas nettoyée), **B** salle du boss.
@@ -83,7 +84,8 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 ## 5. Règle 3 — Animations pixel art via le système d'animation de Phaser
 
 - **Format unique** : bandes horizontales `<entité>_<anim>[_<direction>]_strip<N>.png`, frames carrées, sans marge ni espacement. Clé de texture = nom du fichier sans `.png` ; clé d'animation = `<entité>-<anim>[-<direction>]` (ex. `player-attack3-side`). Voir `docs/PIXEL_ART_GUIDE.md`.
-- **Source de vérité** : `tools/pixelart/manifest.json` (fichier, taille de frame, nombre de frames, durées par frame, boucle, pivot, frames actives). `src/config/assets.ts` le lit ; `PreloaderScene` charge chaque feuille et **crée toutes les animations une seule fois** dans le gestionnaire global (`this.anims` est global en Phaser 4).
+- **Personnages = pipeline 3D → pixel** (`tools/render3d/`, voir son README) : modèles low-poly articulés rendus sans lissage puis convertis en pixel art (rampes à décalage de teinte, liseré, contour, normal maps). Décor, VFX et UI restent produits par le générateur 2D `tools/pixelart/`.
+- **Source de vérité** : `tools/render3d/manifest.json` (prioritaire) fusionné avec `tools/pixelart/manifest.json` (fichier, taille de frame, nombre de frames, durées par frame, boucle, pivot, frames actives). `src/config/assets.ts` le lit ; `PreloaderScene` charge chaque feuille et **crée toutes les animations une seule fois** dans le gestionnaire global (`this.anims` est global en Phaser 4).
 - **Durées par frame** : en Phaser 4, `frames[i].duration` **remplace** la durée par défaut (elle ne s'y ajoute pas).
 - **Directions** : 3 dessinées (`down`, `up`, `side`) ; la gauche est `side` + `flipX`. Choix via `facingFromAngle(angle)`.
 - **Un seul point d'appel de `play()` par entité** (`playAnim`), qui gère direction, miroir et vitesse de lecture. Les états de la StateMachine demandent une animation ; ils ne manipulent jamais les frames à la main.
@@ -129,7 +131,8 @@ src/ui/                     # Controls (clavier, souris, manette, tactile), plac
 src/platform/               # seul accès au navigateur hors Phaser (localStorage)
 src/utils/                  # rng (graines), math
 tests/                      # Vitest : logique pure et gabarits de salles
-tools/pixelart/             # générateur des sprites et tilesets (+ manifest.json, planches de contrôle)
+tools/render3d/             # personnages : modèles 3D → pixel art (Blender/bpy), manifest.json prioritaire
+tools/pixelart/             # décor, props, VFX, UI (générateur 2D) + manifest.json, planches de contrôle
 public/assets/              # sprites/{player,enemies,bosses,npcs,vfx,pickups,ui,portraits}, tilesets, audio/{sfx,music}, fonts
 docs/                       # GDD, LORE, ARCHITECTURE, PIXEL_ART_GUIDE
 ```

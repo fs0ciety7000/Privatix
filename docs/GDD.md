@@ -47,8 +47,9 @@ Le porteur du projet a tranché : **du pixel art, mais moderne**. Concrètement 
 
 | Couche | Ce qu'on fait | Où c'est fait |
 |---|---|---|
-| Sprites | Rampes de couleurs à **décalage de teinte**, 4 à 6 tons par matériau, **rim light** néon, anti-aliasing sélectif à l'intérieur des formes, contour `#14101A` | `tools/pixelart/` |
-| Animation | Beaucoup de frames (run 10, attaques 7 à 9 avec frame de **smear**), anticipation et follow-through, **écharpe syndicale rouge** qui traîne derrière le héros | `tools/pixelart/` |
+| Personnages | **Méthode Dead Cells** : modèles 3D low-poly articulés, rendus à la taille du sprite sans lissage, puis convertis en pixel art (rampes à **décalage de teinte**, **rim light** néon, sel-out, contour `#14101A`, normal maps exactes) | `tools/render3d/` |
+| Animation | Beaucoup de frames (run 10, attaques 7 à 9 avec frame de **smear**), anticipation et follow-through, **écharpe syndicale rouge** qui traîne derrière le héros | `tools/render3d/` |
+| Décor, VFX, UI | Générateur 2D : tuiles, props, effets lumineux, interface, mêmes rampes et normal maps | `tools/pixelart/` |
 | Lumière | **Éclairage dynamique** Phaser 4 (lampes de quai, néons turquoise et magenta, lanternes de l'OCC, lampe frontale du héros), **normal maps** `_n.png` générées pour les personnages et le décor, éclairs lumineux sur les impacts et les explosions | `src/fx/Atmosphere.ts` |
 | Post-traitement | **Bloom** (seuil + flou + ajout), **étalonnage** par zone (saturation, contraste), **vignette** | `src/fx/Atmosphere.ts` |
 | Juice | **Squash & stretch** (dash, coups, impacts), **traînées rémanentes** au dash (cyan, or sur dash parfait), particules d'ambiance (poussières dans la lumière) | `src/fx/GameFeel.ts` |

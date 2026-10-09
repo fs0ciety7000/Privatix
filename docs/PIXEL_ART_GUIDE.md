@@ -7,6 +7,8 @@
 
 Vocabulaire : **doit** = obligatoire (refus en revue sinon) ; **recommandé** = préférence de la direction artistique ; « P0/P1/P2 » = priorité de production (§10).
 
+> **Production des personnages** : depuis la décision « pixel art moderne, qualité Dead Cells / Celeste », héros, ennemis, boss et PNJ sont produits par le **pipeline 3D → pixel** de `tools/render3d/` (voir son README). Les noms de fichiers, la convention des bandes, les clés d'animation et les normal maps décrits ici restent le contrat : un artiste ou un pack itch.io peut remplacer n'importe quelle bande à l'identique. Les tailles de frame des personnages rendus en 3D sont lues dans `tools/render3d/manifest.json` (héros 72×72, pivot (36, 64)), qui prime sur les tailles indiquées plus bas.
+
 ## Sommaire
 
 1. Résolution, échelle et classes de sprites
