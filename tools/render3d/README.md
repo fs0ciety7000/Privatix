@@ -108,7 +108,7 @@ argument, il traite les personnages au-dessus du budget de leur catégorie ; `--
 - Les **ressorts** (écharpe, cravate, mèche, queue) sont cuits dans les clips ; une chaîne à ressort à
   l'exécution peut s'y superposer.
 - Portés : manager KPI, Auditeur, Fluidifieur, Josiane, Béné, Kevin. Restent à faire : autres PNJ (Marcel,
-  Fatou, Yasmina, Rudy…), Vanderslide, Agent de sécurité, Coach Agile.
+  Fatou, Yasmina, Rudy…), Lurcke, Agent de sécurité, Coach Agile.
 - **Portraits du site** : `viewer/portraits.mjs` (mode `?portrait` : fond transparent, contre-jours) puis
   `viewer/portraits.py` (fond néon, cadrage auto, WebP 960/480) d'après `viewer/specs/portraits.json` →
   `site/public/bestiaire/`.

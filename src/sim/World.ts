@@ -33,7 +33,7 @@ import type { EnemySim } from '@/sim/enemies/EnemySim';
 import { FluidifieurSim } from '@/sim/enemies/FluidifieurSim';
 import { FuretSim } from '@/sim/enemies/FuretSim';
 import { ManagerSim } from '@/sim/enemies/ManagerSim';
-import { VanderslideSim } from '@/sim/enemies/VanderslideSim';
+import { LurckeSim } from '@/sim/enemies/LurckeSim';
 import type { SimEvent } from '@/sim/events';
 import type { HazardHost, HazardSpec } from '@/sim/Hazards';
 import { HazardSim } from '@/sim/Hazards';
@@ -395,8 +395,8 @@ export class World implements SimWorld, Steppable {
       case 'dirupo':
         enemy = new DiRupoSim(this, x, y, bossScale);
         break;
-      case 'vanderslide':
-        enemy = new VanderslideSim(this, x, y, bossScale);
+      case 'lurcke':
+        enemy = new LurckeSim(this, x, y, bossScale);
         break;
       default:
         enemy = new ConsultantSim(this, x, y, scale);

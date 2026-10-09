@@ -8,7 +8,7 @@ import {
   FLUIDIFIEUR,
   FURET,
   SHIFT,
-  VANDERSLIDE,
+  LURCKE,
 } from '@/config/balance';
 import { TILE } from '@/config/constants';
 import { SIM_DT_MS } from '@/sim/clock/FixedClock';
@@ -17,7 +17,7 @@ import type { DiscosaureSim } from '@/sim/enemies/DiscosaureSim';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import type { FluidifieurSim } from '@/sim/enemies/FluidifieurSim';
 import type { FuretSim } from '@/sim/enemies/FuretSim';
-import type { VanderslideSim } from '@/sim/enemies/VanderslideSim';
+import type { LurckeSim } from '@/sim/enemies/LurckeSim';
 import type { SimEvent } from '@/sim/events';
 import type { PlayerIntent } from '@/sim/intent';
 import { NO_INTENT } from '@/sim/intent';
@@ -200,7 +200,7 @@ describe('plan du Shift sur trois biomes (GDD § 3)', () => {
 });
 
 describe('progression multi-biome (RunDirector)', () => {
-  it('Auditeur → Passerelle → Di Rupo → Hall & BAG → Vanderslide → victoire', () => {
+  it('Auditeur → Passerelle → Di Rupo → Hall & BAG → Lurcke → victoire', () => {
     const w = new World({ seed: 31 });
     w.director.godMode = true;
     const biomes: number[] = [];
@@ -221,7 +221,7 @@ describe('progression multi-biome (RunDirector)', () => {
       for (const e of events) if (e.type === 'biomeEntered') biomes.push(e.biome);
       events.push(...play(w, 900));
       const boss = w.director.boss;
-      expect(boss?.kind).toBe(['auditeur', 'dirupo', 'vanderslide'][biome]);
+      expect(boss?.kind).toBe(['auditeur', 'dirupo', 'lurcke'][biome]);
       expect(events.some((e) => e.type === 'bossIntro')).toBe(true);
       const after = kill();
       last = after;
@@ -676,10 +676,10 @@ describe('Elio Di Rupo (boss du biome 2)', () => {
   });
 });
 
-describe('Gontran Vanderslide (boss du biome 3, version de travail)', () => {
+describe('Jean-Cul Lurcke (boss du biome 3, version de travail)', () => {
   it('bullet points à trou, puis coup final sous 5 %', () => {
     const w = quiet('salle-conseil');
-    const v = enemyAt(w, 'vanderslide', 0, -150) as VanderslideSim;
+    const v = enemyAt(w, 'lurcke', 0, -150) as LurckeSim;
     expect(windupOf(w, v, 'bullets')).toBeGreaterThanOrEqual(800);
     const lines = w.hazards.filter((h) => h.spec.kind === 'line' && h.spec.skin === 'bullet');
     expect(lines.length).toBeGreaterThan(0);
@@ -691,7 +691,7 @@ describe('Gontran Vanderslide (boss du biome 3, version de travail)', () => {
       expect(l.contains(s.x0 + (s.x1 - s.x0) * t, s.y0 + 6)).toBe(false);
       expect(l.contains(s.x0 + 4, s.y0 + 6)).toBe(true);
     }
-    hitFor(v, Math.ceil(v.maxHp * (1 - VANDERSLIDE.FINAL_AT) + 2));
+    hitFor(v, Math.ceil(v.maxHp * (1 - LURCKE.FINAL_AT) + 2));
     expect(v.finalBlow).toBe(true);
     expect(v.state).toBe('stagger');
   });

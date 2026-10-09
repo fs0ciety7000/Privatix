@@ -47,7 +47,7 @@ export function createProceduralEnemyView(
     case 'discosaure':
       return new AuditeurView(scene, reducedMotion);
     case 'manager':
-    case 'vanderslide':
+    case 'lurcke':
       return new ManagerView(scene, reducedMotion);
     case 'consultant':
     case 'furet':
