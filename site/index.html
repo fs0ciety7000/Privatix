@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="fr-BE">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Privatix — Hack 'n' slash roguelite sur le rail belge</title>
+    <meta
+      name="description"
+      content="Un cheminot en 3x8, une clé à tire-fond et des collègues à la radio contre les consultants qui veulent vendre la gare de Mons. Jouez gratuitement dans le navigateur ou téléchargez Privatix pour Windows, macOS et Linux."
+    />
+    <meta name="theme-color" content="#0a0818" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://privatix.fs0ciety.org/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Partage (OpenGraph, Twitter) : l'image doit être en URL absolue -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_BE" />
+    <meta property="og:site_name" content="Privatix" />
+    <meta property="og:title" content="Privatix — la gare de Mons ne sera pas vendue" />
+    <meta
+      property="og:description"
+      content="Hack 'n' slash roguelite satirique : un cheminot en 3x8 et sa clé à tire-fond contre Privatix Rail Solutions. Gratuit, dans le navigateur et sur Windows, macOS et Linux."
+    />
+    <meta property="og:url" content="https://privatix.fs0ciety.org/" />
+    <meta property="og:image" content="https://privatix.fs0ciety.org/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Le héros en gilet orange face au Discosaure sur un quai de la gare de Mons, sous les néons de Privatix." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Privatix — la gare de Mons ne sera pas vendue" />
+    <meta name="twitter:description" content="Hack 'n' slash roguelite satirique sur le rail belge. Gratuit, dans le navigateur et sur PC, Mac et Linux." />
+    <meta name="twitter:image" content="https://privatix.fs0ciety.org/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Le héros en gilet orange face au Discosaure sur un quai de la gare de Mons." />
+
+    <link rel="preload" as="image" href="./src/assets/img/hero-poster.webp" fetchpriority="high" />
+    <script type="module" src="./src/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip" href="#contenu">Aller au contenu</a>
+
+    <header class="site-header" id="haut">
+      <div class="wrap site-header__inner">
+        <a class="wordmark" href="#haut" aria-label="Privatix, retour en haut de page">PRIVATIX</a>
+        <nav class="site-nav" aria-label="Sections">
+          <ul>
+            <li><a href="#jeu">Le jeu</a></li>
+            <li><a href="#gameplay">Gameplay</a></li>
+            <li><a href="#galerie">Galerie</a></li>
+            <li><a href="#bestiaire">Bestiaire</a></li>
+            <li><a href="#occ">L'OCC</a></li>
+            <li><a href="#telecharger">Télécharger</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn--primary site-header__cta" href="./jouer/play3d.html">Jouer</a>
+      </div>
+    </header>
+
+    <main id="contenu">
+      <!-- ═══ Hero ═══ -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__media" aria-hidden="true">
+          <video
+            class="hero__video"
+            poster="./src/assets/img/hero-poster.webp"
+            muted
+            loop
+            playsinline
+            preload="none"
+            width="960"
+            height="540"
+          ></video>
+          <div class="hero__scrim"></div>
+        </div>
+        <div class="wrap hero__content">
+          <p class="eyebrow hero__eyebrow" data-hero>Gare de Mons · Quai 2 · 4 h 47</p>
+          <h1 id="hero-title" class="hero__title">
+            <span class="neon" data-neon>PRIVATIX</span>
+          </h1>
+          <p class="hero__tagline" data-hero>
+            Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio
+            contre une armée de consultants qui veulent vendre la gare avant la fin du service.
+          </p>
+          <div class="hero__actions" data-hero>
+            <a class="btn btn--primary btn--lg" href="./jouer/play3d.html">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor" /></svg>
+              <span>Jouer dans le navigateur<small>Gratuit · aucune installation</small></span>
+            </a>
+            <a class="btn btn--secondary btn--lg" href="#telecharger" data-dl-hero>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span><span data-dl-hero-label>Télécharger</span><small data-dl-hero-sub>Windows · macOS · Linux</small></span>
+            </a>
+          </div>
+          <p class="hero__more" data-hero>
+            Aussi : <a class="link" href="./jouer/">la version classique (2D)</a> ·
+            <a class="link" href="./3d/">le prototype 3D</a> (Discosaure et butin)
+            <span class="hero__version" data-version hidden></span>
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══ Pitch ═══ -->
+      <section class="section" id="jeu" aria-labelledby="jeu-title">
+        <div class="wrap pitch">
+          <div class="pitch__text" data-reveal>
+            <p class="eyebrow">Le jeu</p>
+            <h2 id="jeu-title" class="section__title">Le 7 h 12 est supprimé. Motif : « Optimisation ».</h2>
+            <p>
+              Le consortium <strong>Privatix Rail Solutions</strong> (« Le rail, en mieux. Pour vous. Pour nous
+              surtout. ») s'apprête à signer la cession de la ligne, de la gare et même du café de la salle
+              des pauses. La signature est prévue « à la fin du service », au dernier étage du BAG.
+            </p>
+            <p>
+              Léon, ou Léa, agent·e polyvalent·e en 3x8 depuis neuf ans, prend la clé à tire-fond de son
+              grand-père et remonte la gare à contre-courant : les <strong>Quais &amp; Voies</strong>, la
+              <strong>Passerelle</strong> que les navetteurs appellent « le Calatrava », puis le
+              <strong>Hall &amp; BAG</strong>, jusqu'au bureau où Gontran Vanderslide tient le stylo.
+            </p>
+            <p>
+              Chaque tentative est un <strong>Shift</strong>. Quand le héros tombe, les collègues le ramènent
+              à l'OCC. Et la signature est reportée, encore et encore : le Sondage de Privatix n'arrive
+              jamais à trouver un créneau.
+            </p>
+          </div>
+          <aside class="pitch__facts" data-reveal aria-label="En bref">
+            <dl class="facts">
+              <div><dt>Genre</dt><dd>Hack 'n' slash roguelite, vue de dessus</dd></div>
+              <div><dt>Rendu</dt><dd>3D toon temps réel « Néon &amp; Ballast »</dd></div>
+              <div><dt>Durée d'un Shift</dt><dd><span data-count="25">25</span> à <span data-count="30">30</span> minutes</dd></div>
+              <div><dt>Plateformes</dt><dd>Navigateur, Windows, macOS, Linux</dd></div>
+              <div><dt>Langue</dt><dd>Français (Belgique)</dd></div>
+              <div><dt>Prix</dt><dd>Gratuit</dd></div>
+            </dl>
+            <p class="facts__motto">Satirique dans les noms, sérieux dans les règles.</p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ═══ Gameplay ═══ -->
+      <section class="section section--alt" id="gameplay" aria-labelledby="gameplay-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Gameplay</p>
+          <h2 id="gameplay-title" class="section__title" data-reveal>Chaque coup se sent</h2>
+          <p class="section__lead" data-reveal>
+            Un combat nerveux et lisible : tout ce qui blesse est magenta et télégraphié. Pas de mort
+            injuste, seulement des réunions qu'on n'aurait pas dû accepter.
+          </p>
+          <ul class="grid grid--pillars" role="list">
+            <li class="card card--interactive pillar" style="--rc: var(--px-hero)" data-reveal>
+              <svg class="card__icon" viewBox="0 0 40 40" aria-hidden="true"><rect x="18" y="4" width="4.5" height="26" rx="2" fill="currentColor" /><rect x="10" y="4" width="20" height="5" rx="2" fill="currentColor" /><rect x="15" y="28" width="10.5" height="9" rx="2" fill="currentColor" /></svg>
+              <p class="card__kicker">Clic · <kbd>J</kbd></p>
+              <h3 class="card__title">Combo à la clé à tire-fond</h3>
+              <p class="card__body">Trois coups, hitstop, étincelles et recul qui plaque les consultants contre les quais. Le troisième coup se reconnaît les yeux fermés.</p>
+            </li>
+            <li class="card card--interactive pillar" style="--rc: var(--px-rim)" data-reveal>
+              <svg class="card__icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 14h16M3 21h19M8 28h14" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><path d="M24 10l12 10-12 10z" fill="currentColor" /></svg>
+              <p class="card__kicker"><kbd>Espace</kbd> · 2 charges</p>
+              <h3 class="card__title">Dash « Retard SNCB »</h3>
+              <p class="card__body">Une esquive à deux charges qui traverse les attaques. Parfait au dernier moment, il ralentit le temps : vous n'êtes pas en retard, vous êtes en avance sur le prochain.</p>
+            </li>
+            <li class="card card--interactive pillar" style="--rc: var(--px-gold)" data-reveal>
+              <svg class="card__icon" viewBox="0 0 40 40" aria-hidden="true"><circle cx="15" cy="24" r="9" fill="none" stroke="currentColor" stroke-width="3" /><path d="M22 18h14v6H23" fill="currentColor" /><path d="M30 8l3-4M24 7l-1-4M35 13l4-1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+              <p class="card__kicker">Clic droit · <kbd>F</kbd></p>
+              <h3 class="card__title">Coup de sifflet</h3>
+              <p class="card__body">La jauge de Mobilisation se remplit au combat. Un coup bref repousse et étourdit ; maintenu, c'est le Préavis de grève, et toute la salle s'arrête.</p>
+            </li>
+            <li class="card card--interactive pillar" style="--rc: var(--px-tungsten)" data-reveal>
+              <svg class="card__icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M8 14h20v12a8 8 0 0 1-8 8h-4a8 8 0 0 1-8-8z" fill="currentColor" /><path d="M28 17h3a4 4 0 0 1 0 8h-3" fill="none" stroke="currentColor" stroke-width="3" /><path d="M14 4c-2 3 2 4 0 7M20 4c-2 3 2 4 0 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+              <p class="card__kicker"><kbd>R</kbd> · Gobelets</p>
+              <h3 class="card__title">Le Café</h3>
+              <p class="card__body">Deux Gobelets au départ, quatre au plus. Boire soigne l'Énergie… et fait monter le Burnout. Le café de la Vieille Dame n'a jamais été détartré, c'est ce qui fait son goût.</p>
+            </li>
+            <li class="card card--interactive pillar pillar--wide" style="--rc: #c04cff" data-reveal>
+              <p class="card__kicker">Jauge 0 à 100</p>
+              <h3 class="card__title">Le Burnout : plus fort, plus fragile</h3>
+              <p class="card__body">Encaisser, dasher et boire du café le font monter. Il augmente vos dégâts <em>et</em> ceux que vous recevez ; l'horloge du 3x8 l'empêche de redescendre sous un plancher. À 100, c'est le Pétage de plombs. Rester frais ou jouer au bord ?</p>
+              <div class="hud-demo" aria-hidden="true">
+                <div class="gauge-label">ÉNERGIE <span>72 / 100</span></div>
+                <div class="gauge gauge--energy" style="--fill: 0.72"><i data-gauge></i></div>
+                <div class="gauge-label">BURNOUT <span>64 · Sur les nerfs</span></div>
+                <div class="gauge gauge--burnout" style="--fill: 0.64"><i data-gauge></i></div>
+                <div class="hud-demo__row"><div class="pips"><i class="on"></i><i class="on"></i></div><span>DASH</span></div>
+              </div>
+            </li>
+            <li class="card card--interactive pillar pillar--wide" style="--rc: var(--rar-patrimoine)" data-reveal>
+              <p class="card__kicker">6 emplacements · 5 raretés</p>
+              <h3 class="card__title">Un butin qui se voit sur le héros</h3>
+              <p class="card__body">Outil, Casque, Gilet, Gants, Chaussures, Insigne : chaque pièce ramassée change la silhouette du héros. Le butin tombe des sacoches, caisses et colis, jamais d'un voyageur.</p>
+              <ul class="rarities" role="list" aria-label="Raretés, de la plus courante à la plus rare">
+                <li><span class="badge badge--reforme">Réforme</span></li>
+                <li><span class="badge badge--reglementaire">Réglementaire</span></li>
+                <li><span class="badge badge--homologue">Homologué</span></li>
+                <li><span class="badge badge--hors-serie">Hors-série</span></li>
+                <li><span class="badge badge--patrimoine">Patrimoine</span></li>
+              </ul>
+            </li>
+            <li class="card card--interactive pillar pillar--full" style="--rc: var(--px-enemy)" data-reveal>
+              <p class="card__kicker">Roguelite</p>
+              <h3 class="card__title">Des Shifts en 3x8</h3>
+              <p class="card__body">Chaque run est un Shift, au roulement imposé : <strong>Matin</strong>, <strong>Après-midi</strong> ou <strong>Nuit</strong>, comme dans la vraie vie. L'horloge avance de 30 minutes par salle. Les collègues envoient des <strong>Avantages acquis</strong> par radio pendant le run ; après un échec, on rentre à l'OCC dépenser ses <strong>Points de Syndicalisme</strong> au Tableau des revendications. Mourir n'est jamais une perte sèche.</p>
+              <ol class="shift" role="list" aria-label="Déroulé d'un Shift">
+                <li>Quais &amp; Voies</li>
+                <li>Passerelle « Calatrava »</li>
+                <li>Hall &amp; BAG</li>
+                <li>Bureau de Vanderslide</li>
+              </ol>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ═══ Galerie ═══ -->
+      <section class="section" id="galerie" aria-labelledby="galerie-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Galerie</p>
+          <h2 id="galerie-title" class="section__title" data-reveal>Captures du jeu</h2>
+          <p class="section__lead" data-reveal>Images réelles, prises dans la version navigateur et dans le prototype 3D.</p>
+          <ul class="gallery" role="list">
+            <li data-reveal>
+              <a class="shot" href="./src/assets/img/jeu-telegraphes.webp" data-lightbox>
+                <img src="./src/assets/img/jeu-telegraphes-640.webp" srcset="./src/assets/img/jeu-telegraphes-640.webp 640w, ./src/assets/img/jeu-telegraphes.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Trois consultants en turquoise encerclent le héros ; leurs attaques sont annoncées au sol par des traits magenta." />
+              </a>
+              <p class="shot__cap"><span class="badge badge--enemy">Jeu</span> Lire, esquiver, punir : le magenta annonce chaque attaque.</p>
+            </li>
+            <li data-reveal>
+              <a class="shot" href="./src/assets/img/jeu-melee.webp" data-lightbox>
+                <img src="./src/assets/img/jeu-melee-640.webp" srcset="./src/assets/img/jeu-melee-640.webp 640w, ./src/assets/img/jeu-melee.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Mêlée sur les voies : le héros frappe au milieu des consultants, sous les lampes à sodium." />
+              </a>
+              <p class="shot__cap"><span class="badge badge--enemy">Jeu</span> Mêlée sur les voies, quai de Mons.</p>
+            </li>
+            <li data-reveal>
+              <a class="shot" href="./src/assets/img/jeu-coup3.webp" data-lightbox>
+                <img src="./src/assets/img/jeu-coup3-640.webp" srcset="./src/assets/img/jeu-coup3-640.webp 640w, ./src/assets/img/jeu-coup3.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Le troisième coup du combo explose en gerbe de lumière et projette les consultants." />
+              </a>
+              <p class="shot__cap"><span class="badge badge--enemy">Jeu</span> Le coup 3 : hitstop, éclair, consultants en réunion.</p>
+            </li>
+            <li data-reveal>
+              <a class="shot" href="./src/assets/img/proto-discosaure.webp" data-lightbox>
+                <img src="./src/assets/img/proto-discosaure-640.webp" srcset="./src/assets/img/proto-discosaure-640.webp 640w, ./src/assets/img/proto-discosaure.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Le Discosaure, dinosaure violet portant une boule à facettes sur le dos, fait face au héros sur un quai éclairé de confettis colorés." />
+              </a>
+              <p class="shot__cap"><span class="badge badge--boss">Prototype</span> Le Discosaure entre en piste.</p>
+            </li>
+            <li data-reveal>
+              <a class="shot" href="./src/assets/img/proto-pietinement.webp" data-lightbox>
+                <img src="./src/assets/img/proto-pietinement-640.webp" srcset="./src/assets/img/proto-pietinement-640.webp 640w, ./src/assets/img/proto-pietinement.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Le Discosaure piétine en rythme et envoie une onde de choc magenta autour de lui." />
+              </a>
+              <p class="shot__cap"><span class="badge badge--boss">Prototype</span> Piétinement en rythme : le tempo est le télégraphe.</p>
+            </li>
+            <li data-reveal>
+              <a class="shot" href="./src/assets/img/proto-loot.webp" data-lightbox>
+                <img src="./src/assets/img/proto-loot-640.webp" srcset="./src/assets/img/proto-loot-640.webp 640w, ./src/assets/img/proto-loot.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Une pièce d'équipement au sol, entourée d'un faisceau de lumière à la couleur de sa rareté, avec sa carte d'objet." />
+              </a>
+              <p class="shot__cap"><span class="badge badge--patrimoine">Prototype</span> Le butin au sol et sa carte d'objet.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ═══ Bestiaire ═══ -->
+      <section class="section section--alt" id="bestiaire" aria-labelledby="bestiaire-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Bestiaire</p>
+          <h2 id="bestiaire-title" class="section__title" data-reveal>Les ressources de Privatix</h2>
+          <p class="section__lead" data-reveal>
+            Des gens payés pour ne pas savoir et des machines achetées pour ne pas répondre. Ils ne
+            meurent pas : ils « partent en réunion », se mettent en mute ou affichent HORS SERVICE.
+          </p>
+          <ul class="grid grid--bestiary" role="list">
+            <li class="card card--enemy card--interactive foe" data-reveal>
+              <img class="foe__img" src="./src/assets/img/foe-consultant.webp" width="320" height="320" loading="lazy" decoding="async" alt="Un consultant junior en costume turquoise, laptop sous le bras." />
+              <p class="card__kicker"><span class="badge badge--enemy">Ennemi</span></p>
+              <h3 class="card__title">Consultant Junior « Slide-Ninja »</h3>
+              <p class="card__body">24 ans, première mission, un framework et un manager qui attend un quick win. Chasse en meute et laisse une traînée de slides.</p>
+              <p class="card__flavor">« On va challenger ça en mode agile ! »</p>
+            </li>
+            <li class="card card--enemy card--interactive foe" data-reveal>
+              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="6" width="32" height="52" rx="4" fill="none" stroke="currentColor" stroke-width="3" /><rect x="21" y="12" width="22" height="16" rx="2" fill="currentColor" opacity="0.35" /><path d="M24 18l6 6M36 14l-4 8" stroke="currentColor" stroke-width="2" /><rect x="27" y="36" width="10" height="3" rx="1.5" fill="currentColor" /><rect x="22" y="45" width="20" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+              <p class="card__kicker"><span class="badge badge--enemy">Ennemi</span></p>
+              <h3 class="card__title">Borne Automatique</h3>
+              <p class="card__body">Elle a remplacé le guichet de Béné et n'a jamais accepté le bon moyen de paiement. Tire des tickets ; son dos est vulnérable.</p>
+              <p class="card__flavor">« Veuillez insérer votre dignité. »</p>
+            </li>
+            <li class="card card--enemy card--interactive foe" data-reveal>
+              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="34" r="10" fill="none" stroke="currentColor" stroke-width="3" /><circle cx="32" cy="34" r="4" fill="currentColor" /><path d="M8 18h16M40 18h16M16 18v8M48 18v8M24 30l-8-4M40 30l8-4M32 24V12" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><circle cx="32" cy="10" r="2.5" fill="currentColor" /></svg>
+              <p class="card__kicker"><span class="badge badge--enemy">Ennemi</span></p>
+              <h3 class="card__title">Drone Optimètre</h3>
+              <p class="card__body">Il mesure le temps que met un agent à sourire et marque le héros pour toute la salle. Il perd sa cible dans les ombres des arcs.</p>
+              <p class="card__flavor">« Souriez, vous êtes filmé pour la qualité. »</p>
+            </li>
+            <li class="card card--boss card--interactive foe" data-reveal>
+              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 54V10M10 54h46" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><rect x="16" y="38" width="7" height="14" fill="currentColor" opacity="0.5" /><rect x="27" y="28" width="7" height="24" fill="currentColor" opacity="0.7" /><rect x="38" y="18" width="7" height="34" fill="currentColor" /><path d="M16 30l12-10 9 6 14-14" fill="none" stroke="currentColor" stroke-width="2.5" /></svg>
+              <p class="card__kicker"><span class="badge badge--elite">Élite</span></p>
+              <h3 class="card__title">Manager KPI « Le Tableur »</h3>
+              <p class="card__body">Le train avait douze minutes de retard, mais l'indicateur est vert. Protège ses troupes en Réunion d'alignement ; frappé à ce moment, il perd tous ses boucliers.</p>
+              <p class="card__flavor">« Vous êtes à 63 % de l'objectif. De vie. »</p>
+            </li>
+            <li class="card card--boss card--interactive foe" data-reveal>
+              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44c6-14 18-20 30-18 8 1 14 6 16 12-4 4-10 6-16 6H20" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" /><circle cx="46" cy="34" r="2" fill="currentColor" /><path d="M54 38l4 1M14 50c4 2 10 2 14 0M30 14c-2 4 1 6-1 9M38 12c-2 4 1 6-1 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+              <p class="card__kicker"><span class="badge badge--elite">Ennemi majeur</span></p>
+              <h3 class="card__title">Le Furet putride</h3>
+              <p class="card__body">Le ramassage des déchets du BAG a été externalisé ; un consultant a eu une idée : un furet. Il a grandi. Beaucoup. Nuages d'odeur, roulades dans les sacs bleus, et il vole vos Gobelets.</p>
+              <p class="card__flavor">« Tri en cours. Veuillez patienter. »</p>
+            </li>
+            <li class="card card--boss card--interactive foe" data-reveal>
+              <img class="foe__img" src="./src/assets/img/foe-discosaure.webp" width="320" height="320" loading="lazy" decoding="async" alt="Le Discosaure, dinosaure violet à boule à facettes." />
+              <p class="card__kicker"><span class="badge badge--elite">Ennemi majeur</span></p>
+              <h3 class="card__title">Le Discosaure</h3>
+              <p class="card__body">Senior Partner fondateur de Synergia Partners. Il vend le même plan de restructuration depuis la soirée de lancement du cabinet, boule à facettes comprise. Ce n'est pas lui qui est fossile, c'est sa méthode.</p>
+              <p class="card__flavor">« Restructurez avec moi ! Un, deux, un, deux ! »</p>
+            </li>
+            <li class="card card--interactive foe foe--guest" style="--rc: var(--px-danger)" data-reveal>
+              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20l20 10v4L8 44z" fill="#7a1e2c" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" /><path d="M56 20L36 30v4l20 10z" fill="#7a1e2c" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" /><rect x="27" y="27" width="10" height="10" rx="2" fill="#b23a4e" stroke="currentColor" stroke-width="2.5" /></svg>
+              <p class="card__kicker"><span class="badge badge--boss">Boss · biome 2</span></p>
+              <h3 class="card__title">Elio Di Rupo, « l'Invité d'honneur »</h3>
+              <p class="card__body">Il ne travaille pas pour Privatix : il a juste répondu « disponible » au Sondage, à condition qu'il y ait un ruban à couper. Il défend son temps de parole, discours de quarante pages et ciseaux d'inauguration en main. On ne le bat pas : on obtient la parole.</p>
+              <p class="card__flavor">« Je serai bref. » (Il ne l'est pas.)</p>
+              <p class="foe__note">Caricature bon enfant, autorisée par le porteur du projet. Toutes ses répliques sont inventées pour le jeu.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ═══ OCC ═══ -->
+      <section class="section occ" id="occ" aria-labelledby="occ-title">
+        <div class="wrap occ__grid">
+          <div data-reveal>
+            <p class="eyebrow">Le hub</p>
+            <h2 id="occ-title" class="section__title">L'OCC, « Operation Coffee Center »</h2>
+            <p>
+              Au rez-de-chaussée arrière du <strong>BAG</strong>, le Centre Opérationnel de la gare tourne
+              jour et nuit devant un mur d'écrans et une rangée de pupitres. Privatix a pris les étages un
+              par un, « en phase de transition », mais ne peut pas fermer celui-ci : sans centre
+              opérationnel, plus aucun train ne roule, et un réseau à l'arrêt se vend mal.
+            </p>
+            <p>
+              Hiver 1987 : la direction remplace la cafetière collective par un distributeur payant. Le soir
+              même, Marcel et une poignée d'accompagnateurs la portent jusqu'à l'OCC. À <strong>22 h 47</strong>,
+              elle sert son premier café. On l'appelle la <strong>Vieille Dame</strong>. Elle siffle avant
+              chaque événement important.
+            </p>
+            <div class="callout callout--info">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2" /><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+              <p>Entre deux Shifts, on y dépense ses <strong>Points de Syndicalisme</strong>, on règle son Paquetage au Vestiaire de Josiane et on écoute les collègues. Chaque retour apporte au moins une ressource gardée et une réplique nouvelle.</p>
+            </div>
+          </div>
+          <div class="occ__desks" data-reveal>
+            <h3 class="occ__desks-title">Les pupitres</h3>
+            <ul class="desks" role="list">
+              <li><b>PACO</b><span>Bus de remplacement, correspondances</span><em>Béné</em></li>
+              <li><b>RTS</b><span>Régulation et matériel roulant</span><em>Yasmina, Kevin</em></li>
+              <li><b>TLI &amp; AIT</b><span>Annonces en gare</span><em>Rudy</em></li>
+              <li><b>RCCA</b><span>Voyageurs à mobilité réduite</span><em>Fatou</em></li>
+              <li><b>Permanence conduite</b><span>Gestion des conducteurs</span><em>Marcel</em></li>
+              <li><b>DPD</b><span>Accompagnateurs de train</span><em>Josiane</em></li>
+            </ul>
+            <p class="occ__rule">7<sup>e</sup> commandement : « Tu ne laisseras aucun collègue sur le quai. »</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Télécharger ═══ -->
+      <section class="section section--alt" id="telecharger" aria-labelledby="dl-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Télécharger</p>
+          <h2 id="dl-title" class="section__title" data-reveal>Privatix sur votre ordinateur</h2>
+          <p class="section__lead" data-reveal>
+            La même version que dans le navigateur, emballée dans une application de bureau qui tire le
+            meilleur de votre carte graphique. Gratuite, pour Windows, macOS et Linux.
+          </p>
+
+          <div class="dl" data-dl aria-live="polite">
+            <!-- Contenu sans JavaScript : liens stables vers la dernière version. Remplacé par src/downloads.ts. -->
+            <div class="dl__head">
+              <p class="dl__status">Dernière version publiée sur GitHub.</p>
+            </div>
+            <ul class="dl__files" role="list">
+              <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-Setup.exe"><b>Windows</b><span>Installeur (x64)</span></a></li>
+              <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-Portable.exe"><b>Windows</b><span>Portable, sans installation (x64)</span></a></li>
+              <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-mac-arm64.dmg"><b>macOS</b><span>Apple Silicon (M1 et suivants)</span></a></li>
+              <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-mac-x64.dmg"><b>macOS</b><span>Intel</span></a></li>
+              <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix.AppImage"><b>Linux</b><span>AppImage (x86_64)</span></a></li>
+            </ul>
+          </div>
+          <p class="dl__all" data-reveal>
+            <a class="link" href="https://github.com/fs0ciety7000/Privatix/releases">Toutes les versions sur GitHub</a>
+          </p>
+
+          <div class="dl__older" data-dl-older hidden>
+            <h3 class="dl__older-title">Versions précédentes</h3>
+            <div data-dl-older-list></div>
+          </div>
+
+          <div class="callout callout--warning dl__warn" data-reveal>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
+            <div>
+              <p><strong>Les applications ne sont pas signées</strong> : un certificat de signature coûte cher, et Privatix est gratuit. Votre système va donc se méfier au premier lancement. C'est normal, et vous pouvez vérifier que le fichier vient bien de la page GitHub du projet.</p>
+              <p><strong>Windows (SmartScreen)</strong> : « Windows a protégé votre ordinateur » → <em>Informations complémentaires</em> → <em>Exécuter quand même</em>.</p>
+              <p><strong>macOS (Gatekeeper)</strong> : « Privatix ne peut pas être ouvert » → clic droit (ou Ctrl-clic) sur l'application → <em>Ouvrir</em>, puis confirmer. Sur macOS 15 et suivants : <em>Réglages Système</em> → <em>Confidentialité et sécurité</em> → <em>Ouvrir quand même</em>.</p>
+              <p><strong>Linux</strong> : rendez l'AppImage exécutable (<code>chmod +x Privatix-*.AppImage</code>, ou Propriétés → Autoriser l'exécution), puis lancez-la.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Configuration ═══ -->
+      <section class="section" id="configuration" aria-labelledby="config-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Configuration</p>
+          <h2 id="config-title" class="section__title" data-reveal>Ce qu'il faut pour prendre son poste</h2>
+          <div class="grid grid--config">
+            <div class="card" style="--rc: var(--px-rim)" data-reveal>
+              <p class="card__kicker">Navigateur</p>
+              <h3 class="card__title">WebGL 2 obligatoire</h3>
+              <ul class="ticks">
+                <li>Chrome, Edge, Firefox ou Safari récents.</li>
+                <li>Une carte graphique de moins de dix ans, intégrée suffit.</li>
+                <li>Mobile en paysage : Android milieu de gamme, iPhone récent.</li>
+                <li>Clavier et souris, manette ou écran tactile.</li>
+              </ul>
+            </div>
+            <div class="card" style="--rc: var(--px-hero)" data-reveal>
+              <p class="card__kicker">Qualité</p>
+              <h3 class="card__title">Bas, Moyen, Haut</h3>
+              <ul class="ticks">
+                <li>Choisie automatiquement au démarrage (Moyen sur écran tactile).</li>
+                <li>Forcée par l'adresse : <code>?q=bas</code>, <code>?q=moyen</code> ou <code>?q=haut</code>.</li>
+                <li>Dans le prototype : <kbd>F2</kbd> fait défiler les niveaux.</li>
+                <li><kbd>F3</kbd> affiche les mesures (images par seconde, appels de dessin).</li>
+              </ul>
+            </div>
+            <div class="card" style="--rc: var(--rar-hors-serie)" data-reveal>
+              <p class="card__kicker">Accessibilité</p>
+              <h3 class="card__title">Réduction des mouvements</h3>
+              <ul class="ticks">
+                <li>Suit le réglage de votre système (<em>prefers-reduced-motion</em>).</li>
+                <li>Bascule en jeu : <kbd>M</kbd> (prototype : <kbd>F4</kbd>), ou <code>?rm=1</code>.</li>
+                <li>Secousses réduites, plus aucun clignotement : la boule du Discosaure arrête de stroboscoper.</li>
+                <li>Les télégraphes restent lisibles par leurs contours et leurs remplissages.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ FAQ ═══ -->
+      <section class="section section--alt" id="faq" aria-labelledby="faq-title">
+        <div class="wrap wrap--narrow">
+          <p class="eyebrow" data-reveal>FAQ</p>
+          <h2 id="faq-title" class="section__title" data-reveal>Questions fréquentes</h2>
+          <div class="faq">
+            <details data-reveal>
+              <summary>Le jeu est-il gratuit ?</summary>
+              <p>Oui, dans le navigateur comme en application de bureau. Pas de publicité, pas d'achat intégré : Privatix n'a rien à vous vendre, contrairement à Privatix Rail Solutions.</p>
+            </details>
+            <details data-reveal>
+              <summary>Navigateur ou application de bureau ?</summary>
+              <p>C'est le même jeu. L'application embarque son propre moteur de rendu et peut forcer la carte graphique dédiée : utile sur un portable ou si votre navigateur bride WebGL. Le navigateur, lui, se met à jour tout seul.</p>
+            </details>
+            <details data-reveal>
+              <summary>Pourquoi trois versions jouables ?</summary>
+              <p>Le jeu passe de la 2D à la 3D temps réel. La <a class="link" href="./jouer/play3d.html">version 3D</a> est la version principale ; la <a class="link" href="./jouer/">version classique</a> en pixel art reste jouable jusqu'à la bascule complète ; le <a class="link" href="./3d/">prototype 3D</a> montre le Discosaure et le butin d'équipement en avant-première.</p>
+            </details>
+            <details data-reveal>
+              <summary>Ma progression est-elle sauvegardée ?</summary>
+              <p>Oui, sur votre appareil (stockage local du navigateur ou de l'application). Vider les données du site efface la sauvegarde.</p>
+            </details>
+            <details data-reveal>
+              <summary>Le jeu se moque-t-il des cheminots ou des voyageurs ?</summary>
+              <p>Jamais. La satire vise le management, le conseil et la logique de privatisation. Les cheminots sont drôles parce qu'ils sont lucides ; les voyageurs ont toujours raison d'être fatigués. La SNCB est le service public que l'on défend.</p>
+            </details>
+            <details data-reveal>
+              <summary>Mon antivirus ou mon système bloque l'application.</summary>
+              <p>Les applications ne sont pas signées : voyez l'encart de la section <a class="link" href="#telecharger">Télécharger</a> pour ouvrir le fichier sur Windows, macOS et Linux. En cas de doute, jouez dans le navigateur.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap site-footer__inner">
+        <a class="studio" href="https://studios.fs0ciety.org/" rel="noopener">
+          <img src="./src/assets/img/occ-mons-studios.webp" width="48" height="48" alt="" loading="lazy" decoding="async" />
+          <span>Développé par <strong>OCC MONS Studios</strong></span>
+        </a>
+        <p class="site-footer__meta">
+          © <span data-year>2026</span> OCC MONS Studios · Privatix est une œuvre de fiction satirique.
+          <br />Personnages, entreprises et répliques sont inventés, hors exceptions autorisées par le porteur du projet.
+        </p>
+        <ul class="site-footer__links" role="list">
+          <li><a class="link" href="./jouer/play3d.html">Jouer</a></li>
+          <li><a class="link" href="#telecharger">Télécharger</a></li>
+          <li><a class="link" href="https://github.com/fs0ciety7000/Privatix">Code source</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <dialog class="lightbox" data-lightbox-dialog aria-label="Capture en grand">
+      <form method="dialog"><button class="lightbox__close btn btn--secondary" aria-label="Fermer">✕</button></form>
+      <img alt="" data-lightbox-img />
+      <p class="lightbox__cap" data-lightbox-cap></p>
+    </dialog>
+  </body>
+</html>

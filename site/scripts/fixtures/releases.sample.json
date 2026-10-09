@@ -1,0 +1,108 @@
+[
+ {
+  "tag_name": "v0.1.0",
+  "name": "Privatix v0.1.0",
+  "body": "Applications de bureau Privatix v0.1.0 (Windows, macOS, Linux). Non signées : avertissement SmartScreen ou Gatekeeper au premier lancement.",
+  "html_url": "https://github.com/fs0ciety7000/Privatix/releases/tag/v0.1.0",
+  "published_at": "2026-10-09T15:08:11Z",
+  "draft": false,
+  "prerelease": false,
+  "assets": [
+   {
+    "name": "Privatix-0.1.0-linux-x86_64.AppImage",
+    "size": 125863593,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-linux-x86_64.AppImage"
+   },
+   {
+    "name": "Privatix-0.1.0-mac-arm64.dmg",
+    "size": 121290977,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-mac-arm64.dmg"
+   },
+   {
+    "name": "Privatix-0.1.0-mac-x64.dmg",
+    "size": 124993988,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-mac-x64.dmg"
+   },
+   {
+    "name": "Privatix-0.1.0-portable-x64.exe",
+    "size": 114886659,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-portable-x64.exe"
+   },
+   {
+    "name": "Privatix-0.1.0-setup-x64.exe",
+    "size": 115125798,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-setup-x64.exe"
+   },
+   {
+    "name": "Privatix-mac-arm64.dmg",
+    "size": 121290977,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-mac-arm64.dmg"
+   },
+   {
+    "name": "Privatix-mac-x64.dmg",
+    "size": 124993988,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-mac-x64.dmg"
+   },
+   {
+    "name": "Privatix-Portable.exe",
+    "size": 114886659,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-Portable.exe"
+   },
+   {
+    "name": "Privatix-Setup.exe",
+    "size": 115125798,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-Setup.exe"
+   },
+   {
+    "name": "Privatix.AppImage",
+    "size": 125863593,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix.AppImage"
+   }
+  ]
+ },
+ {
+  "tag_name": "v0.0.9",
+  "name": "",
+  "body": "## Nouveautés\n\n- **Première** version de test avec [notes](https://example.org).\n- Corrections.",
+  "html_url": "https://github.com/fs0ciety7000/Privatix/releases/tag/v0.0.9",
+  "published_at": "2026-09-01T10:00:00Z",
+  "draft": false,
+  "prerelease": true,
+  "assets": [
+   {
+    "name": "Privatix-Setup.exe",
+    "size": 100,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.0.9/Privatix-Setup.exe"
+   },
+   {
+    "name": "Privatix-0.0.9-setup-x64.exe.blockmap",
+    "size": 5,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.0.9/x.blockmap"
+   },
+   {
+    "name": "latest.yml",
+    "size": 5,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.0.9/latest.yml"
+   },
+   {
+    "name": "Privatix-0.0.9-arm64.dmg",
+    "size": 200,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.0.9/Privatix-0.0.9-arm64.dmg"
+   },
+   {
+    "name": "Privatix-0.0.9.AppImage",
+    "size": 300,
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.0.9/Privatix-0.0.9.AppImage"
+   }
+  ]
+ },
+ {
+  "tag_name": "v0.2.0",
+  "name": "brouillon",
+  "body": null,
+  "published_at": null,
+  "draft": true,
+  "prerelease": false,
+  "assets": []
+ }
+]

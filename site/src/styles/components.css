@@ -1,0 +1,338 @@
+/*
+ * Composants du design system (docs/DESIGN_SYSTEM.md § 3). Ils reprennent les gestes de l'UI du jeu :
+ * contour encré de 2 px, double liseré coloré, ombre portée dure, libellés en capitales espacées.
+ */
+
+/* ─── Bouton ─── */
+.btn {
+  --btn-bg: var(--px-panel);
+  --btn-fg: var(--px-text);
+  --btn-line: var(--px-rim);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 48px;
+  padding: var(--sp-3) var(--sp-5);
+  border: var(--bd);
+  outline: 2px solid var(--btn-line);
+  outline-offset: 0;
+  border-radius: var(--r-sm);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: 900 var(--fs-sm) / 1.15 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: var(--sh-drop);
+  cursor: pointer;
+  transition:
+    transform var(--dur-fast) var(--ease-coup),
+    box-shadow var(--dur-fast) var(--ease-ballast),
+    filter var(--dur-fast) linear;
+}
+.btn svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+.btn small {
+  display: block;
+  font: 600 var(--fs-2xs) / 1.2 var(--font-text);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.85;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.45), 0 0 18px color-mix(in srgb, var(--btn-line) 55%, transparent);
+}
+.btn:active {
+  transform: translateY(var(--press-y)) scale(0.98);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+}
+.btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+.btn[aria-disabled='true'],
+.btn:disabled {
+  opacity: var(--disabled-opacity);
+  filter: grayscale(0.6);
+  pointer-events: none;
+}
+
+/* Primaire : l'orange du héros, comme le bouton d'attaque tactile du jeu */
+.btn--primary {
+  --btn-bg: radial-gradient(circle at 35% 30%, var(--px-hero-hi), var(--px-hero) 55%, #b4400f);
+  --btn-fg: var(--px-ink);
+  --btn-line: var(--px-hero);
+  outline-offset: 2px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.btn--primary small {
+  color: #3a1606;
+  opacity: 1;
+}
+/* Secondaire : panneau sombre à liseré cyan, comme la puce de dash */
+.btn--secondary {
+  --btn-line: var(--px-rim);
+}
+.btn--lg {
+  min-height: 60px;
+  padding: var(--sp-3) var(--sp-6);
+  font-size: var(--fs-md);
+}
+
+/* Lien texte */
+.link {
+  color: var(--px-rim);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.link:hover {
+  text-shadow: var(--glow-cyan);
+}
+.link:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─── Carte (carte d'objet du jeu) ─── */
+.card {
+  --rc: var(--px-rim);
+  position: relative;
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  background: linear-gradient(180deg, var(--px-panel-top), var(--px-panel-bottom));
+  border: var(--bd);
+  outline: 2px solid color-mix(in srgb, var(--rc) 70%, transparent);
+  outline-offset: -6px;
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-card);
+  transition:
+    transform var(--dur-base) var(--ease-ballast),
+    box-shadow var(--dur-base) var(--ease-ballast);
+}
+.card--interactive:hover,
+.card--interactive:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--glow-box-rarity), var(--sh-card);
+}
+.card__kicker {
+  margin: 0;
+  color: var(--rc);
+  font: 900 var(--fs-2xs) / 1.3 var(--font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.card__title {
+  margin: var(--sp-1) 0 var(--sp-2);
+  color: var(--px-text);
+  font: 900 var(--fs-lg) / var(--lh-tight) var(--font-display);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--rc) 70%, transparent);
+}
+.card__body {
+  margin: 0;
+  color: var(--px-text-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+.card__flavor {
+  margin: var(--sp-3) 0 0;
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--px-line);
+  color: var(--px-text-mute);
+  font-size: var(--fs-xs);
+  font-style: italic;
+}
+.card__icon {
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  width: 40px;
+  height: 40px;
+  color: var(--rc);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--rc) 70%, transparent));
+}
+.card--enemy {
+  --rc: var(--px-enemy);
+}
+.card--boss {
+  --rc: var(--px-violet-hi);
+}
+
+/* ─── Badge de rareté ─── */
+.badge {
+  --rc: var(--px-text-mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px 3px 7px;
+  border: var(--bd);
+  border-left: 4px solid var(--rc);
+  border-radius: var(--r-sm);
+  background: var(--px-panel);
+  color: var(--rc);
+  font: 900 var(--fs-2xs) / 1.3 var(--font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rc) 40%, transparent);
+  white-space: nowrap;
+}
+.badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: var(--rc);
+  transform: rotate(45deg);
+}
+.badge--reforme {
+  --rc: var(--rar-reforme);
+}
+.badge--reglementaire {
+  --rc: var(--rar-reglementaire);
+}
+.badge--homologue {
+  --rc: var(--rar-homologue);
+}
+.badge--hors-serie {
+  --rc: var(--rar-hors-serie);
+}
+.badge--patrimoine {
+  --rc: var(--rar-patrimoine);
+}
+.badge--patrimoine::before {
+  box-shadow: 0 0 8px var(--rar-patrimoine);
+}
+/* Badges de rôle (bestiaire) */
+.badge--enemy {
+  --rc: var(--px-enemy);
+}
+.badge--elite {
+  --rc: var(--px-violet-hi);
+}
+.badge--boss {
+  --rc: var(--px-danger);
+}
+
+/* ─── Encart (callout), d'après l'emplacement d'équipement du HUD ─── */
+.callout {
+  --rc: var(--px-rim);
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--px-panel);
+  border: var(--bd);
+  border-left: 4px solid var(--rc);
+  border-radius: var(--r-sm);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rc) 40%, transparent), var(--sh-drop);
+  color: var(--px-text-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+.callout > svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  color: var(--rc);
+}
+.callout strong {
+  color: var(--px-text);
+}
+.callout p {
+  margin: 0;
+}
+.callout p + p {
+  margin-top: var(--sp-2);
+}
+.callout--warning {
+  --rc: var(--px-sodium);
+}
+.callout--info {
+  --rc: var(--px-rim);
+}
+
+/* ─── Touche ─── */
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 1px 6px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-bottom-width: 3px;
+  border-radius: var(--r-sm);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--px-text);
+  font: 800 var(--fs-2xs) / 1.5 var(--font-text);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ─── Jauge (HUD) ─── */
+.gauge {
+  --fill: 0.6;
+  position: relative;
+  height: 14px;
+  background: var(--px-track);
+  border: var(--bd);
+  border-radius: 3px;
+  overflow: hidden;
+  transform: var(--skew);
+}
+.gauge > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--fill) * 100%);
+}
+.gauge--energy {
+  outline: 2px solid var(--px-hero);
+}
+.gauge--energy > i {
+  background: linear-gradient(180deg, var(--px-hero-hi) 0%, var(--px-hero) 45%, var(--px-hero-lo) 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+.gauge--burnout {
+  outline: 2px solid #8a4fd8;
+}
+.gauge--burnout > i {
+  background: linear-gradient(90deg, #6d4cff, #c04cff 60%, var(--px-danger));
+}
+.gauge--mob {
+  outline: 2px solid var(--px-gold);
+}
+.gauge--mob > i {
+  background: linear-gradient(90deg, #b88a00, var(--px-gold));
+}
+.gauge-label {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--sp-2) 0 var(--sp-1);
+  color: var(--px-label);
+  font: 900 var(--fs-2xs) / 1.2 var(--font-display);
+  letter-spacing: var(--tracking-label);
+}
+.gauge-label span {
+  color: var(--px-text);
+  font-family: var(--font-text);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.pips {
+  display: flex;
+  gap: 5px;
+}
+.pips i {
+  width: 22px;
+  height: 7px;
+  background: #22304a;
+  border: 1.5px solid var(--px-ink);
+  transform: skewX(-20deg);
+}
+.pips i.on {
+  background: var(--px-rim);
+  box-shadow: var(--glow-box-cyan);
+}
