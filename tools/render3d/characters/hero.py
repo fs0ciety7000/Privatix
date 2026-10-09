@@ -11,7 +11,8 @@ SKIN, HELMET, VEST, STRIPE, CLOTH, BOOTS, STEEL, SCARF, EYES, SMEAR_CORE, SMEAR_
 
 
 def build() -> Character:
-    """Proportions trapues et lisibles (tête et mains généreuses, jambes courtes), à la Celeste / Dead Cells."""
+    """Proportions trapues et lisibles (tête et mains généreuses, jambes courtes), à la Celeste / Dead Cells ;
+    épaules larges et buste en V (silhouette héroïque à la Hades)."""
     b = Builder("hero")
     b.joint("pelvis", None, (0, 0, 0.62))
     b.joint("spine", "pelvis", (0, 0, 0.10))
@@ -19,7 +20,7 @@ def build() -> Character:
     b.joint("neck", "chest", (0, 0, 0.27))
     b.joint("head", "neck", (0, 0, 0.05))
     for side, sx in (("L", 1), ("R", -1)):
-        b.joint(f"shoulder_{side}", "chest", (0.29 * sx, 0, 0.17))
+        b.joint(f"shoulder_{side}", "chest", (0.33 * sx, 0, 0.17))
         b.joint(f"elbow_{side}", f"shoulder_{side}", (0, 0, -0.21))
         b.joint(f"hand_{side}", f"elbow_{side}", (0, 0, -0.19))
         b.joint(f"hip_{side}", "pelvis", (0.12 * sx, 0, -0.02))
@@ -39,13 +40,13 @@ def build() -> Character:
     b.box("hips", "pelvis", CLOTH, (0, 0, 0.0), (0.38, 0.24, 0.17), 0.07)
     # Torse : t-shirt sous un gilet orange haute visibilité, deux bandes fines
     b.box("belly", "spine", CLOTH, (0, 0, 0.03), (0.37, 0.25, 0.17), 0.08)
-    b.box("vest", "chest", VEST, (0, 0, 0.08), (0.5, 0.31, 0.36), 0.1)
-    b.box("stripe_lo", "chest", STRIPE, (0, 0, -0.01), (0.51, 0.32, 0.028), 0.01)
-    b.box("stripe_hi", "chest", STRIPE, (0, 0, 0.11), (0.51, 0.32, 0.028), 0.01)
+    b.box("vest", "chest", VEST, (0, 0, 0.08), (0.58, 0.33, 0.37), 0.1)
+    b.box("stripe_lo", "chest", STRIPE, (0, 0, -0.01), (0.59, 0.34, 0.028), 0.01)
+    b.box("stripe_hi", "chest", STRIPE, (0, 0, 0.11), (0.59, 0.34, 0.028), 0.01)
     # Bras (manches) et grosses mains gantées
     for side in ("L", "R"):
-        b.sphere(f"shoulderpad_{side}", f"shoulder_{side}", VEST, (0, 0, -0.01), (0.12, 0.12, 0.11), 12)
-        b.capsule(f"upperarm_{side}", f"shoulder_{side}", CLOTH, (0, 0, -0.02), (0, 0, -0.21), 0.082, 0.075)
+        b.sphere(f"shoulderpad_{side}", f"shoulder_{side}", VEST, (0, 0, -0.01), (0.14, 0.14, 0.125), 12)
+        b.capsule(f"upperarm_{side}", f"shoulder_{side}", CLOTH, (0, 0, -0.02), (0, 0, -0.21), 0.09, 0.08)
         b.capsule(f"forearm_{side}", f"elbow_{side}", CLOTH, (0, 0, 0), (0, 0, -0.16), 0.074, 0.07)
         b.sphere(f"hand_{side}", f"hand_{side}", BOOTS, (0, 0, -0.03), (0.085, 0.085, 0.09), 10)
     # Tête : visage bien visible sous un casque relevé
@@ -316,13 +317,22 @@ def hurt(i: int, n: int) -> Pose:
 
 
 def death(i: int, n: int) -> Pose:
+    """Touché, tombe à genoux, bascule et s'effondre sur le dos en travers (lisible en vue de dessus),
+    petit rebond ; l'écharpe retombe après le corps."""
+    hit = merge(base(0), {"spine": (24, 0, 8), "head": (22, 0, -10), "shoulder_L": (30, 0, -50), "shoulder_R": (30, 0, 50), "knee_L": (20, 0, 0), "scarf0": (-80, 0, 0)}, root=(0, 0.05, -0.02))
     kneel = merge(
         base(0),
-        {"spine": (-30, 0, 0), "head": (30, 0, 0), "hip_L": (-80, 0, 0), "hip_R": (-10, 0, 0), "knee_L": (90, 0, 0), "knee_R": (120, 0, 0), "shoulder_L": (-10, 0, -10), "shoulder_R": (-10, 0, 10), "hand_R": (0, 0, 0)},
-        root=(0, 0, -0.3),
+        {"spine": (18, 0, -6), "head": (20, 0, 6), "hip_L": (-20, 0, 0), "hip_R": (-14, 0, 0), "knee_L": (100, 0, 0), "knee_R": (96, 0, 0), "foot_L": (-40, 0, 0), "foot_R": (-40, 0, 0), "shoulder_L": (-10, 0, -10), "shoulder_R": (-10, 0, 10), "hand_R": (0, 0, 0), "scarf0": (-40, 0, 0)},
+        root=(0, 0.03, -0.3),
     )
-    down = merge(kneel, {"spine": (-75, 0, 0), "head": (20, 0, 0), "shoulder_L": (-150, 0, -20), "shoulder_R": (-150, 0, 20)}, root=(0, -0.3, -0.55))
-    return _keyed([(0, base(0)), (3, kneel), (7, down), (n - 1, down)], i)
+    tip = merge(kneel, {"pelvis": (-46, 0, -38), "spine": (-12, 0, 0), "head": (-14, 0, 0), "hip_L": (-70, 0, 0), "hip_R": (-60, 0, 0), "knee_L": (100, 0, 0), "knee_R": (90, 0, 0), "shoulder_L": (-60, 0, -50), "shoulder_R": (-40, 0, 40), "scarf0": (-80, 0, 0), "scarf1": (-20, 0, 0)}, root=(0.04, 0.05, -0.42))
+    lie = merge(
+        base(0),
+        {"pelvis": (-86, 0, -72), "spine": (-4, 0, 0), "head": (6, 0, 14), "hip_L": (-16, 0, -8), "hip_R": (-4, 0, 6), "knee_L": (26, 0, 0), "knee_R": (8, 0, 0), "foot_L": (20, 0, 0), "foot_R": (10, 0, 0), "shoulder_L": (-150, 0, -30), "elbow_L": (-20, 0, 0), "shoulder_R": (-20, 0, 40), "hand_R": (0, 0, 0), "scarf0": (-10, 0, 0), "scarf1": (10, 0, 0), "scarf2": (10, 0, 0), "scarf3": (10, 0, 0)},
+        root=(0.1, 0.05, -0.49),
+    )
+    bounce = merge(lie, {"pelvis": (-80, 0, -72), "head": (-4, 0, 14), "knee_L": (36, 0, 0), "shoulder_L": (-130, 0, -30), "scarf0": (-50, 0, 0), "scarf1": (-20, 0, 0)}, root=(0.1, 0.05, -0.45))
+    return _keyed([(0, hit), (3, kneel), (5, tip), (7, lie), (8, bounce), (9, lie), (n - 1, lie)], i)
 
 
 def spawn(i: int, n: int) -> Pose:
@@ -352,7 +362,7 @@ ANIMS = {
 }
 
 ENTITY = "player"
-FRAME = 72
-PIVOT = (36, 64)
+FRAME = 80
+PIVOT = (40, 66)
 PX_PER_UNIT = 30.0
 CATEGORY = "player"

@@ -39,12 +39,12 @@ export class MainMenuScene extends Phaser.Scene {
     }
     const hero = this.add
       .sprite(GAME_WIDTH / 2 - 120, GAME_HEIGHT - 82, sheetOf('player-idle-side'))
-      .setScale(3)
+      .setScale(1.25)
       .setOrigin(...originOf('player-idle-side'));
     if (this.anims.exists('player-idle-side')) hero.play('player-idle-side');
     const foe = this.add
       .sprite(GAME_WIDTH / 2 + 130, GAME_HEIGHT - 82, sheetOf('consultant-idle-side'))
-      .setScale(3)
+      .setScale(1.25)
       .setOrigin(...originOf('consultant-idle-side'))
       .setFlipX(true);
     if (this.anims.exists('consultant-idle-side')) foe.play('consultant-idle-side');
@@ -139,7 +139,7 @@ export class MainMenuScene extends Phaser.Scene {
       'R : boire un Gobelet · E : interagir · Échap : pause · Tactile : joystick à gauche, boutons à droite',
     ];
     this.add
-      .text(GAME_WIDTH / 2, 196, help.join('\n'), {
+      .text(GAME_WIDTH / 2, 172, help.join('\n'), {
         ...style,
         color: Css.ballast,
         align: 'center',

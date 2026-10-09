@@ -109,6 +109,7 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.body.setCollideWorldBounds(false);
     this.shadow = world.stage.add
       .image(x, y, frameSize >= 96 ? 'shadow_xl' : frameSize >= 48 ? 'shadow_l' : 'shadow_s')
+      .setScale(frameSize >= 160 ? 1.8 : 1)
       .setAlpha(0.5)
       .setDepth(Depth.Shadow);
 
@@ -482,7 +483,7 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
           e.kbLeft = 0;
           e.onDeath();
           e.playAnim(e.deathAnim(), true);
-          e.world.feel.papersAt(e.x, e.y - 10, 12);
+          e.world.feel.papersAt(e.x, e.y - 18, 12);
           e.world.vfx('vfx-poof', e.x, e.y - 8, { depth: e.y + 1 });
           e.world.onEnemyKilled(e);
           e.scene.tweens.add({

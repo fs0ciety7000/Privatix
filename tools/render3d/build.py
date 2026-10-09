@@ -117,41 +117,42 @@ def render_entity(mod, only_anims: list[str] | None, only_dirs: list[str] | None
     return entries
 
 
-def contact_sheet(entries: list[dict], out: str, scale: int = 3) -> None:
-    rows = [Image.open(os.path.join(PUBLIC, e["file"])) for e in entries]
-    w = max(r.width for r in rows) * scale
-    h = sum(r.height for r in rows) * scale
+def _sheet(strips: list[tuple[Image.Image, int]], out: str, max_w: int = 2560, small_scale: int = 3) -> None:
+    """Planche lisible : ×`small_scale` pour les petits cadres, ×1 au-delà de 112 px ; les bandes trop
+    longues reviennent à la ligne ; damier discret pour distinguer les frames."""
+    rows = []
+    for im, fw in strips:
+        sc = small_scale if fw <= 112 else 1
+        per = max(1, max_w // (fw * sc))
+        n = im.width // fw
+        for s0 in range(0, n, per):
+            part = im.crop((s0 * fw, 0, min(n, s0 + per) * fw, im.height))
+            rows.append((part.resize((part.width * sc, part.height * sc), Image.NEAREST), fw * sc))
+    gap = 2
+    w = max(r.width for r, _ in rows)
+    h = sum(r.height + gap for r, _ in rows)
     sheet = Image.new("RGBA", (w, h), (40, 46, 70, 255))
     y = 0
-    for r in rows:
-        big = r.resize((r.width * scale, r.height * scale), Image.NEAREST)
-        sheet.alpha_composite(big, (0, y))
-        y += big.height
+    for r, fw in rows:
+        for k in range(r.width // fw):
+            if k % 2:
+                sheet.paste((46, 53, 80, 255), (k * fw, y, (k + 1) * fw, y + r.height))
+        sheet.alpha_composite(r, (0, y))
+        y += r.height + gap
     sheet.save(out)
 
 
+def contact_sheet(entries: list[dict], out: str, scale: int = 3) -> None:
+    _sheet([(Image.open(os.path.join(PUBLIC, e["file"])), e["frameWidth"]) for e in entries], out, small_scale=scale)
+
+
 def recap_sheet(out: str, categories: tuple[str, ...] = ("enemies", "bosses", "npcs", "player"), scale: int = 2) -> None:
-    """Planche récapitulative de toutes les bandes render3d du manifeste (une ligne par animation)."""
+    """Planche récapitulative de toutes les bandes render3d du manifeste (regroupées par catégorie)."""
     with open(MANIFEST) as f:
         anims = [a for a in json.load(f)["animations"] if a["file"].split("/")[2] in categories]
     order = {c: i for i, c in enumerate(categories)}
     anims.sort(key=lambda a: (order[a["file"].split("/")[2]], a["anim"]))
-    rows = [Image.open(os.path.join(PUBLIC, a["file"])) for a in anims]
-    gap = 2
-    w = max(r.width for r in rows) * scale
-    h = sum(r.height * scale + gap for r in rows)
-    sheet = Image.new("RGBA", (w, h), (40, 46, 70, 255))
-    y = 0
-    for r, a in zip(rows, anims):
-        big = r.resize((r.width * scale, r.height * scale), Image.NEAREST)
-        # Damier discret par frame pour lire les cadres.
-        fw = a["frameWidth"] * scale
-        for k in range(a["frames"]):
-            if k % 2:
-                sheet.paste((46, 53, 80, 255), (k * fw, y, (k + 1) * fw, y + big.height))
-        sheet.alpha_composite(big, (0, y))
-        y += big.height + gap
-    sheet.save(out)
+    _sheet([(Image.open(os.path.join(PUBLIC, a["file"])), a["frameWidth"]) for a in anims], out, small_scale=scale)
 
 
 def main() -> None:

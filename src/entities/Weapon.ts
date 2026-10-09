@@ -92,7 +92,7 @@ export class Weapon {
         )
         .slice(0, mods.chainTargets);
       for (const e of others) {
-        this.world.feel.sparksAt(e.x, e.y - 10, 4);
+        this.world.feel.sparksAt(e.x, e.y - 18, 4);
         const r = e.takeHit({
           amount: Math.round(mods.chainDamage),
           crit: false,

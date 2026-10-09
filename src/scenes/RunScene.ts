@@ -228,8 +228,8 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
   public onEnemyDamaged(enemy: Enemy, amount: number, crit: boolean): void {
     this.run.mobilisation.onDamageDealt(amount);
     this.feel.damageNumber(enemy.x, enemy.y - enemy.height * 0.6, amount, { crit });
-    this.feel.sparksAt(enemy.x, enemy.y - 10, crit ? 8 : 4);
-    this.vfx('vfx-hit', enemy.x, enemy.y - 12, { scale: crit ? 1.5 : 1 });
+    this.feel.sparksAt(enemy.x, enemy.y - 18, crit ? 8 : 4);
+    this.vfx('vfx-hit', enemy.x, enemy.y - 18, { scale: crit ? 1.5 : 1 });
   }
 
   public onEnemyKilled(enemy: Enemy): void {
@@ -243,7 +243,7 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
     const tickets = Math.round(enemy.stats.tickets * (this.shiftId === 'apres-midi' ? 1.2 : 1));
     run.tickets += tickets;
     if (enemy.kind !== 'auditeur')
-      this.feel.floatText(enemy.x, enemy.y - 20, `+${String(tickets)} tickets`, Css.danger, 700);
+      this.feel.floatText(enemy.x, enemy.y - 40, `+${String(tickets)} tickets`, Css.danger, 700);
     const grainChance = elite ? REWARDS.GRAIN_ELITE_CHANCE : REWARDS.GRAIN_KILL_CHANCE;
     if (this.rng() < grainChance) this.dropPickup(enemy.x, enemy.y, 'grains', 1, false);
     this.feel.shake(2, 100);
@@ -508,26 +508,26 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
       case 'gobelet':
         if (run.gobelets < COFFEE.MAX) {
           run.gobelets += 1;
-          feel.floatText(p.x, p.y - 16, '+1 Gobelet', Css.quaiYellow);
+          feel.floatText(p.x, p.y - 40, '+1 Gobelet', Css.quaiYellow);
         } else {
           heal(run, Math.round(maxEnergy(run) * REWARDS.COFFEE_OVERFLOW_HEAL));
-          feel.floatText(p.x, p.y - 16, 'Stock plein : soin 25 %', Css.quaiYellow);
+          feel.floatText(p.x, p.y - 40, 'Stock plein : soin 25 %', Css.quaiYellow);
         }
         break;
       case 'tickets':
         run.tickets += p.amount;
-        feel.floatText(p.x, p.y - 16, `+${String(p.amount)} Tickets`, Css.danger);
+        feel.floatText(p.x, p.y - 40, `+${String(p.amount)} Tickets`, Css.danger);
         break;
       case 'ps': {
         const ps = earnPs(run, p.amount);
-        feel.floatText(p.x, p.y - 16, `+${String(ps)} PS`, Css.hero);
+        feel.floatText(p.x, p.y - 40, `+${String(ps)} PS`, Css.hero);
         break;
       }
       case 'grains':
         run.grainsEarned += p.amount;
         feel.floatText(
           p.x,
-          p.y - 16,
+          p.y - 40,
           `+${String(p.amount)} Grain${p.amount > 1 ? 's' : ''}`,
           Css.quaiYellow,
         );
@@ -614,7 +614,7 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
         if (locker) {
           run.grainsEarned += 3;
           run.tickets += 30;
-          this.feel.floatText(at.x, at.y - 20, '+3 Grains · +30 Tickets', Css.quaiYellow, 1200);
+          this.feel.floatText(at.x, at.y - 40, '+3 Grains · +30 Tickets', Css.quaiYellow, 1200);
           this.clearRoom(false);
           return;
         }
@@ -674,12 +674,12 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
         `${item.label} — ${String(item.price)} Tickets`,
         () => {
           if (this.run.tickets < item.price) {
-            this.feel.floatText(at.x, at.y - 20, 'Pas assez de Tickets', Css.danger, 900);
+            this.feel.floatText(at.x, at.y - 40, 'Pas assez de Tickets', Css.danger, 900);
             it.used = false;
             return;
           }
           this.run.tickets -= item.price;
-          this.feel.floatText(at.x, at.y - 20, 'Merci chef !', Css.quaiYellow, 900);
+          this.feel.floatText(at.x, at.y - 40, 'Merci chef !', Css.quaiYellow, 900);
           item.buy();
         },
       );
@@ -928,7 +928,7 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
       shown = true;
       this.prompt
         .setText(`[E] ${it.label}`)
-        .setPosition(it.x, it.y - 22)
+        .setPosition(it.x, it.y - 44)
         .setVisible(true);
       if (interactPressed) {
         it.used = true;

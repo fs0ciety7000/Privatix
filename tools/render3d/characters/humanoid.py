@@ -145,3 +145,38 @@ def arm_ik(body: Body, side: str, target: tuple[float, float, float], swivel: fl
         f"shoulder_{side}": (math.degrees(e.x), math.degrees(e.y), math.degrees(e.z)),
         f"elbow_{side}": (-math.degrees(beta), 0.0, 0.0),
     }
+
+
+def hold_prop(body: Body, joint: str, grip: tuple[float, float, float], rot: tuple[float, float, float], half_width: float, hands: str = "LR", swivel: float = 10.0, up_off: float = 0.03) -> tuple[dict, dict]:
+    """Objet tenu (articulation `joint` enfant de chest, prise à l'origine, largeur le long de X local) :
+    renvoie (rotations, décalages) avec les mains posées de part et d'autre de la prise par IK."""
+    from mathutils import Euler, Vector
+
+    e = Euler(tuple(math.radians(v) for v in rot), "XYZ").to_matrix()
+    wax = e @ Vector((1, 0, 0))
+    up = e @ Vector((0, 0, 1))
+    g = Vector(grip)
+    rots = {joint: tuple(rot)}
+    if "R" in hands:
+        rots.update(arm_ik(body, "R", tuple(g - wax * (half_width if "L" in hands else 0.0) + up * up_off), swivel))
+    if "L" in hands:
+        rots.update(arm_ik(body, "L", tuple(g + wax * (half_width if "R" in hands else 0.0) + up * up_off), swivel))
+    return rots, {joint: tuple(grip)}
+
+
+def point_hand(rots: dict, side: str, direction: tuple[float, float, float], twist: float = 0.0) -> dict:
+    """Rotation de la main `side` pour que son axe -Z (objet tenu) pointe vers `direction` (repère du
+    buste), compte tenu des rotations d'épaule et de coude déjà dans `rots`."""
+    from mathutils import Euler, Quaternion, Vector
+
+    def m(name):
+        r = rots.get(name, (0, 0, 0))
+        return Euler(tuple(math.radians(v) for v in r), "XYZ").to_matrix()
+
+    total = m(f"shoulder_{side}") @ m(f"elbow_{side}")
+    local = total.transposed() @ Vector(direction).normalized()
+    q = Vector((0, 0, -1)).rotation_difference(local)
+    if twist:
+        q = Quaternion(local, math.radians(twist)) @ q
+    e = q.to_euler("XYZ")
+    return {f"hand_{side}": (math.degrees(e.x), math.degrees(e.y), math.degrees(e.z))}

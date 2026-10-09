@@ -2,11 +2,13 @@
 
 Chaque matière du modèle 3D porte un identifiant ; post.py remplace la lumière rendue par un ton
 de sa rampe. C'est ce qui donne le rendu « Celeste » : peu de tons, très maîtrisés, saturés.
+Contraste « Hades » : le ton le plus sombre est très profond (bleu nuit / violet presque noir, jamais
+#000), il sert aussi d'encre aux lignes intérieures ; les lumières sont franches et saturées.
 """
 from __future__ import annotations
 
 OUTLINE = "#14101a"
-RIM = "#7ef0ff"
+RIM = "#6ff3ff"
 
 
 def _hex(c: str) -> tuple[int, int, int]:
@@ -16,52 +18,53 @@ def _hex(c: str) -> tuple[int, int, int]:
 
 # id → (nom, rampe du plus sombre au plus clair, émissif ?, liseré ?)
 MATERIALS: dict[int, tuple[str, list[str], bool, bool]] = {
-    1: ("peau", ["#4a2330", "#86443e", "#c4735a", "#e89c78", "#f6c49e"], False, True),
-    2: ("casque", ["#4b2a1a", "#9c5c12", "#e0a10c", "#ffd200", "#fff3a6"], False, True),
-    3: ("gilet", ["#3e1424", "#8f2e1c", "#d4501a", "#ff7a1a", "#ff9e3d"], False, True),
-    4: ("bande", ["#5f6f8c", "#b9c9dc", "#f4f8ff", "#ffffff"], False, False),
-    5: ("tenue", ["#0e1229", "#18213f", "#253563", "#38508c", "#5d7cba"], False, True),
-    6: ("bottes", ["#0d0a10", "#221a22", "#3d3238", "#5f5050"], False, True),
-    7: ("acier", ["#161a2b", "#323a55", "#5f6b8a", "#9eabc3", "#e5edf8"], False, True),
-    8: ("écharpe", ["#2e0b1f", "#6c1230", "#b8223b", "#eb4646", "#ff8f7d"], False, True),
+    1: ("peau", ["#1e0f22", "#6b2f3c", "#b85e4e", "#eb9a72", "#ffd0a6"], False, True),
+    2: ("casque", ["#261222", "#8a4a12", "#e09a0c", "#ffd400", "#fff6b0"], False, True),
+    3: ("gilet", ["#240c1e", "#8a2618", "#d9481a", "#ff7a1a", "#ffb04a"], False, True),
+    4: ("bande", ["#3d4868", "#b9c9dc", "#f4f8ff", "#ffffff"], False, False),
+    5: ("tenue", ["#090a1a", "#141c3c", "#223467", "#3a56a0", "#6c8fd6"], False, True),
+    6: ("bottes", ["#08060c", "#1c1420", "#3a2c38", "#62505a"], False, True),
+    7: ("acier", ["#0c0e1e", "#2a3352", "#5a6890", "#a2b2d0", "#f0f6ff"], False, True),
+    8: ("écharpe", ["#1c0716", "#62102e", "#b81e3a", "#f2443f", "#ff9a80"], False, True),
     9: ("yeux", ["#14101a"], False, False),
     10: ("smear-cœur", ["#fffbe8"], True, False),
     11: ("smear-bord", ["#ffd08a"], True, False),
-    12: ("cheveux", ["#1a1018", "#3b2420", "#5e3a2a", "#80543a"], False, True),
+    12: ("cheveux", ["#0e0810", "#2e1a1c", "#5a3626", "#8a5a3a"], False, True),
     # Ennemis (Privatix : turquoise de lecture #19C3B1).
-    20: ("costume", ["#0a1a24", "#0f3340", "#16575e", "#19c3b1", "#7af0dc"], False, True),
-    21: ("chemise", ["#3a4660", "#8a98b5", "#d6deea", "#ffffff"], False, False),
-    22: ("cravate", ["#3a0828", "#8f1252", "#ff3ea5", "#ff9ad0"], False, False),
+    20: ("costume", ["#061220", "#0b3044", "#11636a", "#19c3b1", "#8affe6"], False, True),
+    21: ("chemise", ["#2c3452", "#8a98b5", "#dfe6f2", "#ffffff"], False, False),
+    22: ("cravate", ["#240420", "#8a0f52", "#ff3ea5", "#ffa6d6"], False, False),
     23: ("écran", ["#ff3ea5"], True, False),
     24: ("écran-repos", ["#19c3b1"], True, False),
-    25: ("plastique", ["#141a2c", "#2a3550", "#4a5a7c", "#7d8eb0", "#c3cfe4"], False, True),
-    26: ("baskets", ["#6a7488", "#c9d1de", "#ffffff"], False, True),
+    25: ("plastique", ["#0b0f1e", "#222c48", "#45567c", "#7f92b8", "#cfdcf0"], False, True),
+    26: ("baskets", ["#2e3048", "#8a94ac", "#dfe6f0", "#ffffff"], False, True),
     # Télégraphes / coups ennemis (magenta émissif) et effets
     27: ("smear-magenta", ["#ff3ea5"], True, False),
     28: ("smear-magenta-cœur", ["#ffd3ec"], True, False),
     29: ("écran-jaune", ["#ffd84a"], True, False),
-    30: ("ticket", ["#5a5470", "#b7b0c4", "#efe8dc", "#fffdf4"], False, False),
-    31: ("tôle-borne", ["#0b1620", "#123a44", "#1b6b6e", "#2fa79b", "#8ff2df"], False, True),
+    30: ("ticket", ["#3a3450", "#b7b0c4", "#efe8dc", "#fffdf4"], False, False),
+    31: ("tôle-borne", ["#06121c", "#0e3440", "#17686c", "#29a898", "#93f5e0"], False, True),
     32: ("étincelle", ["#fff1a0"], True, False),
-    33: ("verre", ["#07080f", "#141b33", "#28396a", "#5677b8", "#a9c8ff"], False, False),
-    34: ("rouge-barrière", ["#2a0812", "#6e1020", "#c2202e", "#ff4a4a", "#ff9a8a"], False, True),
+    33: ("verre", ["#05060e", "#121a34", "#26396e", "#5677c0", "#b0d0ff"], False, False),
+    34: ("rouge-barrière", ["#1c0614", "#6a0e22", "#c81e30", "#ff4a4a", "#ffa292"], False, True),
     35: ("écran-rouge", ["#ff3b3b"], True, False),
-    36: ("costume-foncé", ["#071219", "#0b2830", "#11474d", "#16867c", "#4fd6c3"], False, True),
+    36: ("costume-foncé", ["#040b14", "#082430", "#0f4a50", "#168a7e", "#55dcc6"], False, True),
     37: ("led-turquoise", ["#5ff7e4"], True, False),
-    38: ("or", ["#3a1e0a", "#8a5012", "#d39a1e", "#ffd75a", "#fff2b0"], False, True),
+    38: ("or", ["#24100e", "#7a4210", "#d0961c", "#ffd65a", "#fff4b8"], False, True),
     39: ("fiole", ["#6dffb0"], True, False),
-    40: ("cheveux-blancs", ["#4e5266", "#9aa0b2", "#d9dde6", "#ffffff"], False, True),
-    41: ("peau-foncée", ["#22100f", "#4a261f", "#764330", "#a46648", "#c98c66"], False, True),
-    42: ("peau-mate", ["#3a1c20", "#6c382e", "#a5634a", "#cf8b65", "#ebb38a"], False, True),
-    43: ("vert-prévention", ["#0a2214", "#145c2c", "#22a046", "#5fd46a", "#b8f59a"], False, True),
-    44: ("bleu-régulation", ["#0c1640", "#1a3088", "#2f5bd0", "#5b8def", "#a9c8ff"], False, True),
-    45: ("jaune-hv", ["#33300a", "#7f7a10", "#cfd31a", "#efff3c", "#fbffb0"], False, True),
-    46: ("violet", ["#1e0c30", "#45186a", "#7a2eb0", "#a95ae0", "#d9a6ff"], False, True),
-    47: ("marron", ["#1e0e08", "#4a2614", "#7e4824", "#b0723c", "#dca46a"], False, True),
-    48: ("beige", ["#2c2018", "#5e4a36", "#98805c", "#c8b088", "#efe0be"], False, True),
-    49: ("gris-manteau", ["#141820", "#2a3240", "#4a5668", "#76869a", "#b4c2d0"], False, True),
-    50: ("caoutchouc", ["#0c0a10", "#1f1a24", "#37303e", "#57505e"], False, True),
-    51: ("chaussettes", ["#2a2236", "#5a4c6e", "#8c7ca6"], False, False),
+    40: ("cheveux-blancs", ["#2e3048", "#8a90a8", "#d4d9e4", "#ffffff"], False, True),
+    41: ("peau-foncée", ["#1a0d18", "#55291f", "#8a5034", "#b8774f", "#dca274"], False, True),
+    42: ("peau-mate", ["#1c0e1c", "#5e2e2c", "#a0604a", "#d48c64", "#f2bc90"], False, True),
+    43: ("vert-prévention", ["#06141a", "#0f4c2a", "#1e9a44", "#5ad868", "#c0ff9e"], False, True),
+    44: ("bleu-régulation", ["#080c2a", "#162a80", "#2c58d0", "#5c90f4", "#b0d0ff"], False, True),
+    45: ("jaune-hv", ["#1e1c10", "#6e6a10", "#c8cc18", "#f0ff3c", "#fcffb8"], False, True),
+    46: ("violet", ["#12081e", "#3e1462", "#7a2cb4", "#ac5ce6", "#e0b0ff"], False, True),
+    47: ("marron", ["#140a0c", "#401e14", "#7c4424", "#b4743c", "#e6ae72"], False, True),
+    48: ("beige", ["#1a1218", "#56402e", "#98805a", "#ceb488", "#f6e8c4"], False, True),
+    49: ("gris-manteau", ["#0c0e18", "#262e40", "#4a5670", "#7a8ca4", "#bccbdc"], False, True),
+    50: ("caoutchouc", ["#060509", "#1c1622", "#38303e", "#5a5262"], False, True),
+    52: ("coque-laptop", ["#0a0c1a", "#1a2140", "#2e3a60", "#4c5c88", "#7a8cb8"], False, True),
+    51: ("chaussettes", ["#1a1426", "#5a4c6e", "#8c7ca6"], False, False),
 }
 
 

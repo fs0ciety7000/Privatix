@@ -261,7 +261,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.shieldReadyAt = this.world.now() + run.mods.shieldEveryMs;
       this.iframesUntil = this.world.now() + 300;
       feel.floatText(this.x, this.y - 40, 'PAUSE LÉGALE', Css.white, 900);
-      feel.sparksAt(this.x, this.y - 12, 8);
+      feel.sparksAt(this.x, this.y - 18, 8);
       return false;
     }
     const takenBonus = run.burnout.tier.damageTaken + (this.isMarked ? this.markBonus : 0);
@@ -274,7 +274,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     feel.shake(4, 180);
     feel.vignettePulse(0.3, 250);
     feel.flash(this, 60);
-    feel.damageNumber(this.x, this.y - 30, amount, { hero: true });
+    feel.damageNumber(this.x, this.y - 48, amount, { hero: true });
     this.iframesUntil = this.world.now() + HERO.IFRAMES_AFTER_HIT_MS;
 
     if (run.energy <= 0) {
@@ -306,7 +306,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     run.delayMinutes += 10;
     this.world.feel.slowmo(DASH.PERFECT_TIMESCALE, DASH.PERFECT_SLOWMO_MS, 80);
     this.world.feel.floatText(this.x, this.y - 40, '+15 min', Css.quaiYellow, 900);
-    this.world.feel.sparksAt(this.x, this.y - 12, 6);
+    this.world.feel.sparksAt(this.x, this.y - 18, 6);
   }
 
   // ─── Boucle ────────────────────────────────────────────────────────────────
@@ -658,7 +658,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (report.targets > 0) {
       for (const e of this.world.livingEnemies()) {
         if (Math.hypot(e.x - this.x, e.y - this.y) <= radius + 8)
-          feel.floatText(e.x, e.y - 34, 'EN GRÈVE', Css.white, 900);
+          feel.floatText(e.x, e.y - 50, 'EN GRÈVE', Css.white, 900);
       }
     }
   }

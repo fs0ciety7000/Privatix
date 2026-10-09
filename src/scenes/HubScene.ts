@@ -39,6 +39,9 @@ interface Npc {
 }
 
 /** Répliques des PNJ (docs/LORE.md § 4) : générique, après une mort, après une victoire. */
+/** Hauteur visible d'un PNJ au-dessus de ses pieds (rendu 3D, ~1,6 m à 30 px/m) : place nom et invite. */
+const NPC_HEAD_PX = 50;
+
 const LINES: Readonly<
   Record<keyof typeof NPCS, { generic: readonly string[]; death: string; victory: string }>
 > = {
@@ -172,11 +175,12 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
         .setDepth(m.y + 8);
       if (this.anims.exists(key)) sprite.play({ key, startFrame: Math.floor(Math.random() * 4) });
       this.add
-        .image(m.x, m.y + 8, 'shadow_s')
+        .image(m.x, m.y + 8, 'shadow_l')
+        .setScale(0.7)
         .setAlpha(0.5)
         .setDepth(Depth.Shadow);
       this.add
-        .text(m.x, m.y - 22, npc.name, {
+        .text(m.x, m.y + 8 - NPC_HEAD_PX, npc.name, {
           fontFamily: FONT,
           fontSize: '8px',
           color: Css.white,
@@ -257,8 +261,8 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
 
   public onEnemyDamaged(enemy: Enemy, amount: number, crit: boolean): void {
     this.feel.damageNumber(enemy.x, enemy.y - 20, amount, { crit });
-    this.feel.sparksAt(enemy.x, enemy.y - 10, crit ? 8 : 4);
-    this.vfx('vfx-hit', enemy.x, enemy.y - 12);
+    this.feel.sparksAt(enemy.x, enemy.y - 18, crit ? 8 : 4);
+    this.vfx('vfx-hit', enemy.x, enemy.y - 18);
   }
 
   public onEnemyKilled(): void {
@@ -464,7 +468,7 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
             : 'Parler';
       this.prompt
         .setText(`[E] ${verb}`)
-        .setPosition(npc.x, npc.y - 30)
+        .setPosition(npc.x, npc.y + 8 - NPC_HEAD_PX - 10)
         .setVisible(true);
       if (input.interact) this.talk(npc);
       break;

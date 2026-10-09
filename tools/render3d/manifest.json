@@ -1,12 +1,1962 @@
 {
  "animations": [
   {
+   "file": "assets/sprites/bosses/auditeur_attack-barrage_strip8.png",
+   "texture": "auditeur_attack-barrage_strip8",
+   "anim": "auditeur-attack-barrage",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 8,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [
+    2,
+    6
+   ],
+   "events": {
+    "shoot": [
+     2,
+     6
+    ],
+    "projectile": "proj-ticket"
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_attack-barrage_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_attack-stamp_strip14.png",
+   "texture": "auditeur_attack-stamp_strip14",
+   "anim": "auditeur-attack-stamp",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 14,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    40,
+    60,
+    100,
+    100,
+    100,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [
+    8
+   ],
+   "events": {
+    "telegraph": "vfx_telegraph-96",
+    "vfx": {
+     "8": "vfx_dust-land"
+    }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_attack-stamp_strip14_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_attack-sweep_strip12.png",
+   "texture": "auditeur_attack-sweep_strip12",
+   "anim": "auditeur-attack-sweep",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    40,
+    40,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [
+    5,
+    6
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_attack-sweep_strip12_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_death_strip20.png",
+   "texture": "auditeur_death_strip20",
+   "anim": "auditeur-death",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 20,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    400
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "19": "vfx_explosion-big"
+    }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_death_strip20_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_hurt_strip2.png",
+   "texture": "auditeur_hurt_strip2",
+   "anim": "auditeur-hurt",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 2,
+   "durations": [
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/bosses/auditeur_hurt_strip2_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_idle_strip6.png",
+   "texture": "auditeur_idle_strip6",
+   "anim": "auditeur-idle",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 6,
+   "durations": [
+    120,
+    120,
+    120,
+    120,
+    120,
+    120
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/bosses/auditeur_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_idle-p2_strip6.png",
+   "texture": "auditeur_idle-p2_strip6",
+   "anim": "auditeur-idle-p2",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/bosses/auditeur_idle-p2_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_intro_strip14.png",
+   "texture": "auditeur_intro_strip14",
+   "anim": "auditeur-intro",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 14,
+   "durations": [
+    160,
+    120,
+    100,
+    100,
+    90,
+    70,
+    70,
+    100,
+    100,
+    100,
+    120,
+    100,
+    80,
+    160
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": {
+    "shake": [
+     12
+    ]
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_intro_strip14_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_move_strip8.png",
+   "texture": "auditeur_move_strip8",
+   "anim": "auditeur-move",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 8,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": {
+    "shake": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_move_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_move-p2_strip8.png",
+   "texture": "auditeur_move-p2_strip8",
+   "anim": "auditeur-move-p2",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 8,
+   "durations": [
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": {
+    "shake": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_move-p2_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_phase_strip12.png",
+   "texture": "auditeur_phase_strip12",
+   "anim": "auditeur-phase",
+   "type": "spritesheet",
+   "frameWidth": 208,
+   "frameHeight": 208,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 104,
+    "y": 156
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": {
+    "shake": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_phase_strip12_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/bene_idle_strip6.png",
+   "texture": "bene_idle_strip6",
+   "anim": "bene-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/bene_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/borne_attack_strip6.png",
+   "texture": "borne_attack_strip6",
+   "anim": "borne-attack",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    110,
+    100,
+    100,
+    90,
+    60,
+    140
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 52
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8125
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "shoot": 4,
+    "projectile": "proj-ticket"
+   },
+   "normalMap": "assets/sprites/enemies/borne_attack_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/borne_death_strip6.png",
+   "texture": "borne_death_strip6",
+   "anim": "borne-death",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    70,
+    70,
+    80,
+    70,
+    90,
+    140
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 52
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8125
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "4": "vfx_explosion"
+    }
+   },
+   "normalMap": "assets/sprites/enemies/borne_death_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/borne_hurt_strip2.png",
+   "texture": "borne_hurt_strip2",
+   "anim": "borne-hurt",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 2,
+   "durations": [
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 52
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8125
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/borne_hurt_strip2_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/borne_idle_strip6.png",
+   "texture": "borne_idle_strip6",
+   "anim": "borne-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    220,
+    160,
+    200,
+    140,
+    200,
+    160
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 52
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8125
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/borne_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/borne_wake_strip6.png",
+   "texture": "borne_wake_strip6",
+   "anim": "borne-wake",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    90,
+    80,
+    80,
+    70,
+    80,
+    120
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 52
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8125
+   },
+   "active": [],
+   "events": {
+    "invulnerable": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/borne_wake_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/borne_wreck_strip1.png",
+   "texture": "borne_wreck_strip1",
+   "anim": "borne-wreck",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 1,
+   "durations": [
+    1000
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 52
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8125
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/borne_wreck_strip1_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_attack_down_strip8.png",
+   "texture": "consultant_attack_down_strip8",
+   "anim": "consultant-attack-down",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    120,
+    90,
+    40,
+    60,
+    80,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "warnFlash": 2,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_attack_down_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_attack_side_strip8.png",
+   "texture": "consultant_attack_side_strip8",
+   "anim": "consultant-attack-side",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    120,
+    90,
+    40,
+    60,
+    80,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "warnFlash": 2,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_attack_side_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_attack_up_strip8.png",
+   "texture": "consultant_attack_up_strip8",
+   "anim": "consultant-attack-up",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    120,
+    90,
+    40,
+    60,
+    80,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "warnFlash": 2,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_attack_up_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_death_strip10.png",
+   "texture": "consultant_death_strip10",
+   "anim": "consultant-death",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 10,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    90,
+    90,
+    120,
+    600
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "8": "vfx_poof"
+    }
+   },
+   "normalMap": "assets/sprites/enemies/consultant_death_strip10_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_hurt_down_strip3.png",
+   "texture": "consultant_hurt_down_strip3",
+   "anim": "consultant-hurt-down",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 3,
+   "durations": [
+    60,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/consultant_hurt_down_strip3_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_hurt_side_strip3.png",
+   "texture": "consultant_hurt_side_strip3",
+   "anim": "consultant-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 3,
+   "durations": [
+    60,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/consultant_hurt_side_strip3_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_hurt_up_strip3.png",
+   "texture": "consultant_hurt_up_strip3",
+   "anim": "consultant-hurt-up",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 3,
+   "durations": [
+    60,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/consultant_hurt_up_strip3_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_idle_down_strip6.png",
+   "texture": "consultant_idle_down_strip6",
+   "anim": "consultant-idle-down",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/consultant_idle_down_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_idle_side_strip6.png",
+   "texture": "consultant_idle_side_strip6",
+   "anim": "consultant-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/consultant_idle_side_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_idle_up_strip6.png",
+   "texture": "consultant_idle_up_strip6",
+   "anim": "consultant-idle-up",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/consultant_idle_up_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_run_down_strip8.png",
+   "texture": "consultant_run_down_strip8",
+   "anim": "consultant-run-down",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_run_down_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_run_side_strip8.png",
+   "texture": "consultant_run_side_strip8",
+   "anim": "consultant-run-side",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_run_side_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_run_up_strip8.png",
+   "texture": "consultant_run_up_strip8",
+   "anim": "consultant-run-up",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 62
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.775
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_run_up_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/drone_attack_strip8.png",
+   "texture": "drone_attack_strip8",
+   "anim": "drone-attack",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    120,
+    120,
+    60,
+    60,
+    60,
+    60
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 60
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [
+    4,
+    5,
+    6,
+    7
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "loopFrames": [
+     4,
+     7
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/drone_attack_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/drone_death_strip6.png",
+   "texture": "drone_death_strip6",
+   "anim": "drone-death",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 6,
+   "durations": [
+    70,
+    70,
+    70,
+    70,
+    90,
+    200
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 60
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "5": "vfx_poof"
+    }
+   },
+   "normalMap": "assets/sprites/enemies/drone_death_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/drone_fly_strip4.png",
+   "texture": "drone_fly_strip4",
+   "anim": "drone-fly",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 4,
+   "durations": [
+    60,
+    60,
+    60,
+    60
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 40,
+    "y": 60
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/drone_fly_strip4_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/drone_hurt_strip2.png",
+   "texture": "drone_hurt_strip2",
+   "anim": "drone-hurt",
+   "type": "spritesheet",
+   "frameWidth": 80,
+   "frameHeight": 80,
+   "frames": 2,
+   "durations": [
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 40,
+    "y": 60
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.75
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/drone_hurt_strip2_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/fatou_idle_strip6.png",
+   "texture": "fatou_idle_strip6",
+   "anim": "fatou-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/fatou_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/jeanmi_idle_strip6.png",
+   "texture": "jeanmi_idle_strip6",
+   "anim": "jeanmi-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/jeanmi_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/josiane_idle_strip6.png",
+   "texture": "josiane_idle_strip6",
+   "anim": "josiane-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/josiane_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/kevin_idle_strip6.png",
+   "texture": "kevin_idle_strip6",
+   "anim": "kevin-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/kevin_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_attack_down_strip8.png",
+   "texture": "manager-kpi_attack_down_strip8",
+   "anim": "manager-kpi-attack-down",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    150,
+    150,
+    60,
+    80,
+    120,
+    150
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [
+    5
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_attack_down_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_attack_side_strip8.png",
+   "texture": "manager-kpi_attack_side_strip8",
+   "anim": "manager-kpi-attack-side",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    150,
+    150,
+    60,
+    80,
+    120,
+    150
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [
+    5
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_attack_side_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_attack_up_strip8.png",
+   "texture": "manager-kpi_attack_up_strip8",
+   "anim": "manager-kpi-attack-up",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    150,
+    150,
+    60,
+    80,
+    120,
+    150
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [
+    5
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_attack_up_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_death_strip8.png",
+   "texture": "manager-kpi_death_strip8",
+   "anim": "manager-kpi-death",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    100,
+    100,
+    100,
+    110,
+    100,
+    100,
+    120,
+    600
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "6": "vfx_poof"
+    }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_death_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_hurt_down_strip2.png",
+   "texture": "manager-kpi_hurt_down_strip2",
+   "anim": "manager-kpi-hurt-down",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 2,
+   "durations": [
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/manager-kpi_hurt_down_strip2_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_hurt_side_strip2.png",
+   "texture": "manager-kpi_hurt_side_strip2",
+   "anim": "manager-kpi-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 2,
+   "durations": [
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/manager-kpi_hurt_side_strip2_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_hurt_up_strip2.png",
+   "texture": "manager-kpi_hurt_up_strip2",
+   "anim": "manager-kpi-hurt-up",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 2,
+   "durations": [
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/manager-kpi_hurt_up_strip2_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_idle_down_strip6.png",
+   "texture": "manager-kpi_idle_down_strip6",
+   "anim": "manager-kpi-idle-down",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 6,
+   "durations": [
+    160,
+    160,
+    160,
+    160,
+    160,
+    160
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/manager-kpi_idle_down_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_idle_side_strip6.png",
+   "texture": "manager-kpi_idle_side_strip6",
+   "anim": "manager-kpi-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 6,
+   "durations": [
+    160,
+    160,
+    160,
+    160,
+    160,
+    160
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/manager-kpi_idle_side_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_idle_up_strip6.png",
+   "texture": "manager-kpi_idle_up_strip6",
+   "anim": "manager-kpi-idle-up",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 6,
+   "durations": [
+    160,
+    160,
+    160,
+    160,
+    160,
+    160
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/enemies/manager-kpi_idle_up_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_shield_down_strip8.png",
+   "texture": "manager-kpi_shield_down_strip8",
+   "anim": "manager-kpi-shield-down",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_shield_down_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_shield_side_strip8.png",
+   "texture": "manager-kpi_shield_side_strip8",
+   "anim": "manager-kpi-shield-side",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_shield_side_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_shield_up_strip8.png",
+   "texture": "manager-kpi_shield_up_strip8",
+   "anim": "manager-kpi-shield-up",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_shield_up_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_walk_down_strip8.png",
+   "texture": "manager-kpi_walk_down_strip8",
+   "anim": "manager-kpi-walk-down",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    95,
+    95,
+    95,
+    95,
+    95,
+    95,
+    95,
+    95
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_walk_down_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_walk_side_strip8.png",
+   "texture": "manager-kpi_walk_side_strip8",
+   "anim": "manager-kpi-walk-side",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    95,
+    95,
+    95,
+    95,
+    95,
+    95,
+    95,
+    95
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_walk_side_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_walk_up_strip8.png",
+   "texture": "manager-kpi_walk_up_strip8",
+   "anim": "manager-kpi-walk-up",
+   "type": "spritesheet",
+   "frameWidth": 112,
+   "frameHeight": 112,
+   "frames": 8,
+   "durations": [
+    95,
+    95,
+    95,
+    95,
+    95,
+    95,
+    95,
+    95
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 56,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.7857
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_walk_up_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/marcel_idle_strip6.png",
+   "texture": "marcel_idle_strip6",
+   "anim": "marcel-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/marcel_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
    "file": "assets/sprites/player/player_attack1_down_strip7.png",
    "texture": "player_attack1_down_strip7",
    "anim": "player-attack1-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 7,
    "durations": [
     60,
@@ -19,12 +1969,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     2
@@ -38,8 +1988,8 @@
    "texture": "player_attack1_side_strip7",
    "anim": "player-attack1-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 7,
    "durations": [
     60,
@@ -52,12 +2002,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     2
@@ -71,8 +2021,8 @@
    "texture": "player_attack1_up_strip7",
    "anim": "player-attack1-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 7,
    "durations": [
     60,
@@ -85,12 +2035,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     2
@@ -104,8 +2054,8 @@
    "texture": "player_attack2_down_strip7",
    "anim": "player-attack2-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 7,
    "durations": [
     60,
@@ -118,12 +2068,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     2
@@ -137,8 +2087,8 @@
    "texture": "player_attack2_side_strip7",
    "anim": "player-attack2-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 7,
    "durations": [
     60,
@@ -151,12 +2101,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     2
@@ -170,8 +2120,8 @@
    "texture": "player_attack2_up_strip7",
    "anim": "player-attack2-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 7,
    "durations": [
     60,
@@ -184,12 +2134,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     2
@@ -203,8 +2153,8 @@
    "texture": "player_attack3_down_strip9",
    "anim": "player-attack3-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 9,
    "durations": [
     90,
@@ -219,12 +2169,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     4
@@ -238,8 +2188,8 @@
    "texture": "player_attack3_side_strip9",
    "anim": "player-attack3-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 9,
    "durations": [
     90,
@@ -254,12 +2204,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     4
@@ -273,8 +2223,8 @@
    "texture": "player_attack3_up_strip9",
    "anim": "player-attack3-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 9,
    "durations": [
     90,
@@ -289,12 +2239,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     4
@@ -308,8 +2258,8 @@
    "texture": "player_dash_down_strip6",
    "anim": "player-dash-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 6,
    "durations": [
     25,
@@ -321,12 +2271,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -338,8 +2288,8 @@
    "texture": "player_dash_side_strip6",
    "anim": "player-dash-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 6,
    "durations": [
     25,
@@ -351,12 +2301,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -368,8 +2318,8 @@
    "texture": "player_dash_up_strip6",
    "anim": "player-dash-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 6,
    "durations": [
     25,
@@ -381,12 +2331,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -398,8 +2348,8 @@
    "texture": "player_death_strip12",
    "anim": "player-death",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 12,
    "durations": [
     90,
@@ -417,12 +2367,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -434,8 +2384,8 @@
    "texture": "player_hurt_down_strip4",
    "anim": "player-hurt-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 4,
    "durations": [
     60,
@@ -445,12 +2395,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -462,8 +2412,8 @@
    "texture": "player_hurt_side_strip4",
    "anim": "player-hurt-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 4,
    "durations": [
     60,
@@ -473,12 +2423,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -490,8 +2440,8 @@
    "texture": "player_hurt_up_strip4",
    "anim": "player-hurt-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 4,
    "durations": [
     60,
@@ -501,12 +2451,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -518,8 +2468,8 @@
    "texture": "player_idle_down_strip8",
    "anim": "player-idle-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 8,
    "durations": [
     140,
@@ -533,12 +2483,12 @@
    ],
    "loop": true,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -550,8 +2500,8 @@
    "texture": "player_idle_side_strip8",
    "anim": "player-idle-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 8,
    "durations": [
     140,
@@ -565,12 +2515,12 @@
    ],
    "loop": true,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -582,8 +2532,8 @@
    "texture": "player_idle_up_strip8",
    "anim": "player-idle-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 8,
    "durations": [
     140,
@@ -597,12 +2547,12 @@
    ],
    "loop": true,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -614,8 +2564,8 @@
    "texture": "player_run_down_strip10",
    "anim": "player-run-down",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 10,
    "durations": [
     70,
@@ -631,12 +2581,12 @@
    ],
    "loop": true,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": {
@@ -653,8 +2603,8 @@
    "texture": "player_run_side_strip10",
    "anim": "player-run-side",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 10,
    "durations": [
     70,
@@ -670,12 +2620,12 @@
    ],
    "loop": true,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": {
@@ -692,8 +2642,8 @@
    "texture": "player_run_up_strip10",
    "anim": "player-run-up",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 10,
    "durations": [
     70,
@@ -709,12 +2659,12 @@
    ],
    "loop": true,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": {
@@ -731,8 +2681,8 @@
    "texture": "player_spawn_strip10",
    "anim": "player-spawn",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 10,
    "durations": [
     80,
@@ -748,12 +2698,12 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [],
    "events": null,
@@ -765,8 +2715,8 @@
    "texture": "player_special_strip12",
    "anim": "player-special",
    "type": "spritesheet",
-   "frameWidth": 72,
-   "frameHeight": 72,
+   "frameWidth": 80,
+   "frameHeight": 80,
    "frames": 12,
    "durations": [
     100,
@@ -784,18 +2734,78 @@
    ],
    "loop": false,
    "pivot": {
-    "x": 36,
-    "y": 64
+    "x": 40,
+    "y": 66
    },
    "origin": {
     "x": 0.5,
-    "y": 0.8889
+    "y": 0.825
    },
    "active": [
     4
    ],
    "events": null,
    "normalMap": "assets/sprites/player/player_special_strip12_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/rudy_idle_strip6.png",
+   "texture": "rudy_idle_strip6",
+   "anim": "rudy-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/rudy_idle_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/npcs/yasmina_idle_strip6.png",
+   "texture": "yasmina_idle_strip6",
+   "anim": "yasmina-idle",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 6,
+   "durations": [
+    240,
+    180,
+    160,
+    160,
+    180,
+    260
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 32,
+    "y": 56
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/npcs/yasmina_idle_strip6_n.png",
    "source": "render3d"
   }
  ]
