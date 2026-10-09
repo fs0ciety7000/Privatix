@@ -3,12 +3,13 @@
 > Vue de dessus, temps réel, roguelite à la Hades. **Gameplay sérieux, lore satirique.**
 > Document de référence pour tous les textes du jeu : scénario, dialogues du hub, barks, fiches d'ennemis, boss, Notes de service, glossaire.
 > En cas de doute sur un **nom, un lieu, un événement ou une réplique**, ce document fait foi. En cas de doute sur un **chiffre** (dégâts, durées, coûts), le GDD combat et le canon technique font foi.
-> Tous les personnages, entreprises et documents sont **fictifs**. La satire vise le management, le conseil et la logique de privatisation, jamais une personne réelle, un parti, les voyageurs ou les cheminots de terrain.
+> Tous les personnages, entreprises et documents sont **fictifs**, hors des trois exceptions autorisées du §1.4 (SNCB, « Calatrava », caricature d'Elio Di Rupo). La satire vise le management, le conseil et la logique de privatisation, jamais une personne réelle (hors de cette caricature encadrée), un parti, les voyageurs ou les cheminots de terrain.
+> Le jeu passe en **3D temps réel** (rendu toon à contours, GDD §1.3) : les lieux décrits ici sont pensés pour être vus en volume, de près, à hauteur de héros.
 
 **Conventions d'écriture du document**
 - `HÉROS` = Léon ou Léa (prénom modifiable, `{prénom}` dans les répliques). Formulations épicènes autant que possible.
 - `PERSONNAGE : réplique` ; didascalies entre astérisques ; `→` note un effet de jeu ; `[condition]` note une condition de déclenchement.
-- Vocabulaire unifié : **Shift** (un run), **Énergie** (la vie), **Burnout**, **Pétage de plombs**, **Gobelets** (soins du run), **Tickets** (monnaie du run), **Avantages acquis**, **Motions communes**, **Réglages de clé**, **Preuves en main** / **Preuves archivées**, **Points de Syndicalisme (PS)**, **Tableau des revendications**, **Grains de café**, **Tasses**, **Souvenirs**, **Pièces détachées**, **Montages de clé**, **Notes de service**, **Plan d'Économies**.
+- Vocabulaire unifié : **Shift** (un run), **Énergie** (la vie), **Burnout**, **Pétage de plombs**, **Gobelets** (soins du run), **Tickets** (monnaie du run), **Avantages acquis**, **Motions communes**, **Réglages d'outil** (ex-« Réglages de clé »), **Preuves en main** / **Preuves archivées**, **Points de Syndicalisme (PS)**, **Tableau des revendications**, **Grains de café**, **Tasses**, **Souvenirs**, **Pièces détachées**, **Dotations d'outil** (ex-« Montages de clé »), **Notes de service**, **Plan d'Économies**, et pour le loot : **la dotation** (l'équipement), les raretés **Réforme**, **Réglementaire**, **Homologué**, **Hors-série** et **Patrimoine**, la **Ferraille**, le **Paquetage**, la **consigne** (§3.6).
 
 ---
 
@@ -50,7 +51,7 @@ Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ram�
 5. **Satire du consulting, pas des gens.** Le Consultant Junior est ridicule par ce qu'on lui fait faire, pas par ce qu'il est : il a 24 ans, une première mission et un manager qui lui demande un quick win. Même les ennemis ont droit à une réplique de défaite un peu humaine.
 
 **Règles d'écriture**
-- **Bulles courtes** : 2 lignes maximum (boîte de dialogue du hub en 640×360 logique). Un bark en run : **8 mots maximum**, lisible en 1,5 s pendant un combat.
+- **Bulles courtes** : 2 lignes maximum, quelle que soit la résolution. Un bark en run : **8 mots maximum**, lisible en 1,5 s pendant un combat.
 - **Tics de langage** : au maximum **une fois par scène** et par personnage. Un tic répété devient une scie.
 - **Le héros** reste sobre : phrases courtes, ironie sèche, jamais de tirade. Son choix récurrent : « … (soupir de fin de pause) ».
 - **Belgicismes bienvenus**, avec parcimonie et compréhensibles par le contexte : « septante », « nonante », « une fois », « savoir » au sens de « pouvoir », « il drache », « fieu », « chicon », « dikkenek » (réservé à Raymonde).
@@ -71,7 +72,7 @@ Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ram�
    - l'**écran de titre**.
    **Motif visuel** : le bleu et blanc SNCB contre les néons magenta et turquoise de Privatix. Dans chaque salle, Privatix a recouvert la signalétique SNCB d'autocollants violets (« Votre quai, votre expérience », « Propriété de Privatix Rail Solutions ») ; quand le joueur nettoie la salle, les autocollants se décollent et tombent, et le logo réapparaît. Cette « libération » de la signalétique devient le signal visuel d'une salle tenue.
 2. **« Calatrava »**, surnom de la passerelle (« le Calatrava »). Le surnom est autorisé ; l'architecte lui-même n'apparaît toujours pas comme personnage.
-3. **Elio Di Rupo**, personnalité politique belge et ancien bourgmestre de Mons, en **caricature satirique bon enfant**, comme boss optionnel (§7.5). Cadre obligatoire :
+3. **Elio Di Rupo**, personnalité politique belge et ancien bourgmestre de Mons, en **caricature satirique bon enfant**, comme **boss obligatoire du biome 2**, « l'Invité d'honneur » de l'inauguration « Mons 2032 » sur la passerelle (§7.5). Cadre obligatoire :
    - l'humour porte sur son **image publique** (nœud papillon bordeaux, lunettes sans monture, mèche brune, costume bleu marine, attachement à Mons) et sur la **posture politique** (grands discours, inaugurations, rubans) ;
    - **aucun crime ni délit** attribué, **aucune fausse citation** présentée comme réelle : toutes ses répliques sont des répliques de jeu, inventées et reconnaissables comme telles ;
    - **pas d'humiliation physique** ni de contenu dégradant ; pas de moquerie de l'âge, de la voix, de l'accent ou de la vie privée ;
@@ -81,6 +82,7 @@ Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ram�
 - **Pas de moquerie des cheminots de terrain**, quel que soit leur métier. Même Jean-Mi est traité avec compassion. Seuls la hiérarchie complice, les consultants et le consortium sont ridicules.
 - **Pas de blague** sur les accidents de personne, les agressions réelles du personnel ou les drames ferroviaires. Les rames qui traversent l'écran ne heurtent que des automates et des consultants qui « partent en réunion ».
 - **Pas de clichés** sur l'origine, l'accent, le genre ou l'âge. L'humour vient du métier et de la situation.
+- **Loot** : aucun équipement de **marque réelle** (EPI, chaussures, électronique) ; le butin tombe de **sacoches, caisses, casiers et colis**, jamais d'un corps ; les **voyageurs ne lâchent jamais rien** et ne sont jamais une source de loot.
 
 **Test rapide avant validation d'un texte**
 1. Un cheminot y reconnaîtrait-il son quotidien, et rirait-il ?
@@ -126,11 +128,11 @@ Le Sondage a son propre petit fil comique : le nombre de participants « disponi
 
 | Étape | Lieu | Ce que raconte l'étape |
 |---|---|---|
-| Préparation | **OCC** | On parle aux collègues, on boit sa **Tasse de Relève**, on choisit son Montage et son Souvenir. Yasmina annonce le roulement. |
+| Préparation | **OCC** | On parle aux collègues, on boit sa **Tasse de Relève**, on choisit son Souvenir, et Josiane sort du casier le **Paquetage** et l'outil du jour (§3.6). Yasmina annonce le roulement. |
 | Départ | **Cour intérieure, couloir technique** | Le héros traverse la Cour intérieure ; le couloir technique l'emmène vers les quais. Rudy fait l'annonce du Sondage. |
-| Biome 1 | **Quais & Voies** (8 salles + Salle des pauses + Boss) | « Le 7h12 n'est pas venu. » On défend le terrain. Boss : **l'Auditeur des Quais**. |
-| Biome 2 | **La Passerelle « Calatrava »** (8 salles + Salle des pauses + Boss) | « Le vent tourne. » On remonte la colonne vertébrale de la gare. Boss : **le Fluidifieur**. |
-| Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui décident. Boss final : **Gontran Vanderslide**. |
+| Biome 1 | **Quais & Voies** (8 salles + Salle des pauses + Boss) | « Le 7h12 n'est pas venu. » On défend le terrain. Élite majeur : **le Furet putride**. Boss : **l'Auditeur des Quais**. |
+| Biome 2 | **La Passerelle « Calatrava »** (8 salles + Salle des pauses + Boss) | « Le vent tourne. » On remonte la colonne vertébrale de la gare, fermée « pour cérémonie ». Élite majeur, en dernière salle : **le Fluidifieur**, régisseur de l'inauguration. Boss : **l'Invité d'honneur (Elio Di Rupo)**, qui inaugure « Mons 2032 » au belvédère. |
+| Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui décident. Mini-boss : **le Discosaure**. Boss final : **Gontran Vanderslide**. |
 | Retour | **OCC** | Mort ou victoire, on rentre. Les collègues ont quelque chose de neuf à dire. |
 
 L'horloge diégétique du Shift avance de **30 minutes par salle** : un Shift complet dure « une journée de travail et demie », ce que Fatou fait remarquer à chaque victoire (« Quatorze heures de service. Je fais un signalement. »).
@@ -148,7 +150,8 @@ L'histoire avance par **trois fils** : **le Dossier** (les 3 Preuves du PHR-2032
 | J4 | Retour du Shift 3 | **Béné arrive** avec son classeur, Le Règlement, sous le bras : « On m'a fermé le guichet. Je l'ai emporté. » Elle visse son hygiaphone sur le pupitre PACO, resté vacant. | Pupitre PACO (Recours, archives, codex). |
 | J5 | Premier kill de l'Auditeur des Quais | Le chronomètre de l'Auditeur s'arrête sur **7:12**. « Le train de 7h12, il existe encore ? » **Preuve n° 1 « Fermeture des guichets »** en main. | Si elle est rapportée : Preuve archivée. **Kevin** et **Yasmina** rejoignent l'OCC au retour. |
 | J6 | Première Preuve archivée | Béné ouvre une chemise cartonnée « DOSSIER — NE PAS PERDRE » et punaise la Preuve. Marcel : « Une. Il en faut trois. Et il faut qu'elles tiennent. » | Le **Cahier de revendications** apparaît à côté du Tableau (vraie fin, 1 case cochée). |
-| J7 | Premier kill du Fluidifieur | « Personne ne lit jamais l'alinéa 3. » **Preuve n° 2 « Suppression des accompagnateurs »**. | Rudy découvre au retour que **les annonces de la gare sont pilotées depuis les étages du BAG**, juste au-dessus de son propre pupitre. Béné ouvre au pupitre PACO une « correspondance directe » vers la Passerelle (raccourci). |
+| J7 | Premier kill du Fluidifieur (Salle gardée, fin du biome 2) | « Personne ne lit jamais l'alinéa 3. » **Preuve n° 2 « Suppression des accompagnateurs »**, tombée de son classeur. | Rudy découvre au retour que **les annonces de la gare sont pilotées depuis les étages du BAG**, juste au-dessus de son propre pupitre. |
+| J7 bis | Premier kill de l'Invité d'honneur | La plaque se dévoile : « Privatix Rail Solutions — Phase 3 : Cession ». « Je n'inaugure pas une fermeture. » Il tend les **Ciseaux d'inauguration** au héros. | Béné archive les Ciseaux et ouvre au pupitre PACO une « correspondance directe » vers la Passerelle (raccourci). Sur l'écran de Rudy, le Sondage affiche « Participant d'honneur : indisponible ». |
 | J8 | Shifts 4 à ~8, avant la 1re victoire | **Indices sur Jean-Mi** : notes « pour le registre », téléphone neuf, absences « en récup ». Les ennemis du Shift suivant portent l'affixe **« Briefé »**. | Les joueurs attentifs soupçonnent. |
 | J9 | Premier kill du Fluidifieur ET passage à l'OCC | Le casier de Jean-Mi est entrouvert : **Note de service n° 11** (logo Privatix). | Indice ferme. Aucun personnage ne réagit encore (Fatou lève un sourcil). |
 | J10 | **Première victoire sur Vanderslide** | Hubert Rentabilis : « On reprogramme. » Le héros rentre… **l'OCC a été envahie** : stickers « Propriété de Privatix », Vieille Dame renversée. **Combat-défense dans le hub** (3 vagues), puis le Fluidifieur revient, « simple formalité ». **Révélation de Jean-Mi.** | **Choix moral** (§2.5). Le code devient **2-2-4-7**. Plan d'Économies débloqué. Fin « mitigée » affichée (§2.7). |
@@ -293,12 +296,12 @@ Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le
 | 2 | **La salle de repos de nuit** (contiguë au pupitre RCCA) | Le canapé | **Fatou** | Point de réapparition (« Arrêt de travail de 0 jour. Bienvenue. »), soins, réinitialisation gratuite du Tableau | Canapé de première classe éventré, lit de camp, affiche « Pause légale : 15 min. Pause réelle : ? » |
 | 3 | **La salle des opérations** (centre) | Le coin café de la Vieille Dame | **Jean-Mi** (barista), **Fatou** (gardienne) | **Tasse de Relève** du Shift ; améliorations des Tasses en Grains ; Double Expresso | Autel de traverses, registre des membres tenu à la main, photo encadrée « 22h47, 1987 », boîte à jurons « Optimisation » |
 | 4 | **La salle des opérations** | Le pupitre RTS, côté régulation | **Yasmina** | Annonce du roulement du Shift ; **Plan d'Économies** ; défis | Mur d'écrans du réseau, grille de roulement couverte de flèches, radio à molettes |
-| 5 | **La salle des opérations** | Le pupitre RTS, côté matériel roulant | **Kevin** | **Montages de clé** montés avec les Pièces détachées récupérées sur le matériel réformé ; **échanges de matériel** (Grains ↔ PS ↔ Pièces) | Classeur des numéros d'automotrices, pince à caténaire, rapport de trois pages « punaisé, enfin » |
-| 6 | **La salle des opérations** | Le pupitre PACO | **Béné** | **Recours** (relances, « bus de remplacement ») ; **correspondances** (itinéraire direct vers la Passerelle après J7) ; **archives** des Preuves et Notes de service ; **Le Règlement** (codex des ennemis) | Hygiaphone récupéré de son guichet, tampon « Numéro suivant », ticket d'attente n° 001 coincé à jamais |
+| 5 | **La salle des opérations** | Le pupitre RTS, côté matériel roulant | **Kevin** | **Échanges de matériel** (Grains ↔ PS ↔ Pièces) ; il récupère les **Pièces détachées** sur le matériel roulant réformé. Le RTS ne gère que le matériel roulant : Kevin ne touche pas à l'équipement du héros | Classeur des numéros d'automotrices, pince à caténaire, rapport de trois pages « punaisé, enfin » |
+| 6 | **La salle des opérations** | Le pupitre PACO | **Béné** | **Recours** (relances, « bus de remplacement ») : relances des portes, d'un choix d'Avantage et des **affixes d'un objet** (§3.6) ; **correspondances** (itinéraire direct vers la Passerelle après J7 bis) ; **archives** des Preuves, Notes de service et **Plans de Patrimoine** ; **Le Règlement** (codex des ennemis) | Hygiaphone récupéré de son guichet, tampon « Numéro suivant », ticket d'attente n° 001 coincé à jamais |
 | 7 | **La salle des opérations** | Le pupitre TLI & AIT et l'écran des départs | **Rudy** | Statistiques et historique des Shifts présentés comme des trains ; annonce de début de Shift | Micro de la sonorisation, vieux tableau à palettes qui claque au-dessus de la porte de la Cour, ligne du Sondage en bas |
 | 8 | **La salle des opérations** | Le pupitre de la Permanence conduite | **Marcel** | Accueil des retours, tenue du **Cahier de revendications** | Registre des conducteurs, sifflet de 1974, casquette accrochée à la lampe |
 | 9 | **La Salle photocopieuse** (contiguë à la Permanence) | Le **Tableau des revendications** | **Marcel** | Dépense des **PS** (talents permanents) : chaque revendication obtenue est imprimée et punaisée ; le **Cahier de revendications** (vraie fin) y est affiché | Photocopieuse de 1987 qui imprime les tracts (et a imprimé les trois slides du prologue), panneau de liège géant, fils rouges, Preuves punaisées au fil de l'histoire |
-| 10 | **La Cour intérieure** | Les casiers et le mannequin | **Josiane** (DPD) | **Casiers** des agents de bord (Souvenirs et, le cas échéant, équipement personnel) ; **mannequin de formation** (zone d'entraînement, dégâts affichés, essai des Montages) | Rangée de casiers en tôle sous un auvent, adossée au soubassement gris ; mannequin de formation sécurité en gilet orange planté sur les vieilles traces de peinture rouge et bleue (« c'est son marquage ») ; thermos posé sur un tabouret |
+| 10 | **La Cour intérieure** | Les casiers et le mannequin | **Josiane** (DPD) | **Casiers** des agents de bord : Souvenirs et **Vestiaire** de l'équipement personnel (§3.6 : Paquetage, consigne, réforme, polissage, remise à niveau, **Dotations d'outil**) ; second mannequin qui porte le Paquetage ; **mannequin de formation** (zone d'entraînement, dégâts affichés, essai des Outils) | Rangée de casiers en tôle sous un auvent, adossée au soubassement gris ; mannequin de formation sécurité en gilet orange planté sur les vieilles traces de peinture rouge et bleue (« c'est son marquage ») ; thermos posé sur un tabouret |
 | 11 | **La Cour intérieure** | Le coin des palettes | **Le Fantôme** | **Rénovations** de l'OCC en Grains ; marchand légendaire | Au pied de la cage d'escalier vitrée, les palettes de bois : d'abord une simple pile (une photo de 1994, un tablier posé dessus), puis le comptoir du wagon-bar reconstruit pièce par pièce sur les palettes |
 | 12 | **La Cour intérieure** | Le côté ouvert | — | Sortie vers le couloir technique et le Shift | Les deux voitures de service garées en épi ; les petits panneaux bleus disent « Réservé Permanence conduite » et « Réservé PACO — bus de remplacement » ; la gaine de ventilation ronronne ; on aperçoit la Passerelle au-dessus des toits |
 | 13 | **La salle des opérations** | La plaque des 7 commandements | — | Lecture | Plaque de quai émaillée récupérée, gravée à la main, vissée au-dessus du coin café |
@@ -349,6 +352,28 @@ Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le
 | **Les rénovations** | Achats chez le Fantôme (Grains) | Guirlandes de lanternes rallumées dans la Cour, canapé neuf « de deuxième classe, faut pas exagérer », juke-box des annonces au pupitre TLI & AIT, mannequin avancé, auvent refait au-dessus des casiers, 2e emplacement de Souvenir, horloge de gare qui marche, bannière « OCC » brodée par Josiane, wagon-bar reconstitué. |
 | **La veillée** | Conditions de la vraie fin | Toutes les lanternes allumées, tout le monde debout ; la musique se tait. |
 | **Après la vraie fin** | Mode Plan Horizon 2040 | Plaque officielle « Salle de pause conventionnée » vissée sous la plaque des commandements ; le distributeur du sas reste en place quand même, « on sait jamais ». |
+
+### 3.6 La dotation : l'équipement et les pupitres
+
+**D'où vient l'équipement.** Le PHR-2032 a « rationalisé » la dotation vestimentaire (Note de service n° 16, proposée) : plus de casques neufs, plus de gilets, des chaussures « mutualisées ». Le matériel des cheminots dort donc partout dans la gare : **caisses à outils de l'Infra** oubliées le long des voies, **casiers** de vestiaire abandonnés, **sacoches** et **colis** de Privatix jamais distribués, matériel « réformé » promis à la benne. Le héros le récupère en Shift. Le butin tombe d'une sacoche qui s'ouvre, d'une caisse qu'on force, d'une fente de Borne, d'un colis : **jamais d'un corps**, et **jamais d'un voyageur**. Les consultants vaincus « oublient » leur sacoche en partant en réunion.
+
+**Les cinq raretés, en mots de cheminot** (couleurs et chiffres : GDD §9 bis) :
+
+| Rareté | Couleur | Ce que ça veut dire dans la gare |
+|---|---|---|
+| **Réforme** | Gris | Matériel sorti de l'inventaire, rayé, encore utile. « Réformé, pas fini. » |
+| **Réglementaire** | Blanc | La dotation telle que le règlement la prévoit. Propre, neuve, rare depuis le PHR-2032. |
+| **Homologué** | Bleu | Matériel testé et tamponné « HOMOLOGUÉ ». Béné respecte ce tampon. |
+| **Hors-série** | Violet | Fabrication spéciale, prototype ou commande unique ; coutures qui brillent. |
+| **Patrimoine** | Cuivre et or | Objet qui a une histoire, un nom propre, parfois un ancien propriétaire. Ce qu'on vend en dernier, parce qu'on ne sait pas l'estimer. |
+
+**Qui gère quoi à l'OCC.** Chaque service reste rattaché à la fonction réelle de son pupitre :
+- **DPD — Josiane**, aux casiers de la Cour intérieure. La DPD gère la dotation et les casiers des agents : c'est elle qui tient le **Vestiaire**. Elle range les objets ramenés (la **consigne**), prépare le **Paquetage** du Shift, habille le mannequin, **réforme** ce qu'on ne garde pas (en Ferraille, sur bon de réforme), **polit** et **remet à niveau** les pièces, et délivre les **Dotations d'outil** (masse de voie, pied-de-biche, lanterne, pelle à ballast…). Elle échange une fois par Shift la Ferraille contre des Pièces détachées : « Le réformé repart au matériel. Proprement. »
+- **PACO — Béné**. Le PACO trouve une solution de remplacement quand le prévu ne marche pas : Béné **relance** un affixe (le « bus de remplacement » de l'objet) et archive les **Plans** des objets Patrimoine dans Le Règlement.
+- **RTS — Kevin et Yasmina**. Le RTS ne gère que le **matériel roulant** : Kevin récupère les Pièces détachées sur les automotrices réformées et tient les échanges de matériel ; Yasmina régule. Ni l'un ni l'autre ne touche à l'équipement du héros. Kevin donne son avis quand même : « C'est pas nous, c'est l'autre boîte qui l'a cousu. »
+- **TLI & AIT — Rudy** annonce les objets Patrimoine trouvés en Shift et affiche « Dernier objet trouvé » sur l'écran des départs.
+
+**Ce qui se passe en fin de Shift.** Les collègues ramènent le héros par le couloir technique. Josiane range **un objet** dans son casier (deux après une victoire) ; le Paquetage revient intact ; le reste est réformé en Ferraille, « parce qu'on ne jette rien, on réforme ».
 
 ---
 

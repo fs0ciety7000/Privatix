@@ -53,7 +53,14 @@ export interface ToonOpts {
   flash?: Flash;
   transparent?: boolean;
   opacity?: number;
+  /** Variante « lumière cuite » : ajoute l'éclairage précalculé par sommet (attributs aBake0/aBake1). */
+  bake?: boolean;
 }
+
+/** Nombre de lampes du décor dont l'apport est précalculé par sommet (2 × vec4). */
+export const BAKE_CHANNELS = 8;
+/** Couleur × intensité courantes de chaque lampe cuite (0 quand une vraie lumière la remplace). */
+export const bakeUniforms = { uBakeCol: { value: Array.from({ length: BAKE_CHANNELS }, () => new THREE.Color(0, 0, 0)) } };
 
 /**
  * Matériau toon : bandes nettes (gradientMap), liseré coloré venant du haut-droite de l'écran
@@ -69,20 +76,23 @@ export function toon(color: number, o: ToonOpts = {}): THREE.MeshToonMaterial {
     transparent: o.transparent ?? false,
     opacity: o.opacity ?? 1,
   });
+  m.userData.toon = { color, opts: o };
   const rimStrength = o.rimStrength ?? 0;
   const flash = o.flash;
-  if (rimStrength > 0 || flash) {
+  const rimOn = rimStrength > 0 || !!flash;
+  if (rimOn || o.bake) {
     const rimColor = new THREE.Color(o.rim ?? PAL.rim);
     m.onBeforeCompile = (sh) => {
-      sh.uniforms.uRimColor = { value: rimColor };
-      sh.uniforms.uRimStrength = { value: rimStrength };
-      sh.uniforms.uFlash = flash ? flash.amount : { value: 0 };
-      sh.uniforms.uFlashColor = flash ? flash.color : { value: new THREE.Color(1, 1, 1) };
-      sh.fragmentShader =
-        'uniform vec3 uRimColor;\nuniform float uRimStrength;\nuniform float uFlash;\nuniform vec3 uFlashColor;\n' +
-        sh.fragmentShader.replace(
-          '#include <opaque_fragment>',
-          `{
+      if (rimOn) {
+        sh.uniforms.uRimColor = { value: rimColor };
+        sh.uniforms.uRimStrength = { value: rimStrength };
+        sh.uniforms.uFlash = flash ? flash.amount : { value: 0 };
+        sh.uniforms.uFlashColor = flash ? flash.color : { value: new THREE.Color(1, 1, 1) };
+        sh.fragmentShader =
+          'uniform vec3 uRimColor;\nuniform float uRimStrength;\nuniform float uFlash;\nuniform vec3 uFlashColor;\n' +
+          sh.fragmentShader.replace(
+            '#include <opaque_fragment>',
+            `{
             vec3 vd = normalize(vViewPosition);
             float fr = 1.0 - clamp(dot(normal, vd), 0.0, 1.0);
             float side = clamp(dot(normalize(normal.xy + 1e-5), normalize(vec2(0.55, 0.85))), 0.0, 1.0);
@@ -91,10 +101,39 @@ export function toon(color: number, o: ToonOpts = {}): THREE.MeshToonMaterial {
             outgoingLight = mix(outgoingLight, uFlashColor, uFlash);
           }
           #include <opaque_fragment>`,
-        );
+          );
+      }
+      if (o.bake) {
+        // Lampes du décor cuites : poids par sommet (atténuation × rampe toon) × couleur courante.
+        sh.uniforms.uBakeCol = bakeUniforms.uBakeCol;
+        sh.vertexShader =
+          `attribute vec4 aBake0;\nattribute vec4 aBake1;\nuniform vec3 uBakeCol[${BAKE_CHANNELS}];\nvarying vec3 vBaked;\n` +
+          sh.vertexShader.replace(
+            '#include <begin_vertex>',
+            `#include <begin_vertex>
+            vBaked = aBake0.x * uBakeCol[0] + aBake0.y * uBakeCol[1] + aBake0.z * uBakeCol[2] + aBake0.w * uBakeCol[3]
+                   + aBake1.x * uBakeCol[4] + aBake1.y * uBakeCol[5] + aBake1.z * uBakeCol[6] + aBake1.w * uBakeCol[7];`,
+          );
+        sh.fragmentShader =
+          'varying vec3 vBaked;\n' + sh.fragmentShader.replace('#include <opaque_fragment>', 'outgoingLight += vBaked * diffuseColor.rgb;\n#include <opaque_fragment>');
+      }
     };
-    m.customProgramCacheKey = () => 'toon-rim';
+    m.customProgramCacheKey = () => (o.bake ? (rimOn ? 'toon-rim-bake' : 'toon-bake') : 'toon-rim');
   }
+  return m;
+}
+
+/** Variante cuite d'un matériau toon (mêmes réglages, éclairage des lampes du décor par sommet). */
+export function bakedToon(src: THREE.MeshToonMaterial): THREE.MeshToonMaterial {
+  const t = src.userData.toon as { color: number; opts: ToonOpts } | undefined;
+  const m = toon(t?.color ?? src.color.getHex(), { ...(t?.opts ?? {}), bake: true });
+  m.color.copy(src.color);
+  m.emissive.copy(src.emissive);
+  m.emissiveIntensity = src.emissiveIntensity;
+  m.map = src.map;
+  m.side = src.side;
+  m.transparent = src.transparent;
+  m.opacity = src.opacity;
   return m;
 }
 

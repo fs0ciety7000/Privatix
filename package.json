@@ -21,11 +21,13 @@
     "sprites3d:setup": "cd tools/render3d && uv venv .venv --python python3.13 && uv pip install --python .venv/bin/python bpy==5.2.2 pillow numpy"
   },
   "dependencies": {
-    "phaser": "^4.2.1"
+    "phaser": "^4.2.1",
+    "three": "0.186.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^22.19.0",
+    "@types/three": "0.186.0",
     "eslint": "^10.12.0",
     "prettier": "^3.9.9",
     "typescript": "^5.9.3",
