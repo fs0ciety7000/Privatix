@@ -10,6 +10,9 @@ import { Post } from './post';
 import { outlineUniforms, PAL } from './toon';
 import type { Foe, HitInfo, HitShape, World } from './types';
 import { Discosaure } from './discosaure';
+import { LightBudget } from './lighting';
+import { detectGpu, fxFlags, PRESETS, Settings, type QualityLevel } from './quality';
+import { radialTexture } from './toon';
 
 const params = new URLSearchParams(location.search);
 const FIXED = params.has('fixed');
@@ -89,6 +92,7 @@ class Game implements World {
     combo: el<HTMLDivElement>('combo'),
     wave: el<HTMLDivElement>('wave'),
     fps: el<HTMLDivElement>('fps'),
+    perf: el<HTMLDivElement>('perf'),
     use: el<HTMLButtonElement>('btn-use'),
     boss: el<HTMLDivElement>('bossbar'),
     bossFill: el<HTMLDivElement>('boss-fill'),
@@ -96,10 +100,25 @@ class Game implements World {
   private hpGhostV = 100;
   private toastT = 0;
 
+  // Qualité / mesure
+  readonly settings: Settings;
+  private lights: LightBudget;
+  private blobs: THREE.InstancedMesh;
+  private perfOpen = params.has('perf');
+  private benchT = 0;
+  private benchFrames = 0;
+  private benchTime = 0;
+  private applied: QualityLevel | null = null;
+
   constructor() {
     const app = el<HTMLDivElement>('app');
     this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', stencil: false });
-    const pr = Math.min(window.devicePixelRatio || 1, 2);
+    // renderer.info cumule toutes les passes de la frame (ombres, scène, post) : remis à zéro à la main
+    this.renderer.info.autoReset = false;
+    this.settings = new Settings(() => detectGpu(this.renderer));
+    const preset = this.settings.preset;
+    this.prCap = preset.prCap;
+    const pr = Math.min(window.devicePixelRatio || 1, this.prCap);
     this.renderer.setPixelRatio(pr);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
@@ -156,12 +175,161 @@ class Game implements World {
     this.dust = this.makeDust();
     this.scene.add(this.dust);
 
-    this.post = new Post(this.renderer, this.scene, this.camera, window.innerWidth, window.innerHeight, pr > 1.5 ? 2 : 4);
+    // Ombres « blob » (preset Bas, sans shadow map) : un seul appel de rendu instancié
+    this.blobs = new THREE.InstancedMesh(
+      new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2),
+      new THREE.MeshBasicMaterial({ map: radialTexture(), color: 0x000000, transparent: true, opacity: 0.6, depthWrite: false }),
+      8,
+    );
+    this.blobs.renderOrder = 1;
+    this.blobs.frustumCulled = false;
+    this.blobs.visible = false;
+    this.scene.add(this.blobs);
+
+    // Lampes du décor cuites hors preset Haut ; butin = sources dynamiques ; flash de caténaire = Haut seulement
+    this.lights = new LightBudget(this.scene, this.level.bakeLights, this.lootLights, [this.level.sparkLight]);
+    for (const m of this.level.staticMeshes) this.lights.registerStatic(m);
+
+    this.post = new Post(this.renderer, this.scene, this.camera, window.innerWidth, window.innerHeight, this.msaaFor(preset.msaa));
     window.addEventListener('resize', () => this.resize());
     this.resize();
     this.renderSlots();
     this.spawnWave();
+    this.applyQuality();
+    this.applyReducedMotion();
+    window.addEventListener('keydown', (e) => this.onKey(e));
+    matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+      if (this.settings.rmFromSystem || e.matches) {
+        this.settings.reducedMotion = e.matches;
+        this.settings.rmFromSystem = true;
+        this.applyReducedMotion();
+      }
+    });
   }
+
+  // ─── Qualité ──────────────────────────────────────────────────────────────────
+
+  private msaaFor(n: number): number {
+    return n > 2 && (window.devicePixelRatio || 1) > 1.5 ? 2 : n;
+  }
+
+  /** Applique le preset courant (ne recompile les shaders que si quelque chose change). */
+  applyQuality(): void {
+    const q = this.settings.level;
+    const p = PRESETS[q];
+    this.prCap = p.prCap;
+    this.slowFor = 0;
+    // ombres : shadow map 2048 / 1024, ou blobs sous les personnages
+    const sm = p.shadowSize;
+    this.renderer.shadowMap.enabled = sm > 0;
+    this.sun.castShadow = sm > 0;
+    if (sm > 0 && this.sun.shadow.mapSize.x !== sm) {
+      this.sun.shadow.mapSize.set(sm, sm);
+      this.sun.shadow.map?.dispose();
+      this.sun.shadow.map = null;
+    }
+    this.blobs.visible = sm === 0;
+    this.post.configure({ msaa: this.msaaFor(p.msaa), fxaa: p.fxaa, bloomScale: p.bloomScale });
+    this.lights.setMode(p.dynLights);
+    fxFlags.particles = p.particles;
+    this.dust.geometry.setDrawRange(0, Math.round(650 * (p.particles < 1 ? Math.max(0.4, p.particles) : 1)));
+    this.resize();
+    if (this.applied !== q) {
+      this.applied = q;
+      this.warmup();
+    }
+    this.updateFpsLabel();
+  }
+
+  applyReducedMotion(): void {
+    const rm = this.settings.reducedMotion;
+    fxFlags.reducedMotion = rm;
+    fxFlags.shake = rm ? 0.25 : 1;
+    this.level.steady = rm;
+    this.post.staticGrain = rm;
+    document.body.classList.toggle('rm', rm);
+    this.updateFpsLabel();
+  }
+
+  private onKey(e: KeyboardEvent): void {
+    if (e.code === 'F2') {
+      e.preventDefault();
+      const q = this.settings.cycle();
+      this.applyQuality();
+      this.toast(`Qualité : <b>${PRESETS[q].label}</b>`);
+    } else if (e.code === 'F3') {
+      e.preventDefault();
+      this.perfOpen = !this.perfOpen;
+      this.ui.perf.classList.toggle('show', this.perfOpen);
+      this.updatePerf();
+    } else if (e.code === 'F4') {
+      e.preventDefault();
+      const rm = this.settings.toggleReducedMotion();
+      this.applyReducedMotion();
+      this.toast(`Réduction des mouvements : <b>${rm ? 'activée' : 'désactivée'}</b>`);
+    }
+  }
+
+  private updateFpsLabel(): void {
+    const s = this.settings;
+    const tag = `${PRESETS[s.level].label}${s.source === 'auto' ? ' (auto)' : ''}${s.reducedMotion ? ' · RM' : ''}`;
+    this.ui.fps.textContent = `${Math.round(this.fps)} fps · ×${this.renderer.getPixelRatio().toFixed(2)} · ${tag}`;
+    this.ui.fps.title = 'F2 qualité · F3 mesures · F4 réduction des mouvements';
+  }
+
+  private updatePerf(): void {
+    if (!this.perfOpen) return;
+    const i = this.renderer.info;
+    const s = this.settings;
+    const p = PRESETS[s.level];
+    const c = this.renderer.domElement;
+    const sm = this.renderer.shadowMap.enabled ? `${this.sun.shadow.mapSize.x}² PCF` : 'blobs';
+    const rows: Array<[string, string]> = [
+      ['preset', `${p.label} (${s.source})`],
+      ['GPU', `${s.gpu || '?'} → ${s.why}`],
+      ['draw calls', String(i.render.calls)],
+      ['triangles', i.render.triangles.toLocaleString('fr-BE')],
+      ['programmes', String(i.programs?.length ?? 0)],
+      ['géométries · textures', `${i.memory.geometries} · ${i.memory.textures}`],
+      ['lumières ponctuelles', `${this.lights.realLightCount}${p.dynLights === null ? '' : ` (${p.dynLights} + frontale, décor cuit)`}`],
+      ['résolution', `${c.width}×${c.height} (×${this.renderer.getPixelRatio().toFixed(2)})`],
+      ['MSAA · FXAA', `${this.post.samples} · ${this.post.fxaa.enabled ? 'oui' : 'non'}`],
+      ['ombres', sm],
+      ['bloom', this.post.bloom.enabled ? `×${p.bloomScale}` : 'non'],
+      ['passes post', String(this.post.enabled ? this.post.passCount : 0)],
+      ['particules', `×${p.particles}`],
+      ['mouvements', s.reducedMotion ? 'réduits' : 'normaux'],
+    ];
+    this.ui.perf.innerHTML = rows.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('') + '<i>F2 qualité · F3 fermer · F4 mouvements</i>';
+  }
+
+  /**
+   * Préchauffage des shaders : compile d'avance les programmes de tout ce qui peut apparaître
+   * (Discosaure, butin, fantômes, anneaux, éclairs, smears, variantes d'équipement) pour éviter
+   * la saccade au premier combat. Les objets temporaires sont placés loin du champ puis retirés.
+   */
+  warmup(): void {
+    const far = new THREE.Vector3(400, 0, 400);
+    const disco = new Discosaure(this, far.clone());
+    this.ghosts.spawn(disco.rig.root, 0xff3ea5, 0.01);
+    this.rings.spawn(far, 0xffffff, 0.1, 0.2, 0.01);
+    const drops = LOOT_TABLE.map((it) => {
+      const d = new LootDrop(it, far, far, null);
+      d.attach(this.scene);
+      return d;
+    });
+    const target = this.post.enabled ? this.post.composer.readBuffer : null;
+    const prev = this.renderer.getRenderTarget();
+    this.renderer.setRenderTarget(target);
+    try {
+      this.renderer.compile(this.scene, this.camera);
+    } finally {
+      this.renderer.setRenderTarget(prev);
+    }
+    disco.discard();
+    for (const d of drops) d.detach(this.scene);
+  }
+
 
   // ─── World ─────────────────────────────────────────────────────────────────────
 
@@ -437,6 +605,25 @@ class Game implements World {
   private prCap = 2;
   private slowFor = 0;
 
+  private updateBlobs(): void {
+    if (!this.blobs.visible) return;
+    const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const s = new THREE.Vector3();
+    const p = new THREE.Vector3();
+    let n = 0;
+    const put = (x: number, z: number, r: number) => {
+      if (n >= this.blobs.count) return;
+      s.set(r, 1, r * 0.9);
+      p.set(x, 0.018, z);
+      this.blobs.setMatrixAt(n++, m.compose(p, q, s));
+    };
+    put(this.hero.pos.x, this.hero.pos.z, 1.25);
+    for (const e of this.enemies) if (e.alive && !e.spawning) put(e.pos.x, e.pos.z, e.radius * 2.6);
+    for (let i = n; i < this.blobs.count; i++) this.blobs.setMatrixAt(i, m.makeScale(0, 0, 0));
+    this.blobs.instanceMatrix.needsUpdate = true;
+  }
+
   resize(): void {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -457,6 +644,7 @@ class Game implements World {
   }
 
   step(realDt: number): void {
+    this.bench(realDt);
     // Hitstop et ralenti
     let dt = realDt;
     if (this.freeze > 0) {
@@ -534,10 +722,11 @@ class Game implements World {
         if (this.waveTimer < 0) this.spawnWave();
       }
       // étincelles de caténaire
+      // (coupées en réduction des mouvements : flash stroboscopique)
       this.sparkTimer -= dt;
       if (this.sparkTimer <= 0) {
         this.sparkTimer = 2.5 + Math.random() * 4;
-        this.catenarySpark();
+        if (!fxFlags.reducedMotion) this.catenarySpark();
       }
     } else {
       // pendant le hitstop, le héros garde sa pose mais accepte les entrées (tampon)
@@ -602,6 +791,8 @@ class Game implements World {
     this.camera.position.copy(this.camTarget).addScaledVector(CAM_OFFSET, this.camZoom).add(this.shake.offset);
     this.camera.lookAt(this.camTarget.x + this.shake.offset.x * 0.5, 0.6, this.camTarget.z - 2.5);
     for (const e of this.enemies) e.faceCamera(this.camera);
+    this.lights.update(this.camTarget, realDt);
+    this.updateBlobs();
 
     // HUD
     const w = window.innerWidth;
@@ -609,6 +800,7 @@ class Game implements World {
     this.dmg.update(realDt, this.camera, w, h);
     this.updateHud(realDt);
 
+    this.renderer.info.reset();
     this.post.render(this.time, this.hurtVignette);
 
     this.frames++;
@@ -617,17 +809,44 @@ class Game implements World {
       this.fps = this.frames / this.fpsT;
       this.frames = 0;
       this.fpsT = 0;
-      this.ui.fps.textContent = `${Math.round(this.fps)} fps · ×${this.renderer.getPixelRatio().toFixed(2)}`;
+      this.updateFpsLabel();
+      this.updatePerf();
       // résolution adaptative : si l'on reste sous 50 fps, on baisse le pixel ratio par paliers
+      // jusqu'au plancher du preset ; en mode auto, on descend ensuite d'un preset.
       if (!FIXED && this.time > 3) {
         this.slowFor = this.fps < 50 ? this.slowFor + 0.5 : 0;
-        if (this.slowFor >= 2 && this.renderer.getPixelRatio() > 1) {
-          this.prCap = Math.max(1, this.renderer.getPixelRatio() - 0.25);
+        const floor = PRESETS[this.settings.level].prMin;
+        if (this.slowFor >= 2 && this.renderer.getPixelRatio() > floor + 1e-3) {
+          this.prCap = Math.max(floor, this.renderer.getPixelRatio() - 0.25);
           this.slowFor = 0;
           this.resize();
+        } else if (this.slowFor >= 4 && this.settings.stepDown()) {
+          this.slowFor = 0;
+          this.applyQuality();
+          this.toast(`Qualité abaissée : <b>${PRESETS[this.settings.level].label}</b> (F2 pour changer)`);
         }
       }
     }
+  }
+
+  /**
+   * Micro-benchmark de démarrage (mode auto) : après 1 s de chauffe, moyenne sur 2,5 s.
+   * Sous 42 fps on descend d'un preset tout de suite (sans attendre la résolution adaptative).
+   */
+  private bench(realDt: number): void {
+    if (FIXED || this.settings.source !== 'auto' || this.benchT < 0) return;
+    this.benchT += realDt;
+    if (this.benchT < 1) return;
+    this.benchFrames++;
+    this.benchTime += realDt;
+    if (this.benchTime < 2.5) return;
+    const fps = this.benchFrames / this.benchTime;
+    this.benchFrames = 0;
+    this.benchTime = 0;
+    if (fps < 42 && this.settings.stepDown()) {
+      this.applyQuality();
+      this.benchT = 0; // re-mesure au nouveau preset
+    } else this.benchT = -1;
   }
 
   private updateCard(): void {
@@ -718,6 +937,22 @@ class Game implements World {
       hero: () => ({ x: this.hero.pos.x, z: this.hero.pos.z, hp: this.hero.hp, state: this.hero.state, helmet: this.hero.helmetKind, ...this.hero.attackInfo }),
       drops: () => this.drops.map((d) => ({ id: d.item.id, x: d.pos.x, z: d.pos.z, ready: d.readyToPick })),
       fps: () => this.fps,
+      quality: (q?: QualityLevel) => {
+        if (q) {
+          this.settings.level = q;
+          this.settings.source = 'url';
+          this.applyQuality();
+        }
+        return this.settings.level;
+      },
+      reducedMotion: (v: boolean) => {
+        this.settings.reducedMotion = v;
+        this.applyReducedMotion();
+      },
+      perf: () => {
+        const i = this.renderer.info;
+        return { calls: i.render.calls, triangles: i.render.triangles, programs: i.programs?.length ?? 0, lights: this.lights.realLightCount, bakedTriangles: this.lights.bakedTriangles, pr: this.renderer.getPixelRatio(), passes: this.post.passCount, samples: this.post.samples };
+      },
       sparkNow: () => this.catenarySpark(),
     };
   }

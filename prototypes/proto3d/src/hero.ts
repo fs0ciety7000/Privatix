@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { easeIn, easeOut, keyed, merge, Rig, type Pose, type V3 } from './rig';
 import { glow, makeFlash, PAL, sncbLogoTexture, toon, type Flash } from './toon';
 import type { HitShape, World } from './types';
+import { fxFlags } from './quality';
 
 export type HelmetKind = 'base' | 'legend';
 export type VestKind = 'base' | 'rare';
@@ -496,7 +497,8 @@ export class Hero {
     this.hurtFlash = Math.max(0, this.hurtFlash - dtS * 6);
     this.flash.amount.value = this.hurtFlash * 0.8;
     // Clignotement d'invulnérabilité après un coup reçu
-    this.rig.body.visible = !(this.invuln > 0 && this.state !== 'hurt' && Math.floor(this.invuln / 60) % 2 === 0);
+    // clignotement d'invulnérabilité (coupé en réduction des mouvements)
+    this.rig.body.visible = fxFlags.reducedMotion || !(this.invuln > 0 && this.state !== 'hurt' && Math.floor(this.invuln / 60) % 2 === 0);
 
     this.animate(dtS);
   }

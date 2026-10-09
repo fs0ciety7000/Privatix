@@ -5,6 +5,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { FXAAPass } from 'three/examples/jsm/postprocessing/FXAAPass.js';
 
 const GradeShader = {
   name: 'GradeShader',
@@ -82,11 +83,19 @@ export class Post {
   readonly composer: EffectComposer;
   readonly bloom: UnrealBloomPass;
   readonly grade: ShaderPass;
+  readonly fxaa: FXAAPass;
+  private readonly sanitize: ShaderPass;
+  private msaa: number;
+  private bloomScale = 1;
+  private size = { w: 1, h: 1, pr: 1 };
+  /** Grain figé (réduction des mouvements). */
+  staticGrain = false;
 
   constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, w: number, h: number, msaa: number) {
     this.renderer = renderer;
     this.scene = scene;
     this.camera = camera;
+    this.msaa = msaa;
     const pr = renderer.getPixelRatio();
     // Cible HDR seulement si le GPU sait y rendre ; sinon 8 bits (bloom moins doux, mais une image).
     const ext = renderer.extensions;
@@ -97,22 +106,54 @@ export class Post {
     });
     this.composer = new EffectComposer(renderer, rt);
     this.composer.addPass(new RenderPass(scene, camera));
-    this.composer.addPass(new ShaderPass(SanitizeShader));
+    this.sanitize = new ShaderPass(SanitizeShader);
+    this.composer.addPass(this.sanitize);
     this.bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.9, 0.55, 0.96);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
+    // FXAA (presets sans MSAA) : sur l'image déjà tonemappée, avant le grain de l'étalonnage
+    this.fxaa = new FXAAPass();
+    this.fxaa.enabled = false;
+    this.composer.addPass(this.fxaa);
     this.grade = new ShaderPass(GradeShader);
     this.composer.addPass(this.grade);
   }
 
   setSize(w: number, h: number, pr: number): void {
+    this.size = { w, h, pr };
     this.composer.setPixelRatio(pr);
     this.composer.setSize(w, h);
+    // bloom à résolution réduite (Moyen : moitié, Bas : quart) — le flou reste aussi large à l'écran
+    if (this.bloomScale !== 1) this.bloom.setSize(Math.max(2, Math.round(w * pr * this.bloomScale)), Math.max(2, Math.round(h * pr * this.bloomScale)));
     (this.grade.uniforms.uRes.value as THREE.Vector2).set(w * pr, h * pr);
   }
 
+  /** Applique un preset : MSAA, FXAA, résolution du bloom. */
+  configure(o: { msaa: number; fxaa: boolean; bloomScale: number }): void {
+    if (o.msaa !== this.msaa) {
+      this.msaa = o.msaa;
+      for (const rt of [this.composer.renderTarget1, this.composer.renderTarget2]) {
+        rt.samples = o.msaa;
+        rt.dispose(); // recréé avec le bon nombre d'échantillons au prochain rendu
+      }
+    }
+    this.fxaa.enabled = o.fxaa;
+    this.bloomScale = o.bloomScale;
+    this.bloom.enabled = o.bloomScale > 0;
+    this.setSize(this.size.w, this.size.h, this.size.pr);
+  }
+
+  /** Nombre de passes plein écran actives (hors bloom interne). */
+  get passCount(): number {
+    return this.composer.passes.filter((p) => p.enabled).length;
+  }
+
+  get samples(): number {
+    return this.enabled ? this.msaa : 0;
+  }
+
   render(time: number, hurt: number): void {
-    this.grade.uniforms.uTime.value = time;
+    this.grade.uniforms.uTime.value = this.staticGrain ? 0.37 : time;
     this.grade.uniforms.uHurt.value = hurt;
     if (!this.enabled) {
       this.renderer.render(this.scene, this.camera);

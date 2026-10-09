@@ -1,10 +1,13 @@
 // Post-traitement : rendu HDR multiéchantillonné → bloom → tone mapping → étalonnage + vignette.
+// Repris du prototype validé (prototypes/proto3d/src/post.ts) ; le preset de qualité règle le MSAA,
+// la présence et la résolution du bloom.
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import type { QualityPreset } from '@/view/quality';
 
 const GradeShader = {
   name: 'GradeShader',
@@ -12,6 +15,7 @@ const GradeShader = {
     tDiffuse: { value: null as THREE.Texture | null },
     uTime: { value: 0 },
     uHurt: { value: 0 },
+    uGrain: { value: 0.028 },
     uRes: { value: new THREE.Vector2(1, 1) },
   },
   vertexShader: /* glsl */ `
@@ -21,6 +25,7 @@ const GradeShader = {
     uniform sampler2D tDiffuse;
     uniform float uTime;
     uniform float uHurt;
+    uniform float uGrain;
     uniform vec2 uRes;
     varying vec2 vUv;
     float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
@@ -48,7 +53,7 @@ const GradeShader = {
       // coup reçu : bords magenta
       col = mix(col, vec3(1.0, 0.16, 0.5), uHurt * (1.0 - v) * 0.75);
       // grain
-      col += (hash(vUv * uRes + fract(uTime) * 91.0) - 0.5) * 0.028;
+      col += (hash(vUv * uRes + fract(uTime) * 91.0) - 0.5) * uGrain;
       gl_FragColor = vec4(col, 1.0);
     }`,
 };
@@ -73,47 +78,62 @@ const SanitizeShader = {
 
 export class Post {
   /** Faux si le post-traitement a été désactivé (`?safe` ou écran noir détecté) : rendu direct. */
-  enabled = !new URLSearchParams(location.search).has('safe');
+  public enabled: boolean;
+  public readonly composer: EffectComposer;
+  public readonly bloom: UnrealBloomPass | null;
+  public readonly grade: ShaderPass;
   private checks = 0;
-  private readonly renderer: THREE.WebGLRenderer;
-  private readonly scene: THREE.Scene;
-  private readonly camera: THREE.Camera;
+  private frame = 0;
+  private readonly bloomScale: number;
 
-  readonly composer: EffectComposer;
-  readonly bloom: UnrealBloomPass;
-  readonly grade: ShaderPass;
-
-  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, w: number, h: number, msaa: number) {
-    this.renderer = renderer;
-    this.scene = scene;
-    this.camera = camera;
+  public constructor(
+    private readonly renderer: THREE.WebGLRenderer,
+    private readonly scene: THREE.Scene,
+    private readonly camera: THREE.Camera,
+    w: number,
+    h: number,
+    quality: QualityPreset,
+    safe: boolean,
+  ) {
+    this.enabled = !safe;
+    this.bloomScale = quality.bloomScale;
     const pr = renderer.getPixelRatio();
     // Cible HDR seulement si le GPU sait y rendre ; sinon 8 bits (bloom moins doux, mais une image).
     const ext = renderer.extensions;
     const hdr = ext.has('EXT_color_buffer_float') || ext.has('EXT_color_buffer_half_float');
     const rt = new THREE.WebGLRenderTarget(Math.floor(w * pr), Math.floor(h * pr), {
       type: hdr ? THREE.HalfFloatType : THREE.UnsignedByteType,
-      samples: msaa,
+      samples: quality.msaa,
     });
     this.composer = new EffectComposer(renderer, rt);
     this.composer.addPass(new RenderPass(scene, camera));
     this.composer.addPass(new ShaderPass(SanitizeShader));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.9, 0.55, 0.96);
-    this.composer.addPass(this.bloom);
+    if (quality.bloom) {
+      this.bloom = new UnrealBloomPass(
+        new THREE.Vector2(w * quality.bloomScale, h * quality.bloomScale),
+        0.9,
+        0.55,
+        0.96,
+      );
+      this.composer.addPass(this.bloom);
+    } else {
+      this.bloom = null;
+    }
     this.composer.addPass(new OutputPass());
     this.grade = new ShaderPass(GradeShader);
     this.composer.addPass(this.grade);
   }
 
-  setSize(w: number, h: number, pr: number): void {
+  public setSize(w: number, h: number, pr: number): void {
     this.composer.setPixelRatio(pr);
     this.composer.setSize(w, h);
-    (this.grade.uniforms.uRes.value as THREE.Vector2).set(w * pr, h * pr);
+    if (this.bloom) this.bloom.resolution.set(w * this.bloomScale, h * this.bloomScale);
+    (this.grade.uniforms.uRes as THREE.IUniform<THREE.Vector2>).value.set(w * pr, h * pr);
   }
 
-  render(time: number, hurt: number): void {
-    this.grade.uniforms.uTime.value = time;
-    this.grade.uniforms.uHurt.value = hurt;
+  public render(time: number, hurt: number): void {
+    (this.grade.uniforms.uTime as THREE.IUniform<number>).value = time;
+    (this.grade.uniforms.uHurt as THREE.IUniform<number>).value = hurt;
     if (!this.enabled) {
       this.renderer.render(this.scene, this.camera);
       return;
@@ -121,8 +141,9 @@ export class Post {
     this.composer.render();
     // Le fond de la scène n'est jamais noir pur : une image entièrement noire après quelques
     // frames signale un post-traitement que ce GPU ne supporte pas. On bascule en rendu direct.
-    if (this.checks < 3 && ++this.frame % 30 === 0) {
-      this.checks++;
+    this.frame += 1;
+    if (this.checks < 3 && this.frame % 30 === 0) {
+      this.checks += 1;
       if (this.isBlack()) {
         console.warn('[post] image noire détectée : post-traitement désactivé');
         this.enabled = false;
@@ -130,17 +151,26 @@ export class Post {
     }
   }
 
-  private frame = 0;
-
   private isBlack(): boolean {
     const gl = this.renderer.getContext();
     const w = gl.drawingBufferWidth;
     const h = gl.drawingBufferHeight;
     const px = new Uint8Array(4);
-    for (const [fx, fy] of [[0.5, 0.5], [0.25, 0.3], [0.75, 0.7], [0.5, 0.15], [0.3, 0.8]] as const) {
+    const probes: readonly (readonly [number, number])[] = [
+      [0.5, 0.5],
+      [0.25, 0.3],
+      [0.75, 0.7],
+      [0.5, 0.15],
+      [0.3, 0.8],
+    ];
+    for (const [fx, fy] of probes) {
       gl.readPixels(Math.floor(w * fx), Math.floor(h * fy), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
-      if (px[0] + px[1] + px[2] > 6) return false;
+      if ((px[0] ?? 0) + (px[1] ?? 0) + (px[2] ?? 0) > 6) return false;
     }
     return true;
+  }
+
+  public dispose(): void {
+    this.composer.dispose();
   }
 }

@@ -124,12 +124,11 @@ export class World implements SimWorld, Steppable {
     this.emit({ type: 'shake', px: FEEL.KILL_SHAKE_PX, ms: FEEL.KILL_SHAKE_MS });
   }
 
-  public spawnEnemy(kind: EnemyKind, x: number, y: number, immediate = false): EnemySim | null {
+  public spawnEnemy(_kind: EnemyKind, x: number, y: number, immediate = false): EnemySim | null {
     if (this.livingEnemies().length >= ENEMY_RULES.MAX_ALIVE) return null;
     const scale = enemyScale(this.director.r, this.run.shift, SCALING);
     // Seul le Consultant est porté pour l'instant ; les autres types arrivent en J2 suite / J7.
     const enemy = new ConsultantSim(this, x, y, scale);
-    void kind;
     enemy.start(immediate);
     this.enemies.push(enemy);
     return enemy;

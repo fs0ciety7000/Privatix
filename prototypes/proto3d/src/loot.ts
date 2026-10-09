@@ -1,6 +1,7 @@
 // Butin : objets d'équipement à rareté, objet au sol avec faisceau coloré, carte HTML de l'objet.
 import * as THREE from 'three';
 import { addOutline, canvasTexture, glow, rboxGeo, toon } from './toon';
+import { fxFlags } from './quality';
 
 export type Rarity = 'commun' | 'rare' | 'epique' | 'legendaire';
 export type Slot = 'casque' | 'gilet' | 'cle';
@@ -261,13 +262,14 @@ export class LootDrop {
       m.uniforms.uAlpha.value = e;
       m.uniforms.uTime.value = time;
     }
-    (this.disc.material as THREE.MeshBasicMaterial).opacity = e * (0.75 + 0.25 * Math.sin(time * 4));
+    const pulse = fxFlags.reducedMotion ? 0 : Math.sin(time * 4);
+    (this.disc.material as THREE.MeshBasicMaterial).opacity = e * (0.75 + 0.25 * pulse);
     this.disc.rotation.y += dt * 0.6;
     this.model.position.set(this.pos.x, 0.95 + Math.sin(time * 2.4) * 0.12, this.pos.z);
     this.model.rotation.y += dt * 1.4;
     if (this.light) {
       this.light.position.set(this.pos.x, 2.6, this.pos.z);
-      this.light.intensity = e * (4.5 + Math.sin(time * 4) * 1);
+      this.light.intensity = e * (4.5 + pulse);
     }
     return false;
   }

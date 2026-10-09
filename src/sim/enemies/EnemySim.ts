@@ -181,7 +181,8 @@ export abstract class EnemySim {
         this.world.emit({ type: 'wallSlam', x: this.body.x, y: this.body.y });
         this.world.emit({ type: 'shake', px: 1, ms: 60 });
         this.applyDamage(HERO.WALL_SLAM_DAMAGE, false, false);
-        if (!this.isDead && !this.isHeavy)
+        // applyDamage peut avoir tué l'ennemi : on relit l'état.
+        if (!this.fsm.is('dead') && !this.isHeavy)
           this.fsm.request({ to: 'stagger', payload: { ms: HERO.WALL_SLAM_STUN_MS } });
       }
       if (this.kbLeft <= 0) this.halt(true);

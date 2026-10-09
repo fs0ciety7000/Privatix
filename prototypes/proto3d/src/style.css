@@ -384,6 +384,71 @@ kbd {
   opacity: 0.4;
 }
 
+/* ─── Mesures (F3) ─── */
+#perf {
+  position: absolute;
+  right: 10px;
+  bottom: 24px;
+  display: none;
+  min-width: 250px;
+  max-width: min(420px, calc(100vw - 20px));
+  padding: 8px 10px;
+  background: rgba(10, 8, 24, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  font: 600 11px/1.45 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  color: #d8d4f0;
+  pointer-events: none;
+}
+#perf.show {
+  display: block;
+}
+#perf div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+#perf span {
+  color: rgba(216, 212, 240, 0.6);
+  white-space: nowrap;
+}
+#perf b {
+  color: #fff;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+#perf i {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  color: rgba(216, 212, 240, 0.45);
+}
+
+/* ─── Réduction des mouvements (F4, ?rm=1 ou prefers-reduced-motion) ─── */
+body.rm .card-act,
+body.rm #combo.pop,
+body.rm .slot.flash {
+  animation: none;
+}
+body.rm #toast.show {
+  animation: toast-rm 2.4s linear forwards;
+}
+@keyframes toast-rm {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(1);
+  }
+  8%,
+  85% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 /* ─── Nombres de dégâts ─── */
 #dmg-layer {
   position: absolute;

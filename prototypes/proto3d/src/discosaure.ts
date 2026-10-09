@@ -7,6 +7,7 @@ import { easeOut, keyed, Rig, type Pose } from './rig';
 import { canvasTexture, glow, makeFlash, PAL, radialTexture, toon, type Flash } from './toon';
 import { DiscTelegraph, Telegraph } from './fx';
 import type { Foe, HitInfo, World } from './types';
+import { fxFlags } from './quality';
 
 const STOMP_WINDUP = 1050;
 const STOMP_ACTIVE = 160;
@@ -75,7 +76,10 @@ export class Discosaure implements Foe {
   private glints: THREE.Points;
   private floorSpots: THREE.InstancedMesh;
   private wallSpots: THREE.InstancedMesh;
-  private beams: THREE.Mesh[] = [];
+  /** 9 rayons visibles en un seul appel de rendu (instanciés, couleur par instance). */
+  private beams: THREE.InstancedMesh;
+  /** rotation des taches (figée en réduction des mouvements) */
+  private spotSpin = 0;
   private spotDirs: Array<{ az: number; el: number; color: THREE.Color }> = [];
   private spotFade = 0;
   private eyeMat: THREE.MeshBasicMaterial;
@@ -311,24 +315,35 @@ export class Discosaure implements Foe {
       world.scene.add(im);
     }
     const beamMat = new THREE.ShaderMaterial({
-      uniforms: { uColor: { value: new THREE.Color(1, 1, 1) } },
-      vertexShader: /* glsl */ `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
-      fragmentShader: /* glsl */ `uniform vec3 uColor; varying vec2 vUv; void main(){ float a = pow(vUv.y, 1.5) * 0.28; gl_FragColor = vec4(uColor * a, a); }`,
+      vertexShader: /* glsl */ `
+        varying vec2 vUv; varying vec3 vCol;
+        void main(){
+          vUv = uv;
+          vec4 p = vec4(position, 1.0);
+          vCol = vec3(1.0);
+          #ifdef USE_INSTANCING
+            p = instanceMatrix * p;
+          #endif
+          #ifdef USE_INSTANCING_COLOR
+            vCol = instanceColor;
+          #endif
+          gl_Position = projectionMatrix * modelViewMatrix * p;
+        }`,
+      fragmentShader: /* glsl */ `varying vec2 vUv; varying vec3 vCol; void main(){ float a = pow(vUv.y, 1.5) * 0.28; gl_FragColor = vec4(vCol * a, a); }`,
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
       side: THREE.DoubleSide,
     });
+    // cylindre de hauteur 1 couché sur +Y : uv.y = 1 côté boule
+    this.beams = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.03, 0.2, 1, 8, 1, true).translate(0, -0.5, 0), beamMat, 9);
+    this.beams.renderOrder = 4;
+    this.beams.frustumCulled = false;
     for (let i = 0; i < 9; i++) {
-      const mat = beamMat.clone();
-      (mat.uniforms.uColor.value as THREE.Color).copy(this.spotDirs[i * 3].color);
-      // cylindre de hauteur 1 couché sur +Y : uv.y = 1 côté boule
-      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.2, 1, 8, 1, true).translate(0, -0.5, 0), mat);
-      b.renderOrder = 4;
-      b.frustumCulled = false;
-      this.beams.push(b);
-      world.scene.add(b);
+      this.beams.setColorAt(i, this.spotDirs[i * 3].color);
+      this.beams.setMatrixAt(i, new THREE.Matrix4().makeScale(0, 0, 0));
     }
+    world.scene.add(this.beams);
 
     this.stompTele = new DiscTelegraph(STOMP_R, PAL.danger);
     this.chargeTele = new Telegraph(CHARGE_W, CHARGE_DIST + 1.5, PAL.danger);
@@ -649,11 +664,15 @@ export class Discosaure implements Foe {
     this.facing += d * (1 - Math.exp(-k * dt));
   }
 
+  /** Retire le Discosaure de la scène sans passer par sa mort (préchauffage des shaders). */
+  discard(): void {
+    this.remove();
+  }
+
   private remove(): void {
     this.removed = true;
     const s = this.world.scene;
-    s.remove(this.rig.root, this.stompTele.mesh, this.chargeTele.mesh, this.floorSpots, this.wallSpots);
-    for (const b of this.beams) s.remove(b);
+    s.remove(this.rig.root, this.stompTele.mesh, this.chargeTele.mesh, this.floorSpots, this.wallSpots, this.beams);
   }
 
   // ─── Boule et taches de lumière ───────────────────────────────────────────────
@@ -662,6 +681,10 @@ export class Discosaure implements Foe {
     const w = this.world;
     this.ballSpin += dt * (this.state === 'charge' ? 3.5 : 1.1);
     this.ballPivot.rotation.y = this.ballSpin;
+    const rm = fxFlags.reducedMotion;
+    // réduction des mouvements : ni scintillement des facettes, ni lasers, ni taches qui balaient/clignotent
+    if (!rm) this.spotSpin = this.ballSpin;
+    this.glints.visible = !rm;
     (this.glints.material as THREE.ShaderMaterial).uniforms.uTime.value = w.time;
     const targetFade = this.ballBroken || this.state === 'spawn' ? 0 : 1;
     this.spotFade += (targetFade - this.spotFade) * (1 - Math.exp(-(this.ballBroken ? 12 : 3) * dt));
@@ -676,7 +699,7 @@ export class Discosaure implements Foe {
     const FAR_EDGE = -11.6;
     for (let i = 0; i < this.spotDirs.length; i++) {
       const sd = this.spotDirs[i];
-      const az = sd.az + this.ballSpin;
+      const az = sd.az + this.spotSpin;
       const ce = Math.cos(sd.el);
       const d = new THREE.Vector3(Math.sin(az) * ce, Math.sin(sd.el), Math.cos(az) * ce);
       let floorY = 0;
@@ -693,7 +716,7 @@ export class Discosaure implements Foe {
         p.copy(c).addScaledVector(d, t);
         onWall = true;
       }
-      const flick = 0.75 + 0.25 * Math.sin(w.time * 5 + i);
+      const flick = rm ? 0.85 : 0.75 + 0.25 * Math.sin(w.time * 5 + i);
       const size = (0.55 + 0.25 * (i % 3)) * this.spotFade * flick;
       if (!onWall) {
         // ellipse étirée dans la direction du rayon (incidence rasante)
@@ -711,16 +734,17 @@ export class Discosaure implements Foe {
         this.floorSpots.setMatrixAt(i, zero);
       }
       if (i % 3 === 0) {
-        const b = this.beams[i / 3];
-        if (b) {
+        if (this.spotFade > 0.02 && !rm) {
           const len = c.distanceTo(p);
-          b.position.copy(c);
-          b.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), d);
-          b.scale.set(this.spotFade, len, this.spotFade);
-          b.visible = this.spotFade > 0.02;
-        }
+          q.setFromUnitVectors(new THREE.Vector3(0, -1, 0), d);
+          s.set(this.spotFade, len, this.spotFade);
+          m.compose(c, q, s);
+          this.beams.setMatrixAt(i / 3, m);
+        } else this.beams.setMatrixAt(i / 3, zero);
       }
     }
+    this.beams.visible = this.spotFade > 0.02 && !rm;
+    this.beams.instanceMatrix.needsUpdate = true;
     this.floorSpots.instanceMatrix.needsUpdate = true;
     this.wallSpots.instanceMatrix.needsUpdate = true;
   }
