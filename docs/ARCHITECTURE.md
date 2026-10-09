@@ -1201,7 +1201,7 @@ Le savoir-faire des cartes ASCII (parse + test d'accessibilité) est réutilisé
 ### 15.1 Principe
 La **logique reste en 2D dans le plan du sol**, dans l'unité de `balance.ts` (le pixel logique `u`). La vue affiche un point `(x, y)` en `(x / 30, 0, y / 30)` mètres (`sim/units.ts`, `toWorld`) : `y` logique (vers le bas de l'écran) devient `+z`. 30 est le `PX_PER_UNIT` de `tools/render3d`. Les angles `atan2(dy, dx)` sont conservés ; un modèle qui regarde vers `+Z` prend `rotation.y = π/2 − angle` (`yawFromAngle`). `balance.ts` ne change pas.
 
-Les deux versions coexistent sans se toucher : **deux entrées Vite**, `index.html` (Phaser, `src/main.ts`) et `play3d.html` (Three.js, `src/main3d.ts`), servies par le même `dist/` (`/` et `/play3d.html`). Phaser et three sont chacun dans leur chunk ; aucune entrée ne charge le moteur de l'autre. Les deux importent les mêmes `systems/` et `config/` : l'équilibrage ne peut pas diverger.
+Les deux versions coexistent sans se toucher : **deux entrées Vite**, `index.html` (Phaser, `src/main.ts`) et `play3d.html` (Three.js, `src/main3d.ts`), servies par le même `dist/` (`/jouer/` et `/jouer/play3d.html` en production ; la racine `/` sert le site vitrine `site/`, et l'ancien `/play3d.html` redirige en 301). Phaser et three sont chacun dans leur chunk ; aucune entrée ne charge le moteur de l'autre. Les deux importent les mêmes `systems/` et `config/` : l'équilibrage ne peut pas diverger.
 
 ### 15.2 Couches (imposées par ESLint, `eslint.config.js`)
 ```

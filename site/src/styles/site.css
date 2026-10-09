@@ -50,7 +50,7 @@ code {
   background: rgba(255, 255, 255, 0.08);
   font: 600 0.9em var(--font-mono);
   color: var(--px-perk);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 :focus-visible {
   outline: var(--focus-ring);
@@ -340,12 +340,13 @@ code {
     grid-column: 1 / -1;
   }
 }
-.pillar {
-  padding-right: calc(var(--sp-5) + 44px);
+.pillar .card__kicker,
+.pillar .card__title {
+  padding-right: 48px;
 }
-.pillar--wide,
-.pillar--full {
-  padding-right: var(--sp-5);
+.pillar--wide .card__title,
+.pillar--full .card__title {
+  padding-right: 0;
 }
 .hud-demo {
   max-width: 340px;
@@ -412,7 +413,7 @@ code {
 /* Galerie */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
   gap: var(--sp-5);
   margin: 0;
   padding: 0;
@@ -660,6 +661,8 @@ code {
   font-size: var(--fs-xs);
 }
 .dl-file code {
+  white-space: normal;
+  overflow-wrap: anywhere;
   margin-top: 2px;
   padding: 0;
   background: none;
@@ -880,3 +883,9 @@ code {
 }
 
 /* Révélations au scroll : l'état initial n'est posé que par motion.ts (contenu visible sans JS). */
+
+@media (max-width: 640px) {
+  .hero__scrim {
+    background: linear-gradient(180deg, rgba(10, 8, 24, 0.45) 0%, rgba(10, 8, 24, 0.82) 45%, var(--px-night) 100%);
+  }
+}

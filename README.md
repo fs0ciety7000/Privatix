@@ -4,6 +4,8 @@ Hack 'n' Slash / Roguelite 2D en vue de dessus, satirique, sur le rail belge. Un
 
 **Stack** : Phaser 4.2 (Arcade Physics) · TypeScript 5.9 strict · Vite 7 · Vitest 4 · sprites originaux générés par `tools/pixelart/` · déploiement Docker/nginx sur Coolify (`privatix.fs0ciety.org`).
 
+**En ligne** : `/` site vitrine (`site/`, design system `docs/DESIGN_SYSTEM.md`) · `/jouer/play3d.html` jeu 3D · `/jouer/` version classique Phaser · `/3d/` prototype 3D. Téléchargements de bureau : GitHub Releases, affichées automatiquement par le site.
+
 ```bash
 npm ci
 npm run dev        # http://localhost:5173  (?debug : corps Arcade · ?cheat : raccourcis de test)

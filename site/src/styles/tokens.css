@@ -36,9 +36,9 @@
   --px-line: rgba(255, 255, 255, 0.12);
 
   /* Texte (contrastes mesurés sur --px-night) */
-  --px-text: #ffffff; /* 19,6:1 */
-  --px-text-soft: #dcd8ef; /* 14:1 */
-  --px-text-mute: #a9a3c8; /* 7,9:1 */
+  --px-text: #ffffff; /* 19,8:1 */
+  --px-text-soft: #dcd8ef; /* 14,2:1 */
+  --px-text-mute: #a9a3c8; /* 8,3:1 */
   --px-label: #ffd9b8; /* libellés du HUD (ÉNERGIE) */
   --px-cream: #fff3c8; /* combo, nombres */
   --px-perk: #ffe7a8; /* effet d'objet */

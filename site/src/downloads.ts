@@ -261,6 +261,8 @@ export async function initDownloads(): Promise<void> {
   const latest = all.find((r) => !r.prerelease) ?? all[0];
   if (!latest) {
     renderNone(root);
+    const sub = document.querySelector<HTMLElement>('[data-dl-hero-sub]');
+    if (sub) sub.textContent = 'Applications de bureau bientôt disponibles';
     return;
   }
   renderLatest(root, latest, os, loaded.source);
