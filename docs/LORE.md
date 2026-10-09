@@ -18,11 +18,11 @@
 
 Mons, 4h47, quai 2. L'écran des départs annonce que le **train de 7h12**, celui que la grand-mère du héros prend chaque mardi pour aller au marché depuis quarante ans, est supprimé. Motif affiché : « Optimisation ».
 
-Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») s'apprête à signer la cession de la ligne, de la gare et même du café de la salle des pauses, en exécution du **Plan Horizon Rentabilité 2030 (PHR-2030)**. La signature est prévue « à la fin du service », au dernier étage du **BAG**, le bâtiment administratif de la gare.
+Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») s'apprête à signer la cession de la ligne, de la gare et même du café de la salle des pauses, en exécution du **Plan Horizon Rentabilité 2030 (PHR-2030)**. La signature est prévue « à la fin du service », au dernier étage du **BAG**, dont Privatix a pris les étages un par un.
 
 Léon (ou Léa), agent·e polyvalent·e en 3x8 depuis neuf ans, prend la **clé à tire-fond** de son grand-père et remonte la gare à contre-courant : les **Quais & Voies**, la **Passerelle** que les navetteurs appellent « le Calatrava », puis le **Hall & BAG**, jusqu'au bureau où **Gontran Vanderslide** tient le stylo.
 
-Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ramènent par le couloir technique jusqu'à l'**OCC (Operation Coffee Center)**, une lampisterie oubliée sous la passerelle. Et la signature est reportée, encore et encore : le **Sondage de Privatix** n'arrive jamais à trouver un créneau.
+Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ramènent par le couloir technique jusqu'à l'**OCC**, le centre opérationnel de la gare, au rez-de-chaussée arrière du BAG : le seul étage que Privatix n'a pas encore pris, parce qu'on ne coupe pas un centre opérationnel sans arrêter les trains. Ses agents l'ont rebaptisé **« Operation Coffee Center »**. Et la signature est reportée, encore et encore : le **Sondage de Privatix** n'arrive jamais à trouver un créneau.
 
 ### 1.2 Pitch (version une ligne)
 
