@@ -47,8 +47,10 @@ export function createProceduralEnemyView(
     case 'discosaure':
       return new AuditeurView(scene, reducedMotion);
     case 'manager':
-    case 'lurcke':
       return new ManagerView(scene, reducedMotion);
+    case 'lurcke':
+      // Boss final sans GLB propre : le Manager KPI grandi, sans bulle de posture.
+      return new ManagerView(scene, reducedMotion, { grow: 1.4, posture: false });
     case 'consultant':
     case 'furet':
     case 'fluidifieur':
