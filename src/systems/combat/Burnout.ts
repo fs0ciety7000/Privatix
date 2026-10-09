@@ -20,6 +20,13 @@ export class BurnoutMeter {
   private tierId: BurnoutTierDef['id'];
   /** Bonus de récupération passive (méta « Local syndical »), en points/s. */
   public extraDecayPerS = 0;
+  /** Multiplicateur de la récupération passive (Casque Cocotte-minute : 0,5), 1 = neutre. */
+  public decayMult = 1;
+  /**
+   * Plafond de la jauge (Casque Cocotte-minute : 99). Sous `BURNOUT.MAX`, le Pétage de plombs ne se
+   * déclenche plus. Par défaut : `BURNOUT.MAX`.
+   */
+  public cap: number = BURNOUT.MAX;
 
   public constructor(initial = 0) {
     this.v = clamp(initial, 0, BURNOUT.MAX);
@@ -60,7 +67,7 @@ export class BurnoutMeter {
   public add(points: number, resetsCalm = false, out: BurnoutEvent[] = []): BurnoutEvent[] {
     if (resetsCalm) this.calmMs = 0;
     if (this.inMeltdown) return out;
-    this.v = clamp(this.v + points, this.floorValue, BURNOUT.MAX);
+    this.v = clamp(this.v + points, this.floorValue, Math.min(BURNOUT.MAX, this.cap));
     if (this.v >= BURNOUT.MAX) {
       this.meltdownLeft = BURNOUT.MELTDOWN_MS;
       out.push({ kind: 'meltdown-start' });
@@ -90,7 +97,8 @@ export class BurnoutMeter {
     }
     this.calmMs += dtMs;
     if (this.calmMs >= BURNOUT.CALM_DELAY_MS && this.v > this.floorValue) {
-      const decay = ((BURNOUT.CALM_DECAY_PER_S + this.extraDecayPerS) * dtMs) / 1000;
+      const decay =
+        ((BURNOUT.CALM_DECAY_PER_S + this.extraDecayPerS) * this.decayMult * dtMs) / 1000;
       this.v = Math.max(this.floorValue, this.v - decay);
       this.checkTier(out);
     }

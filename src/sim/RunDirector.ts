@@ -208,7 +208,7 @@ export class RunDirector {
             tresorSeen: run.tresorSeen,
             previousType: door.type,
           });
-    this.doors = assignDoors(this.world.arena.layout.doors, choices);
+    this.doors = assignDoors(this.world.arena.layout.doors, this.world.loot.dressDoors(choices));
     this.world.emit({ type: 'roomEntered', room: door.room, roomType: door.type });
   }
 
@@ -281,7 +281,8 @@ export class RunDirector {
         const x = Math.min(arena.widthPx - 48, Math.max(48, arena.widthPx / 2));
         const y = Math.min(spawn.ty * TILE - 48, arena.heightPx / 2);
         this.after(REWARD_DROP_DELAY_MS, () => {
-          this.dropReward(reward, x, y);
+          if (reward === 'dotation') this.world.loot.dropDotation(x, y);
+          else this.dropReward(reward, x, y);
         });
       }
     }
@@ -689,6 +690,7 @@ const REWARD_LABEL: Readonly<Record<NonNullable<DoorChoice['reward']>, string>> 
   tickets: 'Tickets',
   ps: 'PS',
   grains: 'Grains',
+  dotation: 'Dotation',
 };
 
 /**

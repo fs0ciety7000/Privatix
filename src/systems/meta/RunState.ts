@@ -44,6 +44,11 @@ export interface RunState {
   readonly burnout: BurnoutMeter;
   readonly mobilisation: Mobilisation;
   readonly dash: DashCharges;
+  /**
+   * Contributions extérieures aux Avantages (équipement du loot, entrée 3D) : ajoutées au socle des
+   * modificateurs à chaque `refreshMods`, dans le même seau additif que la méta. `null` sans loot.
+   */
+  modsHook: ((base: HeroMods) => void) | null;
 }
 
 export function createRun(meta: MetaState, shiftId: ShiftId, seed: number): RunState {
@@ -77,6 +82,7 @@ export function createRun(meta: MetaState, shiftId: ShiftId, seed: number): RunS
     burnout,
     mobilisation: new Mobilisation(loadout.mobilisation),
     dash: new DashCharges(),
+    modsHook: null,
   };
   refreshMods(run);
   run.energy = maxEnergy(run);
@@ -88,8 +94,9 @@ export function refreshMods(run: RunState): void {
   const base = baseMods();
   base.damageBonus += run.loadout.damageBonus;
   base.dashCharges += run.loadout.dashCharges;
+  run.modsHook?.(base);
   run.mods = computeMods(base, run.avantages);
-  run.dash.max = 2 + run.mods.dashCharges;
+  run.dash.max = Math.max(1, 2 + run.mods.dashCharges);
 }
 
 export function maxEnergy(run: RunState): number {

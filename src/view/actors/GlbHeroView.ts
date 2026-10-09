@@ -7,7 +7,7 @@
 // actif du clip (événement `active` du manifeste) tombe donc sur le premier frame actif de la sim,
 // quelle que soit la vitesse d'attaque (`sim.timing`).
 import * as THREE from 'three';
-import { DASH, DASH_ATTACK, HERO, PREAVIS, WHISTLE } from '@/config/balance';
+import { DASH, HERO, PREAVIS, WHISTLE } from '@/config/balance';
 import type { HeroSim } from '@/sim/hero/HeroSim';
 import { pxToM, yawFromAngle } from '@/sim/units';
 import type { ActorFxSink, EquipSlot, HeroActorView, HeroEquipment } from '@/view/actors/ActorView';
@@ -131,13 +131,13 @@ export class GlbHeroView implements HeroActorView {
     this.lastState = state;
     switch (state) {
       case 'attack': {
-        const clip = COMBO_CLIPS[sim.combo] ?? 'attack1';
+        const clip = COMBO_CLIPS[sim.animCombo] ?? 'attack1';
         const tm = sim.timing;
         m.scrub(clip, this.aligned(clip, t, tm.startupMs, tm.activeMs + tm.recoveryMs), 0.04);
         break;
       }
       case 'dashAttack': {
-        const s = DASH_ATTACK;
+        const s = sim.timing;
         m.scrub(
           'attack2',
           this.aligned('attack2', t, s.startupMs, s.activeMs + s.recoveryMs),

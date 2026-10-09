@@ -1,11 +1,11 @@
-import type { AttackStep, SpecialDef } from '@/config/balance';
+import type { SpecialDef } from '@/config/balance';
+import type { ToolDef, ToolStep } from '@/config/loot';
 import {
   BURNOUT,
   COFFEE,
   COMBO,
   COMBO_RULES,
   DASH,
-  DASH_ATTACK,
   FEEL,
   HERO,
   INPUT,
@@ -75,7 +75,7 @@ export class HeroSim {
   private intent: PlayerIntent = NO_INTENT;
   // Combo
   private comboIndex = 0;
-  private step: AttackStep = COMBO[0];
+  private step: ToolStep = COMBO[0];
   private stepTiming: StepTiming = timingOf(COMBO[0]);
   private activeStarted = false;
   private lastAttackEnd = -Infinity;
@@ -129,9 +129,28 @@ export class HeroSim {
     return this.fsm.is('dead');
   }
 
-  /** Coup du combo en cours (0..2). */
+  /** Coup du combo en cours (0 à 3 selon l'Outil). */
   public get combo(): number {
     return this.comboIndex;
+  }
+
+  /** Outil équipé (moveset) : Clé à tire-fond sans équipement. */
+  public get tool(): ToolDef {
+    return this.world.loot.mods.tool;
+  }
+
+  /** Le coup en cours est le coup final de l'Outil. */
+  public get isFinisher(): boolean {
+    return this.comboIndex === this.tool.finisherIndex;
+  }
+
+  /**
+   * Clip d'attaque à jouer (0, 1, 2 = attack1, attack2, attack3) : le coup final prend toujours le
+   * coup lourd, les autres alternent (combos de 2 à 4 coups).
+   */
+  public get animCombo(): number {
+    if (this.isFinisher) return 2;
+    return this.comboIndex % 2;
   }
 
   /** Timing du coup en cours (vitesse d'attaque comprise) : la vue y cale l'animation. */
@@ -174,26 +193,40 @@ export class HeroSim {
     const energyRatio = run.energy / maxEnergy(run);
     const overBurn = Math.max(0, run.burnout.value - 30);
     const tierCrit = run.burnout.inMeltdown ? 0 : tier.crit;
+    const loot = this.world.loot;
     return {
       damageBonus:
-        tier.damageDealt + mods.damageBonus + (energyRatio < 0.5 ? mods.lowEnergyDamageBonus : 0),
-      critChance:
-        HERO.CRIT_CHANCE +
-        tierCrit +
-        mods.critChance +
-        mods.critPerBurnout * Math.floor(overBurn / 10),
+        tier.damageDealt +
+        mods.damageBonus +
+        loot.damageBonusNow() +
+        (energyRatio < 0.5 ? mods.lowEnergyDamageBonus : 0),
+      // Le critique de base vient de l'Outil ; le total est plafonné (GDD § 9 bis.8).
+      critChance: loot.capCrit(
+        loot.mods.damage.critChanceBase +
+          tierCrit +
+          mods.critChance +
+          mods.critPerBurnout * Math.floor(overBurn / 10),
+      ),
       critMult: HERO.CRIT_MULT + mods.critMult + (energyRatio < 0.3 ? mods.lowEnergyCritMult : 0),
     };
   }
 
   private get attackSpeedBonus(): number {
-    const caffeine = this.world.now() < this.caffeineUntil ? COFFEE.CAFFEINE_ATTACK_SPEED : 0;
-    return this.world.run.burnout.tier.attackSpeed + caffeine;
+    const gear = this.world.loot.mods;
+    const caffeine =
+      this.world.now() < this.caffeineUntil
+        ? COFFEE.CAFFEINE_ATTACK_SPEED + gear.coffee.caffeineAttackSpeedBonus
+        : 0;
+    return this.world.run.burnout.tier.attackSpeed + caffeine + (gear.attackSpeedMult - 1);
   }
 
   private get moveSpeed(): number {
     const run = this.world.run;
-    const ballast = this.world.arena.isSlowGround(this.body.x, this.body.y) ? HERO.BALLAST_SLOW : 0;
+    const ballast =
+      this.world.arena.isSlowGround(this.body.x, this.body.y) &&
+      !this.world.loot.mods.movement.ballastImmune
+        ? HERO.BALLAST_SLOW
+        : 0;
     const slow = this.slowLeft > 0 ? this.slowFactor : 0;
     return (
       HERO.SPEED * (1 + run.burnout.tier.speed + run.mods.speedBonus) * (1 - slow) * (1 - ballast)
@@ -210,7 +243,7 @@ export class HeroSim {
 
   public applySlow(factor: number, ms: number): void {
     this.slowFactor = Math.max(factor, this.slowLeft > 0 ? this.slowFactor : 0);
-    this.slowLeft = Math.max(this.slowLeft, ms);
+    this.slowLeft = Math.max(this.slowLeft, ms * this.world.loot.mods.defense.slowTakenMult);
   }
 
   /** Vrai si le héros est dans la fenêtre de dash parfait. */
@@ -219,7 +252,9 @@ export class HeroSim {
     return (
       this.fsm.is('dash') &&
       !this.perfectUsed &&
-      t <= DASH.PERFECT_WINDOW_MS + this.world.run.mods.perfectDashWindowBonusMs
+      t <=
+        (DASH.PERFECT_WINDOW_MS + this.world.run.mods.perfectDashWindowBonusMs) *
+          this.world.loot.perfectWindowMult
     );
   }
 
@@ -239,6 +274,11 @@ export class HeroSim {
     if (this.isInvulnerable()) return false;
     const run = this.world.run;
     const now = this.world.now();
+    const loot = this.world.loot;
+    if (loot.absorbHit()) {
+      this.iframesUntil = now + 300;
+      return false;
+    }
     if (this.hasShield) {
       this.shieldReadyAt = now + run.mods.shieldEveryMs;
       this.iframesUntil = now + 300;
@@ -246,11 +286,15 @@ export class HeroSim {
       return false;
     }
     const takenBonus = run.burnout.tier.damageTaken + (this.isMarked ? this.markBonus : 0);
-    const amount = incoming(base, takenBonus);
+    const amount = Math.max(
+      1,
+      Math.round(incoming(base, takenBonus) * loot.mods.defense.damageTakenMult),
+    );
     run.energy = Math.max(0, run.energy - amount);
     run.lastHitBy = source.name;
     run.mobilisation.add(MOBILISATION.PER_HIT_TAKEN);
-    this.handleBurnout(run.burnout.onDamageTaken(amount));
+    loot.onHitTaken();
+    this.handleBurnout(run.burnout.onDamageTaken(amount * loot.mods.burnout.onHitMult));
     const angle = Math.atan2(this.body.y - source.y, this.body.x - source.x);
     this.world.time.hitstop(FEEL.HERO_HIT_HITSTOP_MS);
     this.world.emit({ type: 'shake', px: FEEL.HERO_HIT_SHAKE_PX, ms: FEEL.HERO_HIT_SHAKE_MS });
@@ -285,6 +329,7 @@ export class HeroSim {
     run.delayMinutes += 10;
     this.world.time.slowmo(DASH.PERFECT_TIMESCALE, DASH.PERFECT_SLOWMO_MS, 80);
     this.world.emit({ type: 'perfectDash', x: this.body.x, y: this.body.y });
+    this.world.loot.onPerfectDash(this.body.x, this.body.y);
     this.text('+15 min', 'gold');
   }
 
@@ -303,7 +348,8 @@ export class HeroSim {
     if (intent.special) this.buffer.press('special', now);
     if (intent.coffee) this.buffer.press('coffee', now);
     if (this.slowLeft > 0) this.slowLeft = Math.max(0, this.slowLeft - dtMs);
-    run.dash.rechargeRate = run.burnout.inMeltdown ? 2 : 1;
+    run.dash.rechargeRate =
+      (run.burnout.inMeltdown ? 2 : 1) / Math.max(0.5, this.world.loot.mods.dash.rechargeMult);
     run.dash.tick(dtMs);
     this.handleBurnout(run.burnout.tick(dtMs));
     this.fsm.update(dtMs);
@@ -313,6 +359,7 @@ export class HeroSim {
     const run = this.world.run;
     for (const e of events) {
       if (e.kind === 'meltdown-start') {
+        this.world.loot.onMeltdown();
         this.world.emit({ type: 'shake', px: 6, ms: 300 });
         this.world.emit({ type: 'vignette', amount: 0.35 });
         this.text('PÉTAGE DE PLOMBS !', 'danger');
@@ -368,10 +415,13 @@ export class HeroSim {
     if (this.buffer.consume('attack', now)) {
       if (now - this.lastDashEnd <= DASH.ATTACK_WINDOW_MS)
         return { to: 'dashAttack', payload: null };
-      const chained = now - this.lastAttackEnd <= COMBO_RULES.CHAIN_GRACE_MS && this.lastCombo >= 0;
+      // Clé à cliquet perpétuel : le combo ne se réinitialise plus.
+      const ratchet = this.world.loot.mods.legendaries.some((l) => l.power === 'cliquet-perpetuel');
+      const chained =
+        this.lastCombo >= 0 && (ratchet || now - this.lastAttackEnd <= COMBO_RULES.CHAIN_GRACE_MS);
       return {
         to: 'attack',
-        payload: { combo: chained ? (this.lastCombo + 1) % COMBO.length : 0 },
+        payload: { combo: chained ? (this.lastCombo + 1) % this.tool.combo.length : 0 },
       };
     }
     if (this.buffer.consume('coffee', now)) {
@@ -382,19 +432,29 @@ export class HeroSim {
     return null;
   }
 
-  private beginSwing(step: AttackStep, comboIndex: number): void {
+  private beginSwing(step: ToolStep, comboIndex: number): void {
     this.step = step;
     this.stepTiming = timingOf(step, this.attackSpeedBonus);
     this.activeStarted = false;
     this.hitThisSwing = false;
     this.comboIndex = comboIndex;
     this.facingAngle = this.intent.aim;
+    this.world.loot.onSwingStart(comboIndex);
+  }
+
+  /** Dégâts du coup : base × Calibre (garde-fou compris) × bonus de coup final ou de dash. */
+  private stepDamage(finisher: boolean, dashAttack: boolean): number {
+    const gear = this.world.loot.mods.damage;
+    const mult =
+      gear.baseMult * (finisher ? gear.finisherMult : 1) * (dashAttack ? gear.dashAttackMult : 1);
+    return this.step.damage * mult + (finisher ? this.world.run.mods.finisherDamage : 0);
   }
 
   /** Frames actives : fente, hitbox, et retour de game feel si le coup porte. */
   private updateSwing(dtMs: number, elapsed: number, finisher: boolean, dashAttack: boolean): void {
     const phase = phaseAt(this.stepTiming, elapsed);
-    if (phase === 'startup' || phase === 'active') this.steer(dtMs, COMBO_RULES.MOVE_FACTOR);
+    if (phase === 'startup' || phase === 'active')
+      this.steer(dtMs, this.tool.moveFactor ?? COMBO_RULES.MOVE_FACTOR);
     else this.steer(dtMs, 0);
     if (phase !== 'active') return;
     const a = this.facingAngle;
@@ -412,9 +472,16 @@ export class HeroSim {
         x: this.body.x,
         y: this.body.y,
         angle: a,
-        reach: shape.kind === 'arc' ? shape.radius : shape.from + shape.length,
-        arcDeg: shape.kind === 'arc' ? shape.angleDeg : 0,
+        reach:
+          shape.kind === 'arc'
+            ? shape.radius
+            : shape.kind === 'circle'
+              ? shape.at + shape.radius
+              : shape.from + shape.length,
+        arcDeg: shape.kind === 'arc' ? shape.angleDeg : shape.kind === 'circle' ? 360 : 0,
       });
+      if (finisher)
+        this.world.loot.onFinisher(this.body.x, this.body.y, a, this.stepDamage(true, false));
       if (finisher) {
         this.world.emit({
           type: 'enemyStrike',
@@ -431,17 +498,19 @@ export class HeroSim {
       a,
       {
         shape: this.step.shape,
-        damage: this.step.damage + (finisher ? this.world.run.mods.finisherDamage : 0),
+        damage: this.stepDamage(finisher, dashAttack),
         knockbackPx: this.step.knockbackPx,
         knockbackMs: this.step.knockbackMs,
         stunMs: this.step.stunMs,
         breaksProjectiles: this.step.breaksProjectiles,
         finisher,
         combo: this.fsm.is('attack'),
+        ...(this.step.slow ? { slow: this.step.slow } : {}),
       },
       this.outgoingMods(),
     );
     if (report.targets > 0) {
+      this.world.loot.onSwingHit();
       this.world.time.hitstop(hitstopFor(this.step, report.targets, report.crit));
       this.world.emit({
         type: 'shake',
@@ -541,16 +610,17 @@ export class HeroSim {
       },
       attack: {
         enter: (p, { combo }) => {
-          p.beginSwing(COMBO[combo] ?? COMBO[0], combo);
+          const moves = p.tool.combo;
+          p.beginSwing(moves[combo] ?? moves[0] ?? COMBO[0], combo);
         },
         update: (p, dt, t) => {
           const now = p.world.now();
-          p.updateSwing(dt, t, p.comboIndex === 2, false);
+          p.updateSwing(dt, t, p.isFinisher, false);
           // Annulation par dash (jamais pendant l'active).
           if (
             p.buffer.peek('dash', now) &&
             p.world.run.dash.canDash() &&
-            canDashCancel(p.stepTiming, p.comboIndex, t)
+            canDashCancel(p.stepTiming, p.isFinisher ? 2 : 0, t)
           ) {
             p.buffer.consume('dash', now);
             p.finishSwing();
@@ -565,7 +635,10 @@ export class HeroSim {
             }
             if (p.buffer.consume('attack', now)) {
               p.finishSwing();
-              return { to: 'attack', payload: { combo: (p.comboIndex + 1) % COMBO.length } };
+              return {
+                to: 'attack',
+                payload: { combo: (p.comboIndex + 1) % p.tool.combo.length },
+              };
             }
           }
           if (phase === 'done') {
@@ -577,7 +650,7 @@ export class HeroSim {
       },
       dashAttack: {
         enter: (p) => {
-          p.beginSwing(DASH_ATTACK, 0);
+          p.beginSwing(p.tool.dashAttack, 0);
           p.facingAngle = p.dashDir;
         },
         update: (p, dt, t) => {
@@ -660,12 +733,15 @@ export class HeroSim {
           if (!p.sipped && t >= COFFEE.SIP_AT_MS) {
             p.sipped = true;
             const run = p.world.run;
+            const gear = p.world.loot.mods.coffee;
             run.gobelets -= 1;
             const ratio =
-              COFFEE.HEAL_FRACTION * run.burnout.tier.coffeeHeal + run.mods.coffeeHealBonus;
+              COFFEE.HEAL_FRACTION * run.burnout.tier.coffeeHeal +
+              run.mods.coffeeHealBonus +
+              p.world.loot.onCupDrink();
             const healed = heal(run, Math.round(maxEnergy(run) * ratio));
-            p.handleBurnout(run.burnout.add(BURNOUT.PER_COFFEE));
-            p.caffeineUntil = now + COFFEE.CAFFEINE_MS;
+            p.handleBurnout(run.burnout.add(BURNOUT.PER_COFFEE + gear.burnoutDelta));
+            p.caffeineUntil = now + COFFEE.CAFFEINE_MS + gear.caffeineMsBonus;
             p.text(`+${String(healed)} Énergie · Caféine`, 'gold');
           }
           return t >= COFFEE.DRINK_MS ? { to: 'idle', payload: null } : null;

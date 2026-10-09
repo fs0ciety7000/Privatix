@@ -2,7 +2,7 @@
 // sombre, écharpe syndicale rouge, clé à tire-fond. Modèle et poses repris du prototype validé
 // (prototypes/proto3d/src/hero.ts) ; ici il ne décide de rien : il lit l'état de `HeroSim`.
 import * as THREE from 'three';
-import { DASH_ATTACK, HERO, PREAVIS, WHISTLE } from '@/config/balance';
+import { HERO, PREAVIS, WHISTLE } from '@/config/balance';
 import type { HeroSim } from '@/sim/hero/HeroSim';
 import type { HeroActorView } from '@/view/actors/ActorView';
 import { pxToM, yawFromAngle } from '@/sim/units';
@@ -318,14 +318,14 @@ export class HeroView implements HeroActorView {
     let k = 14;
     switch (sim.state) {
       case 'attack': {
-        const idx = sim.combo;
+        const idx = sim.animCombo;
         const nominal = NOMINAL_MS[idx] ?? NOMINAL_MS[0];
         pose = attackPose(idx, (t * nominal) / Math.max(1, sim.timing.totalMs));
         k = 32;
         break;
       }
       case 'dashAttack': {
-        const total = DASH_ATTACK.startupMs + DASH_ATTACK.activeMs + DASH_ATTACK.recoveryMs;
+        const total = Math.max(1, sim.timing.totalMs);
         pose = attackPose(1, (t * NOMINAL_MS[1]) / total);
         k = 32;
         break;

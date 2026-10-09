@@ -11,7 +11,10 @@ export interface StepTiming {
   readonly totalMs: number;
 }
 
-export function timingOf(step: AttackStep, attackSpeedBonus = 0): StepTiming {
+export function timingOf(
+  step: Pick<AttackStep, 'startupMs' | 'activeMs' | 'recoveryMs'>,
+  attackSpeedBonus = 0,
+): StepTiming {
   const k = 1 / (1 + Math.max(0, attackSpeedBonus));
   const startupMs = step.startupMs * k;
   const activeMs = step.activeMs * k;
@@ -45,7 +48,11 @@ export function canDashCancel(t: StepTiming, comboIndex: number, elapsedMs: numb
 }
 
 /** Hitstop d'un coup selon le nombre de cibles touchées et le critique. */
-export function hitstopFor(step: AttackStep, targets: number, crit: boolean): number {
+export function hitstopFor(
+  step: Pick<AttackStep, 'hitstopMs'>,
+  targets: number,
+  crit: boolean,
+): number {
   if (targets <= 0) return 0;
   const extra = Math.min(
     COMBO_RULES.HITSTOP_EXTRA_CAP_MS,

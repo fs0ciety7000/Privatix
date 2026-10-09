@@ -27,6 +27,7 @@ import { HeroSim } from '@/sim/hero/HeroSim';
 import type { PlayerIntent } from '@/sim/intent';
 import { mergeIntent, NO_INTENT, releaseEdges } from '@/sim/intent';
 import { moveCircle } from '@/sim/physics/collision';
+import { LootSim } from '@/sim/loot/LootSim';
 import type { PickupSim } from '@/sim/Pickups';
 import type { ProjectileSim, ProjectileSpec } from '@/sim/Projectiles';
 import { Projectiles } from '@/sim/Projectiles';
@@ -42,6 +43,10 @@ export interface WorldOptions {
   readonly meta?: MetaState;
   /** Flux du Shift et vagues (faux dans les tests qui placent leurs ennemis à la main). */
   readonly waves?: boolean;
+  /** Drops d'équipement (défaut : comme `waves`). */
+  readonly loot?: boolean;
+  /** Shift à graine saisie : la pitié méta du loot est gelée. */
+  readonly fixedSeed?: boolean;
 }
 
 /**
@@ -62,6 +67,8 @@ export class World implements SimWorld, Steppable {
   public readonly projectiles = new Projectiles();
   public readonly hazards: HazardSim[] = [];
   public readonly pickups: PickupSim[] = [];
+  /** Loot du Shift : équipement porté, sac, objets au sol, pouvoirs Patrimoine. */
+  public readonly loot: LootSim;
   private timeMs = 0;
   private events: SimEvent[] = [];
   private intent: PlayerIntent = NO_INTENT;
@@ -81,6 +88,10 @@ export class World implements SimWorld, Steppable {
     const spawn = this.arena.playerSpawn;
     this.hero = new HeroSim(this, spawn.x, spawn.y);
     this.hero.facingAngle = -Math.PI / 2;
+    this.loot = new LootSim(this, opts.meta ?? newMeta(), {
+      enabled: opts.loot ?? shiftFlow,
+      fixedSeed: opts.fixedSeed ?? false,
+    });
     this.hazardHost = {
       heroFeet: this.hero.body,
       damageHero: (amount, source) => this.damageHero(amount, source),
@@ -126,6 +137,9 @@ export class World implements SimWorld, Steppable {
   public emit(event: SimEvent): void {
     this.events.push(event);
     if (event.type === 'heroDied') this.director.onHeroDied();
+    else if (event.type === 'roomEntered') this.loot.onRoomEntered();
+    else if (event.type === 'roomCleared') this.loot.onRoomCleared();
+    else if (event.type === 'shiftEnded') this.loot.onShiftEnded(event.end);
   }
 
   /** Événements publiés depuis le dernier appel (la vue les consomme une fois par frame). */
@@ -175,7 +189,11 @@ export class World implements SimWorld, Steppable {
     run.mobilisation.add(MOBILISATION.PER_KILL + (elite ? MOBILISATION.ELITE_KILL_BONUS : 0));
     run.burnout.add(elite ? BURNOUT.PER_ELITE_KILL : BURNOUT.PER_KILL);
     if (run.mods.killHeal > 0) heal(run, run.mods.killHeal);
-    const tickets = Math.round(enemy.stats.tickets * (run.shift.id === 'apres-midi' ? 1.2 : 1));
+    const tickets = Math.round(
+      enemy.stats.tickets *
+        (run.shift.id === 'apres-midi' ? 1.2 : 1) *
+        this.loot.mods.economy.ticketsMult,
+    );
     run.tickets += tickets;
     this.emit({
       type: 'enemyKilled',
@@ -194,6 +212,7 @@ export class World implements SimWorld, Steppable {
         tone: 'danger',
       });
     this.emit({ type: 'shake', px: FEEL.KILL_SHAKE_PX, ms: FEEL.KILL_SHAKE_MS });
+    this.loot.onKill(enemy);
     this.director.onEnemyKilled(enemy.kind, enemy.body.x, enemy.body.y);
   }
 
@@ -258,6 +277,8 @@ export class World implements SimWorld, Steppable {
     const intent = this.director.frozen ? NO_INTENT : this.intent;
     this.interactPressed = intent.interact ?? false;
     this.hero.tick(dtMs, intent);
+    // Un objet au sol à portée prend l'appui « interagir » avant les objets de la salle.
+    if (this.loot.update(intent)) this.interactPressed = false;
     this.intent = releaseEdges(this.intent);
     integrate(this.arena, this.hero.body, dt);
 

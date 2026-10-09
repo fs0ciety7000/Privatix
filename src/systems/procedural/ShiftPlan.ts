@@ -13,11 +13,17 @@ import { createRng, randInt } from '@/utils/rng';
 
 export type RoomType = 'combat' | 'elite' | 'tresor' | 'boutique' | 'repos' | 'boss';
 
+/**
+ * Récompense annoncée par une porte : celles de `REWARD_WEIGHTS`, plus la porte « Dotation » du loot
+ * (GDD § 3.8), posée par la simulation 3D (`sim/loot`) sur les tirages de `doorsFor`.
+ */
+export type DoorReward = RewardKind | 'dotation';
+
 export interface DoorChoice {
   /** Position dans le Shift (1 à 8, puis REST_ROOM, puis BOSS_ROOM). */
   readonly room: number;
   readonly type: RoomType;
-  readonly reward: RewardKind | null;
+  readonly reward: DoorReward | null;
 }
 
 export const REST_ROOM = SHIFT.BIOME1_ROOMS + 1;
