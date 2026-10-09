@@ -54,7 +54,8 @@ export const COLORS = {
 } as const;
 
 export type ThemeName = 'sncb' | 'occ';
-export type ThemeKey = 'bgDeep' | 'panel' | 'border' | 'bevelLight' | 'text' | 'textMuted' | 'accent';
+export type ThemeKey =
+  'bgDeep' | 'panel' | 'border' | 'bevelLight' | 'text' | 'textMuted' | 'accent';
 
 /** Accès générique au thème courant (mêmes clés de base dans les deux thèmes). */
 export const themeColor = (theme: ThemeName, key: ThemeKey): number => COLORS[theme][key];

@@ -50,14 +50,14 @@ Privatix/
 ├─ src/
 │  ├─ main.ts                 # seule instanciation de Phaser.Game
 │  ├─ vite-env.d.ts
-│  ├─ config/                 # constants.ts (SceneKeys, RegistryKeys, AssetKeys, Shift), colors.ts
+│  ├─ config/                 # constants.ts (SceneKeys, RegistryKeys, AssetKeys, Shift), colors.ts, balance.ts
 │  ├─ scenes/                 # BootScene, PreloaderScene, MainMenuScene, GameScene, UIScene
 │  ├─ entities/               # Player.ts (placeholder Arcade, voir §10)
-│  ├─ systems/                # LOGIQUE PURE, sans Phaser : GameState.ts
-│  ├─ ui/                     # (vide) composants Container réutilisables
+│  ├─ systems/                # LOGIQUE PURE, sans Phaser : GameState.ts, time/FatigueClock.ts
+│  ├─ ui/                     # Gauge.ts, Clock3x8.ts (composants Container réutilisables)
 │  ├─ data/                   # (vide) données de jeu typées
-│  └─ utils/                  # math.ts (clamp)
-├─ tests/                     # GameState.test.ts (src/**/*.test.ts est aussi accepté)
+│  └─ utils/                  # math.ts (clamp), registry.ts (accès typé au GameState)
+├─ tests/                     # balance, FatigueClock, registry (src/**/*.test.ts est aussi accepté)
 ├─ docs/                      # documentation (exclue de l'image Docker)
 ├─ vite.config.ts  tsconfig.json  eslint.config.js  .prettierrc  .editorconfig
 └─ Dockerfile  nginx.conf  .dockerignore  package.json  package-lock.json
@@ -69,13 +69,13 @@ Cible (ajouts uniquement, l'existant ne bouge pas) :
 src/
 ├─ scenes/      + BattleScene, DialogueScene, OccScene, PauseScene, BaseScene (abstraite)
 ├─ entities/    + Npc.ts ; Player.ts réécrit en sprite piloté par GridMovement
-├─ systems/     + combat/CombatEngine.ts, time/TimeService.ts (FatigueClock), inventory/Inventory.ts,
+├─ systems/     + combat/CombatEngine.ts, inventory/Inventory.ts,
 │                 save/{SaveManager,schema,migrations}.ts, movement/GridMovement.ts, MoralMeter.ts,
 │                 events/EventBus.ts (implémentation pure, sans Phaser)
-├─ ui/          + NineSlicePanel, UIButton, Gauge, DialogueBox, ActionMenu, Clock3x8,
+├─ ui/          + NineSlicePanel, UIButton, DialogueBox, ActionMenu,
 │                 FocusManager, InputManager, VirtualPad, FloatingText, Toast, theme.ts
-├─ data/        + balance.ts, enemies.ts, items.ts, skills.ts, maps.ts, strings.ts, dialogues/*.ts
-├─ utils/       + rng.ts (RNG seedé), guards.ts (type guards), registry.ts (accès typé)
+├─ data/        + enemies.ts, items.ts, skills.ts, maps.ts, strings.ts, dialogues/*.ts
+├─ utils/       + rng.ts (RNG seedé), guards.ts (type guards)
 └─ platform/    + storage.ts (adaptateur localStorage, seul accès navigateur hors Phaser)
 ```
 
@@ -220,8 +220,8 @@ export const eventBus = new TypedEventBus<GameEvents>(); // singleton de module,
 
 | Système | Responsabilité | Branché par |
 |---|---|---|
-| `GameState` (existe) | Agrégat sérialisable : horloge, joueur ; `shiftAt`, `shiftLabel`, `formatClock`. | Boot (création), toutes les scènes (lecture) |
-| `TimeService` / `FatigueClock` | Horloge in-game (1 min in-game toutes les 8 s réelles, cf. GDD § 4 ; figée en menu/dialogue/combat), changements de poste 06/14/22 h, fenêtres de pause café, Fatigue passive (+2/+3/+5 par heure selon le poste), paliers. | `GameScene.update(delta)`, `Clock3x8` |
+| `GameState` (existe) | Agrégat sérialisable : `time` (état du `FatigueClock`), `player` ; garde `isGameState`. | Boot (création), toutes les scènes (lecture via `utils/registry.ts`) |
+| `FatigueClock` (existe, `systems/time/`) | Horloge 3x8 (1 min in-game toutes les 8 s réelles, figée hors exploration), butées et heures sup', relèves d'acte, Fatigue passive (+2/+3/+5 par heure) et ponctuelle, paliers, repos de l'OCC (café, sieste, dormir, 1 fois par pause chacun), fin de combat. | `GameScene.update(delta)` écrit, `UIScene` + `Clock3x8` + `Gauge` lisent |
 | `CombatEngine` | Initiative, toucher, critique, dégâts, statuts, fuite, IA ennemie, compteur de signature du boss. | `BattleScene` |
 | `Inventory` | Quantités, plafonds, consommables, équipement (3 emplacements), Tickets, Grains de café. | Battle, Pause, Occ |
 | `GridMovement` | Déplacement case par case (16 px), collisions via un prédicat injecté, orientation. | `Player` |
@@ -265,25 +265,34 @@ export function step(pos: GridPos, dir: Facing, isBlocked: IsBlocked): GridPos {
 ```
 
 ```ts
-// src/systems/time/TimeService.ts
-export type FatigueTierId = 'frais' | 'fatigue' | 'epuise' | 'burn-out' | 'effondre';
-export interface TimeState { day: number; minuteOfDay: number; fatigue: number; frozen: boolean }
-export interface TimeService {          // callbacks onTick/onShiftChange/onFatigueChange relayés vers eventBus par la scène
-  readonly state: Readonly<TimeState>;
-  advanceReal(deltaMs: number): void;      // exploration seulement
-  advanceGame(minutes: number): void;      // coûts fixes : combat +15, zone +10, sieste +120
-  addFatigue(delta: number, mult?: number): void;
-  setFrozen(frozen: boolean): void;        // menus, dialogues, combats
-  isCoffeeBreak(): boolean;                // fenêtre de pause café ouverte
+// src/systems/time/FatigueClock.ts (extrait de l'API réelle)
+// Fonctions pures et immuables : chaque appel renvoie un NOUVEL état + les événements produits.
+export interface FatigueClockState {
+  readonly totalMinutes: number;   // minutes depuis lundi 00:00 (jour 0) ; mardi 05:00 = 1740
+  readonly act: ActNumber;         // 1 | 2 | 3
+  readonly fatigue: number;        // 0–100, décimales arrondies au millionième
+  readonly overtime: boolean;      // horloge bloquée à la butée de relève (« HEURES SUP' »)
+  readonly restShiftIndex: number; // pause pour laquelle restUsed est valable
+  readonly restUsed: RestUsage;    // { coffee, nap, sleep } : 1 fois par pause chacun
 }
-export function fatigueTier(f: number): FatigueTierId {
-  if (f >= 100) return 'effondre';
-  if (f >= 90) return 'burn-out';
-  if (f >= 70) return 'epuise';
-  if (f >= 40) return 'fatigue';
-  return 'frais';
-}
+export type ClockEvent =
+  | { type: 'shiftChanged'; from: Shift; to: Shift } | { type: 'overtimeStarted' }
+  | { type: 'actStarted'; act: ActNumber } | { type: 'tierChanged'; from: FatigueTierId; to: FatigueTierId }
+  | { type: 'collapsed' };
+export interface ClockResult { readonly state: FatigueClockState; readonly events: readonly ClockEvent[] }
+
+realMsToGameMinutes(elapsedMs): { minutes; carryMs }          // la scène garde le reliquat (< 8 s)
+advanceTime(state, minutes, { accrueFatigue?, timeMultipliers? }): ClockResult
+addFatigue(state, delta): ClockResult                          // combat, objets, compétences
+finishCombat(state, { rounds, fled }): ClockResult             // +2 (+1/3 manches) ou +5, puis +10 min
+startNextAct(state): ClockResult                               // saut à 14:00 (−30) ou 22:00 (−50)
+drinkOccCoffee(state, machineLevel) / takeNap(state) / sleepUntilCap(state): RestResult
+fatigueTier(fatigue): FatigueTier                              // seule lecture autorisée des effets
 ```
+
+Branchement : `GameScene.update(delta)` convertit le temps réel en minutes et n'écrit dans le registry qu'une fois par minute in-game (toutes les 8 s). Comme `update` ne tourne pas quand la scène est en pause ou en veille, l'horloge est figée d'office pendant les dialogues et les combats. `UIScene` reçoit l'ancien et le nouveau `GameState` via `changedata` : elle compare les pauses pour faire clignoter `Clock3x8` à la relève, sans EventBus. En développement, `T` avance d'une heure et `N` passe à l'acte suivant (retirés du build de production).
+
+> Écart avec le plan initial : le `TimeService` mutable avec `setFrozen` est remplacé par ces fonctions pures. Le gel découle du cycle de vie des scènes et l'immutabilité colle au registry. L'EventBus singleton de module (§2.4) reste à trancher : il contredit la règle « pas d'état mutable au niveau module » de `claude.md`. Le `FatigueClock` n'en a pas besoin.
 
 ```ts
 // src/systems/combat/CombatEngine.ts (extrait de l'API)
@@ -788,13 +797,14 @@ jobs:
 | # | Sujet | État actuel | Cible / action |
 |---|---|---|---|
 | 1 | **Déplacement** | `Player` = `Rectangle` avec Arcade Physics, déplacement libre à `PLAYER_SPEED` (96 px/s), touches `KeyCodes.Z/Q/S/D` + flèches. `main.ts` active `arcade` avec `debug` en dev. | Migration en 4 étapes : (1) écrire `GridMovement` pur + tests ; (2) réécrire `Player` en `Sprite` qui appelle `step()` et interpole par tween (`STEP_DURATION_MS`), collisions via le calque Tiled `collision` ; (3) brancher l'`InputManager` (`KeyboardEvent.code`) ; (4) retirer `physics` de `main.ts` et `PLAYER_SPEED` des constantes. Chaque pas appelle le `TimeService` (rencontres, déclencheurs). |
-| 2 | **Palette** | `src/config/colors.ts` provisoire (`sncbBlue 0x0b2a5b`, `sncbYellow 0xf7c600`, `occBrown 0x3b2418`…), répété dans `index.html` (`#0b2a5b`). | Aligner sur le canon UX : Bleu Nuit `#0B1F3A`, Bleu Institution `#123C73`, Jaune Quai `#FFD200`, Espresso `#2B1A12`, Crème `#F2E6CF`, Ambre `#F2A541`, Rouge Rebelle `#C8323C` ; renommer les clés par thème, mettre à jour `index.html` (fond et `theme-color`), PV rouge / PE cyan / Fatigue violette. |
+| 2 | **Palette** | Fait : `src/config/colors.ts` suit la palette UX par thème (`sncb`, `occ`, `gauge`, `shift`), `index.html` aligné. | — |
 | 3 | **Pack d'assets vide** | `asset-pack.json` sans fichier ; `AssetKeys.Logo` déclaré mais non chargé ; dossiers `images/ audio/ tilemaps/ fonts/` vides. | Remplir au fil des livraisons (§6), ajouter le test de cohérence pack ↔ `AssetKeys`, créer les animations dans le Preloader. |
 | 4 | **Polices** | `fontFamily: 'monospace'` partout. | BitmapFont (Press Start 2P pour titres/chiffres, Pixelify Sans ou m6x11 pour le texte) via `bitmapText` ; en prototype WebFont, attendre `document.fonts.ready` avant la première scène. Corps de texte ≥ 16 px logiques. |
-| 5 | **État** | `GameState` v1 minimal (horloge, joueur) ; `UIScene` fait un cast `as GameState`. | Étendre selon §7 (v2 + migration), helpers typés `getGameState`/`updateGameState`, type guard. |
-| 6 | **Systèmes** | Seuls `GameState` et `clamp` existent. | `TimeService`, `CombatEngine`, `Inventory`, `MoralMeter`, `SaveManager`, `EventBus`, `rng`. |
+| 5 | **État** | `GameState` v1 : `time` (FatigueClock) + `player` ; accès typé `getGameState`/`updateGameState` et garde `isGameState` en place. « Nouvelle partie » ne réinitialise pas encore l'état (retour menu puis Entrée reprend la même partie). | Étendre selon §7 (v2 + migration) ; réinitialiser le GameState sur « Nouvelle partie ». |
+| 5b | **Effondrement** | `FatigueClock` émet `collapsed` à 100 de Fatigue ; `GameScene` ne le consomme pas encore, le HUD affiche le palier « Effondré ». | Implémenter la Mise à pied (GDD § 5.8) hors combat et la micro-sieste d'équipe en combat (Fatigue = 90). |
+| 6 | **Systèmes** | `GameState`, `FatigueClock`, `balance.ts`, `clamp`, `registry`. | `CombatEngine` (consommera `fatigueTier` et `finishCombat`), `Inventory` (multiplicateurs de temps Thermos/Lungo), `MoralMeter`, `SaveManager`, `rng` ; décider du sort de l'EventBus. |
 | 7 | **Scènes** | Battle, Dialogue, Occ, Pause absentes ; Échap renvoie au menu. | Créer les scènes et `BaseScene` ; Échap ouvre `Pause`. |
-| 8 | **UI** | HUD en `Text` et `Rectangle` bruts. | Composants `src/ui` (§5.5), `FocusManager`, `VirtualPad` pour le tactile. |
+| 8 | **UI** | HUD avec `Gauge` (PV, PE, Fatigue colorée par palier) et `Clock3x8` (barre 24 h, heures sup'). Pas de portrait ni d'indicateur de pause café. | Autres composants `src/ui` (§5.5), `FocusManager`, `VirtualPad` pour le tactile. |
 | 9 | **Outillage** | Pas de CI, pas de `.nvmrc`, lint sans `--max-warnings=0`, pas de couverture. | Workflow §9.3, `.nvmrc` = `22`, `@vitest/coverage-v8` sur `src/systems`, `src/data`, `src/utils`. |
-| 10 | **nginx** | `Referrer-Policy` perdu dans les `location` qui redéfinissent `add_header`. | Le répéter dans `/bundle/`, `/assets/` et `= /index.html` ; envisager une CSP stricte (aucun script externe). |
+| 10 | **nginx** | Fait : `Referrer-Policy` répété dans chaque `location`. | Envisager une CSP stricte (aucun script externe). |
 | 11 | **Installation** | `npm install` exige `--legacy-peer-deps` (bug npm 10 avec les peers de vitest 4). | Retirer le flag de la documentation quand npm ou vitest le corrigent ; `npm ci` reste la référence. |

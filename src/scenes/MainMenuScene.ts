@@ -29,7 +29,7 @@ export class MainMenuScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const prompt = this.add
-      .text(GAME_WIDTH / 2, (GAME_HEIGHT * 2) / 3, 'Appuyez sur ENTRÉE ou touchez l\'écran', {
+      .text(GAME_WIDTH / 2, (GAME_HEIGHT * 2) / 3, "Appuyez sur ENTRÉE ou touchez l'écran", {
         fontFamily: 'monospace',
         fontSize: '18px',
         color: toCss(COLORS.occ.accent),

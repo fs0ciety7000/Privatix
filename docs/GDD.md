@@ -632,6 +632,8 @@ En combat, menus et dialogues, le D-pad disparaît : on touche directement les a
 
 Transposition directe des sections 4 à 9 ; toute modification d'équilibrage se fait ici, jamais dans une scène.
 
+> **Le fichier `src/config/balance.ts` fait foi.** Il reprend ce bloc avec trois adaptations : les clés de pause sont `morning` / `afternoon` / `night` (vocabulaire unique du code), les identifiants de paliers sont en minuscules (`frais`, `burn-out`…) et portent un `label` affichable, et `BOSS_MINUTE` est exprimé en minutes absolues depuis lundi 00:00 (`1740` = mardi 5h00), comme toute l'horloge. Toute modification d'équilibrage se fait dans le code, puis ce bloc est mis à jour.
+
 ```ts
 // src/config/balance.ts — source unique des chiffres d'équilibrage (GDD §4 à §9).
 export type Pause = 'MATIN' | 'APREM' | 'NUIT';

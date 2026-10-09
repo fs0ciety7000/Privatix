@@ -25,7 +25,7 @@ export class PreloaderScene extends Phaser.Scene {
       .setOrigin(0, 0.5);
 
     this.load.on(Phaser.Loader.Events.PROGRESS, (progress: number) => {
-      bar.width = (barWidth - 4) * progress;
+      bar.setSize((barWidth - 4) * progress, barHeight - 4);
     });
 
     this.load.pack(AssetKeys.AssetPack, 'assets/asset-pack.json');

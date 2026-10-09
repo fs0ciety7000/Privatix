@@ -54,7 +54,9 @@ Avant de déclarer une tâche terminée : `npm run check` **et** `npm run build`
 
 ### Pas de variables globales
 - Rien sur `window`, `globalThis` ou en module-level mutable. ESLint bloque `window`. L'état partagé passe par **un seul** objet `GameState` dans `this.registry` (clé `RegistryKeys.GameState`), toujours modifié de façon immuable (`registry.set(key, {...state, ...})`) pour que l'événement `changedata` déclenche la mise à jour de l'UI.
-- La communication entre scènes passe par le registry ou par un EventBus typé (`src/systems/events`), jamais par `this.scene.get('X').someProperty`.
+- Lire et écrire le GameState uniquement via `getGameState` / `updateGameState` (`src/utils/registry.ts`), jamais par `registry.get(...) as GameState`.
+- La communication entre scènes passe par le registry (l'événement `changedata` fournit l'ancienne et la nouvelle valeur), jamais par `this.scene.get('X').someProperty`. Un EventBus typé n'est pas encore en place : ne pas en créer un sous forme de singleton de module sans décision.
+- Les transitions de jeu (horloge, Fatigue, combat…) sont des fonctions pures qui renvoient `{ state, events }` (modèle : `src/systems/time/FatigueClock.ts`). La scène applique l'état en une seule écriture registry, puis réagit aux événements.
 - Une seule instance `Phaser.Game`, créée dans `src/main.ts` et jamais exportée.
 
 ### Logique pure séparée de Phaser
@@ -93,7 +95,7 @@ Ordre imposé : **1) interface, 2) logique, 3) intégration.** Ne pas commencer 
 
 4. **Intégration Phaser enfin**
    - Brancher dans la scène ou le composant `src/ui/` : entrée joueur → appel du système → mise à jour du registry → rendu/tweens/sons. Ajouter les assets dans `asset-pack.json` + `AssetKeys` + `CREDITS.md`.
-   - Gérer le cycle de vie (shutdown/destroy). Tester à la main dans `npm run dev` : le scénario nominal, une sortie de scène, un retour.
+   - Gérer le cycle de vie (shutdown/destroy). Tester à la main dans `npm run dev` : le scénario nominal, une sortie de scène, un retour. Raccourcis de développement en jeu : `T` (+1 h), `N` (acte suivant), absents du build de production (`import.meta.env.DEV`).
 
 5. **Finir proprement**
    - `npm run check` et `npm run build` verts. Mettre à jour la doc si le comportement a changé. Commit atomique en français à l'impératif (`feat: ajoute la jauge de fatigue au HUD`), un sujet par commit.
@@ -110,13 +112,13 @@ Ordre imposé : **1) interface, 2) logique, 3) intégration.** Ne pas commencer 
 
 ```
 src/main.ts              # config Phaser, liste des scènes (unique new Phaser.Game)
-src/config/              # constants.ts (SceneKeys, AssetKeys, dimensions), colors.ts (palette SNCB/OCC), balance.ts (à venir)
+src/config/              # constants.ts (SceneKeys, AssetKeys, dimensions), colors.ts (palette SNCB/OCC), balance.ts (équilibrage, fait foi)
 src/scenes/              # Boot, Preloader, MainMenu, Game, UI (+ Battle, Dialogue, OCC, Pause à venir)
 src/entities/            # objets de jeu Phaser (Player, NPC, Enemy)
-src/systems/             # logique pure sans Phaser (GameState, CombatEngine, FatigueClock, Inventory, SaveManager, GridMovement)
-src/ui/                  # composants Phaser réutilisables (NineSlicePanel, UIButton, Gauge, DialogueBox, ActionMenu, Clock3x8)
+src/systems/             # logique pure sans Phaser : GameState, time/FatigueClock (+ à venir CombatEngine, Inventory, SaveManager, GridMovement)
+src/ui/                  # composants Phaser réutilisables : Gauge, Clock3x8 (+ à venir NineSlicePanel, UIButton, DialogueBox, ActionMenu)
 src/data/                # données typées (ennemis, objets, compétences, dialogues)
-src/utils/               # helpers purs
+src/utils/               # helpers purs : math (clamp), registry (getGameState / updateGameState)
 tests/                   # tests Vitest de la logique pure
 public/assets/           # asset-pack.json, images/, audio/, tilemaps/, fonts/
 docs/                    # GDD, STORY_AND_LORE, ARCHITECTURE, ASSETS_GUIDE
