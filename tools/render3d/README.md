@@ -14,6 +14,8 @@ cd tools/render3d && .venv/bin/python export_glb.py hero items     # quelques en
 cd tools/render3d && .venv/bin/python export_glb.py --raw dirupo   # sans compression meshopt
 cd tools/render3d/viewer && npm run dev                            # visionneuse : http://localhost:4180
 cd tools/render3d/viewer && node shots.mjs <dossier> [--only hero] [--spec specs/closeups.json]  # captures
+cd tools/render3d/viewer && npm run lod                            # variantes allégées (preset bas), après chaque export
+cd tools/render3d/viewer && node inspect.mjs ../../../public/models/hero.glb   # nœuds, primitives, attributs, clips
 ```
 
 **Script npm racine proposé** (non ajouté au `package.json` racine, à valider par le lead dev) :
@@ -71,6 +73,25 @@ de sa pièce), échantillonne chaque clip à 30 i/s et exporte.
 Total : **≈ 1,7 Mio** pour 7 personnages et 9 objets. Les **animations** pèsent environ 60 % de chaque GLB
 (toutes les rotations d'os échantillonnées à 30 i/s, cf. limites). Appels de rendu : 2 (héros nu : toon +
 contour) à 4 par personnage, +2 par pièce d'équipement.
+
+## Variantes allégées (LOD, preset « bas »)
+
+`viewer/lod.mjs` simplifie chaque primitive avec meshoptimizer (`dequantize` → `weld` → `simplify` à bords
+verrouillés, ratio 0,5, erreur 0,4 %) puis recompresse en meshopt. Les pièces rigides gardent leur silhouette ;
+couleurs de sommet, `_OUTLINE`, squelette et clips sont conservés. Sortie : `public/models/lod/<nom>.glb` et
+`public/models/lod/manifest.json` (**à part** du manifeste principal, que `export_glb.py` réécrit). Sans
+argument, il traite les personnages au-dessus du budget de leur catégorie ; `--items` traite les objets ;
+`--ratio 0.4 hero` cible un modèle. Le jeu charge ces fichiers quand le preset de qualité est « bas »
+(`src/view/models/ModelLibrary.ts`) et retombe sur le GLB complet s'il n'y a pas de variante.
+
+| Entité | Complet → LOD (triangles) |
+|---|---|
+| héros / consultant | 9 316 → 4 658 / 8 376 → 4 240 |
+| borne / drone | 2 536 → 1 326 / 3 012 → 1 588 |
+| manager / Auditeur | 7 372 → 4 038 / 8 664 → 4 332 |
+| Discosaure / furet / Di Rupo | 14 320 → 7 724 / 9 050 → 4 524 / 14 950 → 7 486 |
+| Fluidifieur / PNJ | 6 620 → 4 224 / ≈ 5 900 → ≈ 3 700 |
+| casque antibruit / légendaire / gilet porte-outils | 2 220 → 1 346 / 2 352 → 1 426 / 3 140 → 1 928 |
 
 ## Limites connues
 
