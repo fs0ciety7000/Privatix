@@ -339,7 +339,7 @@ Mêmes règles (§2), mêmes dossiers. Durées détaillées à fixer au lancemen
 | **Pense-bête Vivant** `postit` (essaim invoqué) | **16** / (8, 14) | 1 | `spawn` 4 · `run` 4 · `stick` 4 (collé au héros) · `death` 4 |
 | **Coach Agile « Le Facilitateur »** `coach` (élite) | 48 / (24, 44) | 3 (sauf mention) | `idle` 4 · `run` 6 · `summon` 10 (1 dir, invocation frame **7**) · `team` 12 (1 dir, télégraphe 1 s, **active 8**) · `retro` 8 (1 dir, boucle, canalisation 2 s) · `hurt` 2 · `death` 10 (1 dir) |
 | **Boss 2 : Le Réorganisateur RH « le Fluidifieur »** `reorganisateur` | **96** / (48, 88) | 1 (sauf mention) | `intro` 12 · `idle` 6 · `move` 4 (3 dir, chaise à roulettes) · `charge` 6 (3 dir, **actives 3–5**) · `throw` 8 (classeur, lancer frame **5** → `proj-classeur_spin_strip4.png` 16) · `postit` 10 (damier, frame **6**) · `organigramme` 10 · `mutation` 12 (échange de positions, frame **9**) · `stun` 6 (« Article 47 ») · `phase` 12 · `hurt` 2 · `death` 18 |
-| **Boss final : Gontran Vanderslide** `gontran` | **128** / (64, 120) | 1 | P1 « Méga-Deck 2030 » : `idle` 6 · `ride` 6 (trottinette) · `attack-slides` 10 · `teleport` 8 (balayage d'écran) · `summon` 8 · `hurt` 2 — transition `phase2` 16 — P2 « Conseil d'Administration en visio » : `idle-p2` 8 · `attack-social` 14 (Plan social, zone) · `attack-mute` 10 · `hurt-p2` 2 — transition `phase3` 16 — P3 « L'Optimiseur Absolu » : `idle-p3` 6 · `attack-copy` 10 · `attack-jam` 12 · `hurt-p3` 2 · `final` 8 (coup final « Mais concrètement, sur le terrain, ça donne quoi ? ») · `death` 16 |
+| **Boss final : Gontran Vanderslide** `gontran` | **128** / (64, 120) | 1 | P1 « Méga-Deck 2032 » : `idle` 6 · `ride` 6 (trottinette) · `attack-slides` 10 · `teleport` 8 (balayage d'écran) · `summon` 8 · `hurt` 2 — transition `phase2` 16 — P2 « Conseil d'Administration en visio » : `idle-p2` 8 · `attack-social` 14 (Plan social, zone) · `attack-mute` 10 · `hurt-p2` 2 — transition `phase3` 16 — P3 « L'Optimiseur Absolu » : `idle-p3` 6 · `attack-copy` 10 · `attack-jam` 12 · `hurt-p3` 2 · `final` 8 (coup final « Mais concrètement, sur le terrain, ça donne quoi ? ») · `death` 16 |
 | **Clause-tentacule** `clause` (P2, 200 PV, 4 instances) | 48 / (24, 44) | 1 | `rise` 6 · `idle` 4 · `attack` 8 (**active 5**) · `death` 6 ; chaque Clause a sa couleur : 4 jeux de fichiers `clause-a` à `clause-d` (pas de `setTint`, qui sortirait de la palette) |
 
 Contraintes : à 128 px, **16 frames au plus** par bande (2 048 px) ; à 96 px, 21 au plus. La « photocopie du joueur » (P3) réutilise les sprites du héros teintés par le moteur : aucun asset.
@@ -355,7 +355,7 @@ Contraintes : à 128 px, **16 frames au plus** par bande (2 048 px) ; à 96 px, 
 - **Lumière haut-gauche** ; ombres portées du décor décalées vers le **bas-droite**. Décor **sans contour noir** (sel-out uniquement, §7.3).
 - **16 couleurs maximum par tileset**, prises dans la sous-palette du biome (§7.2).
 - Variantes : 4 sols de base + 4 détails par biome ; un détail ne couvre jamais plus d'une tuile sur 6.
-- **Aucun logo réel**, aucune police de signalétique ferroviaire réelle, aucun décalque de photo de gare réelle ; satire maison autorisée (« HORS SERVICE », « PROVISOIRE v14 », « Mons 2030 : une gare, zéro guichet »).
+- **Aucun logo réel**, aucune police de signalétique ferroviaire réelle, aucun décalque de photo de gare réelle ; satire maison autorisée (« HORS SERVICE », « PROVISOIRE v14 », « Mons 2032 : une gare, zéro guichet »).
 
 ### 5.2 Autotiles : blob 47 (dessus de murs) et Wang 16 (transitions de sols)
 
@@ -425,7 +425,7 @@ Dossier `public/assets/tilesets/`. Les trains sont des **images statiques** dép
 | `friterie_idle_strip4.png` | 256×64 | 4 | 200 ×4 | **Friterie de Raymonde** (boutique en run), fumée, cornet géant |
 | `ecran-departs.png` | 96×32 | 1 | — | grand écran des départs de l'arène du boss (texte par `font_led`) |
 
-**Atlas de props statiques** `props_quais.png` 256×256 + `props_quais.json` (Phaser **JSON Hash**, padding 2, sans trim, noms = `<prop>` en kebab-case, pivot bas-centre) : banc 32×16 et 16×32 ; banc de Marcel 32×16 ; poubelle 16×16 ; distributeur 32×48 ; borne de compostage 16×32 ; panneau « Voie 1…4 » 32×16 ; horloge de quai 16×32 ; pilier 32×48 ; extincteur 16×16 ; cône 16×16 ; barrière de travaux 32×16 ; valise ×2 16×16 ; chariot à bagages 32×16 ; poteau de caténaire 16×48 ; abri de quai 48×48 ; panneau Privatix « Mons 2030 » 32×32 ; trappe au sol 32×16 ; sac de sable 16×16.
+**Atlas de props statiques** `props_quais.png` 256×256 + `props_quais.json` (Phaser **JSON Hash**, padding 2, sans trim, noms = `<prop>` en kebab-case, pivot bas-centre) : banc 32×16 et 16×32 ; banc de Marcel 32×16 ; poubelle 16×16 ; distributeur 32×48 ; borne de compostage 16×32 ; panneau « Voie 1…4 » 32×16 ; horloge de quai 16×32 ; pilier 32×48 ; extincteur 16×16 ; cône 16×16 ; barrière de travaux 32×16 ; valise ×2 16×16 ; chariot à bagages 32×16 ; poteau de caténaire 16×48 ; abri de quai 48×48 ; panneau Privatix « Mons 2032 » 32×32 ; trappe au sol 32×16 ; sac de sable 16×16.
 
 ### 5.6 Hub : l'OCC (MVP) — `public/assets/tilesets/tiles_occ.png` (256×256)
 
@@ -571,7 +571,7 @@ Blanc → gris neutre en **3 ou 4 paliers concentriques à bords nets** (tramage
 | `pickup-grain_spin_strip6.png` | 8 | 6 | 80 ×6 | **Grains de café** (méta) |
 | `pickup-gobelet_idle_strip4.png` | 16 | 4 | 150 ×4 | **Gobelet** de café (soin), vapeur |
 | `pickup-piece_idle_strip4.png` | 16 | 4 | 150 ×4 | **Pièces détachées** (boulon et engrenage) |
-| `pickup-preuve_idle_strip6.png` | 16 | 6 | 100 ×6 | **Preuve** (dossier « PHR-2030 ») |
+| `pickup-preuve_idle_strip6.png` | 16 | 6 | 100 ×6 | **Preuve** (dossier « PHR-2032 ») |
 | `pickup-tasse_idle_strip4.png` | 16 | 4 | 150 ×4 | **Tasse** (relations) |
 | `pickup-ps_idle_strip6.png` | 16 | 6 | 100 ×6 | **Points de Syndicalisme** (badge syndical) |
 | `pickup-reglage_idle_strip6.png` | 16 | 6 | 100 ×6 | **Réglage de clé** (clé à molette ambre) |

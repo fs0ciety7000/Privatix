@@ -18,7 +18,7 @@
 
 Mons, 4h47, quai 2. L'écran des départs annonce que le **train de 7h12**, celui que la grand-mère du héros prend chaque mardi pour aller au marché depuis quarante ans, est supprimé. Motif affiché : « Optimisation ».
 
-Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») s'apprête à signer la cession de la ligne, de la gare et même du café de la salle des pauses, en exécution du **Plan Horizon Rentabilité 2030 (PHR-2030)**. La signature est prévue « à la fin du service », au dernier étage du **BAG**, dont Privatix a pris les étages un par un.
+Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») s'apprête à signer la cession de la ligne, de la gare et même du café de la salle des pauses, en exécution du **Plan Horizon Rentabilité 2032 (PHR-2032)**. La signature est prévue « à la fin du service », au dernier étage du **BAG**, dont Privatix a pris les étages un par un.
 
 Léon (ou Léa), agent·e polyvalent·e en 3x8 depuis neuf ans, prend la **clé à tire-fond** de son grand-père et remonte la gare à contre-courant : les **Quais & Voies**, la **Passerelle** que les navetteurs appellent « le Calatrava », puis le **Hall & BAG**, jusqu'au bureau où **Gontran Vanderslide** tient le stylo.
 
@@ -99,7 +99,7 @@ Une seule réponse « non » : on réécrit.
 
 **Le 7h12 supprimé.** Lundi, 4h47, fin de nuit. Troisième café. L'écran du quai 2 affiche : `IC 0712 — SUPPRIMÉ — Motif : Optimisation`. Rudy, le chef de quai, n'a jamais vu ce motif en vingt ans. Dans le bureau du sous-chef, une imprimante crache trois slides oubliées : **fermeture des guichets**, **suppression des accompagnateurs**, et une slide titrée **« Phase 3 : Cession »**.
 
-**Le Plan Horizon Rentabilité 2030 (PHR-2030).** Un deck de 412 slides commandé par Privatix Rail Solutions et mis en musique par le cabinet **Synergia Partners**. Trois phases :
+**Le Plan Horizon Rentabilité 2032 (PHR-2032).** Un deck de 412 slides commandé par Privatix Rail Solutions et mis en musique par le cabinet **Synergia Partners**. Trois phases :
 1. *Phase 1 — « Fluidification »* : fermer les guichets, remplacer les agents par des Bornes Automatiques, équiper les quais de Drones Optimètres « pour la qualité ».
 2. *Phase 2 — « Responsabilisation »* : supprimer les accompagnateurs, réorganiser les roulements « en temps réel », externaliser la sécurité.
 3. *Phase 3 — « Cession »* : céder la ligne, la gare, le BAG et la salle des pauses à Privatix pour un euro symbolique, « frais de traiteur inclus ».
@@ -137,7 +137,7 @@ L'horloge diégétique du Shift avance de **30 minutes par salle** : un Shift co
 
 ### 2.4 Jalons narratifs, run après run
 
-L'histoire avance par **trois fils** : **le Dossier** (les 3 Preuves du PHR-2030), **la Taupe** (Jean-Mi) et **l'Assemblée** (les relations, via les Tasses). Les jalons ci-dessous sont des **scènes Essentielles** (voir §8) : elles passent avant toute autre réplique.
+L'histoire avance par **trois fils** : **le Dossier** (les 3 Preuves du PHR-2032), **la Taupe** (Jean-Mi) et **l'Assemblée** (les relations, via les Tasses). Les jalons ci-dessous sont des **scènes Essentielles** (voir §8) : elles passent avant toute autre réplique.
 
 | # | Condition de déclenchement | Scène / dialogue | Conséquence |
 |---|---|---|---|
@@ -223,7 +223,7 @@ MARCEL : Bien reçu. On prend la voie.
 
 **Après Vanderslide.** Hubert Rentabilis **rallume enfin sa caméra**. On ne voit qu'un bureau vide et une plante verte ; sa voix, calme : « Bon. Signez sans lui. » Des **automates de signature** déferlent de tous les ascenseurs : horde finale.
 
-**La défense.** Le héros doit **tenir 90 secondes** dans la Salle du Conseil pendant que Yasmina diffuse le PHR-2030 sur tous les écrans et toutes les annonces de la gare. La radio égrène les postes tenus : « Béné au hall. Rudy sur les quais. Kevin sur l'armoire. Josiane à la passerelle. Fatou à l'OCC. Marcel… Marcel, t'es où ? » — MARCEL : « Au banc du quai 2. Quelqu'un doit attendre le train. » Pas de boss : la solidarité est la mécanique.
+**La défense.** Le héros doit **tenir 90 secondes** dans la Salle du Conseil pendant que Yasmina diffuse le PHR-2032 sur tous les écrans et toutes les annonces de la gare. La radio égrène les postes tenus : « Béné au hall. Rudy sur les quais. Kevin sur l'armoire. Josiane à la passerelle. Fatou à l'OCC. Marcel… Marcel, t'es où ? » — MARCEL : « Au banc du quai 2. Quelqu'un doit attendre le train. » Pas de boss : la solidarité est la mécanique.
 
 **La diffusion.**
 ```text
@@ -275,7 +275,7 @@ Jean-Mi, sous-chef de gare, n'a pas de pupitre : il passe de l'un à l'autre, le
 
 **Hiver 1987.** Pour « maîtriser les coûts », la direction remplace la cafetière collective de la salle des pauses par un distributeur payant. Le soir même, Marcel, jeune conducteur de permanence, et une poignée d'accompagnateurs portent l'ancienne cafetière jusqu'à l'OCC et la posent entre deux pupitres, « parce que c'est le seul endroit de la gare qui ne ferme jamais ». À **22h47**, elle sert son premier café. On l'appelle aussitôt **la Vieille Dame**, et l'OCC devient, pour ceux qui y travaillent, l'**Operation Coffee Center**.
 
-**Le BAG change de mains, l'OCC reste.** L'OCC occupe le rez-de-chaussée arrière du **BAG**, côté Cour intérieure. Privatix a pris les étages un par un, « en phase de transition », mais elle ne peut pas fermer le rez-de-chaussée : sans centre opérationnel, plus aucun train ne roule, et un réseau à l'arrêt se vend mal. Le PHR-2030 prévoit de remplacer l'OCC par « une IA prédictive, version bêta » (voir Yasmina) ; en attendant, Privatix a simplement **retiré l'OCC des nouveaux plans du bâtiment** (Note de service n° 6) et condamné l'escalier intérieur. Depuis, l'OCC est le lieu où l'on fait rouler les trains, où l'on se dit la vérité, où l'on prépare toutes les résistances et où l'on fait la sieste entre deux nuits.
+**Le BAG change de mains, l'OCC reste.** L'OCC occupe le rez-de-chaussée arrière du **BAG**, côté Cour intérieure. Privatix a pris les étages un par un, « en phase de transition », mais elle ne peut pas fermer le rez-de-chaussée : sans centre opérationnel, plus aucun train ne roule, et un réseau à l'arrêt se vend mal. Le PHR-2032 prévoit de remplacer l'OCC par « une IA prédictive, version bêta » (voir Yasmina) ; en attendant, Privatix a simplement **retiré l'OCC des nouveaux plans du bâtiment** (Note de service n° 6) et condamné l'escalier intérieur. Depuis, l'OCC est le lieu où l'on fait rouler les trains, où l'on se dit la vérité, où l'on prépare toutes les résistances et où l'on fait la sieste entre deux nuits.
 
 **La Vieille Dame.** Cafetière d'origine, inox cabossé, posée sur un autel de traverses dans le coin café de la salle des opérations. Jamais détartrée : c'est ce qui lui donne son goût. Elle **siffle** avant chaque événement important (le joueur apprend vite à reconnaître ce sifflement : une scène Essentielle l'attend). Après le saccage, Kevin la redresse ; elle garde une bosse, que personne ne veut réparer.
 
@@ -408,7 +408,7 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.4 Bénédicte « Béné » Wautier
 
-- **Poste** : guichetière, dernier guichet ouvert de la gare, fermé par le PHR-2030. Arrive au 4e retour (J4) avec son guichet en pièces détachées et reprend le pupitre **PACO** (bus de remplacement, correspondances), resté vacant : « Un voyageur sans train, c'est un client de guichet. Je connais. »
+- **Poste** : guichetière, dernier guichet ouvert de la gare, fermé par le PHR-2032. Arrive au 4e retour (J4) avec son guichet en pièces détachées et reprend le pupitre **PACO** (bus de remplacement, correspondances), resté vacant : « Un voyageur sans train, c'est un client de guichet. Je connais. »
 - **Rôle narratif** : la mémoire administrative de la résistance ; détient **Le Règlement**, le vieux classeur du statut, clé de la Preuve 3 et de la faiblesse du Fluidifieur.
 - **Service gameplay** : **pupitre PACO** — **Recours** (relance des portes ou d'un choix : le « bus de remplacement » du Shift) ; **correspondances** (raccourci vers la Passerelle après J7) ; **archives** (Preuves archivées, Notes de service) ; **Le Règlement** (codex des ennemis, fiches remplies avec les kills).
 - **Personnalité** : pince-sans-rire, a survécu à quatre réformes tarifaires et à une borne qui lui a craché un ticket dans l'œil. Ne s'énerve jamais : elle tamponne.
@@ -424,9 +424,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 ### 4.5 Yasmina Benali
 
 - **Poste** : régulatrice au pupitre **RTS, côté régulation**. Arrive après le 1er kill du boss 1.
-- **Rôle narratif** : la stratège ; voit tout le réseau, parle en codes ; c'est sa voix à la radio pendant les runs et c'est elle qui diffuse le PHR-2030 dans la vraie fin.
+- **Rôle narratif** : la stratège ; voit tout le réseau, parle en codes ; c'est sa voix à la radio pendant les runs et c'est elle qui diffuse le PHR-2032 dans la vraie fin.
 - **Service gameplay** : **pupitre RTS (régulation)** — **tableau des roulements** (annonce Matin / Après-midi / Nuit), **Plan d'Économies** (difficulté optionnelle), défis. Logique de poste : la régulation décide quel train part, quand, et dans quelles conditions.
-- **Personnalité** : calme olympien, pense en sillons et en correspondances, ne hausse jamais la voix (« Si je crie, des trains se percutent. »). Elle a vu une slide du PHR-2030 qui la remplace par « une IA prédictive, version bêta, qui pense que Mons est en Bavière ».
+- **Personnalité** : calme olympien, pense en sillons et en correspondances, ne hausse jamais la voix (« Si je crie, des trains se percutent. »). Elle a vu une slide du PHR-2032 qui la remplace par « une IA prédictive, version bêta, qui pense que Mons est en Bavière ».
 - **Tic** : « Je te mets en voie d'attente. »
 - **Famille** : **Régulation** — mobilité, ralenti du temps, repositionnement (« Voie d'attente » : une bulle de temps ralenti).
 - **Souvenir** : **Casque radio** (choix d'Avantages élargi à 4 options).
@@ -438,7 +438,7 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.6 Josiane Delhaye
 
-- **Poste** : accompagnatrice de train, 28 ans de maison, affectée au pupitre **DPD** (gestion des accompagnateurs de train), menacée par la « suppression des accompagnateurs » (Preuve 2) : le PHR-2030 supprime à la fois son métier et son pupitre.
+- **Poste** : accompagnatrice de train, 28 ans de maison, affectée au pupitre **DPD** (gestion des accompagnateurs de train), menacée par la « suppression des accompagnateurs » (Preuve 2) : le PHR-2032 supprime à la fois son métier et son pupitre.
 - **Rôle narratif** : la figure maternelle et inflexible ; celle qui envoie le héros chercher la vérité au prologue.
 - **Service gameplay** : dans la **Cour intérieure** — **mannequin de formation** (zone d'entraînement, test des Montages, dégâts affichés) ; **casiers** (équiper un Souvenir obtenu et, si l'équipement personnel est validé, la dotation du héros). Logique de poste : la DPD affecte les agents de bord, gère leurs casiers et leur dotation.
 - **Personnalité** : a déjà expulsé un sanglier d'un train « avec politesse ». Connaît le prénom de tous les habitués du 7h12. Tricote pendant les pauses ; la bannière de l'OCC, c'est elle.
@@ -542,7 +542,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
 
 - **Ambiance** : la passerelle enjambe les voies « comme la colonne vertébrale d'un animal préhistorique ». C'est l'aube : grands arcs blancs, verrière, ciel rose-gris. Le vent hurle, le vide est partout sous les pieds. Le biome le plus silencieux, le plus beau, le plus froid.
 - **Histoire du lieu** : les navetteurs l'appellent « la Cathédrale » ou « le Calatrava », selon qu'ils sont émus ou énervés par le budget. On ne nomme jamais son architecte : on montre l'architecture. Les escalators y marchent un jour sur trois ; ce sont presque des personnages. Rudy y était posté avant sa mutation « en temps réel ».
-- **Ce que Privatix y a fait** : collé ses panneaux « **Mons 2030 : une gare, zéro guichet** » sur les arcs, installé un « parcours de mobilité fluide » (des escalators qui ne vont qu'à la montée, vers le BAG), et confié la réorganisation des roulements au **Fluidifieur**, qui règne sous le grand arc.
+- **Ce que Privatix y a fait** : collé ses panneaux « **Mons 2032 : une gare, zéro guichet** » sur les arcs, installé un « parcours de mobilité fluide » (des escalators qui ne vont qu'à la montée, vers le BAG), et confié la réorganisation des roulements au **Fluidifieur**, qui règne sous le grand arc.
 - **Roulements** : *Matin* brume sous la verrière, vides à peine visibles ; *Après-midi* ombres longues des arcs (les drones y perdent leur cible) ; *Nuit* verrière noire, les voies en contrebas éclairées par les rames qui passent.
 - **Détails à placer dans le décor** :
   - Panneaux d'escalator : « En service (aujourd'hui) » / « Hors service (demain, après-demain) ».
@@ -737,7 +737,7 @@ FATOU (radio) : Ça, monsieur, c'est illégal.
 VANDERSLIDE : C'est agile.
 ```
 - **Intros alternatives** (Shifts suivants, une par victoire) : « Encore vous ? J'ai pourtant envoyé un Sondage. » / « Cette fois, j'ai prévu une pause. Pour moi. » / « J'ai benchmarké votre clé. Au Japon, ils utilisent des tablettes. » / *(après 5 victoires, voix cassée)* « Je n'ai plus de slides. J'ai fait les 412. Il ne reste que moi. »
-- **Phase 1 « Méga-Deck 2030 »** (le grand écran annonce chaque attaque par le titre de la slide suivante) :
+- **Phase 1 « Méga-Deck 2032 »** (le grand écran annonce chaque attaque par le titre de la slide suivante) :
   - « Slide 1 sur 412. Restez concentrés, c'est la plus courte. »
   - « Benchmark international ! Au Japon, ça marche ! »
   - « Je vous mets en copie. Et vous. Et vous. »
@@ -776,7 +776,7 @@ VANDERSLIDE : … Concrètement ? Concrètement… *(long silence)* … je n'ai 
 > Caricature satirique d'une personnalité politique réelle, autorisée par le porteur du projet (§1.4, exception 3). Toutes les répliques ci-dessous sont **inventées pour le jeu** ; aucune n'est une citation réelle. Aucun parti, logo ni slogan.
 
 - **Silhouette** : nœud papillon **bordeaux**, lunettes **sans monture**, mèche **brune** impeccable, costume **bleu marine**. Il tient une paire de **ciseaux d'inauguration** géants et un discours de quarante pages.
-- **Ce qu'il fait dans l'histoire** : il ne travaille pas pour Privatix. Il est le seul participant du **Sondage** qui répond toujours « disponible », à condition qu'il y ait **un ruban à couper**. Pour donner une caution à la cession, Privatix organise sur la Passerelle l'**inauguration de « Mons 2030 : la Gare Expérience »** et l'invite à couper le ruban. Il n'a pas lu le dossier : il a lu le discours. Il défend la cérémonie, pas le contrat, avec l'énergie de quelqu'un qui a inauguré beaucoup de choses à Mons et compte bien continuer.
+- **Ce qu'il fait dans l'histoire** : il ne travaille pas pour Privatix. Il est le seul participant du **Sondage** qui répond toujours « disponible », à condition qu'il y ait **un ruban à couper**. Pour donner une caution à la cession, Privatix organise sur la Passerelle l'**inauguration de « Mons 2032 : la Gare Expérience »** et l'invite à couper le ruban. Il n'a pas lu le dossier : il a lu le discours. Il défend la cérémonie, pas le contrat, avec l'énergie de quelqu'un qui a inauguré beaucoup de choses à Mons et compte bien continuer.
 - **Place dans la hiérarchie des boss** : hors hiérarchie. **Boss optionnel du biome 2**, déclenché par l'événement **« L'Inauguration »** (porte surmontée d'un ruban rouge), disponible après le premier kill du Fluidifieur. Il ne remplace aucun boss canon et ne bloque aucune fin.
 - **Arène** : le belvédère de la Passerelle, transformé en tribune : estrade, pupitre à micro, plaque d'inauguration voilée d'un drap, rangée de chaises pliantes occupées par des consultants qui applaudissent sur commande.
 - **Intro** :
