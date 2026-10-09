@@ -6,7 +6,9 @@ import type { Arena } from '@/sim/Arena';
 import type { TimeControl } from '@/sim/clock/TimeControl';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import type { SimEvent } from '@/sim/events';
+import type { HazardSim, HazardSpec } from '@/sim/Hazards';
 import type { HeroSim } from '@/sim/hero/HeroSim';
+import type { ProjectileSim, ProjectileSpec } from '@/sim/Projectiles';
 
 /** Corps d'un acteur : cercle aux pieds, vitesse, état précédent (interpolation), contact du pas. */
 export interface Body {
@@ -53,5 +55,19 @@ export interface SimWorld {
   onEnemyDamaged(enemy: EnemySim, amount: number, crit: boolean): void;
   onEnemyKilled(enemy: EnemySim): void;
   spawnEnemy(kind: EnemyKind, x: number, y: number, immediate?: boolean): EnemySim | null;
+  spawnProjectile(spec: ProjectileSpec): void;
+  spawnHazard(spec: HazardSpec): HazardSim;
+  /** Projectiles ennemis actifs (cassés par le coup 3 et le sifflet). */
+  activeProjectiles(): readonly ProjectileSim[];
+  /** Un projectile est cassé par une arme du héros. */
+  breakProjectile(p: ProjectileSim): void;
   emit(event: SimEvent): void;
+}
+
+/** Bande de voie (rails + ballast) d'une salle, où passent les rames du boss (u). */
+export interface RailBand {
+  readonly x0: number;
+  readonly x1: number;
+  readonly y: number;
+  readonly height: number;
 }

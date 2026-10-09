@@ -1,16 +1,12 @@
 import type { EnemyKind } from '@/config/balance';
-import { BURNOUT, ENEMY_RULES, FEEL } from '@/config/balance';
+import { ENEMY_RULES } from '@/config/balance';
 import type { Wave } from '@/systems/procedural/Waves';
-import { shouldSendNextWave, wavesFor } from '@/systems/procedural/Waves';
+import { shouldSendNextWave } from '@/systems/procedural/Waves';
+import type { Rng } from '@/utils/rng';
 import type { SimWorld } from '@/sim/SimWorld';
 
 /** Délai avant la première vague d'une salle (version Phaser : 700 ms). */
-const FIRST_WAVE_DELAY_MS = 700;
-/** Pause entre deux « salles » de démonstration, une fois la précédente nettoyée. */
-const NEXT_ROOM_DELAY_MS = 2600;
-
-/** Ennemis portés dans la simulation 3D. Les autres types attendent leur port (J2 suite, J7). */
-const PORTED: ReadonlySet<EnemyKind> = new Set<EnemyKind>(['consultant']);
+export const FIRST_WAVE_DELAY_MS = 700;
 
 interface PendingSpawn {
   readonly at: number;
@@ -18,30 +14,26 @@ interface PendingSpawn {
 }
 
 /**
- * Directeur de vagues (extrait du flux de `RunScene`, en pur) : vagues du GDD (`wavesFor`), envoi de la
- * vague suivante (`shouldSendNextWave`), apparitions échelonnées loin du héros, nettoyage de salle.
- * Tant que `RunDirector` (J4) n'existe pas, il enchaîne les « salles » dans le même décor, en montant
- * la difficulté (`r` + 1 à chaque salle nettoyée).
+ * Directeur de vagues d'une salle de combat (extrait de `RunScene`, en pur) : vagues du GDD
+ * (`wavesFor`, tirées par `RunDirector`), envoi de la vague suivante (`shouldSendNextWave`),
+ * apparitions échelonnées loin du héros. Signale la salle vidée à `onCleared`.
  */
 export class WaveDirector {
-  /** Indice de salle comptée (GDD § 3.2). */
-  public r = 1;
   private waves: Wave[] = [];
   private waveIndex = 0;
   private waveSize = 0;
   private killedInWave = 0;
   private pending: PendingSpawn[] = [];
-  private cleared = false;
+  private active = false;
+  private done = false;
   private startAt = 0;
-  private nextRoomAt = -1;
+  private rng: Rng;
 
   public constructor(
     private readonly world: SimWorld,
-    public enabled = true,
-  ) {}
-
-  public get roomCleared(): boolean {
-    return this.cleared;
+    private readonly onCleared: () => void,
+  ) {
+    this.rng = world.rng;
   }
 
   public get waveNumber(): number {
@@ -52,21 +44,30 @@ export class WaveDirector {
     return this.waves.length;
   }
 
-  /** Prépare les vagues de la salle `r`. */
-  public startRoom(r: number): void {
-    const run = this.world.run;
-    this.r = r;
-    this.waves = wavesFor(
-      { r, elite: false, budgetMult: run.shift.budgetMult, extraDronesPerWave: 0 },
-      this.world.rng,
-    ).map((w) => w.map((k) => (PORTED.has(k) ? k : 'consultant')));
+  /** Vagues en cours (salle de combat non vidée). */
+  public get running(): boolean {
+    return this.active && !this.done;
+  }
+
+  /** Prépare les vagues d'une salle ; la première part après `FIRST_WAVE_DELAY_MS`. */
+  public start(waves: Wave[], rng: Rng): void {
+    this.waves = waves;
+    this.rng = rng;
     this.waveIndex = 0;
     this.waveSize = 0;
     this.killedInWave = 0;
     this.pending = [];
-    this.cleared = false;
+    this.active = waves.length > 0;
+    this.done = false;
     this.startAt = this.world.now() + FIRST_WAVE_DELAY_MS;
-    this.nextRoomAt = -1;
+  }
+
+  /** Salle sans vagues (repos, boutique, boss, transition). */
+  public stop(): void {
+    this.waves = [];
+    this.pending = [];
+    this.active = false;
+    this.done = false;
   }
 
   public onKilled(): void {
@@ -74,7 +75,7 @@ export class WaveDirector {
   }
 
   public update(): void {
-    if (!this.enabled) return;
+    if (!this.active || this.done) return;
     const now = this.world.now();
     for (let i = this.pending.length - 1; i >= 0; i -= 1) {
       const p = this.pending[i];
@@ -82,22 +83,22 @@ export class WaveDirector {
       this.pending.splice(i, 1);
       this.spawnOne(p.kind);
     }
-    if (this.cleared) {
-      if (this.nextRoomAt >= 0 && now >= this.nextRoomAt) this.startRoom(this.r + 1);
-      return;
-    }
     if (this.pending.length > 0 || now < this.startAt) return;
     const alive = this.world.livingEnemies().length;
     if (this.waveIndex < this.waves.length) {
       if (shouldSendNextWave(alive, this.waveSize, this.killedInWave)) this.sendWave();
       return;
     }
-    if (alive === 0 && this.waves.length > 0) this.clearRoom();
+    if (alive === 0) {
+      this.done = true;
+      this.onCleared();
+    }
   }
 
   /** Le prochain mort est-il le dernier de la salle ? (ralenti du dernier coup) */
   public isLastKill(): boolean {
     return (
+      this.running &&
       this.waveIndex >= this.waves.length &&
       this.pending.length === 0 &&
       this.world.livingEnemies().length === 0
@@ -118,24 +119,14 @@ export class WaveDirector {
       type: 'wave',
       index: this.waveIndex,
       count: this.waves.length,
-      room: this.r,
+      room: this.world.run.room,
     });
   }
 
   private spawnOne(kind: EnemyKind): void {
     const hero = this.world.hero.body;
     const points = this.world.arena.spawnPoints(hero, ENEMY_RULES.SPAWN_MIN_DIST_PX);
-    const at = points[Math.floor(this.world.rng() * points.length)] ?? this.world.arena.playerSpawn;
+    const at = points[Math.floor(this.rng() * points.length)] ?? this.world.arena.playerSpawn;
     this.world.spawnEnemy(kind, at.x, at.y);
-  }
-
-  private clearRoom(): void {
-    this.cleared = true;
-    const run = this.world.run;
-    this.world.time.slowmo(FEEL.LAST_KILL_SLOWMO, FEEL.LAST_KILL_SLOWMO_MS, 250);
-    this.world.emit({ type: 'shake', px: FEEL.LAST_KILL_SHAKE_PX, ms: FEEL.LAST_KILL_SHAKE_MS });
-    run.burnout.add(BURNOUT.PER_ROOM_CLEARED);
-    this.world.emit({ type: 'roomCleared', room: this.r });
-    this.nextRoomAt = this.world.now() + NEXT_ROOM_DELAY_MS;
   }
 }

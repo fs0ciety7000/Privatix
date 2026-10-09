@@ -61,6 +61,12 @@ export type Telegraph =
       readonly angle: number;
       readonly length: number;
       readonly width: number;
+    }
+  | {
+      readonly kind: 'circle';
+      readonly x: number;
+      readonly y: number;
+      readonly radius: number;
     };
 
 let nextId = 1;
@@ -86,6 +92,12 @@ export abstract class EnemySim {
   public removed = false;
   /** Attaque en cours (télégraphe puis exécution). */
   public currentAttack = '';
+  /** Caché (saut du boss) : la vue ne dessine pas le corps. */
+  public hidden = false;
+  /** Cloué au sol (drone après un piqué) : la vue pose le modèle. */
+  public grounded = false;
+  /** Posture brisée (Manager KPI) : la vue peut le signaler. */
+  public broken = false;
   protected readonly fsm: StateMachine<EnemySim, EnemyStates>;
   private kbLeft = 0;
   private kbVx = 0;

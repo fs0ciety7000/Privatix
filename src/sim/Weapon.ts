@@ -25,12 +25,13 @@ export interface SwingReport {
   readonly targets: number;
   readonly crit: boolean;
   readonly kills: number;
+  readonly projectiles: number;
 }
 
 /**
  * La clé à tire-fond (port pur de `entities/Weapon.ts`) : hitbox géométrique interrogée pendant les
  * pas actifs. Un ensemble des cibles touchées garantit un seul impact par ennemi et par coup.
- * Les projectiles arriveront avec la Borne (J2 suite) : `breaksProjectiles` est déjà porté par la spec.
+ * Le coup 3, le sifflet et l'Avantage de Josiane cassent aussi les projectiles touchés.
  */
 export class Weapon {
   private readonly touched = new Set<EnemySim>();
@@ -114,6 +115,14 @@ export class Weapon {
         if (r.killed) kills += 1;
       }
     }
-    return { targets, crit: anyCrit, kills };
+    let projectiles = 0;
+    if (spec.breaksProjectiles || (spec.combo && mods.comboBreaksProjectiles)) {
+      for (const p of this.world.activeProjectiles()) {
+        if (!inShape({ x: p.x, y: p.y, r: p.r })) continue;
+        this.world.breakProjectile(p);
+        projectiles += 1;
+      }
+    }
+    return { targets, crit: anyCrit, kills, projectiles };
   }
 }
