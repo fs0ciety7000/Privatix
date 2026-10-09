@@ -35,6 +35,7 @@ export class GlbEnemyView extends ProceduralEnemyView {
   private lastAttack = '';
   private plates: THREE.Object3D[] = [];
   private platesOff = false;
+  private readonly attackClips: ReadonlySet<string>;
 
   public constructor(
     tpl: CharacterTemplate,
@@ -54,6 +55,7 @@ export class GlbEnemyView extends ProceduralEnemyView {
       deathFallS: Math.max(1.2, death + 0.25),
     });
     this.map = map;
+    this.attackClips = new Set(Object.values(map.attacks));
     this.model = new GlbRig(tpl, {
       flash: this.flash,
       reducedMotion,
@@ -154,8 +156,7 @@ export class GlbEnemyView extends ProceduralEnemyView {
   }
 
   private inAttackClip(): boolean {
-    const p = this.model.playing;
-    return Object.values(this.map.attacks).includes(p);
+    return this.attackClips.has(this.model.playing);
   }
 
   private locomotion(sim: EnemySim): void {

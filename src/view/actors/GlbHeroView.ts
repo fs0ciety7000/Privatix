@@ -21,6 +21,8 @@ import type { V3 } from '@/view/rig';
 import { Rig } from '@/view/rig';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
+const COMBO_CLIPS = ['attack1', 'attack2', 'attack3'] as const;
+
 export class GlbHeroView implements HeroActorView {
   public readonly flash: Flash = makeFlash();
   public readonly pos = new THREE.Vector3();
@@ -129,7 +131,7 @@ export class GlbHeroView implements HeroActorView {
     this.lastState = state;
     switch (state) {
       case 'attack': {
-        const clip = `attack${String(sim.combo + 1)}`;
+        const clip = COMBO_CLIPS[sim.combo] ?? 'attack1';
         const tm = sim.timing;
         m.scrub(clip, this.aligned(clip, t, tm.startupMs, tm.activeMs + tm.recoveryMs), 0.04);
         break;
