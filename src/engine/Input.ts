@@ -25,6 +25,12 @@ export interface RawInput {
   /** Interagir (E, gâchette gauche) et pause (Échap, P, Start). */
   readonly interact: boolean;
   readonly pause: boolean;
+  /** Interagir maintenu (E, LB) : objet au sol au sac après 400 ms. */
+  readonly interactHeld: boolean;
+  /** Démonter maintenu (X, RB) : objet au sol en Ferraille après 500 ms. */
+  readonly scrapHeld: boolean;
+  /** Écran Tenue (I, Tab, Select) : appui. */
+  readonly inventory: boolean;
 }
 
 const MOVE_KEYS = {
@@ -60,6 +66,9 @@ export class Input {
   private reduced = false;
   private interact = false;
   private pause = false;
+  private inventory = false;
+  private padInteractHeld = false;
+  private padScrapHeld = false;
   private joyX = 0;
   private joyY = 0;
   private joyId: number | null = null;
@@ -105,6 +114,14 @@ export class Input {
           break;
         case 'KeyE':
           this.interact = true;
+          break;
+        case 'KeyI':
+          this.inventory = true;
+          break;
+        case 'Tab':
+          // Tab ouvre l'écran Tenue (la navigation des menus passe par les flèches).
+          this.inventory = true;
+          k.preventDefault();
           break;
         case 'Escape':
         case 'KeyP':
@@ -263,7 +280,10 @@ export class Input {
       if (pressed(2)) this.coffee = true;
       if (pressed(4) || pressed(6)) this.interact = true;
       if (pressed(9)) this.pause = true;
+      if (pressed(8)) this.inventory = true;
       padSpecialHeld = pad.buttons[3] ?? false;
+      this.padInteractHeld = (pad.buttons[4] ?? false) || (pad.buttons[6] ?? false);
+      this.padScrapHeld = pad.buttons[5] ?? false;
       this.padPrev = pad.buttons;
     }
     const out: RawInput = {
@@ -281,6 +301,9 @@ export class Input {
       toggleReducedMotion: this.reduced,
       interact: this.interact,
       pause: this.pause,
+      interactHeld: k.has('KeyE') || this.padInteractHeld,
+      scrapHeld: k.has('KeyX') || this.padScrapHeld,
+      inventory: this.inventory,
     };
     this.attack = false;
     this.dash = false;
@@ -291,12 +314,14 @@ export class Input {
     this.reduced = false;
     this.interact = false;
     this.pause = false;
+    this.inventory = false;
     return out;
   }
 
   /** Appuis simulés (captures automatisées, tests de bout en bout). */
-  public press(what: 'attack' | 'dash' | 'special' | 'coffee' | 'interact'): void {
-    if (what === 'attack') this.attack = true;
+  public press(what: 'attack' | 'dash' | 'special' | 'coffee' | 'interact' | 'inventory'): void {
+    if (what === 'inventory') this.inventory = true;
+    else if (what === 'attack') this.attack = true;
     else if (what === 'dash') this.dash = true;
     else if (what === 'special') this.special = true;
     else if (what === 'interact') this.interact = true;

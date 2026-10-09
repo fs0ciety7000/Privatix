@@ -62,6 +62,17 @@ export interface SavedTotals {
   readonly saved: boolean;
 }
 
+/** Butin du Shift sur l'écran des départs (loot) : noms colorés par rareté. */
+export interface ResultsLoot {
+  readonly found: number;
+  /** Meilleur objet trouvé (« Dernier objet trouvé » de Rudy). */
+  readonly best: { readonly name: string; readonly color: string } | null;
+  readonly kept: readonly { readonly name: string; readonly color: string }[];
+  readonly ferraille: number;
+  /** Refus de la consigne (Vestiaire plein…), affiché tel quel. */
+  readonly error: string | null;
+}
+
 type Screen = 'none' | 'title' | 'pause' | 'options' | 'choice' | 'results' | 'panel';
 
 function el<K extends keyof HTMLElementTagNameMap>(
@@ -219,7 +230,7 @@ export class Menus {
       const help = el('div', 'px-help', box);
       help.innerHTML =
         '<kbd>ZQSD</kbd> bouger · <kbd>Clic</kbd>/<kbd>J</kbd> frapper · <kbd>Espace</kbd> dash · ' +
-        '<kbd>F</kbd> sifflet (maintenir : préavis) · <kbd>R</kbd> café · <kbd>E</kbd> interagir · <kbd>Échap</kbd> pause';
+        '<kbd>F</kbd> sifflet (maintenir : préavis) · <kbd>R</kbd> café · <kbd>E</kbd> interagir · <kbd>I</kbd> tenue · <kbd>Échap</kbd> pause';
       return box;
     });
   }
@@ -412,6 +423,7 @@ export class Menus {
     clock: string,
     totals: SavedTotals,
     onContinue: () => void,
+    loot: ResultsLoot | null = null,
   ): void {
     this.mount('results', (layer) => {
       const won = result.end === 'victoire';
@@ -437,6 +449,28 @@ export class Menus {
         const tr = el('tr', '', table);
         el('td', '', tr, k);
         el('td', '', tr, v);
+      }
+      if (loot) {
+        const colored = (k: string, items: readonly { name: string; color: string }[]): void => {
+          const tr = el('tr', 'px-board-loot', table);
+          el('td', '', tr, k);
+          const td = el('td', '', tr);
+          if (items.length === 0) td.textContent = '—';
+          items.forEach((it, i) => {
+            if (i > 0) td.append(', ');
+            const b = el('b', '', td, it.name);
+            b.style.color = it.color;
+          });
+        };
+        const tr = el('tr', '', table);
+        el('td', '', tr, 'Objets trouvés');
+        el('td', '', tr, String(loot.found));
+        if (loot.best) colored('Plus belle trouvaille', [loot.best]);
+        colored('Ramené au Vestiaire', loot.kept);
+        const fe = el('tr', '', table);
+        el('td', '', fe, 'Ferraille');
+        el('td', '', fe, `+${String(loot.ferraille)}`);
+        if (loot.error) el('p', 'px-sub', panel, `Consigne refusée (${loot.error}) : rien gardé.`);
       }
       el(
         'p',

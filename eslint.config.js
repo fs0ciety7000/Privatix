@@ -127,6 +127,7 @@ export default tseslint.config(
       'src/ui/hud/**/*.ts',
       'src/ui/menus/**/*.ts',
       'src/ui/hub/**/*.ts',
+      'src/ui/loot/**/*.ts',
       'src/engine/**/*.ts',
     ],
     rules: {

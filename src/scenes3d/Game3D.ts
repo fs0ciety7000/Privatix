@@ -1,6 +1,9 @@
 import { AudioDirector } from '@/audio/AudioDirector';
 import { probeWorld } from '@/audio/probe';
 import { COFFEE, ENEMY_NAMES } from '@/config/balance';
+import { ITEM_RARITIES, LOOT_PICKUP, RARITY_ORDER } from '@/config/loot';
+import type { ItemInstance } from '@/systems/loot';
+import { buildPaquetage, compareInLoadout, itemName, slotOf } from '@/systems/loot';
 import type { EnemyKind, ShiftId } from '@/config/balance';
 import { hasSave, loadMeta, metaSave } from '@/platform/save';
 import { browserStorage } from '@/platform/storage';
@@ -23,6 +26,10 @@ import type { RawInput, TouchElements } from '@/engine/Input';
 import { Input } from '@/engine/Input';
 import type { HudSnapshot } from '@/ui/hud/Hud';
 import { Hud } from '@/ui/hud/Hud';
+import type { NearItemView } from '@/ui/loot/LootHud';
+import { CompareCard, GearStrip } from '@/ui/loot/LootHud';
+import { showConsigne, showTenue } from '@/ui/loot/lootPanels';
+import type { ResultsLoot } from '@/ui/menus/Menus';
 import type { OptionsState } from '@/ui/menus/Menus';
 import { Menus } from '@/ui/menus/Menus';
 import { GameView } from '@/view/GameView';
@@ -61,6 +68,10 @@ export class Game3D {
   private readonly hud: Hud;
   private readonly menus: Menus;
   private readonly hubUi: HubUi;
+  /** Loot : carte de comparaison à l'approche, bandeau des emplacements, écran Tenue ouvert. */
+  private readonly lootCard: CompareCard;
+  private readonly gearStrip: GearStrip;
+  private tenueOpen = false;
   /** Hub en cours (phase `hub`), sinon `null`. */
   private hub: HubController | null = null;
   /** Progression permanente (chargée au démarrage, sauvegardée par `saveMeta`). */
@@ -115,6 +126,18 @@ export class Game3D {
     this.audio.bind(document, dom.ui);
     this.hubUi = new HubUi(dom.ui, this.menus, HUB_SERVICES);
     this.hubUi.reducedMotion = settings.reducedMotion;
+    this.lootCard = new CompareCard(
+      dom.ui,
+      (a) => {
+        this.world.loot.act(a);
+      },
+      this.input.touch,
+    );
+    this.lootCard.reducedMotion = settings.reducedMotion;
+    this.gearStrip = new GearStrip(dom.ui, () => {
+      if (this.phase === 'run' && !this.menus.open) this.openTenue();
+    });
+    this.gearStrip.setVisible(false);
     this.cheatHandler = (e) => {
       if (!e.repeat && ['KeyK', 'KeyG', 'KeyN', 'KeyB'].includes(e.code))
         this.cheatQueue.push(e.code.slice(3));
@@ -172,6 +195,8 @@ export class Game3D {
   private showTitle(): void {
     this.phase = 'title';
     this.hud.setVisible(false);
+    this.gearStrip.setVisible(false);
+    this.lootCard.update(null, 0, 0);
     this.hubUi.setVisible(false);
     this.menus.showPauseButton(false);
     this.menus.setBoss(null);
@@ -252,6 +277,8 @@ export class Game3D {
     this.rebuildView();
     this.afterModal = true;
     this.hud.setVisible(false);
+    this.gearStrip.setVisible(false);
+    this.lootCard.update(null, 0, 0);
     this.menus.showPauseButton(this.input.touch);
     this.menus.setBoss(null);
     this.menus.fade(1, 0);
@@ -275,6 +302,7 @@ export class Game3D {
     this.resultsIn = -1;
     this.afterModal = true;
     this.hud.setVisible(true);
+    this.gearStrip.setVisible(true);
     this.menus.showPauseButton(this.input.touch);
     this.menus.fade(1, 0);
     this.menus.fade(0, 400);
@@ -338,6 +366,7 @@ export class Game3D {
     this.settings = { quality, reducedMotion: next.reducedMotion };
     this.menus.reducedMotion = next.reducedMotion;
     this.hubUi.reducedMotion = next.reducedMotion;
+    this.lootCard.reducedMotion = next.reducedMotion;
     browserStorage()?.setItem(QUALITY_KEY, quality.id);
     this.rebuildView();
   }
@@ -350,22 +379,62 @@ export class Game3D {
     const result = this.world.director.result;
     if (!result) return;
     this.phase = 'results';
-    const settled = settleShift(this.meta, result, null);
-    const saved = this.saveMeta(settled.meta);
-    this.lastEnd = result.end;
-    this.lastCause = result.cause;
     this.hud.setVisible(false);
+    this.gearStrip.setVisible(false);
+    this.lootCard.update(null, 0, 0);
     this.menus.showPauseButton(false);
     this.menus.setBoss(null);
     this.menus.setPrompt(null, 0, 0, false);
     this.menus.fade(0, 300);
-    this.menus.showResults(
-      result,
-      this.world.director.clock,
-      { ps: settled.meta.ps, grains: settled.meta.grains, saved },
-      () => {
-        this.enterHub();
+    const loot = this.world.loot;
+    const end = result.end;
+    const candidates = loot.consignCandidates();
+    const settle = (keep: readonly string[]): void => {
+      // Fin de Shift : PS, Grains, statistiques, puis consigne du loot (settleShift → settleLootRun).
+      const settled = settleShift(this.meta, result, loot.runEnd(end, keep));
+      const saved = this.saveMeta(settled.meta);
+      this.lastEnd = end;
+      this.lastCause = result.cause;
+      const color = (i: ItemInstance): { name: string; color: string } => ({
+        name: itemName(i),
+        color: ITEM_RARITIES[i.rarity].color,
+      });
+      const best = [...loot.found].sort(
+        (a, b) => RARITY_ORDER.indexOf(b.rarity) - RARITY_ORDER.indexOf(a.rarity),
+      )[0];
+      const summary: ResultsLoot = {
+        found: loot.found.length,
+        best: best ? color(best) : null,
+        kept: settled.kept.map(color),
+        ferraille: settled.ferraille,
+        error: settled.lootError,
+      };
+      this.menus.showResults(
+        result,
+        this.world.director.clock,
+        { ps: settled.meta.ps, grains: settled.meta.grains, saved },
+        () => {
+          this.enterHub();
+        },
+        summary,
+      );
+    };
+    if (candidates.length === 0) {
+      settle([]);
+      return;
+    }
+    showConsigne(
+      this.menus,
+      {
+        outcome: end,
+        candidates,
+        limit: loot.consignLimit(end),
+        preselect: loot.defaultKeep(end),
+        paquetage: buildPaquetage(this.meta),
+        ferrailleEarned: loot.ferraille,
+        reducedMotion: this.settings.reducedMotion,
       },
+      settle,
     );
   }
 
@@ -420,12 +489,15 @@ export class Game3D {
       coffee: raw.coffee,
       specialHeld: raw.specialHeld,
       interact: raw.interact,
+      interactHeld: raw.interactHeld,
+      scrapHeld: raw.scrapHeld,
     };
   }
 
   private runInput(raw: RawInput): void {
     const director = this.world.director;
     if (this.menus.open) {
+      if (raw.inventory && this.tenueOpen) this.closeTenue();
       this.afterModal = true;
       return;
     }
@@ -436,6 +508,10 @@ export class Game3D {
     if (director.choice) return;
     if (raw.pause && !director.ended) {
       this.openPause();
+      return;
+    }
+    if (raw.inventory && !director.ended) {
+      this.openTenue();
       return;
     }
     if (this.cheats) this.runCheats();
@@ -476,6 +552,7 @@ export class Game3D {
   private hearEvents(events: readonly SimEvent[]): void {
     const menu = this.menus.current;
     this.audio.frame(events, probeWorld(this.world, this.phase, menu, this.world.time.paused));
+    for (const e of events) if (e.type === 'lootDropped') this.audio.loot(e.rank, e.x, e.y);
   }
 
   /**
@@ -505,6 +582,8 @@ export class Game3D {
           coffee: raw.coffee,
           specialHeld: raw.specialHeld,
           interact: raw.interact,
+          interactHeld: raw.interactHeld,
+          scrapHeld: raw.scrapHeld,
         });
       }
       this.world.time.paused = this.menus.open || !this.playing;
@@ -568,6 +647,10 @@ export class Game3D {
         case 'shiftEnded':
           this.menus.fade(1, END_FADE_MS);
           this.resultsIn = END_FADE_MS + 200;
+          if (this.tenueOpen) this.closeTenue();
+          break;
+        case 'lootDropped':
+          this.onLootDropped(e.rank, e.quiet, e.name);
           break;
         default:
           break;
@@ -575,12 +658,92 @@ export class Game3D {
     }
   }
 
+  /**
+   * Mise en scène d'un drop (narrative_level.md § 3.1) : un Patrimoine tombé dans une salle vide
+   * déclenche un ralenti (jamais en Réduction des mouvements) et l'annonce de Rudy ; le Hors-série a
+   * son bandeau. Le son (`audio.loot`) part de `hearEvents`.
+   */
+  private onLootDropped(rank: number, quiet: boolean, name: string): void {
+    if (this.phase !== 'run') return;
+    const top = RARITY_ORDER.length - 1;
+    if (rank >= top) {
+      if (quiet && !this.settings.reducedMotion) {
+        const s = LOOT_PICKUP.PATRIMOINE_SLOWMO;
+        this.world.time.slowmo(s.scale, s.ms, s.easeMs);
+      }
+      this.hud.announce(`RUDY : « OBJET DU PATRIMOINE SUR LA VOIE » · ${name}`, 3, 'gold');
+    } else if (rank === top - 1) this.hud.announce(`HORS-SÉRIE · ${name}`, 2, 'info');
+  }
+
+  /** Carte de comparaison de l'objet au sol le plus proche (ou `null`). */
+  private nearItem(): NearItemView | null {
+    const loot = this.world.loot;
+    const g = loot.near;
+    if (!g || this.menus.open || this.world.director.frozen) return null;
+    const slot = slotOf(g.item);
+    const p = this.view.toScreen(g.x, g.y, 0.6);
+    return {
+      id: g.id,
+      item: g.item,
+      compare: compareInLoadout(loot.loadout.equipped, g.item, { r: loot.r }),
+      current: slot ? loot.loadout.equipped[slot] : null,
+      r: loot.r,
+      canTake: loot.canTake,
+      hold: loot.hold,
+      bagFull: !loot.loadout.bag.includes(null),
+      choice: g.group > 0,
+      x: p.x,
+      y: p.y,
+      version: loot.version,
+    };
+  }
+
+  /** Écran « Tenue » (I, Tab, toucher du bandeau) : le jeu est en pause tant qu'il est ouvert. */
+  private openTenue(refresh = false): void {
+    const loot = this.world.loot;
+    this.tenueOpen = true;
+    showTenue(
+      this.menus,
+      {
+        equipped: loot.loadout.equipped,
+        bag: loot.loadout.bag,
+        mods: loot.mods,
+        r: loot.r,
+        editable: loot.editable,
+        ferraille: loot.ferraille,
+      },
+      {
+        equipBag: (i) => {
+          loot.equipBag(i);
+          this.openTenue(true);
+        },
+        scrapBag: (i) => {
+          loot.scrapBag(i);
+          this.openTenue(true);
+        },
+        close: () => {
+          this.closeTenue();
+        },
+      },
+      refresh,
+    );
+  }
+
+  private closeTenue(): void {
+    this.tenueOpen = false;
+    this.menus.close();
+  }
+
   /** HUD, invite contextuelle et barre du boss. */
   private updateOverlay(realDt: number): void {
     this.hud.update(this.snapshot(), realDt);
+    const loot = this.world.loot;
+    this.gearStrip.update(loot.loadout.equipped, loot.loadout.bag);
+    const near = this.nearItem();
+    this.lootCard.update(near, innerWidth, innerHeight);
     const director = this.world.director;
     const prompt = director.prompt;
-    if (prompt && !this.menus.open && !director.frozen) {
+    if (prompt && !this.menus.open && !director.frozen && !near) {
       const p = this.view.toScreen(prompt.x, prompt.y, prompt.door ? 2.9 : 2.0);
       this.menus.setPrompt(prompt.label, p.x, p.y, !prompt.door && !this.input.touch);
     } else this.menus.setPrompt(null, 0, 0, false);
@@ -660,6 +823,8 @@ export class Game3D {
     this.leaveHub();
     this.hubUi.dispose();
     this.hud.dispose();
+    this.lootCard.dispose();
+    this.gearStrip.dispose();
     this.menus.dispose();
     this.view.dispose();
     this.audio.dispose();

@@ -1,0 +1,633 @@
+/*
+ * UI DOM du loot (3D) : fiche d'objet, carte de comparaison (« Bon de dotation »), bandeau des
+ * emplacements du HUD, écran Tenue, consigne de fin de Shift, services DPD et PACO du hub.
+ * Tokens du design system « Néon & Ballast » (menus.css). Couleurs de rareté : `--rar` (GDD § 9 bis.3).
+ * Comparaison : ▲ vert #5BD17A, ▼ rouge #E8505B, = gris (formes doublées pour le daltonisme).
+ */
+:root {
+  --loot-up: #5bd17a;
+  --loot-down: #e8505b;
+  --loot-same: #a9a3c8;
+  --loot-copper: #ff8c2b;
+  --loot-gold: #ffc24a;
+}
+
+/* ─── Fiche d'objet ─── */
+.loot-card {
+  --rar: var(--px-line);
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border: var(--bd);
+  border-left: 4px solid var(--rar);
+  border-radius: var(--r-sm);
+  background: linear-gradient(180deg, rgba(30, 20, 52, 0.92), rgba(12, 8, 24, 0.94));
+  color: var(--px-text-soft);
+  font: 400 var(--fs-xs) / 1.4 var(--font-text);
+  text-align: left;
+}
+.loot-card[data-rarity='patrimoine'] {
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(255, 140, 43, 0.22), transparent 60%),
+    linear-gradient(180deg, rgba(40, 24, 30, 0.95), rgba(14, 8, 18, 0.95));
+}
+.loot-card--empty {
+  opacity: 0.55;
+  border-left-style: dashed;
+}
+.loot-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.loot-card-head .loot-icon {
+  flex: none;
+  padding: 4px;
+  border: 2px solid var(--rar);
+  border-radius: var(--r-sm);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--rar);
+}
+.loot-card-names {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.loot-name {
+  color: var(--rar);
+  font: 900 var(--fs-sm) / 1.15 var(--font-display);
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 0 #000;
+}
+.loot-card[data-rarity='reforme'] .loot-name,
+.loot-card[data-rarity='reglementaire'] .loot-name {
+  text-shadow: 0 2px 0 #000;
+}
+.loot-meta {
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) / 1.3 var(--font-text);
+}
+.loot-implicit {
+  color: var(--px-text);
+  font-weight: 700;
+}
+.loot-affixes {
+  margin: 0;
+  padding-left: 16px;
+}
+.loot-affixes li::marker {
+  color: var(--rar);
+}
+.loot-power {
+  margin: 0;
+  color: var(--loot-copper);
+  font-weight: 700;
+}
+.loot-drawback {
+  margin: 0;
+  color: var(--px-text-mute);
+  font-style: italic;
+}
+.loot-set {
+  margin: 0;
+  color: var(--px-rim);
+}
+.loot-flavor {
+  margin: 0;
+  color: var(--px-label);
+  font-style: italic;
+}
+
+/* ─── Comparaison ▲ ▼ = ─── */
+.loot-compare {
+  display: grid;
+  gap: 6px;
+}
+.loot-sums {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.loot-sum {
+  display: grid;
+  padding: 4px 8px;
+  border: 2px solid var(--px-line);
+  border-radius: var(--r-sm);
+  background: rgba(0, 0, 0, 0.3);
+}
+.loot-sum span {
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) / 1.2 var(--font-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.loot-sum b {
+  font: 900 var(--fs-md) / 1.1 var(--font-display);
+}
+.loot-sum[data-dir='up'] {
+  border-color: var(--loot-up);
+}
+.loot-sum[data-dir='up'] b {
+  color: var(--loot-up);
+}
+.loot-sum[data-dir='down'] {
+  border-color: var(--loot-down);
+}
+.loot-sum[data-dir='down'] b {
+  color: var(--loot-down);
+}
+.loot-sum[data-dir='same'] b {
+  color: var(--loot-same);
+}
+.loot-deltas {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 700 var(--fs-xs) / 1.35 var(--font-text);
+}
+.loot-deltas li {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 6px;
+}
+.loot-deltas li[data-dir='up'] {
+  color: var(--loot-up);
+}
+.loot-deltas li[data-dir='down'] {
+  color: var(--loot-down);
+}
+.loot-deltas li[data-dir='same'] {
+  color: var(--loot-same);
+}
+.loot-deltas li span {
+  color: var(--px-text-soft);
+}
+
+/* ─── Carte à l'approche (« Bon de dotation ») ─── */
+.loot-near {
+  --rar: var(--px-rim);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: min(320px, calc(100vw - 24px));
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: var(--bd);
+  outline: 2px solid var(--rar);
+  outline-offset: -6px;
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--px-panel-top), var(--px-panel-bottom));
+  box-shadow:
+    var(--sh-card),
+    0 0 24px color-mix(in srgb, var(--rar) 35%, transparent);
+  pointer-events: auto;
+  z-index: 18;
+  transform-origin: 0 50%;
+}
+.loot-near[hidden] {
+  display: none;
+}
+.loot-near .loot-card {
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: transparent;
+  padding: 2px 4px;
+}
+.loot-near-tag {
+  justify-self: start;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  background: var(--rar);
+  color: var(--px-ink);
+  font: 900 var(--fs-2xs) / 1.3 var(--font-display);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+.loot-near[data-rarity='patrimoine'] {
+  --rar: var(--loot-gold);
+}
+.loot-current {
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) / 1.3 var(--font-text);
+}
+.loot-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.loot-actions--wrap {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.loot-act {
+  min-height: 44px;
+  padding: 6px 8px;
+  font-size: var(--fs-2xs);
+  flex-direction: column;
+  gap: 2px;
+}
+.loot-act--small {
+  min-height: 36px;
+  padding: 4px 10px;
+}
+.loot-act kbd {
+  padding: 0 4px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--px-gold);
+  font: 700 var(--fs-2xs) / 1.3 var(--font-text);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.loot-act:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+/* Anneau de maintien : barre qui se remplit sous le bouton. */
+.loot-hold {
+  --hold: 0;
+  position: relative;
+  overflow: hidden;
+}
+.loot-hold::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: var(--px-gold);
+  transform: scaleX(var(--hold));
+  transform-origin: left;
+}
+.loot-lock {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 6px 8px;
+  border: 2px dashed var(--px-danger);
+  border-radius: var(--r-sm);
+  color: #ffd6ee;
+  font: 700 var(--fs-xs) / 1.3 var(--font-text);
+}
+
+/* ─── Bandeau du HUD : 6 emplacements, 4 cases de sac ─── */
+.loot-strip {
+  position: fixed;
+  top: max(124px, calc(env(safe-area-inset-top) + 110px));
+  left: max(16px, env(safe-area-inset-left));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border: var(--bd);
+  outline: 2px solid var(--px-line);
+  border-radius: var(--r-sm);
+  background: var(--px-panel);
+  box-shadow: var(--sh-drop);
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 11;
+}
+.loot-strip[hidden] {
+  display: none;
+}
+.loot-strip:focus-visible {
+  outline: var(--focus-ring);
+}
+.loot-strip-slots {
+  display: flex;
+  gap: 4px;
+}
+.loot-slot {
+  --rar: transparent;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--rar);
+  border-radius: var(--r-sm);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--rar);
+  box-shadow: inset 0 0 8px color-mix(in srgb, var(--rar) 40%, transparent);
+}
+.loot-slot.is-empty {
+  border-color: var(--px-line);
+  border-style: dashed;
+  color: var(--px-text-mute);
+  opacity: 0.6;
+}
+.loot-strip-bag {
+  display: grid;
+  grid-template-columns: repeat(2, 10px);
+  gap: 3px;
+}
+.loot-bagdot {
+  --rar: transparent;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--px-text-mute);
+  border-radius: 2px;
+}
+.loot-bagdot.is-full {
+  border-color: var(--rar);
+  background: var(--rar);
+}
+.loot-strip-key {
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--px-shadow-violet);
+  color: var(--px-text);
+  font: 700 var(--fs-2xs) / 1.3 var(--font-text);
+}
+body.touch .loot-strip-key {
+  display: none;
+}
+
+/* ─── Écran Tenue ─── */
+.loot-tenue-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: var(--sp-4);
+}
+.loot-tenue-worn,
+.loot-tenue-side {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.loot-slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.loot-bag {
+  display: grid;
+  gap: 8px;
+}
+.loot-bag-cell {
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  border: 2px dashed var(--px-line);
+  border-radius: var(--r-sm);
+}
+.loot-bag-cell .loot-actions {
+  grid-template-columns: 1fr 1fr;
+}
+.loot-totals {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 700 var(--fs-xs) / 1.4 var(--font-text);
+}
+.loot-totals li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px dashed var(--px-line);
+}
+.loot-totals b {
+  color: var(--px-gold);
+}
+.loot-close {
+  margin-top: var(--sp-4);
+}
+
+/* ─── Consigne de fin de Shift ─── */
+.loot-consigne-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+.loot-pick {
+  min-height: 0;
+  padding: 8px;
+}
+.loot-pick[aria-pressed='true'] {
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.45),
+    0 0 26px color-mix(in srgb, var(--rc) 55%, transparent);
+}
+.loot-pick-state {
+  color: var(--px-text-mute);
+  font: 900 var(--fs-2xs) / 1.2 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.loot-pick[aria-pressed='true'] .loot-pick-state {
+  color: var(--loot-up);
+}
+.loot-consigne-sum {
+  margin: 0 0 var(--sp-3);
+  color: var(--px-gold);
+  font: 900 var(--fs-md) / 1.2 var(--font-display);
+}
+.px-board-loot td:last-child b {
+  font-family: var(--font-display);
+  text-shadow: 0 2px 0 #000;
+}
+
+/* ─── Services DPD et PACO ─── */
+.loot-money {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--sp-3);
+}
+.loot-money-cell {
+  display: grid;
+  justify-items: center;
+  min-width: 82px;
+  padding: 4px 10px;
+  border: var(--bd);
+  outline: 2px solid var(--px-line);
+  border-radius: var(--r-sm);
+  background: var(--px-panel);
+}
+.loot-money-cell b {
+  color: var(--px-text);
+  font: 900 var(--fs-md) / 1.1 var(--font-display);
+}
+.loot-money-cell span {
+  color: var(--px-text-mute);
+  font: 700 var(--fs-2xs) / 1 var(--font-text);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+.loot-money-cell.is-scrap b {
+  color: #c7ced8;
+}
+.loot-money-cell.is-pieces b {
+  color: var(--px-rim);
+}
+.loot-money-cell.is-pack b {
+  color: var(--px-hero-hi);
+}
+.loot-tabs {
+  margin-bottom: var(--sp-3);
+}
+.loot-msg {
+  margin: 0 0 var(--sp-3);
+  padding: 6px 10px;
+  border-left: 3px solid var(--px-gold);
+  color: var(--px-text);
+  font: 700 var(--fs-xs) / 1.3 var(--font-text);
+}
+.loot-vestiaire {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: var(--sp-4);
+}
+.loot-lockers {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  align-content: start;
+}
+.loot-locker {
+  --rar: var(--px-line);
+  --btn-line: var(--rar);
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  min-height: 64px;
+  padding: 4px;
+  color: var(--rar);
+  font-size: 9px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.loot-locker.is-empty {
+  --btn-line: var(--px-line);
+  opacity: 0.35;
+}
+.loot-locker[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--rar) 22%, var(--px-panel));
+}
+.loot-locker-name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  color: var(--px-text-soft);
+  font: 700 9px / 1.15 var(--font-text);
+  text-align: center;
+}
+.loot-locker-marks {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  display: flex;
+  gap: 2px;
+}
+.loot-locker-marks i {
+  padding: 0 3px;
+  border-radius: 2px;
+  font: 900 8px / 1.4 var(--font-display);
+  font-style: normal;
+}
+.loot-locker-marks .is-pack {
+  background: var(--px-hero);
+  color: var(--px-ink);
+}
+.loot-locker-marks .is-lock {
+  background: var(--px-text-mute);
+  color: var(--px-ink);
+}
+.loot-detail {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.loot-affix-rows {
+  display: grid;
+  gap: 4px;
+}
+.loot-affix-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  font: 700 var(--fs-xs) / 1.3 var(--font-text);
+}
+.loot-q {
+  color: var(--px-text-mute);
+  font-style: normal;
+  font-size: var(--fs-2xs);
+}
+.loot-pack {
+  display: grid;
+  gap: 6px;
+  margin-bottom: var(--sp-3);
+}
+.loot-tools {
+  margin-bottom: var(--sp-3);
+}
+.loot-unlocks {
+  display: grid;
+  gap: 6px;
+}
+.loot-unlock {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  align-items: center;
+  gap: 8px;
+  font: 700 var(--fs-xs) / 1.3 var(--font-text);
+}
+.loot-unlock b {
+  color: var(--px-text);
+}
+.loot-codex {
+  display: grid;
+  gap: 6px;
+}
+.loot-codex-row {
+  display: grid;
+  gap: 2px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--loot-copper);
+}
+.loot-codex-row b {
+  color: var(--loot-copper);
+  font: 900 var(--fs-sm) / 1.2 var(--font-display);
+}
+.loot-codex-row.is-unknown {
+  border-left-color: var(--px-line);
+  opacity: 0.6;
+}
+.loot-codex-row.is-unknown b {
+  color: var(--px-text-mute);
+}
+.loot-reforge {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+@media (max-width: 720px) {
+  .loot-tenue-grid,
+  .loot-vestiaire {
+    grid-template-columns: 1fr;
+  }
+  .loot-slots {
+    grid-template-columns: 1fr;
+  }
+  .loot-lockers {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .loot-strip {
+    top: auto;
+    bottom: max(230px, calc(env(safe-area-inset-bottom) + 230px));
+  }
+}
+
+.reduced-motion .loot-near,
+.reduced-motion .loot-hold::after {
+  transition: none;
+}

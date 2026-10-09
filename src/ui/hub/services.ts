@@ -18,6 +18,7 @@
  *   déjà appelée par la scène : il suffira de lui fournir le `RunEnd` du Shift (écran « Consigne »).
  */
 import type { MetaState } from '@/systems/meta/MetaState';
+import { DPD_SERVICE, PACO_SERVICE } from '@/ui/hub/lootServices';
 
 export type HubServiceId = 'dpd' | 'paco';
 
@@ -39,10 +40,10 @@ export interface HubServicePanel {
 
 export type HubServices = Readonly<Record<HubServiceId, HubServicePanel | null>>;
 
-/** Services branchés par le lot Loot (vides au jalon J6). */
+/** Services branchés par le lot Loot (J10) : `lootServices.ts`. */
 export const HUB_SERVICES: HubServices = {
-  dpd: null,
-  paco: null,
+  dpd: DPD_SERVICE,
+  paco: PACO_SERVICE,
 };
 
 /** Description des services à venir (panneau d'attente). */

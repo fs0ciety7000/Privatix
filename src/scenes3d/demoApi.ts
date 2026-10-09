@@ -1,4 +1,7 @@
 import type { EnemyKind } from '@/config/balance';
+import type { DropSource } from '@/config/loot';
+import type { ItemInstance } from '@/systems/loot';
+import { itemName } from '@/systems/loot';
 import type { Game3D } from '@/scenes3d/Game3D';
 import type { HubDoorId, HubStationId } from '@/sim/hub/stations';
 import { HUB_DOORS, HUB_STATIONS_BY_ID } from '@/sim/hub/stations';
@@ -83,7 +86,7 @@ export function installDemoApi(game: Game3D): void {
     release: () => {
       game.override = {};
     },
-    press: (what: 'attack' | 'dash' | 'special' | 'coffee' | 'interact') => {
+    press: (what: 'attack' | 'dash' | 'special' | 'coffee' | 'interact' | 'inventory') => {
       game.controls.press(what);
     },
     spawn: (kind: EnemyKind, dx: number, dy: number) => game.spawnNear(kind, dx, dy),
@@ -152,6 +155,50 @@ export function installDemoApi(game: Game3D): void {
     },
     advance: (ms: number) => {
       game.fastForward(ms);
+    },
+    /** Loot du Shift : objets au sol, objet proche, équipement, sac, Ferraille, pièces portées. */
+    loot: () => {
+      const l = game.simWorld.loot;
+      const short = (i: ItemInstance | null) =>
+        i ? { uid: i.uid, defId: i.defId, rarity: i.rarity, name: itemName(i) } : null;
+      return {
+        ground: l.ground.map((g) => ({ id: g.id, x: g.x, y: g.y, ...short(g.item) })),
+        near: l.near?.id ?? null,
+        canTake: l.canTake,
+        equipped: Object.fromEntries(
+          Object.entries(l.loadout.equipped).map(([k, v]) => [k, short(v)]),
+        ),
+        bag: l.loadout.bag.map(short),
+        ferraille: l.ferraille,
+        found: l.found.length,
+        pieces: game.gameView.heroEquipment?.equipped ?? null,
+      };
+    },
+    /** Fait tomber le butin d'une source devant le héros (`wagon-bar` : Patrimoine garanti). */
+    lootDrop: (source: DropSource, dx = 0, dy = -50) => {
+      const h = game.simWorld.hero.body;
+      game.simWorld.loot.dropFrom(source, h.x + dx, h.y + dy);
+    },
+    lootDotation: (dx = 0, dy = -50) => {
+      const h = game.simWorld.hero.body;
+      game.simWorld.loot.dropDotation(h.x + dx, h.y + dy);
+    },
+    /** Amène le héros sur un objet au sol (le plus récent par défaut). */
+    lootGoto: (id?: number) => {
+      const l = game.simWorld.loot;
+      const g =
+        id === undefined ? l.ground[l.ground.length - 1] : l.ground.find((x) => x.id === id);
+      if (!g) return false;
+      const b = game.simWorld.hero.body;
+      b.x = g.x;
+      b.y = g.y + 6;
+      b.prevX = b.x;
+      b.prevY = b.y;
+      return true;
+    },
+    lootAct: (action: 'equip' | 'bag' | 'scrap') => game.simWorld.loot.act(action),
+    tenue: () => {
+      game.controls.press('inventory');
     },
   };
   Object.assign(document.defaultView ?? {}, { __privatix3d: api });

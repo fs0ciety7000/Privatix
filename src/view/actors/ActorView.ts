@@ -59,7 +59,8 @@ export type { EquipSlot };
  * n'existe pas ou ne correspond pas à l'emplacement.
  */
 export interface HeroEquipment {
-  attach(slot: EquipSlot, pieceId: string): boolean;
+  /** `outline` : couleur du contour de la pièce (liseré de rareté du loot), sinon celui du héros. */
+  attach(slot: EquipSlot, pieceId: string, opts?: { readonly outline?: number | null }): boolean;
   detach(slot: EquipSlot): void;
   /** Pièce portée sur chaque emplacement (ou `null`). */
   readonly equipped: Readonly<Record<EquipSlot, string | null>>;
