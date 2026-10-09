@@ -143,6 +143,28 @@ export default tseslint.config(
     },
   },
   {
+    // L'audio (Web Audio) lit la sim mais ne dépend ni du rendu, ni de l'UI, ni des scènes.
+    files: ['src/audio/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'three', message: "L'audio n'utilise pas three." },
+            { name: 'phaser', message: 'Entrée 3D : pas de Phaser.' },
+          ],
+          patterns: [
+            {
+              group: ['three/*', '@/view/*', '@/ui/*', '@/scenes/*', '@/scenes3d/*', '@/engine/*'],
+              message:
+                "L'audio s'abonne aux événements de la sim ; seules les scènes l'assemblent.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Garde-fou : seul le Preloader déclare preload(). Les autres scènes ne chargent rien.
     files: ['src/scenes/**/*.ts'],
     ignores: ['src/scenes/PreloaderScene.ts'],

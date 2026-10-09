@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rendu audio hors ligne</title>
+  </head>
+  <body>
+    <!-- Page outil de tools/audio/render.mjs (serveur Vite de dev) : expose src/audio/offline.ts. -->
+    <script type="module">
+      import * as offline from '/src/audio/offline.ts';
+      window.offline = offline;
+      window.offlineReady = true;
+    </script>
+  </body>
+</html>
