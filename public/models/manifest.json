@@ -858,6 +858,108 @@
       "bytes": 124848,
       "bytesRaw": 345636,
       "compression": "meshopt"
+    },
+    "lurcke": {
+      "file": "models/lurcke.glb",
+      "kind": "boss",
+      "height": 2.8,
+      "radius": 0.75,
+      "outline": "#06302C",
+      "rim": "#FFD84A",
+      "bones": 27,
+      "sockets": [
+        "socket_head",
+        "socket_weapon_R",
+        "socket_weapon_L",
+        "socket_back",
+        "socket_hip",
+        "socket_chest",
+        "socket_vfx",
+        "socket_glove_L",
+        "socket_foot_L",
+        "socket_glove_R",
+        "socket_foot_R",
+        "socket_glasses",
+        "socket_pen",
+        "socket_tie",
+        "socket_binder"
+      ],
+      "runtimeBones": [],
+      "triangles": 13154,
+      "clips": {
+        "intro": {
+          "duration": 2.2,
+          "loop": false,
+          "events": {
+            "glint": 1650
+          }
+        },
+        "idle": {
+          "duration": 2.4,
+          "loop": true
+        },
+        "walk": {
+          "duration": 1.0,
+          "loop": true
+        },
+        "attack-slide": {
+          "duration": 1.5,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 700,
+            "recovery": 1150
+          }
+        },
+        "attack-sign": {
+          "duration": 1.6,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "glint": 750,
+            "active": 950,
+            "recovery": 1250
+          }
+        },
+        "attack-cc": {
+          "duration": 1.7,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 600,
+            "recovery": 1400
+          }
+        },
+        "attack-tie": {
+          "duration": 1.9,
+          "loop": false,
+          "events": {
+            "windup": 0,
+            "active": 600,
+            "recovery": 1600
+          }
+        },
+        "phase2": {
+          "duration": 1.5,
+          "loop": false
+        },
+        "hurt": {
+          "duration": 0.35,
+          "loop": false
+        },
+        "stagger": {
+          "duration": 1.2,
+          "loop": true
+        },
+        "defeat": {
+          "duration": 2.6,
+          "loop": false
+        }
+      },
+      "equipment": {},
+      "bytes": 390948,
+      "bytesRaw": 928852,
+      "compression": "meshopt"
     }
   },
   "items": {

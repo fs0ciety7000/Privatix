@@ -49,7 +49,7 @@ export function createProceduralEnemyView(
     case 'manager':
       return new ManagerView(scene, reducedMotion);
     case 'lurcke':
-      // Boss final sans GLB propre : le Manager KPI grandi, sans bulle de posture.
+      // Repli sans GLB (`?procedural`, fichier absent) : le Manager KPI grandi, sans bulle de posture.
       return new ManagerView(scene, reducedMotion, { grow: 1.4, posture: false });
     case 'consultant':
     case 'furet':

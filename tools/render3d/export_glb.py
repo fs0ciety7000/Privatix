@@ -41,6 +41,7 @@ CHARS = {
     "discosaure": ("discosaure", "model", "clips"),
     "furet": ("furet", "model", "clips"),
     "dirupo": ("dirupo", "model", "clips"),
+    "lurcke": ("lurcke", "model", "clips"),
     "borne": ("machines", "borne", "borne_clips"),
     "drone": ("machines", "drone", "drone_clips"),
     "manager": ("manager", "model", "clips"),
@@ -129,7 +130,7 @@ def compress(paths: list[Path]) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("names", nargs="*", help="entités (hero, consultant, discosaure, furet, dirupo, items) ; vide = tout")
+    ap.add_argument("names", nargs="*", help="entités (hero, consultant, discosaure, furet, dirupo, lurcke, items) ; vide = tout")
     ap.add_argument("--raw", action="store_true", help="ne pas compresser (meshopt)")
     ap.add_argument("--list", action="store_true")
     args = ap.parse_args()

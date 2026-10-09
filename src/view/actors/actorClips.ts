@@ -49,7 +49,7 @@ export interface EnemyClipMap {
   readonly rushes?: Readonly<Record<string, Rush>>;
   /** Largeur de la barre de vie (m). */
   readonly barW: number;
-  /** Échelle du modèle (placeholder : un modèle existant grandi pour un boss sans GLB propre). */
+  /** Échelle du modèle (1 par défaut ; un modèle existant grandi peut servir de placeholder). */
   readonly scale?: number;
   /** Sortie digne au lieu de la dissolution (Elio Di Rupo : vaincu, jamais tué). */
   readonly exit?: 'walk';
@@ -188,22 +188,21 @@ export const ENEMY_CLIPS: Readonly<Record<EnemyKind, EnemyClipMap>> = {
     exit: 'walk',
   },
   lurcke: {
-    // Version de travail : pas encore de GLB propre, le costume du Manager KPI grandi.
-    model: 'manager',
+    model: 'lurcke',
     idle: 'idle',
     move: 'walk',
-    moveRef: 1.5,
-    spawn: 'spawn',
+    moveRef: 1.6,
+    spawn: 'intro',
     hurt: 'hurt',
-    stagger: 'hurt',
-    death: 'death',
+    // Étourdi par le coup final : sans voix, lunettes de travers.
+    stagger: 'stagger',
+    death: 'defeat',
     attacks: {
-      bullets: 'attack-report',
-      report: 'attack-report',
-      charts: 'attack-chrono',
-      copy: 'attack-chrono',
+      bullets: 'attack-slide',
+      charts: 'attack-sign',
+      copy: 'attack-cc',
+      report: 'attack-tie',
     },
-    barW: 1.8,
-    scale: 1.4,
+    barW: 2.0,
   },
 };
