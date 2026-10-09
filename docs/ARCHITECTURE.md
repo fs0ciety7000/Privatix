@@ -1209,29 +1209,37 @@ src/sim/          PUR (ni three, ni Phaser, ni DOM, ni Math.random, ni Date.now)
   units.ts          conversion u ↔ m, angles
   clock/            TimeControl (hitstop, ralenti, pause) + FixedClock (pas fixe 60 Hz, interpolation)
   physics/          cercle ↔ grille de tuiles (glissement, sous-pas anti-tunnel), cercle ↔ cercle
-  Arena.ts          salle côté sim : grille de collision du RoomLayout, sol lent, points d'apparition
-  World.ts          possède héros, ennemis, RunState, rng seedé, jetons, temps de sim, file d'événements
+  Arena.ts          salle côté sim : grille de collision du RoomLayout, sol lent, apparitions, voies, marques
+  World.ts          possède héros, ennemis, projectiles, zones, récompenses, RunState, rng, jetons, temps, événements
+  RunDirector.ts    flux du Shift (port de RunScene) : salles, portes, vagues, récompenses, choix, boss, fin
   SimWorld.ts       contrat acteurs ↔ monde (équivalent pur de entities/CombatWorld)
   hero/HeroSim.ts   table d'états de entities/Player.ts, déplacée presque mot pour mot
-  enemies/          EnemySim (base de entities/Enemy.ts), ConsultantSim (Coup de diaporama, Quick win)
-  Weapon.ts         la clé à tire-fond (hitbox géométrique, un impact par cible et par coup)
-  WaveDirector.ts   vagues du GDD (wavesFor, shouldSendNextWave), apparitions échelonnées
-  events.ts         SimEvent : coups, morts, télégraphes, dash, secousses… lus par la vue
-  intent.ts, aim.ts PlayerIntent (même forme que la version Phaser), aide à la visée tactile
+  enemies/          EnemySim (base de entities/Enemy.ts), Consultant, Borne, Drone, Manager KPI, Auditeur
+  Weapon.ts         la clé à tire-fond (hitbox géométrique, un impact par cible, casse les projectiles)
+  Projectiles.ts    tickets d'amende en pool (96), murs, héros (i-frames, dash parfait)
+  Hazards.ts        zones de danger télégraphiées : cercle, anneau, voie (rame), ligne de KPI
+  Pickups.ts        récompenses au sol (Avantage, Gobelet, Tickets, PS, Grains, Cornet)
+  WaveDirector.ts   vagues d'une salle (wavesFor, shouldSendNextWave), apparitions échelonnées
+  events.ts         SimEvent : coups, morts, télégraphes, projectiles, zones, salles, fin du Shift… lus par la vue
+  intent.ts, aim.ts PlayerIntent (même forme que la version Phaser, + interagir), aide à la visée tactile
 src/engine/       plomberie navigateur sans gameplay ni three : Loop (rAF), Input (clavier, souris, manette, tactile)
 src/view/         three uniquement (n'importe ni ui/ ni les scènes)
-  GameView.ts       renderer, scène, lumières, caméra 3/4, effets, synchronisation interpolée
-  RoomView.ts       salle construite depuis le gabarit réel (quai, voies, piliers, bancs, murs, portes)
-  actors/           HeroView, ConsultantView : modèles procéduraux du prototype, pilotés par l'état de la sim
+  GameView.ts       renderer, scène, lumières, caméra 3/4, effets, synchronisation interpolée, changement de salle
+  RoomView.ts       salle construite depuis le gabarit réel (quai, voies, piliers, bancs, murs, portes et leurs panneaux)
+  actors/           ActorView (interface), factory (createEnemyView : point d'entrée des futurs GLB),
+                    HeroView, ConsultantView, ProceduralEnemyView (base) + Borne, Drone, Manager, Auditeur
+  HazardViews.ts    décalques des zones de danger, anneau du Reporting, rame
+  ItemsView.ts      projectiles instanciés, récompenses au sol, objets interactifs (café, étals, consigne)
   materials/toon.ts toon 4 bandes, liseré, flash, contours en coque inversée
   post/Post.ts      HDR → bloom → tone mapping → étalonnage + vignette
-  fx/               étincelles, poussières, traînées, fantômes, télégraphes au sol, nombres de dégâts
+  fx/               étincelles, poussières, traînées, fantômes, télégraphes au sol (TelegraphPainter), nombres
   quality.ts        presets bas / moyen / haut + réglage « Réduction des mouvements »
-src/ui/hud/       HUD en DOM (jamais three) : Énergie, Burnout, dash, Mobilisation, Gobelets, bandeau, F3
-src/scenes3d/     scènes minces qui assemblent sim + view + engine + ui (QuaiScene, outil de capture dev)
+src/ui/hud/       HUD en DOM (jamais three) : Énergie, Burnout, dash, Mobilisation, Gobelets, salle, Tickets, PS, bandeau, F3
+src/ui/menus/     menus DOM (jamais three) : titre, pause, options, choix, départs, fondu, invite, barre du boss ; GSAP
+src/scenes3d/     Game3D (titre → Shift → départs : assemble sim + view + engine + ui), demoApi (dev, captures)
 src/main3d.ts     bootstrap de play3d.html
 ```
-Règles : `sim/` n'importe ni `three`, ni `phaser`, ni `view/`, `ui/`, `engine/`, `scenes*/`, `entities/`, `fx/` ; `view/` n'importe ni `ui/` ni les scènes ; `ui/hud/` et `engine/` n'importent jamais `three`. Seuls `scenes3d/` et `main3d.ts` assemblent les couches. `src/systems/` reste partagé par les deux versions.
+Règles : `sim/` n'importe ni `three`, ni `phaser`, ni `view/`, `ui/`, `engine/`, `scenes*/`, `entities/`, `fx/` ; `view/` n'importe ni `ui/` ni les scènes ; `ui/hud/`, `ui/menus/` et `engine/` n'importent jamais `three`. Seuls `scenes3d/` et `main3d.ts` assemblent les couches. `src/systems/` reste partagé par les deux versions.
 
 ### 15.3 Boucle à pas fixe, hitstop et interpolation
 La simulation avance à **60 Hz fixes** (`SIM_DT_MS`), quelle que soit la fréquence de l'écran ; au plus 5 pas par frame (pas de spirale de la mort), frame réelle tronquée à 250 ms. Le temps réel passe par `TimeControl.advance` : **pendant un hitstop il vaut 0, donc aucun pas n'est joué** ; si un pas déclenche un hitstop, les pas restants de la frame sont abandonnés et l'image reste figée sur le coup. Le ralenti (dernier ennemi, dash parfait) multiplie le temps réel. La vue interpole positions (`prevX/prevY` → `x/y`, facteur `FixedClock.alpha`) ; ses animations et particules reçoivent le temps de sim écoulé (gelées pendant le hitstop), la secousse caméra, l'UI et les nombres de dégâts le temps réel. Les appuis (attaque, dash…) sont mémorisés jusqu'au pas suivant (`mergeIntent`) : rien ne se perd entre deux pas ni pendant le hitstop. Même graine + mêmes intentions = même partie (test de rejeu dans `tests/sim.test.ts`).
@@ -1251,16 +1259,22 @@ Rendu, matériaux, contours, bloom, étalonnage et personnages viennent du **pro
 |---|---|
 | J0 Spike / go | **Fait** : `three@0.186.1` validé par le porteur, prototype jouable de référence. |
 | J1 Prototype « Quai » | **Fait** : entrée `play3d.html`, boucle à pas fixe, collisions, salle `quai-1` réelle, héros, caméra 3/4, clavier, souris (visée par rayon sur le sol), manette, tactile. |
-| J2 Combat | **Fait (périmètre Consultant)** : `HeroSim` complet (combo 3 coups, dash 2 charges et dash parfait, dash-attaque, sifflet et préavis, café, coup reçu, mort et reprise), `Weapon`, Burnout, Mobilisation, DashCharges, AttackTokens, Consultant Junior (deux attaques télégraphiées), vagues du GDD en boucle de salles, HUD DOM minimal, presets de qualité, réduction des mouvements. **Reste** : Borne et projectiles en pool, zones de danger, comparaison côte à côte du ressenti avec la version Phaser. |
-| J3 à J10 | À faire (pipeline GLB, RunDirector et Shift complet, UI et menus DOM, Hub, ennemis et boss restants, DA des décors, perf et bascule, loot). |
+| J2 Combat | **Fait** : `HeroSim` complet, `Weapon` (casse les projectiles), Burnout, Mobilisation, DashCharges, AttackTokens, projectiles en pool, zones de danger, HUD DOM, presets de qualité, réduction des mouvements. **Reste** : comparaison côte à côte du ressenti avec la version Phaser. |
+| J3 Pipeline GLB | En cours (agent assets, `tools/render3d`, `public/models`). Côté jeu, les vues de personnages passent toutes par `view/actors/ActorView` et `createEnemyView` : brancher un GLB ne touche ni la sim ni `GameView`. |
+| J4 Boucle de Shift | **Fait** : `RunDirector` (port pur de `RunScene`) : salle 1 → 8, Salle des pauses, arène du boss ; tous les gabarits (`quai-1`, `quai-2`, `aiguillage`, `hall`, `repos`, `friterie`, `tresor`, `arene-auditeur`) construits en 3D avec un nombre de lumières fixe ; portes qui annoncent type et récompense (panneau lumineux), vagues, récompenses (Avantage, Gobelet, Tickets, PS, Grains), choix d'Avantage en DOM, salle café (machine ou consigne), Friterie (3 étals), Salle des pauses (2 choix), fondu de transition, mort et victoire, écran des départs, retour au titre. Menus DOM (titre, pause Échap, options : qualité et réduction des mouvements), bouton pause tactile, invite contextuelle (E ou toucher). Raccourcis `?cheat` (K, G, N, B). **Reste** : sauvegarde des PS et Grains (avec l'OCC, J6), son (volume dans les options quand il existera). |
+| J7 Ennemis et boss (avancé) | **Porté** : Borne Automatique (tourelle, salves de 3 tickets, blindage frontal, dos ×2), Drone Optimètre (orbite, tir, scan qui marque, piqué puis cloué au sol), Manager KPI (posture « Costume trois-pièces », tablette, Chronomètre, Reporting), zones (cercle, anneau, rame, ligne de KPI), **Auditeur des Quais** à 3 phases (balayage, chronomètres, barrage, « Contrôle ! », rames, renforts, ruées de KPI). Télégraphes en décalques magenta à la forme exacte des hitboxes. **Reste** : modèles définitifs (GLB), VFX propres au boss, équilibrage côte à côte. |
+| J5, J6, J8 à J10 | À faire (UI tactile complète et manette dans les menus, Hub OCC et sauvegarde, DA des décors et `LOOKS` par zone, perf et bascule, loot). |
 
 Budget mesuré (rendu logiciel, à confirmer sur appareil) : environ 600 à 700 appels de rendu en combat, dont l'essentiel vient des personnages procéduraux (une pièce + un contour par membre). C'est le premier chantier perf : fusion des pièces rigides par os ou GLB skinné (J3), contours partagés.
 
 ### 15.7 Lancer et tester
-- `npm run dev` puis **http://localhost:5173/play3d.html** (options `?q=bas|moyen|haut`, `?rm=1`, `?safe` sans post-traitement, `?seed=N`). Commandes : ZQSD/WASD, clic ou J (frapper), Espace (dash), F (sifflet, maintenu : préavis), R (café), M (réduction des mouvements), F3 (compteurs).
+- `npm run dev` puis **http://localhost:5173/play3d.html** (options `?q=bas|moyen|haut`, `?rm=1`, `?safe` sans post-traitement, `?seed=N`, `?cheat` en dev : K tue tout, G invincible, N salle suivante ou Avantage, B salle du boss). Commandes : ZQSD/WASD, clic ou J (frapper), Espace (dash), F (sifflet, maintenu : préavis), R (café), E (interagir), Échap (pause), M (réduction des mouvements), F3 (compteurs).
 - `npm run build` produit les deux entrées (`dist/index.html`, `dist/play3d.html`). L'image Docker sert donc la 3D en `/play3d.html` sans changement de Dockerfile.
-- Tests : `tests/sim.test.ts` (collisions, horloge, combo, dash, dégâts, jetons, rejeu seedé).
-- Captures automatisées (dev) : `play3d.html?demo` expose un outil de pilotage (`src/scenes3d/demoApi.ts`, absent du build) qui avance la simulation sans dessiner, pour Playwright avec SwiftShader.
+- Tests : `tests/sim.test.ts` (collisions, horloge, combo, dash, dégâts, jetons, rejeu seedé), `tests/simRun.test.ts` (Borne, Drone, Manager, zones, boss, boucle de salle, portes, Avantage, mort et victoire, rejeu d'un Shift).
+- Captures automatisées (dev) : `play3d.html?demo` expose un outil de pilotage (`src/scenes3d/demoApi.ts`, absent du build) qui avance la simulation sans dessiner, pour Playwright avec SwiftShader (`?cheat&demo` : parcours complet titre → salles → boss → départs).
+
+### 15.7 bis Flux d'un Shift en 3D
+`World` délègue le flux à `RunDirector`, qui reprend `RunScene` en pur : `buildRoom` (gabarit tiré par `templateFor`, `World.loadRoom` vide la salle précédente et replace le héros, portes de la salle suivante par `doorsFor` puis `assignDoors`), `startRoomContent` (vagues `wavesFor` sur `roomRng(seed, salle, 2)`, boss 600 ms après l'entrée, objets interactifs des salles calmes), `clearRoom` (ralenti, Burnout, PS, récompense de la porte 500 ms plus tard), `goThrough` (fondu de 220 ms en temps de sim, puis nouvelle salle). Les minuteries passent par le temps de la simulation (rejouable). Les fenêtres de choix sont un état (`director.choice`) : la scène ouvre le menu DOM, met le temps en pause et répond par `choose(i)`. La vue reconstruit le décor sur l'événement `roomEntered` (même `WebGLRenderer`, même nombre de lumières : pas de recompilation de shaders). La fin du Shift (`shiftEnded`) produit le `ShiftResult` de `finishRun` ; l'écran des départs le montre. La progression permanente (`MetaState`) est lue (bonus du Tableau des revendications) mais pas encore écrite : la sauvegarde viendra avec l'OCC (J6).
 
 ### 15.8 Bascule (J9)
 `index.html` passe en 3D ; on supprime `phaser`, `src/scenes/`, `src/entities/`, `src/fx/`, `src/ui/Controls.ts` et `placeholders.ts`, `config/assets.ts`, les sprites et tilesets PNG ; `scenes3d/` devient `scenes/`. Les §§ 1 à 13 de ce document et claude.md sont alors réécrits pour la 3D, sans assouplir les règles.

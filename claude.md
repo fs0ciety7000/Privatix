@@ -98,12 +98,13 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 
 ## 5 bis. Règle 4 — 3D temps réel (entrée `play3d.html`)
 
-- **Couches** (ESLint) : `src/sim/` est **pur** (ni `three`, ni `phaser`, ni DOM, ni `Math.random`, ni `Date.now`) et testé dans `tests/sim.test.ts` ; `src/engine/` (boucle, entrées) et `src/ui/hud/` (HUD DOM) n'importent jamais `three` ; `src/view/` (Three.js) n'importe ni l'UI ni les scènes ; seules `src/scenes3d/` et `src/main3d.ts` assemblent. `src/systems/` et `config/` sont partagés avec la version Phaser.
+- **Couches** (ESLint) : `src/sim/` est **pur** (ni `three`, ni `phaser`, ni DOM, ni `Math.random`, ni `Date.now`) et testé dans `tests/sim*.test.ts` ; `src/engine/` (boucle, entrées), `src/ui/hud/` (HUD DOM) et `src/ui/menus/` (menus DOM, GSAP) n'importent jamais `three` ; `src/view/` (Three.js) n'importe ni l'UI ni les scènes ; seules `src/scenes3d/` et `src/main3d.ts` assemblent. `src/systems/` et `config/` sont partagés avec la version Phaser.
 - **Plan du sol** : la sim travaille en unités de `balance.ts` ; la vue affiche `(x, y)` u en `(x/30, 0, y/30)` m (`sim/units.ts`). Angles logiques `atan2(dy, dx)` ; un modèle tourné vers +Z prend `yawFromAngle(angle)`.
 - **Pas fixe 60 Hz** (`sim/clock/FixedClock`) : hitstop et ralenti passent par `TimeControl` (jamais de temps réel dans la sim) ; le hitstop donne **zéro pas**. La vue interpole et ne modifie jamais la sim ; la sim publie des `SimEvent` que la vue consomme.
 - **Collisions** : `sim/physics/collision.ts` (cercle ↔ grille, cercle ↔ cercle) remplace Arcade. Les règles 1 (hitboxes géométriques, télégraphes magenta ≥ 300 ms, timings de `balance.ts`, game feel) restent valables mot pour mot.
 - **Rendu** : référence visuelle = `prototypes/proto3d/` (validé par le porteur ; ne pas le modifier depuis `src/`). Toute nouvelle option visuelle respecte le preset de qualité (`view/quality.ts`) et la **Réduction des mouvements** (aucun clignotement ni stroboscope).
 - **Lumières** : nombre fixe par salle (pas de recompilation de shaders) ; émissifs + bloom pour le reste. Libérer géométries, matériaux et textures propres à un objet à sa destruction (`dispose`).
+- **Flux du Shift** : `sim/RunDirector.ts` (port pur de `RunScene`) ; minuteries en temps de sim, fenêtres de choix comme état (`director.choice`) auxquelles l'UI répond. **Personnages** : toujours derrière `view/actors/ActorView` (`createEnemyView`), pour remplacer un modèle procédural par un GLB sans toucher la sim.
 
 ## 6. Workflow d'une feature : 1) logique → 2) placeholders → 3) vrais sprites
 
@@ -123,7 +124,7 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 
 ## 8. Ce que Claude ne fait pas sans demander
 
-- Changer la stack ou une version majeure, assouplir `tsconfig`/ESLint, ajouter une dépendance runtime (Phaser et Three.js sont les seules ; `three` est épinglé en version exacte).
+- Changer la stack ou une version majeure, assouplir `tsconfig`/ESLint, ajouter une dépendance runtime (Phaser, Three.js et GSAP sont les seules ; `three` et `gsap` sont épinglés en version exacte, GSAP sert au mouvement des menus DOM).
 - Modifier le canon (noms, lieux, fins) ou une formule d'équilibrage sans mettre à jour le GDD.
 - Nommer une personne réelle, reproduire un logo ou une marque, intégrer un asset sans licence compatible (CC0, CC-BY avec crédit, licence commerciale du pack).
 - Supprimer ou désactiver un test, pousser sur une autre branche que celle demandée, créer une PR non demandée.
@@ -143,11 +144,11 @@ src/platform/               # seul accès au navigateur hors Phaser (localStorag
 src/utils/                  # rng (graines), math
 tests/                      # Vitest : logique pure, gabarits de salles, simulation 3D (sim.test.ts)
 play3d.html, src/main3d.ts  # entrée 3D (Three.js) pendant la migration
-src/sim/                    # PUR : World, HeroSim, EnemySim/ConsultantSim, Weapon, WaveDirector, physics/, clock/ (pas fixe, hitstop)
+src/sim/                    # PUR : World, RunDirector (Shift), HeroSim, enemies/ (5 types + boss), Weapon, Projectiles, Hazards, Pickups, WaveDirector, physics/, clock/
 src/engine/                 # Loop (rAF), Input (clavier, souris, manette, tactile) : DOM, sans three
-src/view/                   # Three.js : GameView, RoomView, actors/, fx/, materials/toon, post/, quality (presets, réduction des mouvements)
-src/ui/hud/                 # HUD DOM de la 3D (+ hud3d.css)
-src/scenes3d/               # QuaiScene (assemble sim + view + engine + ui), demoApi (dev, captures)
+src/view/                   # Three.js : GameView, RoomView, actors/ (ActorView, factory), HazardViews, ItemsView, fx/, materials/toon, post/, quality
+src/ui/hud/, src/ui/menus/  # HUD et menus DOM de la 3D (titre, pause, options, choix, départs ; GSAP)
+src/scenes3d/               # Game3D (titre → Shift → départs, assemble sim + view + engine + ui), demoApi (dev, captures)
 tools/render3d/             # personnages : modèles 3D → pixel art (Blender/bpy), manifest.json prioritaire
 tools/pixelart/             # décor, props, VFX, UI (générateur 2D) + manifest.json, planches de contrôle
 public/assets/              # sprites/{player,enemies,bosses,npcs,vfx,pickups,ui,portraits}, tilesets, audio/{sfx,music}, fonts
