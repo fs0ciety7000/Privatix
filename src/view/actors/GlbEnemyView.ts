@@ -14,6 +14,7 @@ import { AuditeurSim } from '@/sim/enemies/AuditeurSim';
 import { BorneSim } from '@/sim/enemies/BorneSim';
 import { DiscosaureSim } from '@/sim/enemies/DiscosaureSim';
 import { DroneSim } from '@/sim/enemies/DroneSim';
+import { LurckeSim } from '@/sim/enemies/LurckeSim';
 import type { EnemySim } from '@/sim/enemies/EnemySim';
 import { pxToM } from '@/sim/units';
 import type { ActorFxSink, OccluderShape } from '@/view/actors/ActorView';
@@ -82,8 +83,7 @@ export class GlbEnemyView extends ProceduralEnemyView {
     this.rig.body.add(this.model.object);
     this.model.play(map.idle, { fade: 0 });
     const height = meta.height * scale;
-    this.occluder =
-      height >= OCCLUDER_MIN_HEIGHT ? { radius: meta.radius * scale, height } : null;
+    this.occluder = height >= OCCLUDER_MIN_HEIGHT ? { radius: meta.radius * scale, height } : null;
     if (map.model === 'auditeur')
       this.plates = ['plate_L', 'plate_R']
         .map((n) => this.model.bone(n))
@@ -143,7 +143,11 @@ export class GlbEnemyView extends ProceduralEnemyView {
       // Apparition (intro du boss) ou réaction au coup : on laisse finir.
     } else if (sim instanceof DroneSim && sim.grounded) {
       m.scrub(map.death, DRONE_GROUNDED_S, 0.1);
-    } else if (sim instanceof AuditeurSim && sim.transitionLeft > 0 && m.has('phase2')) {
+    } else if (
+      (sim instanceof AuditeurSim || sim instanceof LurckeSim) &&
+      sim.transitionLeft > 0 &&
+      m.has('phase2')
+    ) {
       if (m.playing !== 'phase2') m.play('phase2', { fade: 0.1, restart: true });
     } else if (state === 'windup') {
       const rush = map.rushes?.[sim.currentAttack];

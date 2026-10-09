@@ -77,6 +77,12 @@
       "triangles": 3710,
       "bytes": 108840,
       "source": 5884
+    },
+    "lurcke": {
+      "file": "models/lod/lurcke.glb",
+      "triangles": 6600,
+      "bytes": 342856,
+      "source": 13154
     }
   },
   "items": {

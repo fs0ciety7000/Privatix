@@ -15,6 +15,7 @@
   {"file": "discosaure", "role": "boss", "model": "discosaure", "clip": "idle", "t": 0.5, "yaw": 40, "zoom": 0.7, "frame": {"wide": 0.92}},
   {"file": "auditeur", "role": "boss", "model": "auditeur", "clip": "attack-tickets", "t": 0.6, "tele": 1, "yaw": 10, "zoom": 0.7},
   {"file": "dirupo", "role": "boss", "model": "dirupo", "clip": "smile-flash", "t": 0.9, "yaw": -10, "zoom": 0.85},
+  {"file": "lurcke", "role": "boss", "model": "lurcke", "clip": "intro", "t": 2.0, "yaw": -15, "zoom": 0.85},
   {"file": "josiane", "role": "npc", "model": "josiane", "clip": "wave", "t": 0.45, "yaw": 0, "zoom": 0.85},
   {"file": "bene", "role": "npc", "model": "bene", "clip": "talk", "t": 0.5, "yaw": 0, "zoom": 0.85},
   {"file": "kevin", "role": "npc", "model": "kevin", "clip": "talk", "t": 0.6, "yaw": 0, "zoom": 0.85}

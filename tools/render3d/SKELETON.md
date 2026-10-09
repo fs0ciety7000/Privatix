@@ -17,7 +17,7 @@ Tout changement de nom d'os ou de socket est un **changement cassant** : il faut
 | Orientation de repos des os | **Identité pour tous les os** (sockets compris) : le repère local de chaque os est celui du personnage. Un objet accroché à un socket garde donc l'orientation du personnage au repos. |
 
 Les hauteurs de référence sont dans le manifeste (`height`, `radius`) : héros 2,0 m casque compris,
-consultant 1,75 m, Di Rupo 2,6 m, Discosaure 3,6 m (5,5 m de long), furet 0,9 m (2,6 m de long).
+consultant 1,75 m, Di Rupo 2,6 m, Lurcke 2,8 m, Discosaure 3,6 m (5,5 m de long), furet 0,9 m (2,6 m de long).
 
 ## 2. Os standard des humanoïdes (18)
 
@@ -81,7 +81,7 @@ sockets humanoïdes, `socket_bowtie` et `socket_glasses` (éclat des lunettes) ;
 | Drone (10) | `root`, `hover`, `body`, `eye`, `tape0..1`, `rotor_FL/FR/BL/BR` |
 | Auditeur (20) | `root`, `pelvis`, `chest`, `hip/knee/foot_L/R`, `arm_L/R` (balayage, Y), `boom_L/R` (barrière, Z), `plate_L/R` (blindage, échelle 0 en phase 2), `cockpit`, `pilot`, `pilot_head`, `parm_L/R` ; sockets `socket_vfx`, `socket_screen`, `socket_pilot`, `socket_tip_L/R`, `socket_slot_L/R`, `socket_foot_L/R` |
 
-Humanoïdes ajoutés (18 os du contrat + os secondaires) : manager (`tie0`, `chrono`, `tablet`, `glasses` ; sockets `socket_chrono`, `socket_tablet`), Fluidifieur (`chair`, `binder`, `lanyard` ; `socket_binder`), PNJ (`prop`, `prop_L`).
+Humanoïdes ajoutés (18 os du contrat + os secondaires) : manager (`tie0`, `chrono`, `tablet`, `glasses` ; sockets `socket_chrono`, `socket_tablet`), Fluidifieur (`chair`, `binder`, `lanyard` ; `socket_binder`), PNJ (`prop`, `prop_L`), Lurcke (`jaw`, `brow_L/R`, `glasses`, `earpiece`, `tie0..1`, `pen`, `binder` ; sockets `socket_glasses`, `socket_pen` (bec du stylo), `socket_tie` (bout de la cravate-fouet), `socket_binder`).
 
 **Os pilotés à l'exécution** (`runtimeBones` dans le manifeste) : `disco_ball` et `rotor_*` ne sont **pas**
 animés par les clips. Le jeu les fait tourner autour de Y (vitesse liée à l'état : la boule accélère pendant la

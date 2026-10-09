@@ -40,6 +40,7 @@ cd tools/render3d/viewer && node inspect.mjs ../../../public/models/hero.glb   #
 | `glb/chars/discosaure.py` | Discosaure (port de `discosaure.ts`), boule à facettes en matériau `mirror` |
 | `glb/chars/furet.py` | Furet putride (fiche art_director § 7.2) |
 | `glb/chars/dirupo.py` | Boss caricature d'Elio Di Rupo (fiche § 7.3), 100 % procédural, aucune photo |
+| `glb/chars/lurcke.py` | Boss final Jean-Cul Lurcke (LORE § 7.3), 100 % procédural, aucune photo ; traits du visage en décalques épousant les ellipsoïdes de la tête |
 | `glb/chars/machines.py` | Borne et drone (portés de `characters/borne.py` et `drone.py`) |
 | `viewer/` | Visionneuse Vite + three 0.186.1 autonome (hors build du jeu) : shader toon proche du prototype, clips, équipement, télégraphe, captures Playwright (`shots.mjs`, `specs/`), planche contact (`sheet.py`) |
 
@@ -57,6 +58,7 @@ de sa pièce), échantillonne chaque clip à 30 i/s et exporte.
 | `discosaure` | 14 320 | 24 | 9 : idle, walk, attack-stomp, charge-windup, charge, stagger, hurt, death, spawn | 324 Kio (904 brut) |
 | `furet` | 9 050 | 31 | 9 : idle, run, attack-bite, attack-spray, war-dance, hurt, death, spawn, burrow | 306 Kio (641 brut) |
 | `dirupo` | 14 950 | 26 | 10 : intro, idle, walk, attack-bowtie, attack-inauguration, hair-swipe, smile-flash, hurt, stagger, defeat | 362 Kio (879 brut) |
+| `lurcke` (boss final) | 13 154 | 27 | 11 : intro, idle, walk, attack-slide, attack-sign, attack-cc, attack-tie, phase2, hurt, stagger, defeat | 382 Kio (907 brut) |
 | `borne` | 2 536 | 7 | 5 : idle, spawn, attack, hurt, death | 58 Kio |
 | `drone` | 3 012 | 10 | 5 : fly, attack, hurt, death, spawn | 69 Kio |
 | `manager` (élite) | 7 372 | 22 | 8 : idle, walk, attack-report, attack-chrono, shield, hurt, death, spawn | 247 Kio |
@@ -89,7 +91,7 @@ argument, il traite les personnages au-dessus du budget de leur catégorie ; `--
 | héros / consultant | 9 316 → 4 658 / 8 376 → 4 240 |
 | borne / drone | 2 536 → 1 326 / 3 012 → 1 588 |
 | manager / Auditeur | 7 372 → 4 038 / 8 664 → 4 332 |
-| Discosaure / furet / Di Rupo | 14 320 → 7 724 / 9 050 → 4 524 / 14 950 → 7 486 |
+| Discosaure / furet / Di Rupo / Lurcke | 14 320 → 7 724 / 9 050 → 4 524 / 14 950 → 7 486 / 13 154 → 6 600 |
 | Fluidifieur / PNJ | 6 620 → 4 224 / ≈ 5 900 → ≈ 3 700 |
 | casque antibruit / légendaire / gilet porte-outils | 2 220 → 1 346 / 2 352 → 1 426 / 3 140 → 1 928 |
 
@@ -107,8 +109,8 @@ argument, il traite les personnages au-dessus du budget de leur catégorie ; `--
   (le viewer ne fait qu'une version simple du miroir et du verre).
 - Les **ressorts** (écharpe, cravate, mèche, queue) sont cuits dans les clips ; une chaîne à ressort à
   l'exécution peut s'y superposer.
-- Portés : manager KPI, Auditeur, Fluidifieur, Josiane, Béné, Kevin. Restent à faire : autres PNJ (Marcel,
-  Fatou, Yasmina, Rudy…), Lurcke, Agent de sécurité, Coach Agile.
+- Portés : manager KPI, Auditeur, Fluidifieur, Josiane, Béné, Kevin, Lurcke. Restent à faire : autres PNJ (Marcel,
+  Fatou, Yasmina, Rudy…), Agent de sécurité, Coach Agile.
 - **Portraits du site** : `viewer/portraits.mjs` (mode `?portrait` : fond transparent, contre-jours) puis
   `viewer/portraits.py` (fond néon, cadrage auto, WebP 960/480) d'après `viewer/specs/portraits.json` →
   `site/public/bestiaire/`.
