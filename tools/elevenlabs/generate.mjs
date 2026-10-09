@@ -383,8 +383,11 @@ async function sfx(a) {
 }
 
 async function music(a, t) {
-  const body = { ...a.params, seed: (a.params.seed ?? 0) + t };
+  const seed = (a.params.seed ?? 0) + t;
+  const body = { ...a.params, seed };
   if (MUSIC_MODEL) body.model_id = MUSIC_MODEL;
+  // L'API refuse `seed` avec `prompt` (422 « `seed` cannot be used with `prompt` », vérifié le 9 octobre 2026).
+  if (body.prompt) delete body.seed;
   try {
     return await api('POST', `/v1/music${fmt(a)}`, { json: body });
   } catch (err) {
@@ -392,7 +395,9 @@ async function music(a, t) {
     console.warn(
       `  ${a.id} : plan refusé (${String(err.message).slice(0, 120)}), repli « ${a.fallback.model_id} » + prompt`,
     );
-    return api('POST', `/v1/music${fmt(a)}`, { json: { ...a.fallback, seed: body.seed } });
+    const fb = { ...a.fallback, seed };
+    if (fb.prompt) delete fb.seed;
+    return api('POST', `/v1/music${fmt(a)}`, { json: fb });
   }
 }
 

@@ -18,7 +18,7 @@ Prérequis : Node ≥ 22 (fetch natif, aucune dépendance), `/usr/bin/ffmpeg` (l
 
 - **Voix arrêtées** (dans le manifeste, champ `voiceId` des assets `voice-design`, prioritaires sur `out/state/voices.json`) : Léon `Ql8Hq7echfwTF90Fec6K`, Yasmina `ROy6nWoXjRMqzkdFdAkB`, l'Invité d'honneur `BHaCuTcypMPA9jhksYPX`, Jean-Cul Lurcke `MAZdzkb78f8SA7DNBT41` (voix de bibliothèque « Nico »). Le workspace est à **3/3 voix personnalisées** : les autres voix ne peuvent pas encore être créées ; leurs répliques sont ignorées (message « Sans voix arrêtée »).
 - **Déjà validés, exclus de la génération** (`status: validé`) : SFX `impact`, `whistle`, `dash`, `loot4` (generation_id dans le manifeste) et la réplique de référence de Lurcke `vo.lurcke.boss.05`.
-- **Clé** : `ELEVENLABS_API_KEY` uniquement depuis l'environnement, jamais dans le dépôt. Elle arrive dans une prochaine session.
+- **Clé** : `ELEVENLABS_API_KEY` uniquement depuis l'environnement, jamais dans le dépôt. Clé reçue et testée le 9 octobre 2026 : elle n'a pas le droit `user_read` (pas de lecture de l'usage via `/v1/user/subscription`) et le compte est en **offre gratuite** : `POST /v1/music` répond `402 Payment Required` (« Music API is not available for free users. Please upgrade to a paid plan to use the API. »). **Le lot d'écoute musical attend un plan payant** ; aucun fichier n'a été produit.
 - **Aucune production en lot** avant la validation finale des répliques et des prompts par le porteur du projet.
 
 ## Démarrage
@@ -93,7 +93,7 @@ Base `https://api.elevenlabs.io`, en-tête `xi-api-key`. Documentation consulté
 | voice-design | `POST /v1/text-to-voice/design` (`voice_description`, `model_id` `eleven_ttv_v3`, `text` 100–1 000 car.) → 3 `previews` (`generated_voice_id`, `audio_base_64`) ; puis `POST /v1/text-to-voice` (`voice_name`, `voice_description`, `generated_voice_id`, `labels`) → `voice_id` |
 | tts | `POST /v1/text-to-speech/{voice_id}?output_format=mp3_44100_128` (`text`, `model_id` `eleven_v3`, `language_code` `fr`, `voice_settings`, `seed`) |
 | sfx | `POST /v1/sound-generation?output_format=mp3_44100_128` (`text`, `duration_seconds` 0,5–30, `prompt_influence`, `loop`, `model_id` `eleven_text_to_sound_v2`) |
-| music | `POST /v1/music?output_format=mp3_44100_128` (`prompt` + `music_length_ms` + `force_instrumental`, ou `composition_plan` ; `model_id` `music_v2`) |
+| music | `POST /v1/music?output_format=mp3_44100_128` (`prompt` + `music_length_ms` + `force_instrumental`, ou `composition_plan` ; `model_id` `music_v2`). L'API refuse `seed` avec `prompt` (`422` « `seed` cannot be used with `prompt` », constaté le 9 octobre 2026) : `generate.mjs` l'omet dans ce cas et ne l'envoie qu'avec un `composition_plan`. |
 | stem-split | `POST /v1/music/stem-separation` (multipart, champ `file`) → ZIP |
 
 **Hypothèses** (à confirmer au premier appel réel) : le plan de composition `chunks` est accepté par `music_v2` (sinon repli automatique `music_v1` + prompt) ; le contenu du ZIP de stems (noms et nombre de pistes) n'est pas documenté ; le coût de Voice Design et des séparations n'est pas publié.
