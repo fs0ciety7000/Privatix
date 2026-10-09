@@ -121,7 +121,7 @@ Le Sondage a son propre petit fil comique : le nombre de participants « disponi
 | Étape | Lieu | Ce que raconte l'étape |
 |---|---|---|
 | Préparation | **OCC** | On parle aux collègues, on boit sa **Tasse de Relève**, on choisit son Montage et son Souvenir. Yasmina annonce le roulement. |
-| Sas | **Couloir technique** | Le distributeur « HORS SERVICE » se referme derrière le héros. Rudy fait l'annonce du Sondage. |
+| Départ | **Cour intérieure, couloir technique** | Le héros traverse la Cour intérieure ; le couloir technique l'emmène vers les quais. Rudy fait l'annonce du Sondage. |
 | Biome 1 | **Quais & Voies** (8 salles + Salle des pauses + Boss) | « Le 7h12 n'est pas venu. » On défend le terrain. Boss : **l'Auditeur des Quais**. |
 | Biome 2 | **La Passerelle « Calatrava »** (8 salles + Salle des pauses + Boss) | « Le vent tourne. » On remonte la colonne vertébrale de la gare. Boss : **le Fluidifieur**. |
 | Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui décident. Boss final : **Gontran Vanderslide**. |
@@ -250,7 +250,7 @@ MARCEL : De mon temps, on appelait ça une victoire. Aujourd'hui aussi, tiens.
 
 ---
 
-## 3. L'OCC — Operation Coffee Center
+## 3. L'OCC — le centre opérationnel (« Operation Coffee Center »)
 
 ### 3.1 Histoire
 
@@ -550,7 +550,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
 ### 5.3 Biome 3 — Hall & BAG (« Terminus BAG »)
 
 - **Ambiance** : on redescend dans le hall historique (bois clair, guichets bâchés), puis on passe le portique du **BAG** côté hall, à l'opposé de la Cour intérieure où tourne l'OCC. Open-space, flex office, moquette grise, néons blancs, salles de réunion vitrées, écrans de KPI partout. Musique d'ascenseur qui se déforme en synthé agressif à chaque vague.
-- **Histoire du lieu** : le hall a vu passer des générations de navetteurs ; le guichet de Béné y était le dernier ouvert. Le BAG abritait autrefois les services de la gare ; Privatix en a pris les étages, étage par étage, « en phase de transition ». Au 3e : le bureau du Directeur, et derrière une double porte capitonnée, la **Salle du Conseil**, reliée au système d'annonces de toute la gare.
+- **Histoire du lieu** : le hall a vu passer des générations de navetteurs ; le guichet de Béné y était le dernier ouvert. Le BAG abritait autrefois les services de la gare ; Privatix en a pris les étages, étage par étage, « en phase de transition ». Seul le rez-de-chaussée arrière, où tourne l'OCC, lui résiste (§3.1). Au 3e : le bureau du Directeur, et derrière une double porte capitonnée, la **Salle du Conseil**, reliée au système d'annonces de toute la gare.
 - **Ce que Privatix y a fait** : remplacé les guichets par le « **Corner Expérience Voyageur** » (un écran tactile et une plante en plastique), installé des portiques à badge qui bipent rouge pour toute chasuble orange, une **Hôtesse holographique**, une salle de sieste « Power Nap Zone » fermée à clé depuis son inauguration, et une salle de réunion « **Synergie** » où une réunion dure depuis 2019.
 - **Étages** : RDC (Hall, Accueil) → 1er (Open-space) → 2e (salle Synergie, **Archives** où dort la Preuve 3) → **Palier du 3e** (repos, machine à café « premium » à 30 Tickets le Gobelet) → Bureau du Directeur et Salle du Conseil.
 - **Roulements** : *Matin* bureaux vides, écrans de veille qui affichent des KPI ; *Après-midi* réunions en cours partout (plus d'écrans de visio allumés) ; *Nuit* lumière de veille, néons qui clignotent, Agents de sécurité en patrouille.
@@ -641,6 +641,32 @@ Les ennemis sont les **ressources** de Privatix : des gens payés pour ne pas sa
   - *(vaincu)* « Je… je ressens beaucoup de choses, là… »
 
 **Annexe — Hôtesse holographique** (soutien du biome 3) : projection bleutée souriante qui grésille ; rend les ennemis invisibles 2 s ; s'éteint quand on frappe son projecteur. Barks : « Bienvenue chez nous, qui sommes vous. » / « Votre remarque sera traitée sous 6 à 18 mois. » / *(éteinte)* « Souhaitez-vous… remplir… une enquête… »
+
+### 6.8 Le Furet putride (ennemi majeur)
+
+- **Qui** : un furet énorme, pelage gris-jaune ébouriffé, collier violet Privatix avec un petit haut-parleur et un badge « Solution de tri autonome ». Il vit dans le **coin poubelles de la Cour intérieure** du BAG (§3.2), sous le pignon au toit bâché, entre les six conteneurs qui débordent et le tas de sacs bleus.
+- **Origine** : quand Privatix a pris les étages du BAG, elle a **externalisé le ramassage des déchets** ; le prestataire passe « selon un roulement communiqué la veille », c'est-à-dire jamais. Pour « optimiser le tri à coût zéro », un consultant a eu une idée : un furet. Il s'est nourri des **sacs bleus**, des rapports déchiquetés qui tombent des étages par la gaine de ventilation et des petits fours décongelés du traiteur du Sondage (Note n° 13). Il a grandi. Beaucoup.
+- **Place dans la hiérarchie** : **aucune, officiellement**. Il n'est sur aucun organigramme ; Privatix nie son existence (« Nous n'avons pas de furet. Nous avons une solution de tri. »). Dans les faits, l'Auditeur des Quais l'utilise comme fouineur : il **renifle les locaux non répertoriés** (Note n° 6) et suit l'odeur du marc de café jusqu'à l'OCC.
+- **Biome** : sort de son antre par les plaques d'égout et les gaines techniques. **Élite majeur du biome 1** (passage sous voies, couloir technique), plus fréquent la Nuit ; **rencontre optionnelle depuis le hub** : quand le couvercle d'un conteneur se soulève tout seul dans la Cour, le héros peut aller voir (combat dans le coin poubelles, sans risque de Mise à pied : à zéro Énergie, Fatou vient le chercher en grommelant).
+- **Ton** : le seul ennemi qui sent mauvais, et qui le sait. Pas méchant : mal nourri par un système qui ne vide plus ses poubelles. La satire vise l'externalisation, pas l'animal.
+- **En jeu** : nuages d'odeur (zones qui font monter le Burnout, télégraphiées par des volutes magenta), roulades à travers le tas de sacs bleus (projectiles mous qui rebondissent), plongée sous une plaque d'égout et resurgissement (les pavés se soulèvent avant), vol d'un Gobelet (frappé, il le recrache).
+- **Barks** (voix synthétique de son collier) :
+  - « Tri en cours. Veuillez patienter. »
+  - « Odeur de café détectée. Local non répertorié. »
+  - *(vaincu)* « Tri… suspendu… » *Il éternue, se roule en boule dans un conteneur et s'endort. Josiane referme doucement le couvercle : « Ça, c'est pas dans le règlement, mais c'est dans le cœur. »*
+
+### 6.9 Le Discosaure (ennemi majeur)
+
+- **Qui** : un dinosaure massif en costume trois-pièces à larges revers, dont le dos porte, encastrée entre les écailles, une **boule à facettes disco** qui tourne en permanence et jette des éclats de lumière sur les murs. Il avance en rythme. On ne l'a jamais vu s'asseoir.
+- **Origine** : **Senior Partner fondateur** de Synergia Partners. Il vend le même plan de restructuration depuis la soirée de lancement du cabinet, à l'époque des pistes de danse, et n'a fait que changer le logo de la couverture. La boule à facettes date de cette soirée ; il ne l'a jamais retirée, « parce que ça a toujours marché ».
+- **Place dans la hiérarchie** : au-dessus des Coachs Agiles et des Managers KPI, en dessous de Vanderslide sur le papier ; en pratique, Vanderslide l'admire et lui demande son avis avant chaque Comité. Privatix le loue pour ses « soirées de lancement de transformation ».
+- **Biome** : **élite majeur ou mini-boss du biome 3**, à l'« Afterwork de transformation » du 2e étage du BAG (open-space aux néons éteints, seule la boule éclaire). Peut apparaître en élite rare dans le hall.
+- **Ton** : le Discosaure n'est pas vieux, il est **fossile** : c'est sa méthode qui l'est, pas son âge. Aucune blague sur l'âge (règle §1.4) ; l'humour porte sur le recyclage infini des mêmes recettes de conseil.
+- **En jeu** : les éclats de la boule balaient la salle comme des projecteurs et **marquent** le héros (comme le Drone Optimètre) ; piétinements **en rythme** qui envoient des ondes de choc sur les temps forts de la musique (le rythme est le télégraphe) ; « Restructuration » : il fait tourner la salle en ronde forcée (attire et repousse). Casser la boule (dos exposé après un piétinement) éteint la salle et le désoriente.
+- **Barks** :
+  - « On a toujours fait comme ça. Et ça a toujours marché. Pour nous. »
+  - « Restructurez avec moi ! Un, deux, un, deux ! »
+  - *(vaincu)* *La boule s'arrête.* « … La musique… s'est arrêtée ? » *Il reste debout, immobile, à attendre qu'on la rallume.*
 
 **Affixe narratif « Briefé »** (avant la révélation de Jean-Mi) : un ennemi Briefé porte un dossier sous le bras marqué du portrait du collègue dont la famille a été la plus prise au Shift précédent, et y résiste. Bark : « On a lu votre roulement. »
 
@@ -738,6 +764,38 @@ VANDERSLIDE : … Concrètement ? Concrètement… *(long silence)* … je n'ai 
   5. « Je commence à trouver ce dossier… peu scalable. »
   6. « La prochaine date est définitive. » *(déclenche la vraie fin si les autres conditions sont remplies)*
 - **Vraie fin** : « Bon. Signez sans lui. » puis, après la diffusion : « … On en reparlera au prochain plan stratégique. » *(Déconnexion.)*
+
+### 7.5 Boss optionnel — Elio Di Rupo, « l'Invité d'honneur »
+
+> Caricature satirique d'une personnalité politique réelle, autorisée par le porteur du projet (§1.4, exception 3). Toutes les répliques ci-dessous sont **inventées pour le jeu** ; aucune n'est une citation réelle. Aucun parti, logo ni slogan.
+
+- **Silhouette** : nœud papillon **bordeaux**, lunettes **sans monture**, mèche **brune** impeccable, costume **bleu marine**. Il tient une paire de **ciseaux d'inauguration** géants et un discours de quarante pages.
+- **Ce qu'il fait dans l'histoire** : il ne travaille pas pour Privatix. Il est le seul participant du **Sondage** qui répond toujours « disponible », à condition qu'il y ait **un ruban à couper**. Pour donner une caution à la cession, Privatix organise sur la Passerelle l'**inauguration de « Mons 2030 : la Gare Expérience »** et l'invite à couper le ruban. Il n'a pas lu le dossier : il a lu le discours. Il défend la cérémonie, pas le contrat, avec l'énergie de quelqu'un qui a inauguré beaucoup de choses à Mons et compte bien continuer.
+- **Place dans la hiérarchie des boss** : hors hiérarchie. **Boss optionnel du biome 2**, déclenché par l'événement **« L'Inauguration »** (porte surmontée d'un ruban rouge), disponible après le premier kill du Fluidifieur. Il ne remplace aucun boss canon et ne bloque aucune fin.
+- **Arène** : le belvédère de la Passerelle, transformé en tribune : estrade, pupitre à micro, plaque d'inauguration voilée d'un drap, rangée de chaises pliantes occupées par des consultants qui applaudissent sur commande.
+- **Intro** :
+```text
+*Un micro siffle. Un ruban rouge barre le belvédère d'un bout à l'autre.*
+INVITÉ D'HONNEUR : Mesdames, messieurs, chers amis… et vous, au fond, en gilet orange.
+INVITÉ D'HONNEUR : Nous sommes ici pour inaugurer l'avenir. Et l'avenir, je le dis souvent, ça s'inaugure.
+RUDY (radio) : Attention, attention… il a quarante pages. Prévois des Gobelets.
+HÉROS : … (soupir de fin de pause)
+INVITÉ D'HONNEUR : Je vois que l'émotion vous gagne. Page deux.
+```
+- **Phases** :
+  - *Phase 1 « Le Discours inaugural »* : les phrases se déroulent en ondes depuis le pupitre ; chaque « Et j'ajouterai… » relance une onde. Les consultants de la claque applaudissent et renforcent les ondes ; les faire taire les affaiblit. Répliques : « Je serai bref. » *(Il ne l'est pas.)* / « Permettez-moi une parenthèse. Elle durera le temps qu'il faudra. »
+  - *Phase 2 « La Première Pierre »* : il pose des premières pierres de projets « qui verront le jour » ; elles tombent sur l'arène, deviennent obstacles, puis s'effritent (« reportés »). Répliques : « Cette pierre est la première d'une longue série. » / « Les travaux commenceront… bientôt. C'est un engagement. »
+  - *Phase 3 « Le Ruban »* : le ruban rouge encercle l'arène et se resserre ; les ciseaux géants coupent en lignes droites, télégraphiées par l'ouverture des lames. Répliques : « Un ruban, c'est une promesse. Celle-là, je la coupe. » / « Mons mérite mieux ! » *(Il le pense.)*
+- **Défaite** : le drap glisse de la plaque d'inauguration. Il lit, pour la première fois : **« Privatix Rail Solutions — Phase 3 : Cession »**. Long silence. Il redresse son nœud papillon.
+```text
+INVITÉ D'HONNEUR : … On m'avait parlé d'une inauguration.
+INVITÉ D'HONNEUR : Je n'inaugure pas une fermeture.
+*Il tend les ciseaux au héros, range ses quarante pages et descend de l'estrade.*
+INVITÉ D'HONNEUR : Il doit bien y avoir, quelque part dans cette ville, quelque chose qui ouvre.
+MARCEL (radio) : De mon temps, on inaugurait les gares. Pas leur vente.
+```
+- **Victoire sur le joueur** : « Je déclare ce Shift… clos. Applaudissez, applaudissez. Et rendez-vous à la prochaine inauguration. »
+- **Récompense narrative** (1er kill) : les **Ciseaux d'inauguration** (objet de collection, archivé par Béné). La cérémonie annulée fait reculer le **Sondage** : au retour, l'écran de Rudy affiche « Participant d'honneur : indisponible ».
 
 ---
 

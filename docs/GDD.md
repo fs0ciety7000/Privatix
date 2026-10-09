@@ -66,11 +66,11 @@ Règle de lecture : les acteurs et le décor sont **éclairés**, les **émissif
 ```
  ┌──────────────────────────── OCC (hub) ─────────────────────────────┐
  │ Tableau des revendications (PS) · Vieille Dame (Grains)            │
- │ Établi de Kevin (Pièces) · Tasses / Souvenirs · Plan d'Économies   │
+ │ RTS : Kevin (Pièces) · Tasses / Souvenirs · Plan d'Économies       │
  └──────┬─────────────────────────────────────────────────────────────┘
         │ choix : Tasse de Relève + Montage de clé + Souvenir
         ▼
-  Couloir technique (sas, distributeur « HORS SERVICE »)  ── horloge 06:00 (Matin)
+  Cour intérieure ─► couloir technique                    ── horloge 06:00 (Matin)
         ▼
   BIOME 1 — Quais & Voies   : 8 salles ─► Salle des pauses ─► BOSS 1 L'Auditeur des Quais
         ▼  escalator
@@ -85,7 +85,7 @@ Règle de lecture : les acteurs et le décor sont **éclairés**, les **émissif
         │           Preuves rapportées, Notes de service          │
         │   PERDU : Tickets, Avantages, Motions, Réglages,        │
         │           Gobelets, Preuves non rapportées              │
-        └──────────────────────► retour à l'OCC (infirmerie de Fatou) ◄──┘
+        └──────────────────────► retour à l'OCC (salle de repos, Fatou) ◄┘
 ```
 
 ### 2.2 Déroulé d'un Shift
@@ -93,7 +93,7 @@ Règle de lecture : les acteurs et le décor sont **éclairés**, les **émissif
 |---|---|---|---|
 | 1 | **OCC** | 1–3 min (libre) | Dépense PS / Grains / Pièces, parle aux collègues, offre des Tasses, choisit Tasse de Relève, Montage, Souvenir. |
 | 2 | **Tableau des roulements** (Yasmina) | 10 s | Voit le roulement imposé du Shift, active (ou non) des clauses du Plan d'Économies. Valide « Prendre son poste ». |
-| 3 | **Couloir technique** | 10–15 s | Salle de transition sans ennemi : Rudy annonce la reprogrammation de la signature. Le distributeur se referme. |
+| 3 | **Couloir technique** | 10–15 s | Salle de transition sans ennemi : Rudy annonce la reprogrammation de la signature. Le côté ouvert de la Cour intérieure s'éloigne derrière le héros. |
 | 4 | **Salles du biome** | 45–70 s (combat), 20–40 s (calme) | Nettoie la salle, ramasse la récompense annoncée, choisit une porte parmi 2 ou 3. |
 | 5 | **Salle des pauses** | 20–40 s | Choix : « Pause réglementaire » (soin 40 % + −50 Burnout) **ou** « Formation continue » (monte la rareté d'un Avantage). |
 | 6 | **Boss** | 2 / 2,5 / 4 min | Arène unique. Victoire : transition scénarisée vers le biome suivant. |
@@ -123,7 +123,7 @@ Le roulement est **imposé en rotation** : Matin → Après-midi → Nuit → Ma
 | Pièces, Tasses, Notes de service | gardées | gardées |
 | Preuves en main | **Gardées si on les a « rapportées »** : une Preuve ramassée est archivée au retour, vivant ou mort (consigne de Béné), **sauf** si on meurt dans la salle même où on l'a ramassée | archivées |
 | Perdus | Tickets, Avantages acquis, Motions communes, Réglages de clé, Gobelets, Mobilisation, séquelles | idem (le run se termine) |
-| Retour | Infirmerie de Fatou : « Arrêt de travail de 0 jour. Bienvenue. » | OCC, dialogues de victoire prioritaires |
+| Retour | Salle de repos de nuit de Fatou (pupitre RCCA) : « Arrêt de travail de 0 jour. Bienvenue. » | OCC, dialogues de victoire prioritaires |
 
 ## 3. Génération des Shifts (vue design)
 ### 3.1 Les biomes
@@ -252,6 +252,7 @@ Règles : pas de Gobelet si le joueur a 4 Gobelets **et** plus de 80 % d'Énergi
 | **Grève du zèle** | 1, 3 | v1 | Accepter | Salle-défi chronométrée (60 s, aucun coup encaissé autorisé plus de 3 fois). Réussite : PS ×3 de la salle (9) + 1 Réglage. |
 | **Le Fantôme du Wagon-Bar** | 1 (Nuit) | v1 | « Et pour monsieur-dame, ce sera ? » | Ouvre le Wagon-Bar ; avance la quête. |
 | **Matricule 4412** (pigeon) | 2 | v1 | Partager son croissant (−15 Tickets) / Ignorer | 3e partage cumulé : une Note de service. |
+| **L'Inauguration** | 2 | v2 | Couper le ruban (entrer) / Passer son chemin | Boss optionnel **l'Invité d'honneur** (LORE §7.5), après le 1er kill du Fluidifieur. 1er kill : 20 PS, 4 Grains, objet de collection « Ciseaux d'inauguration ». |
 | **Réunion surprise** | 2, 3 | v1 | Y assister (survivre 45 s dans une salle qui rétrécit) / Décliner | Survie : Avantage de rareté +1. Déclin : +1 vague à la salle suivante. |
 
 ## 4. Contrôles
@@ -712,6 +713,14 @@ Répliques : « Vous êtes à 63 % de l'objectif. De vie. » · « Ce qui ne se 
 ### 7.10 Ennemis post-MVP (rappel design)
 **Agent de Sécurité Externalisé** (Tank, 90 PV, coût 3) : Bouclier-badge frontal (100 % bloqué), charge « Contrôle d'accès » de 48 px (télégraphe 700 ms), ouverture 1 s ; le Sifflet lui fait baisser le bouclier · **Pense-bête Vivant** (Essaim invoqué, 5 PV, coût 0) : Se colle : −10 % de vitesse par Pense-bête (3 max) ; décollé par un dash · **Coach Agile « Le Facilitateur »** (Élite invocateur, 140 PV, coût 7) : Kite à 112 px, 4 Pense-bête toutes les 8 s, *Team building* (attire et inverse les commandes 1,5 s), *Rétro positive* (soin 20 %, canalisation 2 s interrompable) · **Certifié (affixe)** (Variante, ×2,5 PV, coût ×2,5) : ISO (armure), En copie (se dédouble), Prioritaire (vitesse ×1,4), Senior Partner (explose en zone).
 
+**Ennemis majeurs (v1/v2, version design ; valeurs à équilibrer, lore : LORE §6.8, §6.9, §7.5)**
+
+| Ennemi | Type | Biome | Rôle et lecture |
+|---|---|---|---|
+| **Le Furet putride** | Élite majeur (coût ≈ 10) ; rencontre optionnelle depuis le hub | 1 (passage sous voies, couloir technique ; plus fréquent la Nuit) + coin poubelles de la Cour | Contrôle de zone : nuages d'odeur (Burnout +, volutes magenta), roulades de sacs bleus (projectiles rebondissants), plongée sous plaque d'égout (pavés qui se soulèvent 600 ms avant), vol d'un Gobelet (rendu s'il est frappé). Vaincu : s'endort dans un conteneur. |
+| **Le Discosaure** | Élite majeur ou mini-boss | 3 (« Afterwork de transformation », 2e étage) | Tank rythmique : éclats de la boule à facettes qui marquent le héros, piétinements sur les temps forts de la musique (le rythme est le télégraphe), ronde forcée « Restructuration ». Casser la boule (dos exposé après un piétinement) éteint la salle et l'étourdit. |
+| **L'Invité d'honneur** (Elio Di Rupo, caricature autorisée) | Boss optionnel | 2 (belvédère de la Passerelle, événement « L'Inauguration ») | 3 phases : *Le Discours inaugural* (ondes de phrases depuis le pupitre, claque de consultants qui les renforce), *La Première Pierre* (pierres qui tombent, deviennent obstacles puis s'effritent), *Le Ruban* (ruban qui resserre l'arène, ciseaux géants en lignes télégraphiées). Silhouette : nœud papillon bordeaux, lunettes sans monture, mèche brune, costume bleu marine. Cadre satirique obligatoire : LORE §1.4. |
+
 ## 8. Game feel
 ### 8.1 Tableau par événement
 `camera.shake(durée, intensité)` avec `intensité = px / 640`. Les secousses **se combinent au maximum, pas en somme**. Le hitstop **gèle l'animation et la vélocité du héros et des cibles touchées seulement** ; le reste du monde continue.
@@ -865,7 +874,9 @@ Une Tasse de Relève est choisie avant chaque Shift (buff de départ).
 
 Total Tasses : **405 Grains** (≈ 12 Grains par Shift en moyenne → **≈ 30 Shifts**). Les **rénovations de l'OCC** (Fantôme, v2) coûtent 15 à 80 Grains (≈ 300 au total).
 
-### 10.4 Établi de Kevin : Montages de clé (en Pièces)
+### 10.4 Pupitre RTS de Kevin : Montages de clé (en Pièces)
+Les Pièces détachées sont récupérées sur le matériel roulant réformé ; le RTS (matériel roulant, échanges de matériel) « compose » la clé du Shift comme une rame.
+
 | Montage | Déblocage | Jeu de coups (MVP d'actions) | Rang 2 (2 Pièces) | Rang 3 (4 Pièces) |
 |---|---|---|---|---|
 | **Clé d'origine** (du grand-père) | Départ | Combo 12 / 12 / 30 (référence) | Coup 3 +6 dégâts | Chain point −20 ms |
@@ -898,21 +909,24 @@ Débloqué après le **premier Shift tenu** (MVP : après la 1re victoire sur le
 | | | **Maximum** | **28 points (+168 % de PS)** |
 
 ## 11. Hub OCC (vue gameplay)
-Salle de **40×28 tuiles**, explorable à pied, contrôles de combat actifs (pas de dégâts). Le hub s'étoffe au fil des rénovations et de l'histoire.
+L'OCC est le **centre opérationnel** de la gare (LORE §3), au rez-de-chaussée arrière du BAG. Le hub, explorable à pied avec les contrôles de combat actifs (pas de dégâts), comprend **cinq lieux** : le **sas** (arrivée, distributeur pivotant), la **salle de repos de nuit**, la **salle des opérations** (rangée de pupitres face au mur d'écrans, coin café de la Vieille Dame), la **Salle photocopieuse** et la **Cour intérieure** (départ du Shift). Chaque service est rattaché au pupitre d'une fonction réelle du centre opérationnel.
 
-| Station | PNJ | Service | Disponible |
-|---|---|---|---|
-| Tableau des revendications | Marcel | Achats en PS (§10.2), « Cahier de revendications » de la vraie fin | Départ (**MVP**) |
-| Comptoir café | Vieille Dame + Jean-Mi (puis Fatou) | Tasse de Relève (§10.3) | Départ (**MVP** : Expresso, Café long) |
-| Écran des départs | Rudy | Statistiques, historique des Shifts « comme des trains » | Départ (**MVP**) |
-| Infirmerie / canapé | Fatou | Réapparition, réinitialisation gratuite du Tableau | 2e Shift (v1) |
-| Établi | Kevin | Montages (§10.4), raccourci vers le biome 2 | 1er kill Boss 1 (v1) |
-| Tableau des roulements / radio | Yasmina | Roulement imposé, Plan d'Économies | 1er kill Boss 1 (**MVP** pour le Plan après victoire) |
-| Guichet | Béné | Archives (Preuves, Notes, codex « Le Règlement »), échanges Grains ↔ PS ↔ Pièces au « tarif plein » (taux 3:1) | 3e Shift (v1) |
-| Mannequin de formation | Josiane | DPS affiché, essai des Montages, Souvenirs contre Tasses | Départ (v1) |
-| Wagon-bar reconstitué | Fantôme | Rénovations, marchand légendaire | Quête (v2) |
+**La Cour intérieure** (référence : photos du lieu réel) : cour pavée en U, avec de la mousse entre les pavés et de vieilles traces de peinture rouge et bleue au sol ; bâtiments de cinq étages en brique jaune, style années 50, sur un soubassement gris strié de coulures ; une cage d'escalier vitrée (l'escalier condamné vers les étages Privatix) ; climatiseurs en façade, une gaine de ventilation, des palettes, de petits panneaux bleus sur piquets et deux voitures de service garées ; ciel gris. Dans un angle, le **coin poubelles** : pignon de brique sombre au toit bâché déchiré, six conteneurs verts à couvercle jaune qui débordent, un tas de sacs bleus : c'est l'antre du **Furet putride**. Le côté ouvert de la cour mène au couloir technique et au Shift.
 
-**Déroulé entre deux runs** : (1) réapparition à l'infirmerie, écran de gains ; (2) au plus **1 réplique avec bulle par PNJ**, choisie dans l'ordre Essentielle > Réactive (dernier run : lieu de la mort, tueur, boss) > Relation > Remplissage, jamais rejouée ; (3) dépenses libres ; (4) Tableau des roulements ; (5) couloir technique. Temps cible entre deux runs : **< 90 s** pour un joueur pressé (toutes les stations sont à moins de 6 s de marche du couloir).
+| Lieu | Pupitre / station | PNJ | Service | Disponible |
+|---|---|---|---|---|
+| Salle Photocopieuse | Tableau des revendications | Marcel (**Permanence conduite**) | Achats en PS (§10.2), « Cahier de revendications » de la vraie fin | Départ (**MVP**) |
+| Salle des opérations | Coin café | Vieille Dame + Jean-Mi (puis Fatou) | Tasse de Relève (§10.3) | Départ (**MVP** : Expresso, Café long) |
+| Salle des opérations | **TLI & AIT** + écran des départs | Rudy | Annonce du Shift, statistiques, historique des Shifts « comme des trains » | Départ (**MVP**) |
+| Salle de repos de nuit | **RCCA** | Fatou | Réapparition, soins, réinitialisation gratuite du Tableau | 2e Shift (v1) |
+| Salle des opérations | **RTS** (matériel roulant) | Kevin | Montages (§10.4), échanges de matériel Grains ↔ PS ↔ Pièces (taux 3:1) | 1er kill Boss 1 (v1) |
+| Salle des opérations | **RTS** (régulation) | Yasmina | Roulement imposé, Plan d'Économies, défis | 1er kill Boss 1 (**MVP** pour le Plan après victoire) |
+| Salle des opérations | **PACO** | Béné | Recours (« bus de remplacement »), correspondance directe vers le biome 2 (raccourci, après le 1er kill du Boss 2), archives (Preuves, Notes, codex « Le Règlement ») | 3e Shift (v1) |
+| Cour intérieure | **DPD** : casiers + mannequin de formation | Josiane | DPS affiché, essai des Montages, Souvenirs contre Tasses, casiers | Départ (v1) |
+| Cour intérieure | Coin des palettes (wagon-bar reconstitué) | Fantôme | Rénovations, marchand légendaire | Quête (v2) |
+| Cour intérieure | Coin poubelles | Furet putride | Rencontre optionnelle (couvercle qui bouge) : combat sans Mise à pied, gains de Grains (LORE §6.8) | Après le 1er kill du Boss 1 (v1) |
+
+**Déroulé entre deux runs** : (1) réapparition dans la salle de repos de nuit, écran de gains ; (2) au plus **1 réplique avec bulle par PNJ**, choisie dans l'ordre Essentielle > Réactive (dernier run : lieu de la mort, tueur, boss) > Relation > Remplissage, jamais rejouée ; (3) dépenses libres ; (4) Tableau des roulements ; (5) Cour intérieure puis couloir technique. Temps cible entre deux runs : **< 90 s** pour un joueur pressé (toutes les stations sont à moins de 6 s de marche de la sortie de la Cour).
 
 ## 12. Accessibilité et options
 | Option | Valeurs | Défaut |
