@@ -104,7 +104,7 @@ describe('équipe', () => {
     const setup = buildBattleSetup(s, 'consultant-junior');
     expect(setup.encounterId).toBe('consultant-junior');
     expect(setup.party.map((m) => m.id)).toEqual(['heros', 'josiane']);
-    expect(setup.party[0]).toMatchObject({ name: 'Léa', hp: 33, maxHp: 60, force: 10 });
+    expect(setup.party[0]).toMatchObject({ name: 'Léa', hp: 33, maxHp: 60, force: 10 + 4 }); // clé de tirefond rouillée
     expect(setup.party[1]).toMatchObject({ hp: 78, maxHp: 78 });
     expect(setup).toMatchObject({ fatigue: 42, moral: 25, shift: 'morning' });
   });

@@ -84,7 +84,7 @@ export function autoPolicy(state: BattleState): BattleAction {
 
   // Café préventif : le Manager n'a pas encore ouvert sa Réunion d'alignement.
   const manager = state.combatants.find((c) => !c.ko && isManager(c));
-  if (manager && manager.fx.turnsTaken === 0 && avail.cafe && !has(actor, 'cafeine')) {
+  if (manager?.fx.turnsTaken === 0 && avail.cafe && !has(actor, 'cafeine')) {
     return { kind: 'cafe' };
   }
 
@@ -117,7 +117,7 @@ export function autoPolicy(state: BattleState): BattleAction {
   // Rudy ferme les portes au nez de l'ennemi le plus solide.
   if (usable('fermeture-des-portes')) {
     const toughest = [...foes].sort((a, b) => b.hp - a.hp)[0];
-    if (toughest && !has(toughest, 'bloque')) {
+    if (toughest && !has(toughest, 'bloque') && toughest.fx.blockImmunity === 0) {
       return { kind: 'skill', skillId: 'fermeture-des-portes', targetId: toughest.id };
     }
   }
@@ -204,10 +204,14 @@ describe('progression attendue de l’Acte I', () => {
       return sum + enemyXp(e.level, tier, BALANCE.pause.morning.xpMult);
     }, 0);
 
-  it('atteint le niveau ~5 après une dizaine de combats, puis 6 après l’Auditeur', () => {
+  it('atteint le niveau 5 après une dizaine de combats, puis 6 avec l’Auditeur et les quêtes', () => {
     // 3 combats scénarisés : Borne (16) + Consultant (27) + 2 Post-it (54) = 97 XP → niveau 2.
-    const scripted: readonly EncounterId[] = ['borne-rebelle', 'consultant-junior', 'post-it-vivant'];
-    // 7 groupes visibles : 2 rotations des 4 groupes, moins un.
+    const scripted: readonly EncounterId[] = [
+      'borne-rebelle',
+      'consultant-junior',
+      'post-it-vivant',
+    ];
+    // 7 groupes visibles (54 / 123 / 82 / 99 XP) : un peu moins de deux tours des 4 groupes.
     const groups: readonly EncounterId[] = [
       'patrouille-bornes',
       'post-its-couloir',
@@ -218,21 +222,22 @@ describe('progression attendue de l’Acte I', () => {
       'consultants-hall',
     ];
     let progress = { level: 1, xp: 0 };
+    let total = 0;
     const levels: number[] = [];
     for (const id of [...scripted, ...groups]) {
+      total += encounterXp(id);
       progress = gainXp(progress.level, progress.xp, encounterXp(id));
       levels.push(progress.level);
     }
     expect(encounterXp('borne-rebelle')).toBe(16);
-    expect(levels.slice(0, 3)).toEqual([1, 2, 2]);
-    // Après 10 combats (3 scénarisés + 7 groupes, ≈ 674 XP) : niveau 4, à quelques XP du 5
-    // (les quêtes de l'Acte I, 50 XP chacune, font la différence) ; 11 combats → niveau 5.
-    expect(levels[9]).toBe(4);
-    const eleventh = gainXp(progress.level, progress.xp, encounterXp('manager-kpi-quai'));
-    expect(eleventh.level).toBe(5);
-    // L'Auditeur (303 XP, élite) fait passer au niveau 6 : le niveau 7 du GDD s'atteint avec les quêtes.
-    const audit = gainXp(eleventh.level, eleventh.xp, encounterXp('audit-manager-kpi'));
+    // Niveaux après chaque combat : 1, 2, 2, 2, 3, 3, 4, 4, 4, 5 (714 XP cumulés).
+    expect(levels).toEqual([1, 2, 2, 2, 3, 3, 4, 4, 4, 5]);
+    expect(total).toBe(714);
+    // L'Auditeur des quais (élite niv. 7 : 303 XP) et 3 quêtes de l'Acte I (50 XP) → niveau 6 ;
+    // le niveau 7 du GDD (§ 8.1) demande quelques groupes ou quêtes de plus.
     expect(encounterXp('audit-manager-kpi')).toBe(303);
-    expect(audit.level).toBe(6);
+    const quests = 3 * BALANCE.progression.QUEST_XP[1];
+    const end = gainXp(progress.level, progress.xp, encounterXp('audit-manager-kpi') + quests);
+    expect(end.level).toBe(6);
   });
 });

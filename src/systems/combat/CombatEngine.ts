@@ -39,12 +39,7 @@ import {
   tierOf,
   updateCombatant,
 } from '@/systems/combat/context';
-import {
-  enemyTickets,
-  enemyXp,
-  fleeChance,
-  initiative,
-} from '@/systems/combat/formulas';
+import { enemyTickets, enemyXp, fleeChance, initiative } from '@/systems/combat/formulas';
 import type {
   ActionAvailability,
   BattleAction,
@@ -148,7 +143,8 @@ function startRound(ctx: Ctx): void {
   const round = ctx.state.round + 1;
   for (const c of living(ctx.state, 'enemy')) {
     const growth = c.enemyId === null ? undefined : enemyDef(c.enemyId).forceGrowth;
-    if (growth) setFx(ctx, c.id, { forceBonus: Math.min(growth.cap, (round - 1) * growth.perRound) });
+    if (growth)
+      setFx(ctx, c.id, { forceBonus: Math.min(growth.cap, (round - 1) * growth.perRound) });
   }
   const tier = tierOf(ctx.state);
   const scored = living(ctx.state).map((c, index) => ({
@@ -169,7 +165,9 @@ function startRound(ctx: Ctx): void {
   );
   const first = scored.filter((s) => !s.c.fx.actsLast).map((s) => s.c.id);
   const last = scored.filter((s) => s.c.fx.actsLast).map((s) => s.c.id);
-  last.forEach((id) => { setFx(ctx, id, { actsLast: false }); });
+  last.forEach((id) => {
+    setFx(ctx, id, { actsLast: false });
+  });
   const order = [...first, ...last];
   ctx.state = {
     ...ctx.state,
@@ -236,7 +234,11 @@ function beginTurn(ctx: Ctx, id: string): TurnStart {
 function endTurn(ctx: Ctx, id: string, acted: boolean, blocked: boolean): void {
   const c = getCombatant(ctx.state, id);
   if (c.ko) return;
-  c.statuses.filter((s) => s.turns <= 0).forEach((s) => { removeStatus(ctx, id, s.id); });
+  c.statuses
+    .filter((s) => s.turns <= 0)
+    .forEach((s) => {
+      removeStatus(ctx, id, s.id);
+    });
   const after = getCombatant(ctx.state, id);
   setFx(ctx, id, {
     blockImmunity: blocked ? after.fx.blockImmunity : Math.max(0, after.fx.blockImmunity - 1),
@@ -360,7 +362,8 @@ export function availableActions(state: BattleState): ActionAvailability {
     .filter((it) => it.count > 0)
     .map((it) => ({
       ...it,
-      usable: itemDef(it.id).usableInBattle && legalTargets(state, itemDef(it.id).target).length > 0,
+      usable:
+        itemDef(it.id).usableInBattle && legalTargets(state, itemDef(it.id).target).length > 0,
     }));
   return { skills, items, cafe: state.gobelets > 0, flee: canFlee(state) };
 }

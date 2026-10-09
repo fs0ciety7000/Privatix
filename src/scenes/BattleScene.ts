@@ -128,13 +128,8 @@ export class BattleScene extends Phaser.Scene {
       .setOrigin(0)
       .setStrokeStyle(2, COLORS.sncb.border);
     this.partyText = this.text(20, PANEL_Y + 14, '', 15, COLORS.sncb.text).setLineSpacing(10);
-    this.helpText = this.text(
-      GAME_WIDTH - 16,
-      GAME_HEIGHT - 10,
-      '',
-      12,
-      COLORS.sncb.textMuted,
-    ).setOrigin(1, 1);
+    // En haut à droite : le bas de l'écran est occupé par le menu d'actions.
+    this.helpText = this.text(GAME_WIDTH - 16, 14, '', 12, COLORS.sncb.textMuted).setOrigin(1, 0);
 
     this.setupInput();
     const step = startBattle(
@@ -632,11 +627,11 @@ export class BattleScene extends Phaser.Scene {
         : outcome === 'fled'
           ? ['Repli stratégique.', 'Pas de récompense, +5 Fatigue.']
           : ['Défaite…', 'Mise à pied : retour à la case départ.'];
-    const panel = this.add
+    this.add
       .rectangle(GAME_WIDTH / 2, 200, 520, 130, COLORS.sncb.bgDeep, 0.96)
       .setStrokeStyle(3, outcome === 'defeat' ? COLORS.semantic.danger : COLORS.sncb.accent)
       .setDepth(2000);
-    const title = this.text(
+    this.text(
       GAME_WIDTH / 2,
       160,
       lines[0] ?? '',
@@ -646,12 +641,9 @@ export class BattleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setFontStyle('bold')
       .setDepth(2001);
-    const detail = this.text(GAME_WIDTH / 2, 215, lines[1] ?? '', 16, COLORS.sncb.text)
+    this.text(GAME_WIDTH / 2, 215, lines[1] ?? '', 16, COLORS.sncb.text)
       .setOrigin(0.5)
       .setDepth(2001);
-    void panel;
-    void title;
-    void detail;
     this.say('Entrée ou toucher pour continuer');
     this.helpText.setText('Entrée : continuer');
     this.acceptInputAt = this.time.now + 600;

@@ -65,7 +65,8 @@ function memberSetup(state: GameState, id: PartyMemberId): PartyMemberSetup {
     maxHp: stats.maxHp,
     pe: clamp(vitals.pe, 0, stats.maxPe),
     maxPe: stats.maxPe,
-    force: stats.force,
+    // Outil du héros : la clé de tirefond (rang 0 « rouillée » en Acte I, GDD § 8.4). Les collègues ont un outil fixe.
+    force: stats.force + (id === 'heros' ? BALANCE.economy.TIREFOND[0].force : 0),
     defense: stats.defense,
     speed: stats.speed,
     skills: skillsFor(id, level),

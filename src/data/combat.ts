@@ -294,11 +294,11 @@ export const SKILLS = {
   },
   'reporting-audit': {
     name: 'Reporting hebdo certifié',
-    description: "Puissance 150 sur l'équipe, touche toujours ; Burn-out 35 %",
+    description: "Puissance 140 sur l'équipe, touche toujours ; Burn-out 35 %",
     owner: 'enemy',
     peCost: 0,
     target: 'all-enemies',
-    power: 150,
+    power: 140,
     alwaysHit: true,
     status: 'burnout',
     statusChance: 35,
@@ -374,7 +374,11 @@ export const ENEMIES = {
     dodge: DODGE.consultant,
     skills: ['tempete-post-it', 'synergie'],
     weakTo: ['question-concrete'],
-    summon: { skill: 'je-loop-un-junior', enemy: 'consultant', afterRound: CONSULTANT_SUMMON_ROUND },
+    summon: {
+      skill: 'je-loop-un-junior',
+      enemy: 'consultant',
+      afterRound: CONSULTANT_SUMMON_ROUND,
+    },
   },
   stagiaire: {
     name: 'Stagiaire en Stratégie',

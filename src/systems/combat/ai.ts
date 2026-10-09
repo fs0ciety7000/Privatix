@@ -31,12 +31,7 @@ export function decideEnemy(ctx: Ctx, actorId: string): EnemyDecision | null {
   }
 
   const summonSkill = readySkill(def.summon?.skill);
-  if (
-    summonSkill &&
-    def.summon &&
-    !actor.fx.summonSpent &&
-    state.round > def.summon.afterRound
-  ) {
+  if (summonSkill && def.summon && !actor.fx.summonSpent && state.round > def.summon.afterRound) {
     return { kind: 'skill', skillId: summonSkill };
   }
 
@@ -75,7 +70,9 @@ function withTarget(ctx: Ctx, actorId: string, skillId: SkillId): EnemyDecision 
   const skill = skillDef(skillId);
   if (skill.target === 'enemy' && (skill.hits ?? 1) === 1) {
     const target = pick(ctx.rng, targetsFor(ctx, 'enemy', 'enemy', actorId));
-    return target === undefined ? { kind: 'skill', skillId } : { kind: 'skill', skillId, targetId: target };
+    return target === undefined
+      ? { kind: 'skill', skillId }
+      : { kind: 'skill', skillId, targetId: target };
   }
   if (skill.target === 'ally') {
     const target = woundedAlly(ctx, actorId) ?? actorId;

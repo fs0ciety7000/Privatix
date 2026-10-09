@@ -228,7 +228,10 @@ export function applyStatus(
   }));
   emit(ctx, { kind: 'status', targetId, status, applied: true });
   if (status === 'cafeine') removeStatus(ctx, targetId, 'sommeil');
-  if (status === 'syndique') SYNDIQUE_IMMUNE.forEach((s) => { removeStatus(ctx, targetId, s); });
+  if (status === 'syndique')
+    SYNDIQUE_IMMUNE.forEach((s) => {
+      removeStatus(ctx, targetId, s);
+    });
   return true;
 }
 

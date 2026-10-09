@@ -192,7 +192,10 @@ function offensiveHit(ctx: Ctx, actorId: string, targetId: string, id: SkillId, 
     const summon = after.enemyId === null ? undefined : enemyDef(after.enemyId).summon;
     setFx(ctx, targetId, { summonSpent: true });
     if (summon && !after.ko) {
-      emit(ctx, { kind: 'message', text: `${after.name} n'a pas de réponse : invocation annulée.` });
+      emit(ctx, {
+        kind: 'message',
+        text: `${after.name} n'a pas de réponse : invocation annulée.`,
+      });
     }
   }
   if (def.status !== undefined && !after.ko) {
@@ -240,7 +243,10 @@ function summon(ctx: Ctx, actorId: string): void {
   setEngine(ctx, { spawned });
   ctx.state = {
     ...ctx.state,
-    combatants: [...ctx.state.combatants, { ...combatant, fx: { ...combatant.fx, summonSpent: true } }],
+    combatants: [
+      ...ctx.state.combatants,
+      { ...combatant, fx: { ...combatant.fx, summonSpent: true } },
+    ],
   };
   emit(ctx, { kind: 'summon', combatantId: combatant.id });
 }
