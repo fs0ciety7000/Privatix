@@ -1,0 +1,21 @@
+[
+  {"file": "hero", "role": "hero", "model": "hero", "equip": {"casque": "casque_chantier", "gilet": "gilet_hv", "outil": "cle_tire_fond"}, "clip": "attack2", "t": 0.08, "yaw": -40, "zoom": 0.8, "stage": {"rimA": "#ffb347", "rimB": "#6ff3ff"}},
+  {"file": "hero-equipe", "role": "hero", "model": "hero", "equip": {"casque": "casque_legendaire", "gilet": "gilet_porte_outils", "outil": "cle_tire_fond_epique"}, "clip": "idle", "t": 0.3, "yaw": -30, "zoom": 0.85, "stage": {"rimA": "#ffb347", "rimB": "#6ff3ff"}},
+  {"file": "rarete-1", "role": "rar1", "model": "hero", "equip": {"casque": "casque_chantier", "gilet": "gilet_hv", "outil": "cle_tire_fond"}, "clip": "idle", "t": 0.3, "yaw": -25, "zoom": 0.85, "stage": {"rimA": "#8a929a", "rimB": "#6ff3ff"}},
+  {"file": "rarete-2", "role": "rar2", "model": "hero", "equip": {"casque": "casque_antibruit", "gilet": "gilet_hv", "outil": "masse_de_voie"}, "clip": "idle", "t": 0.3, "yaw": -25, "zoom": 0.85, "stage": {"rimA": "#f2eee3", "rimB": "#6ff3ff"}},
+  {"file": "rarete-3", "role": "rar3", "model": "hero", "equip": {"casque": "casque_chantier", "gilet": "gilet_porte_outils", "outil": "pince_catenaire"}, "clip": "idle", "t": 0.3, "yaw": -25, "zoom": 0.85, "stage": {"rimA": "#3f8cff", "rimB": "#6ff3ff"}},
+  {"file": "rarete-4", "role": "rar4", "model": "hero", "equip": {"casque": "casque_antibruit", "gilet": "gilet_porte_outils", "outil": "cle_tire_fond_epique"}, "clip": "idle", "t": 0.3, "yaw": -25, "zoom": 0.85, "stage": {"rimA": "#a86bff", "rimB": "#6ff3ff"}},
+  {"file": "rarete-5", "role": "rar5", "model": "hero", "equip": {"casque": "casque_legendaire", "gilet": "gilet_porte_outils", "outil": "cle_tire_fond_epique"}, "clip": "idle", "t": 0.3, "yaw": -25, "zoom": 0.85, "stage": {"rimA": "#ff8c2b", "rimB": "#ffd200"}},
+  {"file": "consultant", "role": "enemy", "model": "consultant", "clip": "attack", "t": 0.79, "tele": 1, "yaw": -30, "zoom": 0.85},
+  {"file": "borne", "role": "enemy", "model": "borne", "clip": "attack", "t": 0.66, "tele": 1, "yaw": -10, "frame": {"fill": 0.7}},
+  {"file": "drone", "role": "enemy", "model": "drone", "clip": "attack", "t": 0.5, "tele": 1, "yaw": -10, "frame": {"fill": 0.55, "foot": 0.8}},
+  {"file": "manager", "role": "elite", "model": "manager", "clip": "idle", "t": 0.3, "tele": 1, "yaw": -10, "zoom": 0.85},
+  {"file": "furet", "role": "elite", "model": "furet", "clip": "war-dance", "t": 0.2, "yaw": 30, "frame": {"wide": 0.92}},
+  {"file": "fluidifieur", "role": "elite", "model": "fluidifieur", "clip": "glide", "t": 0.2, "yaw": -20, "zoom": 0.85},
+  {"file": "discosaure", "role": "boss", "model": "discosaure", "clip": "idle", "t": 0.5, "yaw": 40, "zoom": 0.7, "frame": {"wide": 0.92}},
+  {"file": "auditeur", "role": "boss", "model": "auditeur", "clip": "attack-tickets", "t": 0.6, "tele": 1, "yaw": 10, "zoom": 0.7},
+  {"file": "dirupo", "role": "boss", "model": "dirupo", "clip": "smile-flash", "t": 0.9, "yaw": -10, "zoom": 0.85},
+  {"file": "josiane", "role": "npc", "model": "josiane", "clip": "wave", "t": 0.45, "yaw": 0, "zoom": 0.85},
+  {"file": "bene", "role": "npc", "model": "bene", "clip": "talk", "t": 0.5, "yaw": 0, "zoom": 0.85},
+  {"file": "kevin", "role": "npc", "model": "kevin", "clip": "talk", "t": 0.6, "yaw": 0, "zoom": 0.85}
+]

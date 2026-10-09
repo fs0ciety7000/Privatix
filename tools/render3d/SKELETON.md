@@ -79,6 +79,9 @@ sockets humanoïdes, `socket_bowtie` et `socket_glasses` (éclat des lunettes) ;
 | Furet putride (31) | `root`, `spine0..6` (des hanches vers les épaules), `neck0..1`, `head`, `jaw`, `ear_L/R`, `tail0..4`, et pour `FL`, `FR`, `BL`, `BR` : `<patte>0`, `<patte>1`, `paw_<patte>` |
 | Borne (7) | `root`, `body`, `head`, `slot`, `ticket`, `trap_L/R` (trappe au sol) |
 | Drone (10) | `root`, `hover`, `body`, `eye`, `tape0..1`, `rotor_FL/FR/BL/BR` |
+| Auditeur (20) | `root`, `pelvis`, `chest`, `hip/knee/foot_L/R`, `arm_L/R` (balayage, Y), `boom_L/R` (barrière, Z), `plate_L/R` (blindage, échelle 0 en phase 2), `cockpit`, `pilot`, `pilot_head`, `parm_L/R` ; sockets `socket_vfx`, `socket_screen`, `socket_pilot`, `socket_tip_L/R`, `socket_slot_L/R`, `socket_foot_L/R` |
+
+Humanoïdes ajoutés (18 os du contrat + os secondaires) : manager (`tie0`, `chrono`, `tablet`, `glasses` ; sockets `socket_chrono`, `socket_tablet`), Fluidifieur (`chair`, `binder`, `lanyard` ; `socket_binder`), PNJ (`prop`, `prop_L`).
 
 **Os pilotés à l'exécution** (`runtimeBones` dans le manifeste) : `disco_ball` et `rotor_*` ne sont **pas**
 animés par les clips. Le jeu les fait tourner autour de Y (vitesse liée à l'état : la boule accélère pendant la

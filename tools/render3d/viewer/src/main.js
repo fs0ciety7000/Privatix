@@ -9,10 +9,13 @@ import { makeShared, outlineUniforms, PAL, toonify } from './toon.js';
 
 const params = new URLSearchParams(location.search);
 const SHOT = params.has('shot');
+// Mode portrait (vitrines du site, `portraits.mjs`) : fond transparent, sol réduit à ses ombres,
+// deux lumières de contour colorées en contre-jour. N'affecte pas le mode normal.
+const PORTRAIT = params.has('portrait');
 if (SHOT) document.body.classList.add('shot');
 
 const app = document.getElementById('app');
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: SHOT });
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: SHOT, alpha: PORTRAIT });
 renderer.setPixelRatio(SHOT ? 1 : Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -22,7 +25,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 app.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = backdrop();
+scene.background = PORTRAIT ? null : backdrop();
+if (PORTRAIT) renderer.setClearColor(0x000000, 0);
 const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 200);
 
 // Lumières « Quais, Nuit » du prototype : ciel violet, lune froide (ombres), lampe chaude du héros.
@@ -53,6 +57,17 @@ scene.add(ring);
 const yellow = new THREE.Mesh(new THREE.PlaneGeometry(2, 0.06).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x8a7420 }));
 yellow.position.set(0, 0.003, -0.55);
 scene.add(yellow);
+const rimA = new THREE.DirectionalLight(0xff3ea5, 0);
+const rimB = new THREE.DirectionalLight(0x6ff3ff, 0);
+if (PORTRAIT) {
+  ground.visible = ring.visible = yellow.visible = false;
+  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(40, 40).rotateX(-Math.PI / 2), new THREE.ShadowMaterial({ color: 0x05030c, opacity: 0.55 }));
+  catcher.receiveShadow = true;
+  scene.add(catcher);
+  rimA.intensity = 2.2;
+  rimB.intensity = 1.8;
+  scene.add(rimA, rimB);
+}
 
 function backdrop() {
   const c = document.createElement('canvas');
@@ -124,7 +139,8 @@ async function setModel(name) {
   const root = skClone(gltf.scene);
   state.shared = makeShared({ rim: parseInt((info.rim ?? '#6FF3FF').slice(1), 16), rimStrength: info.kind === 'hero' ? 0.85 : 0.9 });
   const outlineColor = parseInt((info.outline ?? '#14101A').slice(1), 16);
-  state.calls = toonify(root, state.shared, { outlineColor, outlineWidth: info.height > 3 ? 3.2 : 2.6 }).calls;
+  const ow = +(params.get('ow') ?? 1); // multiplicateur d'épaisseur du contour (captures haute définition)
+  state.calls = toonify(root, state.shared, { outlineColor, outlineWidth: (info.height > 3 ? 3.2 : 2.6) * ow }).calls;
   state.outlineColor = outlineColor;
   scene.add(root);
   state.root = root;
@@ -160,6 +176,8 @@ async function setModel(name) {
   yellow.scale.set(r, 1, 1);
   yellow.position.z = -r * 0.55;
   warm.position.set(0.6 * h, 1.7 * h, 1.2 * h);
+  rimA.position.set(-1.2 * h, 1.1 * h, -1.4 * h);
+  rimB.position.set(1.4 * h, 0.9 * h, -1.0 * h);
   warm.distance = h * 5;
   sun.shadow.camera.left = sun.shadow.camera.bottom = -r * 1.5;
   sun.shadow.camera.right = sun.shadow.camera.top = r * 1.5;
@@ -230,7 +248,7 @@ async function setEquip(eq) {
         const bones = m.skeleton.bones.map((b) => state.root.getObjectByName(b.name));
         heroMesh.parent.add(m);
         m.bind(new THREE.Skeleton(bones, m.skeleton.boneInverses), m.bindMatrix);
-        const r = toonify([m], state.shared, { outlineColor: state.outlineColor });
+        const r = toonify([m], state.shared, { outlineColor: state.outlineColor, outlineWidth: 2.6 * +(params.get('ow') ?? 1) });
         calls += r.calls;
         state.equipObjs.push(m, ...r.outlines);
       }
@@ -238,7 +256,7 @@ async function setEquip(eq) {
       const socket = state.root.getObjectByName(it.socket);
       if (!socket) continue;
       const obj = gltf.scene.clone(true);
-      calls += toonify(obj, state.shared, { outlineColor: state.outlineColor }).calls;
+      calls += toonify(obj, state.shared, { outlineColor: state.outlineColor, outlineWidth: 2.6 * +(params.get('ow') ?? 1) }).calls;
       socket.add(obj);
       state.equipObjs.push(obj);
     }
@@ -272,8 +290,8 @@ function setCam(name, yaw = state.yaw, zoom = 1, ty = null) {
   const h = b ? b.max.y : state.info?.height ?? 2;
   const size = b ? b.getSize(new THREE.Vector3()) : new THREE.Vector3(1, h, 1);
   const span = Math.max(h * 1.05, size.x * 0.95, size.z * 0.85, 1.6);
-  const el2 = { game: 41.5, threequarter: 18, front: 6, side: 6, back: 12 }[name] ?? 18;
-  const az = ({ game: 0, threequarter: 35, front: 0, side: 90, back: 180 }[name] ?? 0) + yaw;
+  const el2 = { game: 41.5, threequarter: 18, front: 6, side: 6, back: 12, portrait: 9 }[name] ?? 18;
+  const az = ({ game: 0, threequarter: 35, front: 0, side: 90, back: 180, portrait: 30 }[name] ?? 0) + yaw;
   const fit = (span * 0.56) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   const d = (name === 'game' ? fit * 1.25 : fit) / zoom;
   const e = THREE.MathUtils.degToRad(el2);
@@ -355,6 +373,17 @@ window.viewer = {
     state.shared.uTime.value = t;
     setCam(cam, yaw, zoom, ty);
     renderer.render(scene, camera);
+    return true;
+  },
+  /** Mode portrait : couleurs et intensités des deux contre-jours, liseré du shader toon. */
+  stage(o = {}) {
+    if (o.rimA != null) rimA.color.set(o.rimA);
+    if (o.rimB != null) rimB.color.set(o.rimB);
+    if (o.rimAI != null) rimA.intensity = o.rimAI;
+    if (o.rimBI != null) rimB.intensity = o.rimBI;
+    if (o.rim != null && state.shared) state.shared.uRimColor.value.set(o.rim);
+    if (o.rimStrength != null && state.shared) state.shared.uRimStrength.value = o.rimStrength;
+    if (o.exposure != null) renderer.toneMappingExposure = o.exposure;
     return true;
   },
   info() {

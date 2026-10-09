@@ -453,33 +453,78 @@ code {
   font-size: var(--fs-sm);
 }
 
-/* Bestiaire */
+/* Bestiaire : trois paliers (terrain, cadres, têtes d'affiche), portraits 3D du jeu */
+.tier + .tier {
+  margin-top: var(--sp-7);
+}
+.tier__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: 0 0 var(--sp-2);
+  color: var(--px-text);
+  font: 900 var(--fs-md) / 1.2 var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tier__title::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--px-danger) 70%, transparent), transparent);
+}
+.tier__lead {
+  margin: 0 0 var(--sp-5);
+  color: var(--px-text-mute);
+  font-size: var(--fs-sm);
+}
 .grid--bestiary {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+@media (min-width: 900px) {
+  .grid--bestiary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.card--elite {
+  --rc: var(--px-violet-hi);
 }
 .foe {
   display: flex;
   flex-direction: column;
 }
-.foe .card__kicker {
-  margin-top: var(--sp-3);
-}
-.foe__img,
-.foe__glyph {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 180px;
-  object-fit: cover;
+.foe__media {
+  margin: calc(var(--sp-2) - var(--sp-5)) calc(var(--sp-2) - var(--sp-5)) var(--sp-4);
+  overflow: hidden;
   border: var(--bd);
   border-radius: var(--r-sm);
   background:
-    radial-gradient(circle at 50% 60%, color-mix(in srgb, var(--rc) 22%, transparent), transparent 70%),
+    radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--rc) 28%, transparent), transparent 70%),
     var(--px-night);
 }
-.foe__glyph {
-  padding: var(--sp-6);
-  color: var(--rc);
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--rc) 50%, transparent));
+.foe__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  transition:
+    transform var(--dur-slow) var(--ease-ballast),
+    filter var(--dur-slow) var(--ease-ballast);
+}
+.foe:hover .foe__img,
+.foe:focus-within .foe__img {
+  transform: scale(1.04);
+  filter: saturate(1.15) brightness(1.06);
+}
+.foe__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+}
+.foe__biome {
+  color: var(--px-text-mute);
+  letter-spacing: 0.12em;
 }
 .foe .card__flavor {
   margin-top: auto;
@@ -493,19 +538,148 @@ code {
   color: var(--px-text-mute);
   font-size: var(--fs-2xs);
 }
+.bestiary__end {
+  margin: var(--sp-7) 0 0;
+  color: var(--px-text-mute);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Le héros et son équipement */
+.heros {
+  background:
+    radial-gradient(700px 520px at 20% 40%, rgba(255, 179, 71, 0.12), transparent 70%),
+    radial-gradient(600px 400px at 90% 90%, rgba(176, 92, 255, 0.1), transparent 70%),
+    var(--px-night);
+}
+.kit {
+  display: grid;
+  gap: var(--sp-6);
+  align-items: center;
+}
 @media (min-width: 900px) {
-  .foe--guest {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    column-gap: var(--sp-5);
+  .kit {
+    grid-template-columns: minmax(0, 460px) 1fr;
+    gap: var(--sp-7);
   }
-  .foe--guest .foe__glyph {
-    grid-row: 1 / span 5;
+}
+.kit__media {
+  margin: 0;
+}
+.kit__img,
+.pitch__hero-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border: var(--bd);
+  border-radius: var(--r-md);
+  outline: 2px solid color-mix(in srgb, var(--px-hero) 70%, transparent);
+  outline-offset: -6px;
+  box-shadow: var(--sh-card);
+}
+.kit__media figcaption {
+  margin-top: var(--sp-2);
+  color: var(--px-text-mute);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+.kit__text p {
+  color: var(--px-text-soft);
+  max-width: 40rem;
+}
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.slots li {
+  padding: 6px 10px;
+  color: var(--px-label);
+  font: 900 var(--fs-2xs) / 1 var(--font-display);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  background: var(--px-track);
+  border: var(--bd);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.kit__ladder-title {
+  margin-top: var(--sp-7);
+  margin-bottom: var(--sp-5);
+}
+.ladder {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: var(--sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 900px) {
+  .ladder {
+    grid-template-columns: repeat(5, 1fr);
   }
-  .foe--guest .card__flavor {
-    margin-top: 0;
-  }
+}
+.loadout {
+  padding: var(--sp-2) var(--sp-2) var(--sp-3);
+  background: linear-gradient(180deg, var(--px-panel-top), var(--px-panel-bottom));
+  border: var(--bd);
+  border-radius: var(--r-md);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--rc) 45%, transparent), var(--sh-card);
+}
+.loadout__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-sm);
+}
+.loadout__name {
+  margin: var(--sp-3) 0 var(--sp-1);
+}
+.loadout__text {
+  margin: 0;
+  padding-inline: var(--sp-1);
+  color: var(--px-text-mute);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+}
+.pitch__hero {
+  margin: 0 0 var(--sp-5);
+}
+
+/* Collègues de l'OCC */
+.mates {
+  margin-top: var(--sp-7);
+}
+.mates .tier__title {
+  margin-bottom: var(--sp-5);
+}
+.mates .tier__title::after {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--px-tungsten) 70%, transparent), transparent);
+}
+.grid--mates {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+.mate {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: var(--sp-4);
+  align-items: start;
+}
+.mate__img {
+  display: block;
+  width: 112px;
+  height: 112px;
+  border: var(--bd);
+  border-radius: var(--r-sm);
+}
+.mate .card__title {
+  font-size: var(--fs-md);
 }
 
 /* OCC */

@@ -57,6 +57,10 @@ de sa pièce), échantillonne chaque clip à 30 i/s et exporte.
 | `dirupo` | 14 950 | 26 | 10 : intro, idle, walk, attack-bowtie, attack-inauguration, hair-swipe, smile-flash, hurt, stagger, defeat | 362 Kio (879 brut) |
 | `borne` | 2 536 | 7 | 5 : idle, spawn, attack, hurt, death | 58 Kio |
 | `drone` | 3 012 | 10 | 5 : fly, attack, hurt, death, spawn | 69 Kio |
+| `manager` (élite) | 7 372 | 22 | 8 : idle, walk, attack-report, attack-chrono, shield, hurt, death, spawn | 247 Kio |
+| `auditeur` (boss 1) | 8 664 | 20 | 10 : intro, idle, walk, attack-sweep, attack-stamp, attack-tickets, phase2, hurt, stagger, defeat | 277 Kio |
+| `fluidifieur` (élite majeur) | 6 620 | 21 | 7 : idle, glide, attack-binder, attack-spin, hurt, defeat, spawn | 208 Kio |
+| `josiane` / `bene` / `kevin` (PNJ) | 6 112 / 5 900 / 5 884 | 20 | 4 : idle, walk, talk, wave | 122 Kio |
 
 | Objet | Slot | Triangles | GLB |
 |---|---|---|---|
@@ -82,8 +86,11 @@ contour) à 4 par personnage, +2 par pièce d'équipement.
   (le viewer ne fait qu'une version simple du miroir et du verre).
 - Les **ressorts** (écharpe, cravate, mèche, queue) sont cuits dans les clips ; une chaîne à ressort à
   l'exécution peut s'y superposer.
-- Le **manager KPI**, l'**Auditeur** et les **PNJ** du hub ne sont pas encore portés (anciens modèles dans
-  `characters/`).
+- Portés : manager KPI, Auditeur, Fluidifieur, Josiane, Béné, Kevin. Restent à faire : autres PNJ (Marcel,
+  Fatou, Yasmina, Rudy…), Vanderslide, Agent de sécurité, Coach Agile.
+- **Portraits du site** : `viewer/portraits.mjs` (mode `?portrait` : fond transparent, contre-jours) puis
+  `viewer/portraits.py` (fond néon, cadrage auto, WebP 960/480) d'après `viewer/specs/portraits.json` →
+  `site/public/bestiaire/`.
 - Écarts assumés avec le prototype pour le Discosaure : épines turquoise (au lieu de magenta, réservé aux
   télégraphes) et ventre crème (fiche § 7.1).
 - La compression utilise `viewer/node_modules` (`npm install` dans `viewer/`), sinon `npx @gltf-transform/cli`,

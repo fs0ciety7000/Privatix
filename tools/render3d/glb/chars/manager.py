@@ -44,13 +44,13 @@ def model() -> Model:
         m.capsule(f"hip_{s}", SUIT, (0, 0, 0), (0, -0.38, 0), 0.125, 0.11)
         m.capsule(f"knee_{s}", SUIT, (0, 0, 0), (0, -0.31, 0), 0.105, 0.095)
         m.box(f"knee_{s}", SUIT_DARK, (0, -0.16, 0.1), (0.012, 0.28, 0.01), 0.0, outline=0)
-        m.box(f"foot_{s}", SHOE, (0, 0.04, 0.06), (0.2, 0.13, 0.36), 0.06)
+        m.box(f"foot_{s}", SHOE, (0, 0.04, 0.06), (0.2, 0.13, 0.36), 0.06, seg=1)
         m.sphere(f"foot_{s}", 0x6A6488, (0.02, 0.09, 0.17), (0.04, 0.012, 0.06), outline=0, seg=8, emit=0.3)
     # Bassin, gilet (ventre), veste ouverte
-    m.box("pelvis", SUIT, (0, 0, 0), (0.48, 0.22, 0.32), 0.09)
-    m.box("spine", VEST, (0, 0.04, 0.0), (0.46, 0.26, 0.33), 0.1)
+    m.box("pelvis", SUIT, (0, 0, 0), (0.48, 0.22, 0.32), 0.09, seg=1)
+    m.box("spine", VEST, (0, 0.04, 0.0), (0.46, 0.26, 0.33), 0.1, seg=1)
     for sx in (1, -1):  # pointes du gilet
-        m.box("spine", VEST, (0.07 * sx, -0.1, 0.14), (0.13, 0.1, 0.05), 0.02, rot=(0, 0, 30 * sx), outline=0)
+        m.box("spine", VEST, (0.07 * sx, -0.1, 0.14), (0.13, 0.1, 0.05), 0.0, rot=(0, 0, 30 * sx), outline=0)
     m.box("chest", SUIT, (0, 0.1, -0.02), (0.76, 0.46, 0.36), 0.14)  # veste : épaules carrées
     m.box("chest", VEST, (0, 0.06, 0.15), (0.3, 0.34, 0.06), 0.03, outline=0)  # gilet visible
     for k in range(4):
@@ -59,17 +59,17 @@ def model() -> Model:
         yy = y if k < 2 else y + DIMS.chest
         m.sphere(part, GOLD, (0, yy, 0.185 if k < 2 else 0.17), (0.026, 0.026, 0.018), outline=0, seg=8, emit=0.25)
     for sx in (1, -1):  # revers larges de la veste
-        m.box("chest", SUIT_DARK, (0.15 * sx, 0.12, 0.165), (0.09, 0.38, 0.03), 0.012, rot=(0, 0, 18 * sx), outline=0)
+        m.box("chest", SUIT_DARK, (0.15 * sx, 0.12, 0.165), (0.09, 0.38, 0.03), 0.0, rot=(0, 0, 18 * sx), outline=0)
         m.box("chest", VEST_DARK, (0.1 * sx, 0.04, 0.18), (0.012, 0.22, 0.01), 0.0, outline=0)  # couture du gilet
-    m.box("chest", SHIRT, (0, 0.27, 0.16), (0.12, 0.12, 0.03), 0.01, outline=0)
-    m.box("chest", SHIRT, (0, 0.31, 0.02), (0.3, 0.07, 0.24), 0.03)  # col
-    m.box("chest", TIE_LIGHT, (0.24, 0.19, 0.17), (0.08, 0.035, 0.012), 0.005, rot=(0, 0, 8), outline=0)  # pochette
+    m.box("chest", SHIRT, (0, 0.27, 0.16), (0.12, 0.12, 0.03), 0.0, outline=0)
+    m.box("chest", SHIRT, (0, 0.31, 0.02), (0.3, 0.07, 0.24), 0.03, seg=1)  # col
+    m.box("chest", TIE_LIGHT, (0.24, 0.19, 0.17), (0.08, 0.035, 0.012), 0.0, rot=(0, 0, 8), outline=0)  # pochette
     # Cravate violette
-    m.box("tie0", TIE, (0, 0, 0), (0.07, 0.05, 0.05), 0.015, outline=0)
-    m.box("tie0", TIE, (0, -0.1, 0.005), (0.085, 0.17, 0.02), 0.01)
+    m.box("tie0", TIE, (0, 0, 0), (0.07, 0.05, 0.05), 0.0, outline=0)
+    m.box("tie0", TIE, (0, -0.1, 0.005), (0.085, 0.17, 0.02), 0.01, seg=1)
     # Bras : épaulettes carrées, manchettes, boutons de manchette dorés
     for s, sx in (("L", 1), ("R", -1)):
-        m.box(f"shoulder_{s}", SUIT, (0.03 * sx, 0.0, 0), (0.22, 0.16, 0.28), 0.07)
+        m.box(f"shoulder_{s}", SUIT, (0.03 * sx, 0.0, 0), (0.22, 0.16, 0.28), 0.07, seg=1)
         m.capsule(f"shoulder_{s}", SUIT, (0, -0.03, 0), (0, -0.27, 0), 0.105, 0.095)
         m.capsule(f"elbow_{s}", SUIT, (0, 0, 0), (0, -0.19, 0), 0.092, 0.085)
         m.cyl(f"hand_{s}", SHIRT, (0, 0.045, 0), 0.08, 0.05, seg=12)
@@ -78,31 +78,35 @@ def model() -> Model:
         m.capsule(f"hand_{s}", SKIN, (0.045 * sx, -0.02, 0.05), (0.075 * sx, -0.08, 0.08), 0.03)  # pouce
     # Cou épais, tête à mâchoire carrée
     m.cyl("neck", SKIN, (0, 0.0, 0), 0.105, 0.14)
-    m.sphere("head", SKIN, (0, 0.2, 0.0), (0.26, 0.27, 0.25), seg=22)
-    m.box("head", SKIN, (0, 0.06, 0.04), (0.42, 0.16, 0.36), 0.08)  # mâchoire carrée
+    m.sphere("head", SKIN, (0, 0.2, 0.0), (0.26, 0.27, 0.25), seg=18)
+    m.box("head", SKIN, (0, 0.06, 0.04), (0.42, 0.16, 0.36), 0.08, seg=1)  # mâchoire carrée
     m.sphere("head", SKIN_DARK, (0, 0.15, 0.27), (0.05, 0.06, 0.05), seg=10, outline=0.6)  # nez
     for sx in (1, -1):
         m.sphere("head", SKIN, (0.255 * sx, 0.17, 0.0), (0.05, 0.07, 0.045), seg=10)  # oreilles
-        m.sphere("head", EYES, (0.095 * sx, 0.2, 0.245), (0.028, 0.034, 0.02), outline=0, seg=8)
+        m.sphere("head", EYES, (0.095 * sx, 0.2, 0.243), (0.032, 0.036, 0.02), outline=0, seg=8)
+        m.sphere("head", 0xFFFFFF, (0.095 * sx + 0.01, 0.212, 0.258), (0.009, 0.01, 0.005), outline=0, seg=6, emit=0.3)
         # sourcils épais, froncés vers le nez (sévère)
-        m.box("head", HAIR, (0.1 * sx, 0.27, 0.25), (0.13, 0.038, 0.04), 0.012, rot=(0, 0, 14 * sx), outline=0)
-    m.box("head", 0x7A3A3A, (0.02, 0.06, 0.22), (0.13, 0.02, 0.03), 0.008, rot=(0, 0, -5), outline=0)  # sourire en coin
+        m.box("head", HAIR, (0.1 * sx, 0.27, 0.25), (0.13, 0.038, 0.04), 0.0, rot=(0, 0, 14 * sx), outline=0)
+    m.box("head", 0x7A3A3A, (0.02, 0.06, 0.22), (0.13, 0.02, 0.03), 0.0, rot=(0, 0, -5), outline=0)  # sourire en coin
     # Cheveux plaqués, raie sur le côté, tempes grises
-    m.sphere("head", HAIR, (0, 0.27, -0.04), (0.27, 0.2, 0.25), seg=20)
+    m.sphere("head", HAIR, (0, 0.27, -0.04), (0.27, 0.2, 0.25), seg=16)
     m.sphere("head", HAIR, (0.05, 0.37, 0.06), (0.21, 0.08, 0.18), seg=14, rot=(-8, 0, -6))
     m.box("head", SKIN, (0.1, 0.43, 0.08), (0.02, 0.012, 0.18), 0.0, rot=(0, 8, 0), outline=0)  # raie
     for sx in (1, -1):
         m.sphere("head", GREY, (0.235 * sx, 0.22, -0.03), (0.05, 0.1, 0.13), seg=10)
     # Lunettes rectangulaires à monture sombre
     for sx in (1, -1):
-        m.box("glasses", EYES, (0.1 * sx, 0, 0), (0.15, 0.085, 0.02), 0.01, outline=0)
-        m.box("glasses", 0xDDEBFF, (0.1 * sx, 0, 0.008), (0.12, 0.06, 0.008), 0.0, mat="glass", outline=0, emit=1.0)
+        for dy in (0.038, -0.038):
+            m.box("glasses", EYES, (0.1 * sx, dy, 0), (0.15, 0.016, 0.02), 0.0, outline=0)
+        for dx in (0.067, -0.067):
+            m.box("glasses", EYES, (0.1 * sx + dx, 0, 0), (0.016, 0.09, 0.02), 0.0, outline=0)
+        m.box("glasses", 0xDDEBFF, (0.1 * sx, 0, 0.0), (0.12, 0.06, 0.006), 0.0, mat="glass", outline=0, emit=1.0)
         m.box("glasses", EYES, (0.19 * sx, 0.01, -0.13), (0.012, 0.014, 0.26), 0.0, outline=0)
     m.box("glasses", EYES, (0, 0.012, 0.0), (0.06, 0.016, 0.016), 0.0, outline=0)
     # Chronomètre doré au bout d'une chaîne (os `chrono`, attaché au cou)
     for sx in (1, -1):
         m.box("chrono", GOLD_DARK, (0.07 * sx, -0.1, 0.0), (0.018, 0.2, 0.018), 0.0, rot=(0, 0, -16 * sx), outline=0)
-    m.cyl("chrono", GOLD, (0, -0.3, 0.03), 0.12, 0.05, rot=(90, 0, 0), seg=20)
+    m.cyl("chrono", GOLD, (0, -0.3, 0.03), 0.12, 0.05, rot=(90, 0, 0), seg=16)
     m.torus("chrono", GOLD_DARK, (0, -0.3, 0.055), 0.115, 0.014, radial=6, tubular=20, outline=0)
     m.cyl("chrono", 0xFFF4D6, (0, -0.3, 0.058), 0.1, 0.006, rot=(90, 0, 0), seg=20, mat="glow", outline=0, emit=1.0)  # cadran
     m.box("chrono", EYES, (0, -0.26, 0.064), (0.014, 0.08, 0.006), 0.0, outline=0)  # aiguille
@@ -110,7 +114,7 @@ def model() -> Model:
     m.cyl("chrono", GOLD, (0, -0.16, 0.03), 0.025, 0.05, seg=10, outline=0.6)  # remontoir
     m.cyl("chrono", GOLD, (0, -0.13, 0.03), 0.04, 0.02, seg=10, outline=0)
     # Tablette-graphique : prise par le bas, écran vers +Z, panneau dans le plan XY
-    m.box("tablet", SHELL, (0, TAB_H / 2, 0), (TAB_W, TAB_H, 0.035), 0.018)
+    m.box("tablet", SHELL, (0, TAB_H / 2, 0), (TAB_W, TAB_H, 0.035), 0.018, seg=1)
     m.box("tablet", SCREEN, (0, TAB_H / 2, 0.019), (TAB_W * 0.88, TAB_H * 0.82, 0.004), 0.0, mat="glow", outline=0, emit=1.0)
     for k, h in enumerate((0.08, 0.14, 0.11, 0.22)):
         m.box("tablet", (0x5FF7E4, 0x5FF7E4, 0xFFD84A, 0x5FF7E4)[k], (-0.15 + k * 0.1, 0.06 + h / 2, 0.023), (0.06, h, 0.004), 0.0, mat="glow", outline=0)
@@ -188,11 +192,10 @@ CLOCK = P(
     {
         **REST, "spine": (-6, -20, 0), "chest": (-8, -16, 0), "head": (-10, 20, 0),
         "shoulder_L": (-40, 10, 20), "elbow_L": (-70, 0, 0), "tablet": (96, -20, 0),
-        "shoulder_R": (-110, -10, -30), "elbow_R": (-20, 0, 0), "hand_R": (-20, 0, 0),
+        "shoulder_R": (-70, -30, -6), "elbow_R": (-60, 0, 0), "hand_R": (-20, 0, 0),
         "hip_L": (-10, 0, 8), "hip_R": (8, 0, -10), "knee_L": (12, 0, 0), "knee_R": (6, 0, 0),
-        "chrono": (-80, 0, -14),
+        "chrono": (-62, 0, 0),
     },
-    loc={"chrono": (-0.18, 0.26, 0.2)},
     root=(0, 0.02, 0.04),
 )
 
@@ -267,7 +270,7 @@ def attack_report(t: float) -> dict:
 
 
 def attack_clock(t: float) -> dict:
-    return keyed([(0, stance(0)), (400, CLOCK, ease_out), (650, merge(CLOCK, rot={"chrono": (-84, 0, 10)})), (900, CLOCK), (1300, stance(0))], t)
+    return keyed([(0, stance(0)), (400, CLOCK, ease_out), (650, merge(CLOCK, rot={"chrono": (-70, 0, 6)})), (900, CLOCK), (1300, stance(0))], t)
 
 
 def shield(t: float) -> dict:

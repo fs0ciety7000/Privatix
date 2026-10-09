@@ -51,6 +51,31 @@ export function reveal(targets: Element[], opts: { y?: number; stagger?: number 
   gsap.set(below, { autoAlpha: 0, y: opts.y ?? 24 });
 }
 
+/**
+ * Preset « allumage » des portraits (bestiaire, équipement, collègues) : la figurine sort de l'ombre
+ * comme sous un projecteur qui chauffe (luminosité, léger recul de zoom), par lot au scroll.
+ * Les propriétés sont rendues au CSS à la fin (survol des cartes).
+ */
+export function portraitIgnite(targets: Element[]): void {
+  const below = targets.filter((t) => t.getBoundingClientRect().top > innerHeight * 0.95);
+  if (!below.length) return;
+  gsap.set(below, { scale: 1.1, filter: 'brightness(0.25) saturate(0.4)' });
+  ScrollTrigger.batch(below, {
+    start: 'top 90%',
+    once: true,
+    onEnter: (batch) =>
+      gsap.to(batch, {
+        scale: 1,
+        filter: 'brightness(1) saturate(1)',
+        duration: DUR.xslow,
+        ease: EASE.ballast,
+        stagger: 0.12,
+        overwrite: true,
+        clearProps: 'transform,filter',
+      }),
+  });
+}
+
 /** Preset « néon » : allumage hésitant d'un tube (quelques coupures nettes), puis tenu. */
 export function neonIgnite(target: Element, delay = 0): gsap.core.Timeline {
   const tl = gsap.timeline({ delay });
@@ -147,6 +172,7 @@ export function initMotion(): void {
     const neon = document.querySelector('[data-neon]');
     if (neon) neonFlicker(neon);
     reveal(Array.from(document.querySelectorAll('[data-reveal]')));
+    portraitIgnite(Array.from(document.querySelectorAll('.foe__img, .loadout__img, .mate__img, .kit__img')));
     document.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
     document.querySelectorAll('[data-gauge]').forEach(fillGauge);
   });
@@ -154,5 +180,6 @@ export function initMotion(): void {
   // ramenées à 0 par les tokens `--dur-*` (tokens.css).
   mm.add(REDUCED, () => {
     gsap.set('[data-reveal], [data-neon]', { clearProps: 'opacity,visibility,transform' });
+    gsap.set('.foe__img, .loadout__img, .mate__img, .kit__img', { clearProps: 'transform,filter' });
   });
 }

@@ -48,6 +48,7 @@
           <ul>
             <li><a href="#jeu">Le jeu</a></li>
             <li><a href="#gameplay">Gameplay</a></li>
+            <li><a href="#heros">Le héros</a></li>
             <li><a href="#galerie">Galerie</a></li>
             <li><a href="#bestiaire">Bestiaire</a></li>
             <li><a href="#occ">L'OCC</a></li>
@@ -132,6 +133,9 @@
             </p>
           </div>
           <aside class="pitch__facts" data-reveal aria-label="En bref">
+            <figure class="pitch__hero">
+              <img class="pitch__hero-img" src="/bestiaire/hero-480.webp" srcset="/bestiaire/hero-480.webp 480w, /bestiaire/hero.webp 960w" sizes="(min-width: 900px) 420px, 92vw" width="960" height="960" loading="lazy" decoding="async" alt="Le héros, casque de chantier et gilet orange haute visibilité, frappe avec sa clé à tire-fond." />
+            </figure>
             <dl class="facts">
               <div><dt>Genre</dt><dd>Hack 'n' slash roguelite, vue de dessus</dd></div>
               <div><dt>Rendu</dt><dd>3D toon temps réel « Néon &amp; Ballast »</dd></div>
@@ -218,6 +222,62 @@
         </div>
       </section>
 
+      <!-- ═══ Le héros et son équipement ═══ -->
+      <section class="section heros" id="heros" aria-labelledby="heros-title">
+        <div class="wrap">
+          <div class="kit">
+            <figure class="kit__media" data-reveal>
+              <img class="kit__img" src="/bestiaire/hero-equipe-480.webp" srcset="/bestiaire/hero-equipe-480.webp 480w, /bestiaire/hero-equipe.webp 960w" sizes="(min-width: 900px) 460px, 92vw" width="960" height="960" loading="lazy" decoding="async" alt="Le héros équipé de pièces rares : casque doré « Acquis historique » à crête, gilet porte-outils et clé à tire-fond épique à tête lumineuse." />
+              <figcaption>Paquetage « Patrimoine » : chaque pièce se voit sur le héros.</figcaption>
+            </figure>
+            <div class="kit__text" data-reveal>
+              <p class="eyebrow">Le héros et son équipement</p>
+              <h2 id="heros-title" class="section__title">La dotation, rangée par Josiane</h2>
+              <p>
+                Léon, ou Léa, part au Shift avec la clé à tire-fond de son grand-père. Le reste se gagne
+                sur le terrain : le butin tombe des sacoches, caisses et colis abandonnés par Privatix,
+                jamais d'un voyageur. Chaque pièce ramassée change la silhouette du héros, du casque au gilet.
+              </p>
+              <p>
+                Au retour, Josiane range ce qui vaut la peine dans son casier, prépare le Paquetage du
+                prochain Shift et réforme le reste en Ferraille, « parce qu'on ne jette rien, on réforme ».
+              </p>
+              <ul class="slots" role="list" aria-label="Emplacements d'équipement">
+                <li>Outil</li><li>Casque</li><li>Gilet</li><li>Gants</li><li>Chaussures</li><li>Insigne</li>
+              </ul>
+            </div>
+          </div>
+          <h3 class="tier__title kit__ladder-title" data-reveal><span>Cinq raretés, de la Réforme au Patrimoine</span></h3>
+          <ol class="ladder" role="list">
+              <li class="loadout" style="--rc: var(--rar-reforme)" data-reveal>
+                <img class="loadout__img" src="/bestiaire/rarete-1-480.webp" srcset="/bestiaire/rarete-1-480.webp 480w, /bestiaire/rarete-1.webp 960w" sizes="(min-width: 900px) 200px, 40vw" width="480" height="480" loading="lazy" decoding="async" alt="Le héros équipé : casque de chantier, gilet haute visibilité et clé à tire-fond." />
+                <p class="loadout__name"><span class="badge badge--reforme">Réforme</span></p>
+                <p class="loadout__text">Rayé, encore utile. « Réformé, pas fini. »</p>
+              </li>
+              <li class="loadout" style="--rc: var(--rar-reglementaire)" data-reveal>
+                <img class="loadout__img" src="/bestiaire/rarete-2-480.webp" srcset="/bestiaire/rarete-2-480.webp 480w, /bestiaire/rarete-2.webp 960w" sizes="(min-width: 900px) 200px, 40vw" width="480" height="480" loading="lazy" decoding="async" alt="Le héros équipé : casque antibruit, gilet haute visibilité et masse de voie." />
+                <p class="loadout__name"><span class="badge badge--reglementaire">Réglementaire</span></p>
+                <p class="loadout__text">La dotation telle que le règlement la prévoit. Rare depuis le PHR-2032.</p>
+              </li>
+              <li class="loadout" style="--rc: var(--rar-homologue)" data-reveal>
+                <img class="loadout__img" src="/bestiaire/rarete-3-480.webp" srcset="/bestiaire/rarete-3-480.webp 480w, /bestiaire/rarete-3.webp 960w" sizes="(min-width: 900px) 200px, 40vw" width="480" height="480" loading="lazy" decoding="async" alt="Le héros équipé : casque de chantier, gilet porte-outils et pince à caténaire." />
+                <p class="loadout__name"><span class="badge badge--homologue">Homologué</span></p>
+                <p class="loadout__text">Testé et tamponné « HOMOLOGUÉ ». Béné respecte ce tampon.</p>
+              </li>
+              <li class="loadout" style="--rc: var(--rar-hors-serie)" data-reveal>
+                <img class="loadout__img" src="/bestiaire/rarete-4-480.webp" srcset="/bestiaire/rarete-4-480.webp 480w, /bestiaire/rarete-4.webp 960w" sizes="(min-width: 900px) 200px, 40vw" width="480" height="480" loading="lazy" decoding="async" alt="Le héros équipé : casque antibruit, gilet porte-outils et clé à tire-fond épique." />
+                <p class="loadout__name"><span class="badge badge--hors-serie">Hors-série</span></p>
+                <p class="loadout__text">Prototype ou commande unique ; les coutures brillent.</p>
+              </li>
+              <li class="loadout" style="--rc: var(--rar-patrimoine)" data-reveal>
+                <img class="loadout__img" src="/bestiaire/rarete-5-480.webp" srcset="/bestiaire/rarete-5-480.webp 480w, /bestiaire/rarete-5.webp 960w" sizes="(min-width: 900px) 200px, 40vw" width="480" height="480" loading="lazy" decoding="async" alt="Le héros équipé : casque doré « Acquis historique », gilet porte-outils et clé à tire-fond épique." />
+                <p class="loadout__name"><span class="badge badge--patrimoine">Patrimoine</span></p>
+                <p class="loadout__text">Un objet qui a une histoire, et parfois un ancien propriétaire.</p>
+              </li>
+          </ol>
+        </div>
+      </section>
+
       <!-- ═══ Galerie ═══ -->
       <section class="section" id="galerie" aria-labelledby="galerie-title">
         <div class="wrap">
@@ -271,61 +331,93 @@
           <p class="eyebrow" data-reveal>Bestiaire</p>
           <h2 id="bestiaire-title" class="section__title" data-reveal>Les ressources de Privatix</h2>
           <p class="section__lead" data-reveal>
-            Des gens payés pour ne pas savoir et des machines achetées pour ne pas répondre. Ils ne
-            meurent pas : ils « partent en réunion », se mettent en mute ou affichent HORS SERVICE.
+            Des gens payés pour ne pas savoir et des machines achetées pour ne pas répondre, chargés de
+            préparer le lot n° 1 avant la signature. Ils ne meurent pas : ils « partent en réunion », se
+            mettent en mute ou affichent HORS SERVICE. Tout ce qui blesse est magenta.
           </p>
-          <ul class="grid grid--bestiary" role="list">
+          <div class="tier">
+            <h3 class="tier__title" data-reveal><span>Le terrain</span></h3>
+            <p class="tier__lead" data-reveal>Les ennemis communs, envoyés en nombre sur les quais.</p>
+            <ul class="grid grid--bestiary" role="list" data-foes>
             <li class="card card--enemy card--interactive foe" data-reveal>
-              <img class="foe__img" src="./src/assets/img/foe-consultant.webp" width="320" height="320" loading="lazy" decoding="async" alt="Un consultant junior en costume turquoise, laptop sous le bras." />
-              <p class="card__kicker"><span class="badge badge--enemy">Ennemi</span></p>
-              <h3 class="card__title">Consultant Junior « Slide-Ninja »</h3>
-              <p class="card__body">24 ans, première mission : découper un réseau ferroviaire découvert lundi en « lots rentables ». Chasse en meute et laisse une traînée de slides.</p>
-              <p class="card__flavor">« On va challenger ça en mode agile ! »</p>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/consultant-480.webp" srcset="/bestiaire/consultant-480.webp 480w, /bestiaire/consultant.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Un consultant junior en costume turquoise trop court abat son laptop, écran magenta, en fondant sur le joueur." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--enemy">Ennemi commun</span><span class="foe__biome">Biomes 1 à 3</span></p>
+              <h4 class="card__title">Consultant Junior « Slide-Ninja »</h4>
+              <p class="card__body">24 ans, première mission chez Synergia Partners : découper en « lots rentables » un réseau découvert lundi. Il chasse en meute, fonce en « Quick win » et laisse une traînée de slides. Projeté sur une voie, il « part en réunion ».</p>
+              <p class="card__flavor">« C'est un quick win, ça ! »</p>
             </li>
             <li class="card card--enemy card--interactive foe" data-reveal>
-              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="6" width="32" height="52" rx="4" fill="none" stroke="currentColor" stroke-width="3" /><rect x="21" y="12" width="22" height="16" rx="2" fill="currentColor" opacity="0.35" /><path d="M24 18l6 6M36 14l-4 8" stroke="currentColor" stroke-width="2" /><rect x="27" y="36" width="10" height="3" rx="1.5" fill="currentColor" /><rect x="22" y="45" width="20" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="2" /></svg>
-              <p class="card__kicker"><span class="badge badge--enemy">Ennemi</span></p>
-              <h3 class="card__title">Borne Automatique</h3>
-              <p class="card__body">Phase 1 du plan : elle a remplacé le guichet de Béné et n'a jamais accepté le bon moyen de paiement. Tire des tickets ; son dos est vulnérable.</p>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/borne-480.webp" srcset="/bestiaire/borne-480.webp 480w, /bestiaire/borne.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Une borne automatique turquoise à écran fissuré, sa fente à tickets prête à tirer." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--enemy">Ennemi commun</span><span class="foe__biome">Biomes 1 à 3</span></p>
+              <h4 class="card__title">Borne Automatique</h4>
+              <p class="card__body">Phase 1 du plan : elle a remplacé le guichet de Béné et n'a jamais accepté le bon moyen de paiement. Elle se déplie d'une trappe au sol et tire des tickets ; son dos est vulnérable.</p>
               <p class="card__flavor">« Veuillez insérer votre dignité. »</p>
             </li>
             <li class="card card--enemy card--interactive foe" data-reveal>
-              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="34" r="10" fill="none" stroke="currentColor" stroke-width="3" /><circle cx="32" cy="34" r="4" fill="currentColor" /><path d="M8 18h16M40 18h16M16 18v8M48 18v8M24 30l-8-4M40 30l8-4M32 24V12" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><circle cx="32" cy="10" r="2.5" fill="currentColor" /></svg>
-              <p class="card__kicker"><span class="badge badge--enemy">Ennemi</span></p>
-              <h3 class="card__title">Drone Optimètre</h3>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/drone-480.webp" srcset="/bestiaire/drone-480.webp 480w, /bestiaire/drone.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Un petit quadrirotor à œil-objectif, l'objectif cerclé de magenta pendant qu'il vise." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--enemy">Ennemi commun</span><span class="foe__biome">Biomes 1 et 2</span></p>
+              <h4 class="card__title">Drone Optimètre</h4>
               <p class="card__body">Il mesure la « performance » de chaque quai avant sa mise en lot, sourire des agents compris, et marque le héros pour toute la salle. Il perd sa cible dans les ombres des arcs.</p>
               <p class="card__flavor">« Souriez, vous êtes filmé pour la qualité. »</p>
             </li>
-            <li class="card card--boss card--interactive foe" data-reveal>
-              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 54V10M10 54h46" stroke="currentColor" stroke-width="3" stroke-linecap="round" /><rect x="16" y="38" width="7" height="14" fill="currentColor" opacity="0.5" /><rect x="27" y="28" width="7" height="24" fill="currentColor" opacity="0.7" /><rect x="38" y="18" width="7" height="34" fill="currentColor" /><path d="M16 30l12-10 9 6 14-14" fill="none" stroke="currentColor" stroke-width="2.5" /></svg>
-              <p class="card__kicker"><span class="badge badge--elite">Élite</span></p>
-              <h3 class="card__title">Manager KPI « Le Tableur »</h3>
-              <p class="card__body">Le train avait douze minutes de retard, mais l'indicateur est vert. Protège ses troupes en Réunion d'alignement ; frappé à ce moment, il perd tous ses boucliers.</p>
+            </ul>
+          </div>
+          <div class="tier">
+            <h3 class="tier__title" data-reveal><span>Les cadres</span></h3>
+            <p class="tier__lead" data-reveal>Les élites : plus solides, plus rares, et toujours sûrs d'avoir raison.</p>
+            <ul class="grid grid--bestiary" role="list" data-foes>
+            <li class="card card--elite card--interactive foe" data-reveal>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/manager-480.webp" srcset="/bestiaire/manager-480.webp 480w, /bestiaire/manager.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Le Manager KPI, carrure large en costume trois-pièces turquoise, chronomètre doré au cou, brandit une tablette au graphique magenta." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--elite">Élite</span><span class="foe__biome">Biomes 1 et 3</span></p>
+              <h4 class="card__title">Manager KPI « Le Tableur »</h4>
+              <p class="card__body">Le train avait douze minutes de retard, mais l'indicateur est vert. Il a chronométré les pauses pipi au centième et rêve d'un indicateur qui mesure les indicateurs. En Réunion d'alignement, il protège ses troupes ; frappé à ce moment, il perd tous ses boucliers.</p>
               <p class="card__flavor">« Vous êtes à 63 % de l'objectif. De vie. »</p>
             </li>
-            <li class="card card--boss card--interactive foe" data-reveal>
-              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44c3-8 13-12 25-10 6 1 9 4 13 3s6-5 10-5c3 0 5 2 5 4s-3 4-6 4c-4 0-6 3-10 5-7 3-17 4-25 3-5-1-9-2-12-4z" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" /><path d="M8 44c-3 2-4 7-1 10M20 47l-2 6M36 46l2 6M52 38l2 3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" /><circle cx="56" cy="35.5" r="1.6" fill="currentColor" /><path d="M24 26c-2-4 2-6 0-10M32 24c-2-4 2-6 0-10M40 26c-2-4 2-6 0-10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.7" /></svg>
-              <p class="card__kicker"><span class="badge badge--elite">Ennemi majeur</span></p>
-              <h3 class="card__title">Le Furet putride</h3>
-              <p class="card__body">Premier lot externalisé du BAG : le ramassage des déchets. Pour « optimiser le tri à coût zéro », un consultant a eu une idée : un furet. Il a grandi. Beaucoup. Nuages d'odeur, roulades dans les sacs bleus, et il vole vos Gobelets.</p>
+            <li class="card card--elite card--interactive foe" data-reveal>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/furet-480.webp" srcset="/bestiaire/furet-480.webp 480w, /bestiaire/furet.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Le Furet putride, énorme furet au pelage ébouriffé et au collier Privatix, queue dressée en pleine danse de guerre." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--elite">Élite majeur</span><span class="foe__biome">Biome 1</span></p>
+              <h4 class="card__title">Le Furet putride</h4>
+              <p class="card__body">Le ramassage des déchets du BAG a été externalisé ; pour « optimiser le tri à coût zéro », un consultant a eu une idée : un furet. Il a grandi. Beaucoup. Nuages d'odeur, roulades dans les sacs bleus, et il vole vos Gobelets.</p>
               <p class="card__flavor">« Tri en cours. Veuillez patienter. »</p>
             </li>
+            <li class="card card--elite card--interactive foe" data-reveal>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/fluidifieur-480.webp" srcset="/bestiaire/fluidifieur-480.webp 480w, /bestiaire/fluidifieur.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Le Fluidifieur, gilet matelassé sans manches et lanyard couvert de badges, file sur sa chaise de bureau à roulettes en brandissant son classeur violet." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--elite">Élite majeur</span><span class="foe__biome">Biome 2</span></p>
+              <h4 class="card__title">Le Fluidifieur</h4>
+              <p class="card__body">Il ne déteste personne : il fluidifie. Régisseur de l'inauguration de « Mons 2032 », il glisse sur sa chaise à roulettes portée par le vent et a rayé le personnel de la gare du plan de table. Il n'a jamais lu l'alinéa 3.</p>
+              <p class="card__flavor">« Ce n'est pas un changement, c'est une opportunité de changement. »</p>
+            </li>
+            </ul>
+          </div>
+          <div class="tier">
+            <h3 class="tier__title" data-reveal><span>Les têtes d'affiche</span></h3>
+            <p class="tier__lead" data-reveal>Un mini-boss et les boss qui gardent les biomes. On ne les tue pas : on les fait renoncer.</p>
+            <ul class="grid grid--bestiary" role="list" data-foes>
             <li class="card card--boss card--interactive foe" data-reveal>
-              <img class="foe__img" src="./src/assets/img/foe-discosaure.webp" width="320" height="320" loading="lazy" decoding="async" alt="Le Discosaure, dinosaure violet à boule à facettes." />
-              <p class="card__kicker"><span class="badge badge--elite">Ennemi majeur</span></p>
-              <h3 class="card__title">Le Discosaure</h3>
-              <p class="card__body">Senior Partner fondateur de Synergia Partners. Il vend le même plan de libéralisation depuis la soirée de lancement du cabinet, boule à facettes comprise. Ce n'est pas lui qui est fossile, c'est sa méthode.</p>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/discosaure-480.webp" srcset="/bestiaire/discosaure-480.webp 480w, /bestiaire/discosaure.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Le Discosaure, dinosaure violet en costume, gueule ouverte, une boule à facettes encastrée dans le dos." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--elite">Mini-boss</span><span class="foe__biome">Biome 3</span></p>
+              <h4 class="card__title">Le Discosaure</h4>
+              <p class="card__body">Senior Partner fondateur de Synergia Partners. Il vend le même plan de restructuration depuis la soirée de lancement du cabinet, boule à facettes comprise, et n'a fait que changer le logo de la couverture. Ce n'est pas lui qui est fossile, c'est sa méthode.</p>
               <p class="card__flavor">« Restructurez avec moi ! Un, deux, un, deux ! »</p>
             </li>
-            <li class="card card--interactive foe foe--guest" style="--rc: var(--px-danger)" data-reveal>
-              <svg class="foe__glyph" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 20l20 10v4L8 44z" fill="#7a1e2c" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" /><path d="M56 20L36 30v4l20 10z" fill="#7a1e2c" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" /><rect x="27" y="27" width="10" height="10" rx="2" fill="#b23a4e" stroke="currentColor" stroke-width="2.5" /></svg>
-              <p class="card__kicker"><span class="badge badge--boss">Boss · biome 2</span></p>
-              <h3 class="card__title">Elio Di Rupo, « l'Invité d'honneur »</h3>
-              <p class="card__body">Il ne travaille pas pour Privatix : il a juste répondu « disponible » au Sondage pour inaugurer « Mons 2032 », la première gare ouverte à la concurrence, sans lire plus loin que le titre. Il défend son temps de parole, discours de quarante pages et ciseaux d'inauguration en main. On ne le bat pas : on obtient la parole.</p>
-              <p class="card__flavor">« Je serai bref. » (Il ne l'est pas.)</p>
-              <p class="foe__note">Caricature bon enfant, autorisée par le porteur du projet. Toutes ses répliques sont inventées pour le jeu.</p>
+            <li class="card card--boss card--interactive foe" data-reveal>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/auditeur-480.webp" srcset="/bestiaire/auditeur-480.webp 480w, /bestiaire/auditeur.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="L'Auditeur des Quais : une borne-mécha massive à deux bras-barrières rayés rouge et blanc, écran de façade magenta, pilotée par un petit auditeur à lunettes depuis un cockpit sur le toit." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--boss">Boss</span><span class="foe__biome">Biome 1</span></p>
+              <h4 class="card__title">L'Auditeur des Quais</h4>
+              <p class="card__body">Promu pour avoir prouvé, tableaux à l'appui, que les quais seraient « 38 % plus ponctuels sans trains ». Il pilote la Borne Totale 3000 et commande les rames depuis sa tablette. Son chronomètre tourne depuis son entrée en fonction ; il s'arrêtera sur 7:12.</p>
+              <p class="card__flavor">« Soupir non conforme. Audit bienveillant : début. »</p>
             </li>
-          </ul>
+            <li class="card foe--guest card--interactive foe" style="--rc: var(--px-danger)" data-reveal>
+              <div class="foe__media"><img class="foe__img" src="/bestiaire/dirupo-480.webp" srcset="/bestiaire/dirupo-480.webp 480w, /bestiaire/dirupo.webp 960w" sizes="(min-width: 1180px) 330px, (min-width: 900px) 28vw, (min-width: 620px) 44vw, 88vw" width="480" height="480" loading="lazy" decoding="async" alt="Caricature d'Elio Di Rupo en invité d'honneur souriant : grande chevelure brune, nœud papillon bordeaux, costume bleu marine, la main levée pour saluer." /></div>
+              <p class="card__kicker foe__meta"><span class="badge badge--boss">Boss</span><span class="foe__biome">Biome 2</span></p>
+              <h4 class="card__title">Elio Di Rupo, « l'Invité d'honneur »</h4>
+              <p class="card__body">Il ne travaille pas pour Privatix : il a répondu « disponible » au Sondage pour couper le ruban de « Mons 2032 », la première gare ouverte à la concurrence, sans lire plus loin que le titre. Il défend son temps de parole, pas le contrat. On ne le bat pas : on obtient la parole.</p>
+              <p class="card__flavor">« Je serai bref. » (Il ne l'est pas.)</p>
+              <p class="foe__note">Caricature bon enfant d'une personnalité réelle, autorisée par le porteur du projet. Toutes ses répliques sont inventées pour le jeu.</p>
+            </li>
+            </ul>
+          </div>
+          <p class="bestiary__end" data-reveal>Au dernier étage du BAG, Gontran Vanderslide tient le stylo du Contrat-cadre de libéralisation. Lui, on le découvre en jeu.</p>
         </div>
       </section>
 
@@ -364,6 +456,38 @@
             </ul>
             <p class="occ__rule">7<sup>e</sup> commandement : « Tu ne laisseras aucun collègue sur le quai. »</p>
           </div>
+        </div>
+        <div class="wrap mates">
+          <h3 class="tier__title" data-reveal><span>Quelques collègues</span></h3>
+          <ul class="grid grid--mates" role="list">
+            <li class="card card--interactive mate" style="--rc: var(--px-tungsten)" data-reveal>
+              <img class="mate__img" src="/bestiaire/josiane-480.webp" srcset="/bestiaire/josiane-480.webp 480w, /bestiaire/josiane.webp 960w" sizes="(min-width: 900px) 120px, 28vw" width="480" height="480" loading="lazy" decoding="async" alt="Josiane, accompagnatrice en képi bleu nuit et écharpe tricotée orange, thermos à la main, salue le joueur." />
+              <div>
+                <p class="card__kicker">DPD · accompagnatrice de train</p>
+                <h4 class="card__title">Josiane Delhaye</h4>
+                <p class="card__body">28 ans de maison. Elle tient les casiers et le Vestiaire de la Cour intérieure, prépare le Paquetage et a déjà expulsé un sanglier d'un train « avec politesse ».</p>
+                <p class="card__flavor">« Ça, c'est pas dans le règlement, mais c'est dans le cœur. »</p>
+              </div>
+            </li>
+            <li class="card card--interactive mate" style="--rc: var(--px-tungsten)" data-reveal>
+              <img class="mate__img" src="/bestiaire/bene-480.webp" srcset="/bestiaire/bene-480.webp 480w, /bestiaire/bene.webp 960w" sizes="(min-width: 900px) 120px, 28vw" width="480" height="480" loading="lazy" decoding="async" alt="Béné, cardigan prune et chignon, lève son tampon au-dessus du classeur vert « Le Règlement »." />
+              <div>
+                <p class="card__kicker">PACO · guichetière</p>
+                <h4 class="card__title">Bénédicte « Béné » Wautier</h4>
+                <p class="card__body">Son guichet a fermé, elle l'a emporté. Elle relance vos affixes, archive les Preuves et garde Le Règlement, le vieux classeur du statut, sous le bras.</p>
+                <p class="card__flavor">« Numéro suivant ! »</p>
+              </div>
+            </li>
+            <li class="card card--interactive mate" style="--rc: var(--px-tungsten)" data-reveal>
+              <img class="mate__img" src="/bestiaire/kevin-480.webp" srcset="/bestiaire/kevin-480.webp 480w, /bestiaire/kevin.webp 960w" sizes="(min-width: 900px) 120px, 28vw" width="480" height="480" loading="lazy" decoding="async" alt="Kevin, grand et barbu, en veste haute visibilité jaune et casque blanc, lève sa pince à caténaire." />
+              <div>
+                <p class="card__kicker">RTS · technicien de l'Infra</p>
+                <h4 class="card__title">Kevin « Kéké » Lambot</h4>
+                <p class="card__body">Technicien caténaires de l'autre maison, détaché au matériel roulant. Gentil comme un pain, il parle à ses outils et a écrit un rapport de trois pages que personne n'avait lu.</p>
+                <p class="card__flavor">« C'est pas nous, c'est l'autre boîte. »</p>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
 
