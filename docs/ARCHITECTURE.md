@@ -221,14 +221,14 @@ export const eventBus = new TypedEventBus<GameEvents>(); // singleton de module,
 | Système | Responsabilité | Branché par |
 |---|---|---|
 | `GameState` (existe) | Agrégat sérialisable : horloge, joueur ; `shiftAt`, `shiftLabel`, `formatClock`. | Boot (création), toutes les scènes (lecture) |
-| `TimeService` / `FatigueClock` | Horloge in-game (1 s réelle = 1 min, figée en menu/dialogue/combat), changements de poste 06/14/22 h, fenêtres de pause café, Fatigue passive (+2/+3/+5 par heure selon le poste), paliers. | `GameScene.update(delta)`, `Clock3x8` |
+| `TimeService` / `FatigueClock` | Horloge in-game (1 min in-game toutes les 8 s réelles, cf. GDD § 4 ; figée en menu/dialogue/combat), changements de poste 06/14/22 h, fenêtres de pause café, Fatigue passive (+2/+3/+5 par heure selon le poste), paliers. | `GameScene.update(delta)`, `Clock3x8` |
 | `CombatEngine` | Initiative, toucher, critique, dégâts, statuts, fuite, IA ennemie, compteur de signature du boss. | `BattleScene` |
 | `Inventory` | Quantités, plafonds, consommables, équipement (3 emplacements), Tickets, Grains de café. | Battle, Pause, Occ |
 | `GridMovement` | Déplacement case par case (16 px), collisions via un prédicat injecté, orientation. | `Player` |
 | `MoralMeter` | Jauge collective 0–100 : crit `floor(Moral/5)`, résistance `min(60, floor(Moral/2))`, fin (≥ 60), phase 3 du boss (< 40). | Battle, dialogues, fins |
 | `SaveManager` | localStorage versionné + migrations (§7). | Boot, Occ, Pause |
 
-Seuils de Fatigue (canon) : **Frais 0–39, Fatigué 40–69, Épuisé 70–89, Burn-out 90–99, Effondré 100**. Toutes les constantes d'équilibrage vivent dans `src/data/balance.ts`.
+Seuils de Fatigue (canon) : **Frais 0–39, Fatigué 40–69, Épuisé 70–89, Burn-out 90–99, Effondré 100**. Toutes les constantes d'équilibrage vivent dans `src/config/balance.ts`.
 
 ### 3.2 Interfaces principales
 
@@ -429,7 +429,7 @@ Un test de cohérence parcourt les données : chaque `next` de dialogue pointe v
 
 - Classes et scènes en **PascalCase** (`BattleScene.ts`), fonctions et variables en camelCase, constantes en `UPPER_SNAKE_CASE`, fichiers d'assets et clés en **kebab-case**.
 - Accessibilité explicite obligatoire (`public`/`private`/`protected`, règle ESLint), `override` sur les méthodes héritées de `Phaser.Scene`.
-- **Aucune valeur magique dans une scène** : `GAME_WIDTH`, `GAME_HEIGHT`, `TILE_SIZE`, `PLAYER_SPEED` sont dans `src/config/constants.ts` ; à ajouter : `WORLD_ZOOM = 2`, `STEP_DURATION_MS = 150`, `CLOCK_MIN_PER_REAL_SEC = 1`, `SAVE_KEY_PREFIX = 'privatix.save'`. Les constantes d'équilibrage vont dans `src/data/balance.ts`.
+- **Aucune valeur magique dans une scène** : `GAME_WIDTH`, `GAME_HEIGHT`, `TILE_SIZE`, `PLAYER_SPEED` sont dans `src/config/constants.ts` ; à ajouter : `WORLD_ZOOM = 2`, `STEP_DURATION_MS = 150`, `CLOCK_MIN_PER_REAL_SEC = 0.125` (1 min in-game toutes les 8 s réelles, cf. GDD § 4), `SAVE_KEY_PREFIX = 'privatix.save'`. Les constantes d'équilibrage vont dans `src/config/balance.ts`.
 - Clés : `SceneKeys`, `RegistryKeys`, `AssetKeys`, `Shift` sont des objets `as const` + type dérivé, jamais de chaîne littérale dans le code (`this.scene.start('Game')` est interdit en revue).
 - Pas de `any`, pas de `!` (non-null assertion) : les données externes sont `unknown` puis affinées par des type guards (`src/utils/guards.ts`).
 
