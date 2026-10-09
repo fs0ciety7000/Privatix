@@ -7,6 +7,9 @@ import { isMarkerVisible } from '@/systems/world/WorldMap';
 import { tileToWorld } from '@/entities/Player';
 import { characterTextureKey, terrainIndex } from '@/ui/PlaceholderTextures';
 
+/** Distance (en cases) sous laquelle le nom d'un objet s'affiche : évite le chevauchement des étiquettes. */
+const PROP_LABEL_RANGE = 2;
+
 const PROP_TINTS = [0xffd200, 0x3fb8e8, 0xe8505b, 0x5bd17a, 0xf2a541, 0xb48cff, 0x9fb0c6, 0xc8323c];
 
 function tintFor(id: string): number {
@@ -29,6 +32,8 @@ export class MapView {
   public readonly heightPx: number;
   private readonly tilemap: Phaser.Tilemaps.Tilemap;
   private readonly views: MarkerView[] = [];
+  private ctx: ConditionContext = { flags: {}, act: 1 };
+  private focus: { tileX: number; tileY: number } | null = null;
 
   public constructor(
     private readonly scene: Phaser.Scene,
@@ -59,9 +64,29 @@ export class MapView {
 
   /** Affiche ou masque PNJ et objets selon l'état de l'histoire. */
   public refresh(ctx: ConditionContext): void {
+    this.ctx = ctx;
+    this.applyVisibility();
+  }
+
+  /** Position du héros : les noms d'objets ne s'affichent qu'à proximité (les noms des PNJ, toujours). */
+  public setFocus(tileX: number, tileY: number): void {
+    this.focus = { tileX, tileY };
+    this.applyVisibility();
+  }
+
+  private applyVisibility(): void {
     for (const view of this.views) {
-      const visible = isMarkerVisible(view.marker, ctx);
-      for (const o of view.objects) o.setVisible(visible);
+      const visible = isMarkerVisible(view.marker, this.ctx);
+      const [main, label] = view.objects;
+      main?.setVisible(visible);
+      if (!label) continue;
+      const near =
+        view.marker.def.kind !== 'prop' ||
+        (this.focus !== null &&
+          Math.abs(this.focus.tileX - view.marker.tileX) +
+            Math.abs(this.focus.tileY - view.marker.tileY) <=
+            PROP_LABEL_RANGE);
+      label.setVisible(visible && near);
     }
   }
 

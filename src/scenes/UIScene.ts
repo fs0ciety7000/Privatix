@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_HEIGHT, GAME_WIDTH, RegistryKeys, SceneKeys } from '@/config/constants';
 import { COLORS, toCss } from '@/config/colors';
 import type { FatigueTierId } from '@/config/balance';
+import { MAPS } from '@/data/maps';
 import { OBJECTIVES } from '@/data/objectives';
 import { isGameState } from '@/systems/GameState';
 import type { GameState } from '@/systems/GameState';
@@ -111,8 +112,10 @@ export class UIScene extends Phaser.Scene {
       this.registry.events.off(Phaser.Data.Events.CHANGE_DATA, this.onRegistryChange, this);
     });
 
-    this.refresh(getGameState(this.registry));
+    const state = getGameState(this.registry);
+    this.refresh(state);
     this.showHint(this.registry.get(RegistryKeys.InteractionHint));
+    this.toast(MAPS[state.position.mapId].name);
   }
 
   private onRegistryChange(_parent: unknown, key: string, value: unknown, previous: unknown): void {

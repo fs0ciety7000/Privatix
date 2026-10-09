@@ -102,6 +102,17 @@ describe('effets de dialogue', () => {
     expect(slept.drink).toBeNull();
   });
 
+  it('une boisson choisie pendant le prologue vaut pour la pause du Matin de l’Acte I', () => {
+    const prologue = gameAt(at(5, 10));
+    const drunk = applyEffect(prologue, { kind: 'drink', drink: 'lungo' }).state;
+    expect(drunk.drink?.shiftIndex).toBe(0);
+    expect(activeDrink(drunk)).toBeNull(); // pas encore le matin
+    expect(activeDrink({ ...drunk, time: { ...drunk.time, totalMinutes: at(9, 0) } })).toBe(
+      'lungo',
+    );
+    expect(activeDrink({ ...drunk, time: { ...drunk.time, totalMinutes: at(14, 0) } })).toBeNull();
+  });
+
   it('Ristretto : Fatigue −10 ; Lungo ralentit la Fatigue liée au temps', () => {
     const s = gameAt(at(9, 0));
     expect(applyEffect(s, { kind: 'drink', drink: 'ristretto' }).state.time.fatigue).toBe(10);

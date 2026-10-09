@@ -134,8 +134,10 @@ export class GameScene extends Phaser.Scene {
       this.playerReady = true;
     }
 
+    this.view.setFocus(pos.tileX, pos.tileY);
     this.setupCamera();
-    pushNotice(this.registry, this.world.def.name);
+    // Au premier chargement, l'UIScene (lancée en parallèle) n'existe pas encore : elle annonce la zone à sa création.
+    if (this.scene.isActive(SceneKeys.UI)) pushNotice(this.registry, this.world.def.name);
     if (state.position.mapId === 'occ') this.autosave();
     this.updateHint();
 
@@ -176,6 +178,7 @@ export class GameScene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   private onArrive(pos: GridPos): void {
+    this.view?.setFocus(pos.tileX, pos.tileY);
     updateGameState(this.registry, (state) => ({
       ...state,
       position: {
@@ -252,6 +255,7 @@ export class GameScene extends Phaser.Scene {
         tileY: state.position.tileY,
         facing: state.position.facing,
       });
+      this.view?.setFocus(state.position.tileX, state.position.tileY);
     }
     this.view?.refresh(contextOf(state));
     this.updateHint();

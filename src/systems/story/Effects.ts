@@ -109,7 +109,12 @@ export function applyEffect(state: GameState, effect: DialogueEffect): EffectRes
     case 'drink': {
       let next: GameState = {
         ...state,
-        drink: { id: effect.drink, shiftIndex: shiftIndexAt(state.time.totalMinutes) },
+        // L'acte N se joue pendant la pause d'index N − 1 (matin, après-midi, nuit du lundi) : une boisson
+        // choisie avant le début de cette pause (prologue de 4h47) vaut pour elle, pas pour la nuit qui s'achève.
+        drink: {
+          id: effect.drink,
+          shiftIndex: Math.max(shiftIndexAt(state.time.totalMinutes), state.time.act - 1),
+        },
       };
       if (effect.drink === 'ristretto') {
         next = withTime(next, addFatigue(next.time, -BALANCE.fatigue.recovery.RISTRETTO));

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME_HEIGHT, GAME_WIDTH, RegistryKeys } from '@/config/constants';
+import { GAME_HEIGHT, GAME_WIDTH, RegistryKeys, STEP_DURATION_MS } from '@/config/constants';
 import { COLORS } from '@/config/colors';
 import type { Facing } from '@/data/types';
 
@@ -12,6 +12,8 @@ const BUTTON_A = { x: GAME_WIDTH - 110, y: GAME_HEIGHT - 110, radius: 44 } as co
  */
 export class VirtualPad extends Phaser.GameObjects.Container {
   private actionCount = 0;
+  /** Numéro d'appui en cours : un relâchement différé ne doit pas annuler un appui plus récent. */
+  private pressId = 0;
 
   public constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
@@ -31,14 +33,32 @@ export class VirtualPad extends Phaser.GameObjects.Container {
         .text(x, y, glyph, { fontFamily: 'monospace', fontSize: '22px', color: '#ffd200' })
         .setOrigin(0.5);
       zone.setInteractive();
+      let pressedAt = 0;
+      let myPress = 0;
       zone.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+        this.pressId += 1;
+        myPress = this.pressId;
+        pressedAt = scene.time.now;
         zone.setFillStyle(COLORS.sncb.panel, 0.85);
         scene.registry.set(RegistryKeys.VirtualDir, dir);
       });
+      const clear = (press: number): void => {
+        if (press === this.pressId && scene.registry.get(RegistryKeys.VirtualDir) === dir) {
+          scene.registry.set(RegistryKeys.VirtualDir, null);
+        }
+      };
+      // Un appui bref (tap) dure souvent moins d'une image : la direction est gardée le temps d'un pas.
       const release = (): void => {
         zone.setFillStyle(COLORS.sncb.panel, 0.5);
-        if (scene.registry.get(RegistryKeys.VirtualDir) === dir)
-          scene.registry.set(RegistryKeys.VirtualDir, null);
+        const press = myPress;
+        const remaining = STEP_DURATION_MS - (scene.time.now - pressedAt);
+        if (remaining > 0) {
+          scene.time.delayedCall(remaining, () => {
+            clear(press);
+          });
+        } else {
+          clear(press);
+        }
       };
       zone.on(Phaser.Input.Events.GAMEOBJECT_POINTER_UP, release);
       zone.on(Phaser.Input.Events.GAMEOBJECT_POINTER_OUT, release);
