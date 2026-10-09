@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0818" />
+    <title>Privatix 3D — prototype</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="ui">
+      <div id="dmg-layer"></div>
+      <div id="hud-top">
+        <div id="badge">
+          <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+            <circle cx="24" cy="24" r="22" fill="#1a1430" stroke="#ff7a1a" stroke-width="3" />
+            <path d="M11 29 Q11 13 24 13 Q37 13 37 29 Z" fill="#ffa419" stroke="#14101a" stroke-width="2" />
+            <rect x="8" y="28" width="32" height="5" rx="2" fill="#ffa419" stroke="#14101a" stroke-width="2" />
+            <circle cx="24" cy="25" r="2.6" fill="#fff0c0" />
+          </svg>
+        </div>
+        <div id="bars">
+          <div class="label">ÉNERGIE <span id="hp-text">100 / 100</span></div>
+          <div id="hp"><div id="hp-ghost"></div><div id="hp-fill"></div></div>
+          <div id="dash-pips"><i class="on"></i><i class="on"></i><span>DASH</span></div>
+        </div>
+      </div>
+      <div id="title"><b>PRIVATIX</b><span>prototype 3D · gare de Mons · shift de nuit</span><em id="wave"></em></div>
+      <div id="combo"></div>
+      <div id="bossbar"><div class="boss-name">DISCOSAURE <span>· élite de Privatix</span></div><div class="boss-bar"><div id="boss-fill"></div></div></div>
+      <div id="slots"></div>
+      <div id="help">
+        <span><kbd>ZQSD</kbd>/<kbd>WASD</kbd> bouger</span><span><kbd>Clic</kbd> frapper (combo ×3)</span><span><kbd>Espace</kbd> dash</span><span><kbd>E</kbd> ramasser</span>
+      </div>
+      <div id="lootcard" class="card"></div>
+      <div id="toast"></div>
+      <div id="fps"></div>
+      <div id="joyzone"></div>
+      <div id="joybase"><div id="joyknob"></div></div>
+      <div id="touch-btns">
+        <button id="btn-use" aria-label="Ramasser">E</button>
+        <button id="btn-dash" aria-label="Dash">DASH</button>
+        <button id="btn-attack" aria-label="Frapper">
+          <svg viewBox="0 0 40 40" width="38" height="38"><rect x="18" y="4" width="4.5" height="26" rx="2" fill="#fff" /><rect x="10" y="4" width="20" height="5" rx="2" fill="#fff" /><rect x="15" y="28" width="10.5" height="9" rx="2" fill="#fff" /></svg>
+        </button>
+      </div>
+    </div>
+    <div id="loading">PRIVATIX</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
