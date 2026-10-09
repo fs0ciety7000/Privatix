@@ -187,7 +187,7 @@ export const ENEMY_CLIPS: Readonly<Record<EnemyKind, EnemyClipMap>> = {
     barW: 1.8,
     exit: 'walk',
   },
-  vanderslide: {
+  lurcke: {
     // Version de travail : pas encore de GLB propre, le costume du Manager KPI grandi.
     model: 'manager',
     idle: 'idle',

@@ -1,6 +1,6 @@
 // Parcours de bout en bout des trois biomes (Playwright + Chromium SwiftShader, serveur Vite de dev,
 // `?cheat&demo`) : un Shift complet — Quais & Voies, La Passerelle (Fluidifieur, Elio Di Rupo),
-// Hall & BAG (Discosaure, Gontran Vanderslide) — jusqu'à l'écran des départs, avec captures.
+// Hall & BAG (Discosaure, Jean-Cul Lurcke) — jusqu'à l'écran des départs, avec captures.
 //   node tools/biomes/e2e.mjs [dossier des captures]
 // Échec (code 1) si une erreur console apparaît, si un boss n'est pas battu ou si le Shift ne se
 // termine pas par une victoire.
@@ -208,11 +208,11 @@ async function boss(biome) {
     await advance(700);
     await capture('b2-dirupo-ciseaux');
     await advance(1500);
-  } else if (kind === 'vanderslide') {
+  } else if (kind === 'lurcke') {
     await advance(1600);
     await api('attack', me.id, 'bullets');
     await advance(700);
-    await capture('b3-vanderslide-bullet-points');
+    await capture('b3-lurcke-bullet-points');
     await advance(1500);
   }
   await api('cheat', 'K');
@@ -229,7 +229,7 @@ await page.waitForTimeout(1500);
 const end = await state();
 await capture('departs', 800);
 if (end.result?.end !== 'victoire') fail(`fin du Shift : ${JSON.stringify(end.result)}`);
-for (const k of ['auditeur', 'fluidifieur', 'dirupo', 'discosaure', 'vanderslide'])
+for (const k of ['auditeur', 'fluidifieur', 'dirupo', 'discosaure', 'lurcke'])
   if (!defeated.has(k)) fail(`${k} jamais rencontré`);
 for (const p of problems) fail(p);
 console.log(

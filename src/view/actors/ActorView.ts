@@ -38,7 +38,21 @@ export interface ActorView<S> {
   dispose(): void;
 }
 
-export type EnemyView = ActorView<EnemySim>;
+/** Volume d'occlusion d'un gros acteur : cylindre au sol, centré sur `pos` (m). */
+export interface OccluderShape {
+  readonly radius: number;
+  readonly height: number;
+}
+
+export interface EnemyView extends ActorView<EnemySim> {
+  /**
+   * Volume des acteurs assez grands pour masquer le héros (Discosaure, boss), sinon `null` ou absent :
+   * `GameView` lance un rayon caméra → héros contre ce volume à chaque frame.
+   */
+  readonly occluder?: OccluderShape | null;
+  /** Masque le héros (ou non) : fondu doux vers l'opacité tramée d'occlusion (temps réel, s). */
+  setOccluding?(on: boolean, realDt: number): void;
+}
 
 /**
  * Événements visuels émis par l'animation d'un modèle (manifeste : `land`, `glint`, `active`… ; plus

@@ -16,7 +16,7 @@
 | Titre | **Privatix** |
 | Genre | Hack 'n' Slash **roguelite** en vue de dessus, temps réel |
 | Accroche officielle | « Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio contre une armée de consultants qui veulent libéraliser et privatiser le rail ! » |
-| Pitch | Privatix Rail Solutions et le cabinet Synergia Partners veulent **libéraliser et privatiser le rail** : ouvrir le réseau à la concurrence, le découper en lots et les céder un par un (plan **PHR-2032**). Mons est le **lot n° 1**, la gare pilote de « Mons 2032 » ; le **Contrat-cadre de libéralisation** doit être signé « à la fin du service » au dernier étage du BAG. Léon (ou Léa), agent·e en 3x8, prend sa **clé à tire-fond** et remonte la gare à contre-courant, des quais jusqu'au bureau où Gontran Vanderslide tient le stylo. Chaque tentative est un **Shift**. |
+| Pitch | Privatix Rail Solutions et le cabinet Synergia Partners veulent **libéraliser et privatiser le rail** : ouvrir le réseau à la concurrence, le découper en lots et les céder un par un (plan **PHR-2032**). Mons est le **lot n° 1**, la gare pilote de « Mons 2032 » ; le **Contrat-cadre de libéralisation** doit être signé « à la fin du service » au dernier étage du BAG. Léon (ou Léa), agent·e en 3x8, prend sa **clé à tire-fond** et remonte la gare à contre-courant, des quais jusqu'au bureau où Jean-Cul Lurcke tient le stylo. Chaque tentative est un **Shift**. |
 | Justification de la boucle | Le **Sondage éternel** : pour signer, Privatix doit réunir toutes les « parties prenantes », dont les trois candidats de son propre appel d'offres (trois filiales du même groupe). Elle n'arrive jamais à trouver un créneau : la signature est sans cesse reprogrammée « à la fin de votre service ». Pas de magie, pas de boucle temporelle. |
 | Objectif final | Empêcher la signature pour de bon : réunir les **3 Preuves** du PHR-2032 (guichets fermés, accompagnateurs supprimés, appel d'offres à candidat unique jamais soumis à concertation), le Quorum de l'OCC, régler la question Jean-Mi et obtenir six reprogrammations, puis rendre le plan public (vraie fin, LORE §2.8). |
 | Ton | **Satirique dans les noms, sérieux dans les règles.** La satire vise une politique (la libéralisation et la privatisation du rail), le management et des cabinets de conseil fictifs ; jamais une personne réelle, un parti, une marque, les voyageurs ou les cheminots de terrain, **hors des trois exceptions autorisées** par le porteur du projet (SNCB, « Calatrava », caricature d'Elio Di Rupo : cadre au LORE §1.4). |
@@ -87,9 +87,9 @@ Ambiances : **Quais** bleu-gris froid et lampes à sodium en flaques, **arène d
                               ─► BOSS 2 L'Invité d'honneur (Elio Di Rupo, inauguration « Mons 2032 »)
         ▼  descente vers le hall + badge visiteur
   BIOME 3 — Hall & BAG      : 9 salles (dont Salle gardée : le Discosaure) ─► Palier du 3e
-                              ─► BOSS FINAL Gontran Vanderslide
+                              ─► BOSS FINAL Jean-Cul Lurcke
         │                                                         │
-        │ Énergie à 0 (« Mise à pied »)                           │ Vanderslide vaincu (« Shift tenu »)
+        │ Énergie à 0 (« Mise à pied »)                           │ Lurcke vaincu (« Shift tenu »)
         ▼                                                         ▼
   Écran de résultats « Fin de service anticipée à 11 h 30 »   Résultats + scène + Sondage  
         │   GARDÉ : PS, Grains, Tasses, Pièces, Ferraille,        │ « signature reprogrammée »
@@ -130,7 +130,7 @@ Le roulement est **imposé en rotation** : Matin → Après-midi → Nuit → Ma
 ### 2.5 Mort et victoire
 | | **Mort** (« Mise à pied ») | **Victoire** (« Shift tenu ») |
 |---|---|---|
-| Déclencheur | Énergie à 0 (après la Mutuelle si on l'a) | Vanderslide vaincu (MVP : L'Auditeur des Quais vaincu) |
+| Déclencheur | Énergie à 0 (après la Mutuelle si on l'a) | Lurcke vaincu (MVP : L'Auditeur des Quais vaincu) |
 | Séquence | Anim `death` 1 500 ms, ralenti ×0,4, fondu au noir, écran des départs : « Shift 37 — **SUPPRIMÉ** — cause : Consultant Junior » | Coup final, scène, Hubert Rentabilis « On reprogramme », Sondage |
 | PS | **100 % gardés** (c'est un acquis) + « Prime d'ancienneté » **+2 PS par salle comptée atteinte** | 100 % + **« Fin de service » +50 PS** |
 | Grains | 100 % gardés | **×2** sur les Grains du run |
@@ -146,7 +146,7 @@ Le roulement est **imposé en rotation** : Matin → Après-midi → Nuit → Ma
 |---|---|---|---|---|---|---|
 | **1 — Quais & Voies** | **8** | Salle des pauses + **Boss 1 L'Auditeur des Quais** | Quai simple 40×24, Double voie 52×30, Faisceau 52×30, Abri de quai 40×22, Passage sous voies 60×14 | **Rames** qui passent (tuent les non-élites, 40 % d'Énergie max au héros), rames à quai qui partent (murs mobiles), caténaire tombée, ballast (−15 % vitesse) | Consultant Junior, Borne Automatique, Drone Optimètre ; Agent de sécurité la Nuit (v1) | Manager KPI ; **Furet putride** (élite majeur, v1 : 40 % des salles Élite, 60 % la Nuit) |
 | **2 — La Passerelle** (v1) | **8**, dont la **Salle gardée du Fluidifieur** en salle 8 | Salle des pauses + **Boss 2 L'Invité d'honneur** (Elio Di Rupo) au belvédère, inauguration « Mons 2032 » | Tablier 64×14, Nœud sous l'arc 40×32, Verrière 40×24, Escalators 40×22, Belvédère 52×30 | **Vent** (rafales de 2 s toutes les 6–8 s), **vides** (héros : −10 % Énergie et retour au bord ; non-élites : éliminés), dalles fissurées | Drones dominants, Consultants, Bornes sur îlots, premiers Certifiés | Coach Agile ; **le Fluidifieur** (élite majeur, Salle gardée garantie) |
-| **3 — Hall & BAG** (v2) | **9** | Palier du 3e + **Boss final Gontran Vanderslide** | Hall historique 52×30, Open-space 52×30, Réunion 40×22, Accueil 40×24, Archives 40×24, Couloir d'étage 60×14 | **Cloisons mobiles** (toutes les 10 s), portiques à badge, photocopieuses-tourelles, écrans de visio (buff ennemi +25 %) | Tous, Agents de sécurité, Pense-bête | Manager KPI + Coach Agile ; **le Discosaure** (mini-boss, Salle gardée garantie, v2) |
+| **3 — Hall & BAG** (v2) | **9** | Palier du 3e + **Boss final Jean-Cul Lurcke** | Hall historique 52×30, Open-space 52×30, Réunion 40×22, Accueil 40×24, Archives 40×24, Couloir d'étage 60×14 | **Cloisons mobiles** (toutes les 10 s), portiques à badge, photocopieuses-tourelles, écrans de visio (buff ennemi +25 %) | Tous, Agents de sécurité, Pense-bête | Manager KPI + Coach Agile ; **le Discosaure** (mini-boss, Salle gardée garantie, v2) |
 
 Taille minimale d'une salle : **40×22 tuiles** (≈ 21 × 12 m ; *hérité Phaser : un écran de 640×352*). En 3D, le champ visible (≈ 23 × 16 m) fait légèrement défiler les grandes salles, comme dans Hades ; les portées des tireurs sont à relire en playtest. Taille maximale : **64×40** (hors arène finale). Caméra : `startFollow` lerp **0,12**, deadzone **32×24 px**, décalage vers la visée **24 px**.
 
@@ -573,7 +573,7 @@ Conséquence : plus le service avance, plus on vit « Sous pression » par défa
 > |---|---|---|
 > | 1 — Quais & Voies | **Furet putride** (élite majeur, salle Élite ; antre au coin poubelles de la Cour intérieure du BAG) | **L'Auditeur des Quais** (§ 7.7) |
 > | 2 — La Passerelle | **Le Fluidifieur** (élite majeur, ancien Boss 2, Salle gardée fixe en salle 8 ; § 7.10) | **L'Invité d'honneur, Elio Di Rupo** (§ 7.8), **obligatoire** |
-> | 3 — Hall & BAG | **Le Discosaure** (mini-boss, Salle gardée garantie, 2e étage du BAG ; § 7.10) | **Gontran Vanderslide** (§ 7.9) |
+> | 3 — Hall & BAG | **Le Discosaure** (mini-boss, Salle gardée garantie, 2e étage du BAG ; § 7.10) | **Jean-Cul Lurcke** (§ 7.9) |
 
 ### 7.1 Le héros (base, sans méta)
 | Stat | Valeur |
@@ -758,7 +758,7 @@ Caricature satirique autorisée d'une personnalité réelle. **Cadre obligatoire
 - **DPS attendu** : ≈ 110 DPS à ce stade (Avantages et équipement ≈ ×2,2) ; uptime ≈ 30 % (fenêtres de discours, pose solennelle, ruban coupé) → ≈ 1 min 30 de dégâts utiles sur 2 min 30.
 - **Repli** : un nom et un modèle fictifs (« Le Bourgmestre au nœud papillon ») restent activables par un drapeau de configuration si l'autorisation tombe ou pour une distribution hors de Belgique.
 
-### 7.9 Boss final : Gontran Vanderslide (v2, version design)
+### 7.9 Boss final : Jean-Cul Lurcke (v2, version design)
 | Élément | Valeur |
 |---|---|
 | Frame / PV | P1 **64×64** (trottinette, 3 directions) puis P2–P3 **128×128** / **1 800 / 1 600 / 1 200 PV** |
@@ -771,7 +771,7 @@ Caricature satirique autorisée d'une personnalité réelle. **Cadre obligatoire
 | Coup final | Sous 5 % : invite unique **« Mais concrètement, sur le terrain, ça donne quoi ? »** ; un seul coup, critique garanti, ralenti, silence. |
 | Récompenses | 60 PS, 5 Pièces (1er kill), 12 Grains, Tasse ; « Shift tenu » +50 PS |
 
-**Version de travail (3D, en attendant la v2)** : Vanderslide est déjà le boss du biome 3 dans `src/sim/enemies/VanderslideSim.ts`, sans jauge de signature, Preuves ni Salle du Conseil : PV 1 800 fixes, phase 1 « Méga-Deck 2032 » (bullet points à trou, piliers-graphiques, « Je vous mets en copie »), phase 2 à 50 % « Conseil d'Administration en visio » (télégraphes ×0,85, Reporting géant), coup final sous 5 % ; modèle provisoire : le Manager KPI agrandi. Chiffres : `VANDERSLIDE` dans `balance.ts`.
+**Version de travail (3D, en attendant la v2)** : Lurcke est déjà le boss du biome 3 dans `src/sim/enemies/LurckeSim.ts`, sans jauge de signature, Preuves ni Salle du Conseil : PV 1 800 fixes, phase 1 « Méga-Deck 2032 » (bullet points à trou, piliers-graphiques, « Je vous mets en copie »), phase 2 à 50 % « Conseil d'Administration en visio » (télégraphes ×0,85, Reporting géant), coup final sous 5 % ; modèle provisoire : le Manager KPI agrandi. Chiffres : `LURCKE` dans `balance.ts`.
 
 ### 7.10 Ennemis post-MVP (rappel design)
 **Agent de Sécurité Externalisé** (Tank, 90 PV, coût 3) : Bouclier-badge frontal (100 % bloqué), charge « Contrôle d'accès » de 48 px (télégraphe 700 ms), ouverture 1 s ; le Sifflet lui fait baisser le bouclier · **Pense-bête Vivant** (Essaim invoqué, 5 PV, coût 0) : Se colle : −10 % de vitesse par Pense-bête (3 max) ; décollé par un dash · **Coach Agile « Le Facilitateur »** (Élite invocateur, 140 PV, coût 7) : Kite à 112 px, 4 Pense-bête toutes les 8 s, *Team building* (attire et inverse les commandes 1,5 s), *Rétro positive* (soin 20 %, canalisation 2 s interrompable) · **Certifié (affixe)** (Variante, ×2,5 PV, coût ×2,5) : ISO (armure), En copie (se dédouble), Prioritaire (vitesse ×1,4), Senior Partner (explose en zone).

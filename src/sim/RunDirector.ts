@@ -196,7 +196,7 @@ interface Timer {
  * Flux d'un Shift complet (port pur de `scenes/RunScene.ts`, étendu aux trois biomes du GDD § 3) :
  * construction de chaque salle depuis son gabarit, portes qui annoncent la récompense, vagues,
  * Salles gardées (Fluidifieur, Discosaure), récompenses, Avantages, Friterie, Salle des pauses, salle
- * café, boss de chaque biome (Auditeur des Quais, Elio Di Rupo, Gontran Vanderslide), transitions
+ * café, boss de chaque biome (Auditeur des Quais, Elio Di Rupo, Jean-Cul Lurcke), transitions
  * de biome, mort et victoire. Environnement : rafales de vent sur la Passerelle, cloisons mobiles dans
  * le BAG. Tout passe par le temps de la simulation : même graine et mêmes intentions = même Shift. La
  * scène ne fait qu'afficher (fondus, fenêtres DOM) et répondre aux choix (`choose`).

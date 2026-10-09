@@ -9,7 +9,7 @@ import { createRng, randInt } from '@/utils/rng';
  * Déroulé d'un Shift (GDD § 3) : trois biomes à la suite, « Quais & Voies » (8 salles), « La
  * Passerelle » (8 salles, Salle gardée du Fluidifieur en salle 8) et « Hall & BAG » (9 salles, Salle
  * gardée du Discosaure entre 5 et 7). Chaque biome finit par la Salle des pauses puis son boss
- * (Auditeur des Quais, Elio Di Rupo, Gontran Vanderslide). Chaque porte annonce le type de salle et sa
+ * (Auditeur des Quais, Elio Di Rupo, Jean-Cul Lurcke). Chaque porte annonce le type de salle et sa
  * récompense. Tirage déterministe par graine et par salle.
  *
  * Numérotation : `room` est la position dans le Shift, tous biomes confondus. Biome 1 : 1 à 8, pauses

@@ -1,4 +1,4 @@
-import { VANDERSLIDE } from '@/config/balance';
+import { LURCKE } from '@/config/balance';
 import type { TokenKind } from '@/systems/combat/AttackTokens';
 import type { EnemyScale } from '@/systems/combat/damage';
 import { blocksWalker, tileAt } from '@/systems/procedural/RoomLayout';
@@ -14,7 +14,7 @@ const COPY_WINDUP_MS = 600;
 const PHASE2_TEMPO = 0.85;
 
 /**
- * Boss du biome 3, **version de travail** : Gontran Vanderslide (LORE § 7.3). Placeholder cohérent du
+ * Boss du biome 3, **version de travail** : Jean-Cul Lurcke (LORE § 7.3). Placeholder cohérent du
  * GDD § 7.9 en attendant la jauge de signature, les Preuves en main et la Salle du Conseil :
  * - Phase 1 « Méga-Deck 2032 » : bullet points (3 lignes qui balaient la salle, un trou par ligne),
  *   piliers-graphiques (3 cercles), « Je vous mets en copie » (2 Consultants) ;
@@ -22,7 +22,7 @@ const PHASE2_TEMPO = 0.85;
  * - Coup final sous 5 % : « Mais concrètement, sur le terrain, ça donne quoi ? » — il reste sans voix,
  *   étourdi 6 s, et encaisse ×4.
  */
-export class VanderslideSim extends EnemySim implements PhasedEnemy {
+export class LurckeSim extends EnemySim implements PhasedEnemy {
   public phase = 1;
   public transitionLeft = 0;
   public finalBlow = false;
@@ -30,7 +30,7 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
   private readonly cooldowns = new Map<DeckPattern, number>();
 
   public constructor(world: SimWorld, x: number, y: number, scale: EnemyScale) {
-    super(world, 'vanderslide', x, y, scale);
+    super(world, 'lurcke', x, y, scale);
     this.nextPatternAt = world.now() + 1500;
   }
 
@@ -61,15 +61,15 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
     const h = this.world.hero.body;
     this.facing = this.angleToHero();
     if (this.transitionLeft > 0 || this.finalBlow) return null;
-    if (d > VANDERSLIDE.KEEP_PX + 40) this.moveToward(h.x, h.y);
-    else if (d < VANDERSLIDE.KEEP_PX - 50) this.moveAngle(this.facing + Math.PI, this.speed);
+    if (d > LURCKE.KEEP_PX + 40) this.moveToward(h.x, h.y);
+    else if (d < LURCKE.KEEP_PX - 50) this.moveAngle(this.facing + Math.PI, this.speed);
     else this.moveAngle(this.facing + Math.PI / 2, this.speed * 0.5);
     this.facing = this.angleToHero();
     if (now < this.nextPatternAt) return null;
     const options: DeckPattern[] = [];
     if (this.ready('bullets')) options.push('bullets', 'bullets');
     if (this.ready('charts')) options.push('charts', 'charts');
-    if (this.ready('copy') && this.consultants() < VANDERSLIDE.COPY_MAX_ALIVE) options.push('copy');
+    if (this.ready('copy') && this.consultants() < LURCKE.COPY_MAX_ALIVE) options.push('copy');
     if (this.phase >= 2 && this.ready('report')) options.push('report');
     return pick(this.world.rng, options) ?? null;
   }
@@ -85,9 +85,9 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
   protected windupMs(attack: string): number {
     switch (attack as DeckPattern) {
       case 'bullets':
-        return Math.max(800, VANDERSLIDE.BULLETS_TELEGRAPH_MS * this.tempo);
+        return Math.max(800, LURCKE.BULLETS_TELEGRAPH_MS * this.tempo);
       case 'charts':
-        return Math.max(700, VANDERSLIDE.CHART_TELEGRAPH_MS * this.tempo);
+        return Math.max(700, LURCKE.CHART_TELEGRAPH_MS * this.tempo);
       case 'copy':
         return COPY_WINDUP_MS;
       case 'report':
@@ -105,10 +105,10 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
         const tele = this.windupMs('bullets');
         const x0 = arena.tileSize * 1.5;
         const x1 = arena.widthPx - arena.tileSize * 1.5;
-        for (let i = 0; i < VANDERSLIDE.BULLET_LINES; i += 1) {
-          const y = h.y + (i - (VANDERSLIDE.BULLET_LINES - 1) / 2) * VANDERSLIDE.BULLET_SPACING;
+        for (let i = 0; i < LURCKE.BULLET_LINES; i += 1) {
+          const y = h.y + (i - (LURCKE.BULLET_LINES - 1) / 2) * LURCKE.BULLET_SPACING;
           if (y < arena.tileSize * 2.5 || y > arena.heightPx - arena.tileSize * 1.5) continue;
-          const gap = VANDERSLIDE.BULLET_GAP / (x1 - x0);
+          const gap = LURCKE.BULLET_GAP / (x1 - x0);
           const from = 0.08 + rng() * (0.84 - gap);
           this.world.spawnHazard({
             kind: 'line',
@@ -116,14 +116,14 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
             y0: y,
             x1,
             y1: y,
-            width: VANDERSLIDE.BULLET_WIDTH,
+            width: LURCKE.BULLET_WIDTH,
             telegraphMs: tele,
             lingerMs: 240,
             tickMs: 1,
             once: true,
             gapFrom: from,
             gapTo: from + gap,
-            damage: Math.round(VANDERSLIDE.BULLET_DAMAGE * this.damageMult),
+            damage: Math.round(LURCKE.BULLET_DAMAGE * this.damageMult),
             owner: this.displayName,
             skin: 'bullet',
           });
@@ -132,7 +132,7 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
       }
       case 'charts': {
         const tele = this.windupMs('charts');
-        for (let i = 0; i < VANDERSLIDE.CHARTS; i += 1) {
+        for (let i = 0; i < LURCKE.CHARTS; i += 1) {
           const a = rng() * Math.PI * 2;
           const r = i === 0 ? 0 : 60 + rng() * 50;
           const x = h.x + Math.cos(a) * r;
@@ -147,9 +147,9 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
             kind: 'circle',
             x,
             y,
-            radius: VANDERSLIDE.CHART_RADIUS,
+            radius: LURCKE.CHART_RADIUS,
             telegraphMs: tele,
-            damage: Math.round(VANDERSLIDE.CHART_DAMAGE * this.damageMult),
+            damage: Math.round(LURCKE.CHART_DAMAGE * this.damageMult),
             owner: this.displayName,
             skin: 'chart',
           });
@@ -166,10 +166,10 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
     const b = this.body;
     const pattern = attack as DeckPattern;
     const cd: Record<DeckPattern, number> = {
-      bullets: VANDERSLIDE.BULLET_COOLDOWN_MS,
-      charts: VANDERSLIDE.CHART_COOLDOWN_MS,
-      copy: VANDERSLIDE.COPY_COOLDOWN_MS,
-      report: VANDERSLIDE.REPORT_COOLDOWN_MS,
+      bullets: LURCKE.BULLET_COOLDOWN_MS,
+      charts: LURCKE.CHART_COOLDOWN_MS,
+      copy: LURCKE.COPY_COOLDOWN_MS,
+      report: LURCKE.REPORT_COOLDOWN_MS,
     };
     this.cooldowns.set(pattern, now + cd[pattern] * this.tempo);
     this.world.emit({
@@ -181,7 +181,7 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
       angle: this.facing,
     });
     if (pattern === 'copy') {
-      for (let i = 0; i < VANDERSLIDE.COPY_COUNT; i += 1) {
+      for (let i = 0; i < LURCKE.COPY_COUNT; i += 1) {
         const a = this.world.rng() * Math.PI * 2;
         this.world.spawnEnemy('consultant', b.x + Math.cos(a) * 60, b.y + Math.sin(a) * 44);
       }
@@ -204,25 +204,25 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
         kind: 'ring',
         x: b.x,
         y: b.y,
-        maxRadius: VANDERSLIDE.REPORT_RADIUS,
-        thickness: VANDERSLIDE.REPORT_THICKNESS,
-        telegraphMs: VANDERSLIDE.REPORT_TELEGRAPH_MS,
-        expandMs: VANDERSLIDE.REPORT_EXPAND_MS,
-        damage: Math.round(VANDERSLIDE.REPORT_DAMAGE * this.damageMult),
+        maxRadius: LURCKE.REPORT_RADIUS,
+        thickness: LURCKE.REPORT_THICKNESS,
+        telegraphMs: LURCKE.REPORT_TELEGRAPH_MS,
+        expandMs: LURCKE.REPORT_EXPAND_MS,
+        damage: Math.round(LURCKE.REPORT_DAMAGE * this.damageMult),
         owner: this.displayName,
       });
     }
   }
 
   protected updateAttack(attack: string, _dt: number, elapsed: number): number | null {
-    const gap = (VANDERSLIDE.PATTERN_GAP_MS[this.phase - 1] ?? 1500) * this.tempo;
+    const gap = (LURCKE.PATTERN_GAP_MS[this.phase - 1] ?? 1500) * this.tempo;
     const done = (recovery: number): number => {
       this.nextPatternAt = this.world.now() + gap;
       return recovery;
     };
     switch (attack as DeckPattern) {
       case 'report':
-        return elapsed >= VANDERSLIDE.REPORT_TELEGRAPH_MS ? done(500) : null;
+        return elapsed >= LURCKE.REPORT_TELEGRAPH_MS ? done(500) : null;
       default:
         return elapsed >= 200 ? done(600) : null;
     }
@@ -234,10 +234,10 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
 
   protected override onHurt(): void {
     const ratio = this.hp / this.maxHp;
-    if (!this.finalBlow && ratio <= VANDERSLIDE.FINAL_AT) {
+    if (!this.finalBlow && ratio <= LURCKE.FINAL_AT) {
       this.finalBlow = true;
-      this.makeVulnerable(3, VANDERSLIDE.FINAL_STUN_MS);
-      this.stun(VANDERSLIDE.FINAL_STUN_MS);
+      this.makeVulnerable(3, LURCKE.FINAL_STUN_MS);
+      this.stun(LURCKE.FINAL_STUN_MS);
       this.world.time.slowmo(0.4, 900, 300);
       this.world.emit({ type: 'fx', name: 'finalBlow', x: this.body.x, y: this.body.y });
       this.world.emit({
@@ -248,15 +248,15 @@ export class VanderslideSim extends EnemySim implements PhasedEnemy {
       });
       return;
     }
-    if (this.phase === 1 && ratio <= VANDERSLIDE.PHASE_AT) {
+    if (this.phase === 1 && ratio <= LURCKE.PHASE_AT) {
       this.phase = 2;
-      this.transitionLeft = VANDERSLIDE.PHASE_TRANSITION_MS;
+      this.transitionLeft = LURCKE.PHASE_TRANSITION_MS;
       this.telegraph = null;
       this.world.emit({ type: 'bossPhase', phase: 2, title: 'CONSEIL D’ADMINISTRATION EN VISIO' });
-      const line = PHASE_LINES.vanderslide?.[0];
+      const line = PHASE_LINES.lurcke?.[0];
       if (line) this.world.emit({ type: 'bossLine', ...line });
-      this.nextPatternAt = this.world.now() + VANDERSLIDE.PHASE_TRANSITION_MS + 500;
-      this.fsm.request({ to: 'recover', payload: { ms: VANDERSLIDE.PHASE_TRANSITION_MS } });
+      this.nextPatternAt = this.world.now() + LURCKE.PHASE_TRANSITION_MS + 500;
+      this.fsm.request({ to: 'recover', payload: { ms: LURCKE.PHASE_TRANSITION_MS } });
     }
   }
 

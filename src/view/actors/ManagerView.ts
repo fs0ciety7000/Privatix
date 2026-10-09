@@ -12,6 +12,13 @@ import { easeIn, easeOut, keyed } from '@/view/rig';
 
 const SCALE = 1.18;
 
+export interface ManagerLook {
+  /** Agrandissement relatif (repli procédural du boss final : 1,4, comme son GLB provisoire). */
+  readonly grow?: number;
+  /** Bulle de posture (Manager KPI seulement : le boss final n'a pas cette mécanique). */
+  readonly posture?: boolean;
+}
+
 export class ManagerView extends ProceduralEnemyView {
   private readonly screen: THREE.MeshBasicMaterial;
   private readonly shieldMat: THREE.MeshBasicMaterial;
@@ -20,14 +27,19 @@ export class ManagerView extends ProceduralEnemyView {
   private walk = Math.random() * 6;
   private shieldK = 1;
 
-  public constructor(scene: THREE.Scene, reducedMotion: boolean) {
+  private readonly posture: boolean;
+
+  public constructor(scene: THREE.Scene, reducedMotion: boolean, look: ManagerLook = {}) {
+    const grow = look.grow ?? 1;
     super(scene, reducedMotion, {
-      barY: 2.55,
-      barW: 1.3,
-      spawnR: 0.6,
+      barY: 2.55 * grow,
+      barW: 1.3 * Math.min(grow, 1.4),
+      spawnR: 0.6 * grow,
       topple: true,
-      scale: SCALE,
+      scale: SCALE * grow,
     });
+    this.posture = look.posture ?? true;
+    if (!this.posture) this.shieldK = 0;
     const r = this.rig;
     const suit = this.mat(0x0f6f6a, 0.9);
     const vest = this.mat(0x19c3b1, 0.7);
@@ -170,7 +182,7 @@ export class ManagerView extends ProceduralEnemyView {
     if (sim.state === 'windup') this.screen.color.setRGB(1.6 + 2 * windup, 0.6, 1.2);
     else this.screen.color.setScalar(1.6);
     // Bulle de posture : se brise au burn-out, revient après.
-    const target = sim.broken ? 0 : 1;
+    const target = sim.broken || !this.posture ? 0 : 1;
     this.shieldK += (target - this.shieldK) * (1 - Math.exp(-(sim.broken ? 20 : 3) * dt));
     this.shield.visible = this.shieldK > 0.03;
     const pulse = this.reducedMotion ? 0 : Math.sin(this.time * 3) * 0.04;

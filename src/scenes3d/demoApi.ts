@@ -150,6 +150,10 @@ export function installDemoApi(game: Game3D): void {
       game.choose(i);
     },
     stats: () => game.gameView.stats(),
+    /** Atténuation des gros acteurs qui masquent le héros (comparaisons avant / après). */
+    occlusion: (on: boolean) => {
+      game.gameView.occlusionFade = on;
+    },
     /** Progression (méta) courante. */
     progress: () => {
       const m = game.progress;

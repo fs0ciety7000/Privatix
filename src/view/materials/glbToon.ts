@@ -24,6 +24,11 @@ export interface GlbUniforms {
   readonly uTwinkle: { value: number };
   readonly uRimColor: { value: THREE.Color };
   readonly uRimStrength: { value: number };
+  /**
+   * Opacité tramée (1 : opaque). Sous 1, les fragments sont écartés selon une matrice de Bayer 4×4 :
+   * l'acteur qui masque le héros devient « semi-transparent » sans tri ni changement de programme.
+   */
+  readonly uFade: { value: number };
 }
 
 export interface GlbUniformOpts {
@@ -44,7 +49,20 @@ export function makeGlbUniforms(o: GlbUniformOpts = {}): GlbUniforms {
     uTwinkle: { value: o.twinkle === false ? 0 : 1 },
     uRimColor: { value: new THREE.Color(o.rim ?? PAL.rim) },
     uRimStrength: { value: o.rimStrength ?? 0.9 },
+    uFade: { value: 1 },
   };
+}
+
+/** Tramage d'opacité (uFade) : fonctions à placer avant `main`, test à placer en tête de `main`. */
+const FADE_PARS = /* glsl */ `
+  uniform float uFade;
+  float glbBayer2(vec2 a) { a = floor(a); return fract(a.x * 0.5 + a.y * a.y * 0.75); }
+  float glbBayer4(vec2 a) { return glbBayer2(0.5 * a) * 0.25 + glbBayer2(a); }
+`;
+const FADE_TEST = /* glsl */ `if (uFade < 0.999 && glbBayer4(gl_FragCoord.xy) >= uFade) discard;`;
+
+function withFade(fragment: string): string {
+  return FADE_PARS + fragment.replace('void main() {', `void main() {\n  ${FADE_TEST}`);
 }
 
 function bind(sh: THREE.WebGLProgramParametersWithUniforms, u: GlbUniforms): void {
@@ -62,7 +80,7 @@ export function glbToonMaterial(u: GlbUniforms): THREE.MeshToonMaterial {
     bind(sh, u);
     sh.fragmentShader =
       'uniform vec3 uRimColor;\nuniform float uRimStrength;\nuniform float uFlash;\nuniform vec3 uFlashColor;\n' +
-      sh.fragmentShader
+      withFade(sh.fragmentShader)
         .replace(
           '#include <color_fragment>',
           `#if defined( USE_COLOR_ALPHA )
@@ -101,7 +119,7 @@ export function glbGlowMaterial(u: GlbUniforms, intensity = 3.2): THREE.MeshBasi
     sh.uniforms.uGlow = { value: intensity };
     sh.fragmentShader =
       'uniform float uGlow;\nuniform float uTelegraph;\nuniform vec3 uDanger;\nuniform float uFlash;\nuniform vec3 uFlashColor;\n' +
-      sh.fragmentShader
+      withFade(sh.fragmentShader)
         .replace(
           '#include <color_fragment>',
           `#if defined( USE_COLOR_ALPHA )
@@ -157,7 +175,7 @@ export function glbMirrorMaterial(u: GlbUniforms): THREE.ShaderMaterial {
     vertexColors: true,
     uniforms: { ...u },
     vertexShader: SKIN_VERT,
-    fragmentShader: /* glsl */ `
+    fragmentShader: withFade(/* glsl */ `
       uniform float uTime;
       uniform float uTwinkle;
       uniform float uTelegraph;
@@ -194,7 +212,7 @@ export function glbMirrorMaterial(u: GlbUniforms): THREE.ShaderMaterial {
         col += vec3(2.5) * tw * uTwinkle;
         col = mix(col, uFlashColor, uFlash);
         gl_FragColor = vec4(col, 1.0);
-      }`,
+      }`),
   });
   m.name = 'mirror';
   return m;
