@@ -1,6 +1,6 @@
 # Privatix
 
-Hack 'n' Slash / Roguelite 2D en vue de dessus, satirique, sur le rail belge. Un cheminot en 3x8, armé d'une clé à tire-fond, défend la gare de Mons contre les consultants et les automates de la mégacorporation **Privatix**. Chaque run est un **Shift** ; à chaque échec, retour à l'**OCC** (Operation Coffee Center), sous la passerelle, pour dépenser ses **Points de Syndicalisme** et reprendre son poste.
+Hack 'n' Slash / Roguelite 2D en vue de dessus, satirique, sur le rail belge. Un cheminot en 3x8, armé d'une clé à tire-fond, défend la gare de Mons contre les consultants et les automates de la mégacorporation **Privatix**, qui veulent libéraliser et privatiser le rail. Chaque run est un **Shift** ; à chaque échec, retour à l'**OCC** (Operation Coffee Center), sous la passerelle, pour dépenser ses **Points de Syndicalisme** et reprendre son poste.
 
 **Stack** : Phaser 4.2 (Arcade Physics) · TypeScript 5.9 strict · Vite 7 · Vitest 4 · sprites originaux générés par `tools/pixelart/` · déploiement Docker/nginx sur Coolify (`privatix.fs0ciety.org`).
 

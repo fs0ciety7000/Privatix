@@ -3,8 +3,15 @@
 > Vue de dessus, temps réel, roguelite à la Hades. **Gameplay sérieux, lore satirique.**
 > Document de référence pour tous les textes du jeu : scénario, dialogues du hub, barks, fiches d'ennemis, boss, Notes de service, glossaire.
 > En cas de doute sur un **nom, un lieu, un événement ou une réplique**, ce document fait foi. En cas de doute sur un **chiffre** (dégâts, durées, coûts), le GDD combat et le canon technique font foi.
-> Tous les personnages, entreprises et documents sont **fictifs**, hors des trois exceptions autorisées du §1.4 (SNCB, « Calatrava », caricature d'Elio Di Rupo). La satire vise le management, le conseil et la logique de privatisation, jamais une personne réelle (hors de cette caricature encadrée), un parti, les voyageurs ou les cheminots de terrain.
+> Tous les personnages, entreprises et documents sont **fictifs**, hors des trois exceptions autorisées du §1.4 (SNCB, « Calatrava », caricature d'Elio Di Rupo). La satire vise une **politique** (la libéralisation et la privatisation du rail), le management et des cabinets de conseil fictifs, jamais une personne réelle (hors de cette caricature encadrée), un parti, les voyageurs ou les cheminots de terrain.
 > Le jeu passe en **3D temps réel** (rendu toon à contours, GDD §1.3) : les lieux décrits ici sont pensés pour être vus en volume, de près, à hauteur de héros.
+
+> **Révision du scénario (octobre 2026, à valider par le porteur du projet)**
+> - **Nouvel enjeu** : Privatix ne veut plus seulement « vendre la gare ». Avec le cabinet Synergia Partners, elle veut **libéraliser et privatiser le rail** : ouvrir le réseau à la concurrence, le **découper en lots** et les céder un par un. **Mons est le lot n° 1**, la gare pilote de « **Mons 2032** » ; si Mons signe, le reste du réseau suit.
+> - **Ce qu'on signe** : le **Contrat-cadre de libéralisation** (au lieu de la cession de la ligne, de la gare et du café). La signature au 3e étage du BAG, la jauge de signature et le **Sondage éternel** restent : la boucle ne change pas.
+> - **Le PHR-2032** garde ses phases 1 et 2 ; la **phase 3** devient « **Libéralisation** » (ouverture, découpage, cession progressive). La **Preuve n° 3** s'appelle désormais « Phase 3 : Libéralisation » et prouve un appel d'offres à candidat unique, jamais soumis à concertation.
+> - **Nouveau gag de canon** : la « concurrence » se résume à trois filiales du même groupe (**Privatix Rail Solutions**, **Privatix Rail Mobility**, **Privatix Rail Experience**). « C'est pas nous, c'est l'autre boîte » devient le slogan officieux du rail découpé.
+> - **Ajustés en conséquence** : pitchs (§1.1, §1.2, avec la nouvelle accroche officielle), thèmes (§1.3), situation initiale et boucle (§2.1, §2.2), jalons J7 bis et J11, fin mitigée, veillée, vraie fin et épilogue (§2.7 à §2.9), Vanderslide (§7.3), plaque et défaite de l'Invité d'honneur (§7.5), Note de service n° 13, glossaire. Personnages, factions, biomes, boss, OCC et pupitres, loot, Discosaure, Furet putride et horizon 2032 : **inchangés**.
 
 **Conventions d'écriture du document**
 - `HÉROS` = Léon ou Léa (prénom modifiable, `{prénom}` dans les répliques). Formulations épicènes autant que possible.
@@ -19,7 +26,7 @@
 
 Mons, 4h47, quai 2. L'écran des départs annonce que le **train de 7h12**, celui que la grand-mère du héros prend chaque mardi pour aller au marché depuis quarante ans, est supprimé. Motif affiché : « Optimisation ».
 
-Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») s'apprête à signer la cession de la ligne, de la gare et même du café de la salle des pauses, en exécution du **Plan Horizon Rentabilité 2032 (PHR-2032)**. La signature est prévue « à la fin du service », au dernier étage du **BAG**, dont Privatix a pris les étages un par un.
+Le consortium **Privatix Rail Solutions** (« Le rail, en mieux. Pour vous. Pour nous surtout. ») et son cabinet de conseil, **Synergia Partners**, ont un plan : **libéraliser et privatiser le rail**. Ouvrir le réseau « à la concurrence », le découper en lots rentables et céder les lots un par un, en exécution du **Plan Horizon Rentabilité 2032 (PHR-2032)**. Mons est le **lot n° 1**, la gare pilote de « **Mons 2032** » : si elle tombe, le reste du réseau suit. La signature du **Contrat-cadre de libéralisation** est prévue « à la fin du service », au dernier étage du **BAG**, dont Privatix a pris les étages un par un.
 
 Léon (ou Léa), agent·e polyvalent·e en 3x8 depuis neuf ans, prend la **clé à tire-fond** de son grand-père et remonte la gare à contre-courant : les **Quais & Voies**, la **Passerelle** que les navetteurs appellent « le Calatrava », puis le **Hall & BAG**, jusqu'au bureau où **Gontran Vanderslide** tient le stylo.
 
@@ -27,13 +34,16 @@ Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ram�
 
 ### 1.2 Pitch (version une ligne)
 
-*Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio contre une armée de consultants qui veulent vendre la gare avant la fin du service.*
+*Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio contre une armée de consultants qui veulent libéraliser et privatiser le rail !*
+
+C'est l'**accroche officielle**, mot pour mot (site, fiche de magasin, bande-annonce).
 
 ### 1.3 Thèmes
 
 | Thème | Ce qu'on raconte | Comment le jeu le montre |
 |---|---|---|
 | **La satire du management** | Le langage creux (« synergie », « quick win », « scalable ») remplace la réalité du terrain. Ceux qui décident n'ont jamais pris le train. | Les ennemis attaquent avec des slides, des réunions, des KPI et des Pense-bête. Leur point faible commun : la question concrète. Le coup final du jeu est une question. |
+| **Le rail en morceaux** | La libéralisation promet la concurrence et livre un réseau découpé en lots, où plus personne n'est responsable de rien. Un train, ça se fait à plusieurs ; un lot, ça se vend seul. | Privatix colle des autocollants « Lot n° 1 » jusque sur les bancs. Les trois « concurrents » de l'appel d'offres sont trois filiales du même groupe. Le gag de Kevin (« C'est pas nous, c'est l'autre boîte ») devient le programme de Privatix ; l'OCC, qui fait encore rouler tous les trains ensemble, est la réponse. |
 | **La solidarité** | Personne ne gagne seul. Conducteur, guichetière, dispatcheuse et technicien de l'Infra boivent le même café. | Les **Avantages acquis** sont envoyés par radio par les collègues : le build, c'est l'équipe. La vraie fin est une **défense collective**, pas un duel. 7e commandement : « Tu ne laisseras aucun collègue sur le quai. » |
 | **Le temps volé des 3x8** | Les horaires décalés grignotent les nuits, les week-ends, les familles. Le traître ne trahit pas pour l'argent : il veut un horaire de bureau. | L'horloge du Shift avance de 30 min par salle et nourrit le **Burnout** (plus fort, plus fragile). Le roulement Matin / Après-midi / Nuit est **imposé**, comme dans la vraie vie. |
 | **Ce qui marchait** | Le 7h12, le wagon-bar, le guichet : des choses simples qu'on « améliore » jusqu'à les supprimer. | Fil rouge du 7h12, quête du Fantôme du Wagon-Bar, épilogue à 7h12 pile. |
@@ -99,28 +109,28 @@ Une seule réponse « non » : on réécrit.
 
 **Le héros.** Léon ou Léa, agent·e polyvalent·e de gare (accueil, quais, renfort accompagnement), en 3x8 depuis neuf ans. Troisième génération de cheminots. Le grand-père tenait le **wagon-bar** de la ligne jusqu'à sa « disparition administrative » en 1996 ; il a laissé une clé à tire-fond d'époque, lourde, honnête, qui ne tombe jamais en panne. La grand-mère prend le 7h12 chaque mardi pour le marché ; elle dit bonjour au conducteur, et il lui répond.
 
-**Le 7h12 supprimé.** Lundi, 4h47, fin de nuit. Troisième café. L'écran du quai 2 affiche : `IC 0712 — SUPPRIMÉ — Motif : Optimisation`. Rudy, le chef de quai, n'a jamais vu ce motif en vingt ans. Dans le bureau du sous-chef, une imprimante crache trois slides oubliées : **fermeture des guichets**, **suppression des accompagnateurs**, et une slide titrée **« Phase 3 : Cession »**.
+**Le 7h12 supprimé.** Lundi, 4h47, fin de nuit. Troisième café. L'écran du quai 2 affiche : `IC 0712 — SUPPRIMÉ — Motif : Optimisation`. Rudy, le chef de quai, n'a jamais vu ce motif en vingt ans. Dans le bureau du sous-chef, une imprimante crache trois slides oubliées : **fermeture des guichets**, **suppression des accompagnateurs**, et une slide titrée **« Phase 3 : Libéralisation »**, avec une carte du réseau découpée en lots de couleur et Mons entouré au feutre : « Lot n° 1 — pilote ».
 
-**Le Plan Horizon Rentabilité 2032 (PHR-2032).** Un deck de 412 slides commandé par Privatix Rail Solutions et mis en musique par le cabinet **Synergia Partners**. Trois phases :
+**Le Plan Horizon Rentabilité 2032 (PHR-2032).** Un deck de 412 slides commandé par Privatix Rail Solutions et mis en musique par le cabinet **Synergia Partners**. Sous-titre : « Libérer le rail de ceux qui le font rouler ». Trois phases, chacune préparant la suivante (un réseau sans guichets ni accompagnateurs coûte moins cher à racheter) :
 1. *Phase 1 — « Fluidification »* : fermer les guichets, remplacer les agents par des Bornes Automatiques, équiper les quais de Drones Optimètres « pour la qualité ».
 2. *Phase 2 — « Responsabilisation »* : supprimer les accompagnateurs, réorganiser les roulements « en temps réel », externaliser la sécurité.
-3. *Phase 3 — « Cession »* : céder la ligne, la gare, le BAG et la salle des pauses à Privatix pour un euro symbolique, « frais de traiteur inclus ».
+3. *Phase 3 — « Libéralisation »* : ouvrir le réseau à la concurrence, le **découper en lots** (une ligne, une gare, un quai, un distributeur) et les céder par appels d'offres, **en commençant par Mons**. Le lot n° 1 (la ligne, la gare, le BAG et même la salle des pauses) part pour un euro symbolique, « frais de traiteur inclus » ; les autres suivront « par vagues ». Trois candidats ont répondu à l'appel d'offres : **Privatix Rail Solutions**, **Privatix Rail Mobility** et **Privatix Rail Experience**. « La concurrence est vive », dit le communiqué.
 
-Le plan n'a jamais été soumis à concertation. C'est sa faille : la **Preuve** que tout le jeu cherche à rendre inattaquable.
+Le plan n'a jamais été soumis à concertation, et l'appel d'offres a été rédigé par celui qui le remporte. C'est sa faille : la **Preuve** que tout le jeu cherche à rendre inattaquable.
 
-**La signature.** Elle doit avoir lieu « à la fin du service », au 3e étage du BAG, dans le bureau de **Gontran Vanderslide**, Directeur de la Transformation et de l'Excellence Opérationnelle. Le stylo est posé sur le Contrat de Concession. Le PDG de Privatix, **Hubert Rentabilis**, assistera en visio, caméra éteinte.
+**La signature.** Elle doit avoir lieu « à la fin du service », au 3e étage du BAG, dans le bureau de **Gontran Vanderslide**, Directeur de la Transformation et de l'Excellence Opérationnelle. Le stylo est posé sur le **Contrat-cadre de libéralisation** (en annexe : la concession du lot n° 1, Mons, à Privatix). Le PDG de Privatix, **Hubert Rentabilis**, assistera en visio, caméra éteinte. Mons signé, le modèle sera « dupliqué sur l'ensemble du réseau » : c'est pour ça que tout se joue ici, et ce matin.
 
 ### 2.2 La boucle justifiée : le « Sondage éternel »
 
 Pas de magie, pas de boucle temporelle : **de la bureaucratie**.
 
-Privatix ne signe rien sans « aligner toutes les parties prenantes ». Pour chaque signature, un **Sondage** est envoyé : juristes, traiteur, photographe, Conseil d'administration, Hubert Rentabilis. Il manque toujours quelqu'un. Chaque fois que le héros tombe, *ou* chaque fois qu'il gagne, la date est reprogrammée « à la fin de votre prochain service ». Le traiteur est validé, le diaporama est validé, mais le créneau, jamais.
+Privatix ne signe rien sans « aligner toutes les parties prenantes ». Pour chaque signature, un **Sondage** est envoyé : juristes, traiteur, photographe, Conseil d'administration, Hubert Rentabilis, et les **trois candidats** de l'appel d'offres, qui doivent tous être présents pour que la concurrence « soit constatée ». Il manque toujours quelqu'un (souvent Privatix Rail Mobility, qui « ne peut que le jeudi », alors que Privatix Rail Experience est en séminaire le jeudi). Chaque fois que le héros tombe, *ou* chaque fois qu'il gagne, la date est reprogrammée « à la fin de votre prochain service ». Le traiteur est validé, le diaporama est validé, mais le créneau, jamais.
 
-- **Quand le héros tombe** (« Mise à pied ») : les collègues le ramènent à l'OCC par le couloir technique. Pendant ce temps, Vanderslide ne peut pas signer : « Je ne signe pas un contrat de cession avec un incident voyageur en cours, ça fait mauvais genre dans le reporting. » Sondage relancé.
+- **Quand le héros tombe** (« Mise à pied ») : les collègues le ramènent à l'OCC par le couloir technique. Pendant ce temps, Vanderslide ne peut pas signer : « Je ne libéralise pas un réseau avec un incident voyageur en cours, ça fait mauvais genre dans le reporting. » Sondage relancé.
 - **Quand le héros gagne** (« Shift tenu ») : Vanderslide est vaincu, la séance est levée « pour raisons d'agenda ». Hubert Rentabilis : « Bon. On reprogramme. Envoyez un Sondage. »
-- **L'annonce de Rudy** ouvre chaque Shift, par l'écran des départs de l'OCC : « Attention, attention… la signature initialement prévue ce matin est reprogrammée à la fin de votre service. Privatix vous remercie pour votre flexibilité. »
+- **L'annonce de Rudy** ouvre chaque Shift, par l'écran des départs de l'OCC : « Attention, attention… la signature du Contrat-cadre de libéralisation, initialement prévue ce matin, est reprogrammée à la fin de votre service. Privatix vous remercie pour votre flexibilité. »
 
-Le Sondage a son propre petit fil comique : le nombre de participants « disponibles » change à chaque Shift sur l'écran de Rudy (`Sondage — Signature cession — 11 participants — 0 créneau commun`), et ses commentaires évoluent (« Le traiteur ne peut que le jeudi », « Le photographe est en séminaire », « Le stylo est en révision annuelle »).
+Le Sondage a son propre petit fil comique : le nombre de participants « disponibles » change à chaque Shift sur l'écran de Rudy (`Sondage — Signature libéralisation — 11 participants — 0 créneau commun`), et ses commentaires évoluent (« Le traiteur ne peut que le jeudi », « Le photographe est en séminaire », « Le stylo est en révision annuelle »).
 
 **Pourquoi le héros se souvient-il ?** Parce qu'il n'y a rien à oublier : c'est le même roulement qui recommence, comme dans la vraie vie en 3x8. Les collègues aussi se souviennent ; les ennemis, eux, « repartent de zéro à chaque réunion » (et c'est précisément ce que les collègues leur reprochent). Seuls Vanderslide et Hubert Rentabilis gardent une mémoire : ils deviennent de plus en plus désespérés au fil des victoires.
 
@@ -132,7 +142,7 @@ Le Sondage a son propre petit fil comique : le nombre de participants « disponi
 | Départ | **Cour intérieure, couloir technique** | Le héros traverse la Cour intérieure ; le couloir technique l'emmène vers les quais. Rudy fait l'annonce du Sondage. |
 | Biome 1 | **Quais & Voies** (8 salles + Salle des pauses + Boss) | « Le 7h12 n'est pas venu. » On défend le terrain. Élite majeur : **le Furet putride**. Boss : **l'Auditeur des Quais**. |
 | Biome 2 | **La Passerelle « Calatrava »** (8 salles + Salle des pauses + Boss) | « Le vent tourne. » On remonte la colonne vertébrale de la gare, fermée « pour cérémonie ». Élite majeur, en dernière salle : **le Fluidifieur**, régisseur de l'inauguration. Boss : **l'Invité d'honneur (Elio Di Rupo)**, qui inaugure « Mons 2032 » au belvédère. |
-| Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui décident. Mini-boss : **le Discosaure**. Boss final : **Gontran Vanderslide**. |
+| Biome 3 | **Hall & BAG** (9 salles + Palier du 3e + Boss final) | « Terminus BAG. » On monte chez ceux qui découpent le réseau. Mini-boss : **le Discosaure**. Boss final : **Gontran Vanderslide**. |
 | Retour | **OCC** | Mort ou victoire, on rentre. Les collègues ont quelque chose de neuf à dire. |
 
 L'horloge diégétique du Shift avance de **30 minutes par salle** : un Shift complet dure « une journée de travail et demie », ce que Fatou fait remarquer à chaque victoire (« Quatorze heures de service. Je fais un signalement. »).
@@ -151,11 +161,11 @@ L'histoire avance par **trois fils** : **le Dossier** (les 3 Preuves du PHR-2032
 | J5 | Premier kill de l'Auditeur des Quais | Le chronomètre de l'Auditeur s'arrête sur **7:12**. « Le train de 7h12, il existe encore ? » **Preuve n° 1 « Fermeture des guichets »** en main. | Si elle est rapportée : Preuve archivée. **Kevin** et **Yasmina** rejoignent l'OCC au retour. |
 | J6 | Première Preuve archivée | Béné ouvre une chemise cartonnée « DOSSIER — NE PAS PERDRE » et punaise la Preuve. Marcel : « Une. Il en faut trois. Et il faut qu'elles tiennent. » | Le **Cahier de revendications** apparaît à côté du Tableau (vraie fin, 1 case cochée). |
 | J7 | Premier kill du Fluidifieur (Salle gardée, fin du biome 2) | « Personne ne lit jamais l'alinéa 3. » **Preuve n° 2 « Suppression des accompagnateurs »**, tombée de son classeur. | Rudy découvre au retour que **les annonces de la gare sont pilotées depuis les étages du BAG**, juste au-dessus de son propre pupitre. |
-| J7 bis | Premier kill de l'Invité d'honneur | La plaque se dévoile : « Privatix Rail Solutions — Phase 3 : Cession ». « Je n'inaugure pas une fermeture. » Il tend les **Ciseaux d'inauguration** au héros. | Béné archive les Ciseaux et ouvre au pupitre PACO une « correspondance directe » vers la Passerelle (raccourci). Sur l'écran de Rudy, le Sondage affiche « Participant d'honneur : indisponible ». |
+| J7 bis | Premier kill de l'Invité d'honneur | La plaque se dévoile : « Mons 2032 — Lot n° 1. Privatix Rail Solutions — Phase 3 : Libéralisation ». « Je n'inaugure pas une vente à la découpe. » Il tend les **Ciseaux d'inauguration** au héros. | Béné archive les Ciseaux et ouvre au pupitre PACO une « correspondance directe » vers la Passerelle (raccourci). Sur l'écran de Rudy, le Sondage affiche « Participant d'honneur : indisponible ». |
 | J8 | Shifts 4 à ~8, avant la 1re victoire | **Indices sur Jean-Mi** : notes « pour le registre », téléphone neuf, absences « en récup ». Les ennemis du Shift suivant portent l'affixe **« Briefé »**. | Les joueurs attentifs soupçonnent. |
 | J9 | Premier kill du Fluidifieur ET passage à l'OCC | Le casier de Jean-Mi est entrouvert : **Note de service n° 11** (logo Privatix). | Indice ferme. Aucun personnage ne réagit encore (Fatou lève un sourcil). |
 | J10 | **Première victoire sur Vanderslide** | Hubert Rentabilis : « On reprogramme. » Le héros rentre… **l'OCC a été envahie** : stickers « Propriété de Privatix », Vieille Dame renversée. **Combat-défense dans le hub** (3 vagues), puis le Fluidifieur revient, « simple formalité ». **Révélation de Jean-Mi.** | **Choix moral** (§2.5). Le code devient **2-2-4-7**. Plan d'Économies débloqué. Fin « mitigée » affichée (§2.7). |
-| J11 | Run suivant la révélation | **Preuve n° 3 « Phase 3 : Cession »** : salle-événement garantie des **Archives du BAG**. Elle exige d'avoir **Le Règlement** (Béné, relation niveau 2) pour retrouver le procès-verbal d'absence de concertation. | Preuve 3 archivable. |
+| J11 | Run suivant la révélation | **Preuve n° 3 « Phase 3 : Libéralisation »** : salle-événement garantie des **Archives du BAG**. Elle exige d'avoir **Le Règlement** (Béné, relation niveau 2) pour retrouver le procès-verbal d'absence de concertation, agrafé au cahier des charges de l'appel d'offres, en-tête Privatix compris. Béné : « Ils ont écrit la question et la réponse. Même au guichet, on n'osait pas. » | Preuve 3 archivable. |
 | J12 | Victoires 2 à 5 | **Les reprogrammations** : à chaque victoire, une nouvelle réplique d'Hubert, une nouvelle tentative de Vanderslide (phase pilote, comité de suivi, « charte des valeurs ») et une scène d'OCC qui fait avancer une relation. | Vanderslide gagne de nouvelles répliques ; sa phase 3 se durcit. |
 | J13 | Les 4 conditions de la vraie fin cochées | Hubert : « La prochaine date est **définitive**. » Rudy : « Attention, attention… dernier Shift avant signature définitive. Tout le monde a pris sa pause ? » | Lance **le Shift du 7h12** (§2.6). |
 | J14 | Vraie fin vue | Générique, puis post-générique « Plan Horizon 2040 ». | Mode **Plan Horizon 2040** ; les collègues commentent la victoire. |
@@ -200,7 +210,7 @@ MARCEL : *(redressant la Vieille Dame)* On change le code. Ce soir. Et on reste 
 
 ### 2.7 La fin « mitigée » (chaque victoire avant la vraie fin)
 
-Vanderslide vaincu propose un compromis : une **« phase pilote »**, une seule ligne privatisée, l'OCC « préservée et officialisée ». Rien n'est signé, mais rien n'est gagné. Écran final : **« Cette fin peut être améliorée. Comme le service. »** Le joueur comprend qu'il manque quelque chose ; le **Cahier de revendications** punaisé à côté du Tableau de Marcel le guide sans tout dire (cases à cocher aux libellés volontairement syndicaux : « Dossier complet », « Quorum atteint », « Question interne réglée », « Six reprogrammations obtenues »).
+Vanderslide vaincu propose un compromis : une **« phase pilote »**, une seule ligne libéralisée « à titre expérimental », l'OCC « préservée et officialisée ». Rien n'est signé, mais rien n'est gagné. Écran final : **« Cette fin peut être améliorée. Comme le service. »** Le joueur comprend qu'il manque quelque chose ; le **Cahier de revendications** punaisé à côté du Tableau de Marcel le guide sans tout dire (cases à cocher aux libellés volontairement syndicaux : « Dossier complet », « Quorum atteint », « Question interne réglée », « Six reprogrammations obtenues »).
 
 ### 2.8 La vraie fin : « Le Shift du 7h12 »
 
@@ -212,9 +222,9 @@ Vanderslide vaincu propose un compromis : une **« phase pilote »**, une seule 
 
 **La veillée.** Avant le dernier Shift, scène unique à l'OCC : tout le monde est là, debout autour de la Vieille Dame. Rituel de la Tasse de Relève collective.
 ```text
-MARCEL : Demain, fin de service, ils signent. Pour de vrai, cette fois.
+MARCEL : Demain, fin de service, ils signent. Pour de vrai, cette fois. Et après Mons, c'est toutes les gares.
 KEVIN : Les étages du BAG, j'ai jamais eu le badge. C'est pas nous, c'est l'autre boîte.
-YASMINA : Ce soir, Kevin, il n'y a plus d'autre boîte. Il y a ceux qui font rouler les trains et ceux qui les vendent.
+YASMINA : Ce soir, Kevin, il n'y a plus d'autre boîte. Il y a ceux qui font rouler les trains et ceux qui les vendent par lots.
 BÉNÉ : Article 47, alinéa 3. Ils n'ont jamais respecté le préavis. Numéro suivant : eux.
 FATOU : Tout le monde a fait sa pause légale ? On attaque en fin de nuit. C'est exactement ce qu'ils attendent.
 MARCEL : Tasse de Relève, tout le monde. Rien à signaler…
@@ -226,22 +236,23 @@ MARCEL : Bien reçu. On prend la voie.
 
 **Après Vanderslide.** Hubert Rentabilis **rallume enfin sa caméra**. On ne voit qu'un bureau vide et une plante verte ; sa voix, calme : « Bon. Signez sans lui. » Des **automates de signature** déferlent de tous les ascenseurs : horde finale.
 
-**La défense.** Le héros doit **tenir 90 secondes** dans la Salle du Conseil pendant que Yasmina diffuse le PHR-2032 sur tous les écrans et toutes les annonces de la gare. La radio égrène les postes tenus : « Béné au hall. Rudy sur les quais. Kevin sur l'armoire. Josiane à la passerelle. Fatou à l'OCC. Marcel… Marcel, t'es où ? » — MARCEL : « Au banc du quai 2. Quelqu'un doit attendre le train. » Pas de boss : la solidarité est la mécanique.
+**La défense.** Le héros doit **tenir 90 secondes** dans la Salle du Conseil pendant que Yasmina diffuse le PHR-2032 (et la carte du réseau découpé en lots) sur tous les écrans et toutes les annonces de la gare. La radio égrène les postes tenus : « Béné au hall. Rudy sur les quais. Kevin sur l'armoire. Josiane à la passerelle. Fatou à l'OCC. Marcel… Marcel, t'es où ? » — MARCEL : « Au banc du quai 2. Quelqu'un doit attendre le train. » Pas de boss : la solidarité est la mécanique.
 
 **La diffusion.**
 ```text
 ANNONCE : Mesdames et messieurs, votre attention s'il vous plaît. Pour une fois, lisez les écrans.
-VOYAGEUSE : … Ils voulaient nous faire payer le quai à la minute ?
-VOYAGEUR : Et fermer le guichet ? C'est la seule qui sait vendre un billet sans faire pleurer personne !
+VOYAGEUSE : … Ils voulaient découper la ligne en lots ? Et nous faire payer le quai à la minute ?
+VOYAGEUR : Trois « concurrents », et c'est trois fois la même boîte ?
+VOYAGEUSE : Et fermer le guichet ? C'est la seule qui sait vendre un billet sans faire pleurer personne !
 HUBERT RENTABILIS : … Bon. On en reparlera au prochain plan stratégique. *(Déconnexion.)*
 VANDERSLIDE : Mon oreillette… n'a plus de réseau.
 JOSIANE (radio) : Bienvenue sur le terrain.
 ```
-Écran : **« Contrat de Concession : NON SIGNÉ. Sondage clôturé. »**
+Écran : **« Contrat-cadre de libéralisation : NON SIGNÉ. Lot n° 1 : retiré. Sondage clôturé. »**
 
 ### 2.9 Épilogue — Quai 2, 7h12
 
-Mardi. Le soleil traverse la passerelle. Les navetteurs lisent enfin les annonces. Privatix publie un communiqué de « repositionnement stratégique ».
+Mardi. Le soleil traverse la passerelle. Les navetteurs lisent enfin les annonces. Privatix publie un communiqué de « repositionnement stratégique » : le lot pilote de Mons est « mis en pause pour enrichir la réflexion », et les trois candidats fusionnent.
 ```text
 RUDY : Attention, attention… *(la voix tremble)* … le train de 7h12 à destination de… *(il respire)* … est à l'heure.
 GRAND-MÈRE : Tu vois, {prénom} ? Il suffisait de demander gentiment.
@@ -255,7 +266,7 @@ MARCEL : De mon temps, on appelait ça une victoire. Aujourd'hui aussi, tiens.
 - **Matricule 4412 nourri 12 fois** : le pigeon monte dans le train, sans titre de transport. Josiane laisse passer : « Ça, c'est pas dans le règlement… »
 - **L'OCC** devient « salle de pause conventionnée », sans QR code. La plaque des 7 commandements est vissée au mur, officiellement.
 
-**Post-générique.** Un jeune homme en costume descend d'un train, une clé USB à la main. Étiquette : **« Plan Horizon 2040 »**. → Débloque le **mode Plan Horizon 2040** (Plan d'Économies au maximum, variantes de boss, répliques post-fin). Le jeu continue ; les collègues commentent la victoire, puis s'inquiètent du jeune homme.
+**Post-générique.** Un jeune homme en costume descend d'un train, une clé USB à la main. Étiquette : **« Plan Horizon 2040 — Libéralisation, saison 2 »**. → Débloque le **mode Plan Horizon 2040** (Plan d'Économies au maximum, variantes de boss, répliques post-fin). Le jeu continue ; les collègues commentent la victoire, puis s'inquiètent du jeune homme.
 
 ---
 
@@ -568,7 +579,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
 
 - **Ambiance** : la passerelle enjambe les voies « comme la colonne vertébrale d'un animal préhistorique ». C'est l'aube : grands arcs blancs, verrière, ciel rose-gris. Le vent hurle, le vide est partout sous les pieds. Le biome le plus silencieux, le plus beau, le plus froid.
 - **Histoire du lieu** : les navetteurs l'appellent « la Cathédrale » ou « le Calatrava », selon qu'ils sont émus ou énervés par le budget. On ne nomme jamais son architecte : on montre l'architecture. Les escalators y marchent un jour sur trois ; ce sont presque des personnages. Rudy y était posté avant sa mutation « en temps réel ».
-- **Ce que Privatix y a fait** : collé ses panneaux « **Mons 2032 : une gare, zéro guichet** » sur les arcs, installé un « parcours de mobilité fluide » (des escalators qui ne vont qu'à la montée, vers le BAG), et confié la réorganisation des roulements au **Fluidifieur**, qui règne sous le grand arc. Surtout, Privatix y **inaugure « Mons 2032 : la Gare Expérience »** : la passerelle est « fermée pour cérémonie », des rubans rouges barrent les escalators, des chaises pliantes attendent la claque et des banderoles « Inauguration — accès invités » pendent des arcs. Le Fluidifieur, promu **régisseur de l'inauguration**, tient le plan de table ; au **belvédère**, l'**Invité d'honneur** attend de couper le ruban (§7.5). Pour descendre vers le hall, il faut passer par la cérémonie.
+- **Ce que Privatix y a fait** : collé ses panneaux « **Mons 2032 : une gare, zéro guichet** » sur les arcs, installé un « parcours de mobilité fluide » (des escalators qui ne vont qu'à la montée, vers le BAG), et confié la réorganisation des roulements au **Fluidifieur**, qui règne sous le grand arc. Surtout, Privatix y **inaugure « Mons 2032 : la Gare Expérience »**, vitrine du lot n° 1 et « première gare ouverte à la concurrence » : la passerelle est « fermée pour cérémonie », des rubans rouges barrent les escalators, des chaises pliantes attendent la claque et des banderoles « Inauguration — accès invités » pendent des arcs. Le Fluidifieur, promu **régisseur de l'inauguration**, tient le plan de table ; au **belvédère**, l'**Invité d'honneur** attend de couper le ruban (§7.5). Pour descendre vers le hall, il faut passer par la cérémonie.
 - **Roulements** : *Matin* brume sous la verrière, vides à peine visibles ; *Après-midi* ombres longues des arcs (les drones y perdent leur cible) ; *Nuit* verrière noire, les voies en contrebas éclairées par les rames qui passent.
 - **Détails à placer dans le décor** :
   - Panneaux d'escalator : « En service (aujourd'hui) » / « Hors service (demain, après-demain) ».
@@ -763,15 +774,15 @@ RUDY (radio) : Attention, attention… il a le classeur. Méfie-toi du classeur.
 ### 7.3 Boss final — Gontran Vanderslide
 
 - **Titre** : Directeur de la Transformation et de l'Excellence Opérationnelle, région « Hainaut Optimisée », futur « Chief Railway Experience Officer » chez Privatix.
-- **Biographie satirique** : costume trop ajusté, baskets blanches « pour faire startup », oreillette permanente, tasse « World's Best Disruptor », trottinette électrique de fonction. **N'a jamais pris le train.** Sincèrement convaincu que le rail serait parfait sans trains, sans voyageurs et sans cheminots. Sa prime dépend du nombre de lignes « rationalisées ». Il a fait toute sa carrière dans des salles sans fenêtre et il a peur du silence : c'est pour ça qu'il parle tout le temps. Il n'est pas le vrai pouvoir : Hubert Rentabilis l'évalue, lui aussi.
+- **Biographie satirique** : costume trop ajusté, baskets blanches « pour faire startup », oreillette permanente, tasse « World's Best Disruptor », trottinette électrique de fonction. **N'a jamais pris le train.** Sincèrement convaincu que le rail serait parfait sans trains, sans voyageurs et sans cheminots. Sa prime dépend du nombre de lots « ouverts au marché » ; Mons doit être le premier. Il a fait toute sa carrière dans des salles sans fenêtre et il a peur du silence : c'est pour ça qu'il parle tout le temps. Il n'est pas le vrai pouvoir : Hubert Rentabilis l'évalue, lui aussi.
 - **Arène** : phase 1 dans le **Bureau du Directeur** ; la cloison s'abat (« Réorganisation ») et l'arène devient la **Salle du Conseil** (table immense, mur de visio aux carrés noirs dont le carré « HR » d'Hubert, photocopieuse monumentale reliée aux annonces de la gare).
-- **La jauge de signature** : en haut de l'écran, le stylo avance sur le Contrat de Concession (7 minutes au total). Pleine : contrat signé, défaite, scène satirique (« Félicitations, vous faites désormais partie de l'aventure Privatix. Votre badge vous sera envoyé par Sondage. »), retour à l'OCC.
+- **La jauge de signature** : en haut de l'écran, le stylo avance sur le Contrat-cadre de libéralisation (7 minutes au total). Pleine : contrat signé, défaite, scène satirique (« Félicitations, le marché est ouvert. Votre poste aussi. Votre badge vous sera envoyé par Sondage. »), retour à l'OCC.
 - **Les Preuves** : chaque **Preuve en main** s'active sur un pupitre-projecteur ; elle fait reculer la jauge de 25 % et étourdit Vanderslide 3 s (« Slide 47 : ce n'est pas la mienne… »). Une fois par phase.
 - **Intro** (premier combat) :
 ```text
 VANDERSLIDE : Ah. L'équipe terrain. Entrez. Un café ? La machine fait 47 recettes. Personne ne sait l'allumer.
 HÉROS : On vient arrêter la signature.
-VANDERSLIDE : Arrêter ? Pour un 7h12 qui transporte quatorze personnes ? Quatorze ! Ce n'est même pas un chiffre significatif.
+VANDERSLIDE : Arrêter ? On ne fait que libérer le marché. Et pour un 7h12 qui transporte quatorze personnes ? Quatorze ! Ce n'est même pas un chiffre significatif.
 JOSIANE (radio) : Ces quatorze-là, ils ont un nom.
 VANDERSLIDE : Pas dans le tableur. Je lance la présentation. Quatre cent douze slides. Il n'y a pas de pause prévue.
 FATOU (radio) : Ça, monsieur, c'est illégal.
@@ -782,6 +793,7 @@ VANDERSLIDE : C'est agile.
   - « Slide 1 sur 412. Restez concentrés, c'est la plus courte. »
   - « Benchmark international ! Au Japon, ça marche ! »
   - « Je vous mets en copie. Et vous. Et vous. »
+  - « Slide 300 : le réseau, en lots. C'est plus lisible, non ? »
 - **Phase 2 « Conseil d'Administration en visio »** (fusion avec le Contrat, Clauses-tentacules ; voix off d'Hubert) :
   - VANDERSLIDE : « Mesdames et messieurs du Conseil, vous m'entendez ? … Vous êtes en mute. »
   - HUBERT : « Gontran, on vous entend mal. On vous voit mal. On vous évalue bien. »
@@ -817,9 +829,9 @@ VANDERSLIDE : … Concrètement ? Concrètement… *(long silence)* … je n'ai 
 > Caricature satirique d'une personnalité politique réelle, autorisée par le porteur du projet (§1.4, exception 3). Toutes les répliques ci-dessous sont **inventées pour le jeu** ; aucune n'est une citation réelle. Aucun parti, logo ni slogan.
 
 - **Silhouette** : nœud papillon **bordeaux**, lunettes **sans monture**, mèche **brune** impeccable, costume **bleu marine**. Il tient une paire de **ciseaux d'inauguration** géants et un discours de quarante pages.
-- **Ce qu'il fait dans l'histoire** : il ne travaille pas pour Privatix. Il est le seul participant du **Sondage** qui répond toujours « disponible », à condition qu'il y ait **un ruban à couper**. Pour donner une caution à la cession, Privatix organise sur la Passerelle l'**inauguration de « Mons 2032 : la Gare Expérience »** et l'invite à couper le ruban. Il n'a pas lu le dossier : il a lu le discours. Il défend la cérémonie, pas le contrat, avec l'énergie de quelqu'un qui a inauguré beaucoup de choses à Mons et compte bien continuer.
+- **Ce qu'il fait dans l'histoire** : il ne travaille pas pour Privatix. Il est le seul participant du **Sondage** qui répond toujours « disponible », à condition qu'il y ait **un ruban à couper**. Pour donner une caution à la libéralisation, Privatix organise sur la Passerelle l'**inauguration de « Mons 2032 : la Gare Expérience »**, présentée comme « la première gare ouverte à la concurrence », et l'invite à couper le ruban. Il n'a pas lu le dossier : il a lu le discours. Il défend la cérémonie, pas le contrat, avec l'énergie de quelqu'un qui a inauguré beaucoup de choses à Mons et compte bien continuer.
 - **Place dans la hiérarchie des boss** : hors de la hiérarchie de Privatix, mais **boss obligatoire du biome 2**. La passerelle est « fermée pour cérémonie » : pour descendre vers le hall, le héros doit traverser l'inauguration. Il vient **après** le Fluidifieur (élite majeur, §7.2) et la Salle des pauses. Il n'y a plus de porte « RUBAN » ni d'événement optionnel : chaque Shift qui passe le biome 1 le rencontre.
-- **Pourquoi il se bat** : il ne défend pas la cession, qu'il ignore ; il défend **son temps de parole**. Le héros ne le « tue » pas : il **obtient la parole**. À zéro, son « temps de parole est épuisé ».
+- **Pourquoi il se bat** : il ne défend pas la libéralisation, dont il n'a lu que le titre ; il défend **son temps de parole**. Le héros ne le « tue » pas : il **obtient la parole**. À zéro, son « temps de parole est épuisé ».
 - **Arène** : le belvédère de la Passerelle, transformé en tribune : estrade, pupitre à micro, plaque d'inauguration voilée d'un drap, rangée de chaises pliantes occupées par des consultants qui applaudissent sur commande.
 - **Intro** :
 ```text
@@ -834,10 +846,10 @@ INVITÉ D'HONNEUR : Je vois que l'émotion vous gagne. Page deux.
   - *Phase 1 « Le Discours inaugural »* : les phrases se déroulent en ondes depuis le pupitre ; chaque « Et j'ajouterai… » relance une onde. Les consultants de la claque applaudissent et renforcent les ondes ; les faire taire les affaiblit. Répliques : « Je serai bref. » *(Il ne l'est pas.)* / « Permettez-moi une parenthèse. Elle durera le temps qu'il faudra. »
   - *Phase 2 « La Première Pierre »* : il pose des premières pierres de projets « qui verront le jour » ; elles tombent sur l'arène, deviennent obstacles, puis s'effritent (« reportés »). Répliques : « Cette pierre est la première d'une longue série. » / « Les travaux commenceront… bientôt. C'est un engagement. »
   - *Phase 3 « Le Ruban »* : le ruban rouge encercle l'arène et se resserre ; les ciseaux géants coupent en lignes droites, télégraphiées par l'ouverture des lames. Répliques : « Un ruban, c'est une promesse. Celle-là, je la coupe. » / « Mons mérite mieux ! » *(Il le pense.)*
-- **Défaite** : le drap glisse de la plaque d'inauguration. Il lit, pour la première fois : **« Privatix Rail Solutions — Phase 3 : Cession »**. Long silence. Il redresse son nœud papillon.
+- **Défaite** : le drap glisse de la plaque d'inauguration. Il lit, pour la première fois : **« Mons 2032 — Lot n° 1. Privatix Rail Solutions — Phase 3 : Libéralisation »**. Long silence. Il redresse son nœud papillon.
 ```text
 INVITÉ D'HONNEUR : … On m'avait parlé d'une inauguration.
-INVITÉ D'HONNEUR : Je n'inaugure pas une fermeture.
+INVITÉ D'HONNEUR : Je n'inaugure pas une vente à la découpe.
 *Il tend les ciseaux au héros, range ses quarante pages et descend de l'estrade.*
 INVITÉ D'HONNEUR : Il doit bien y avoir, quelque part dans cette ville, quelque chose qui ouvre.
 MARCEL (radio) : De mon temps, on inaugurait les gares. Pas leur vente.
@@ -955,7 +967,7 @@ Objets de lore ramassés dans les consignes, les salles Café, les événements 
 > Les heures de nuit ne donnent plus droit à la prime de nuit, mais à la prime d'après-midi longue (à l'étude).
 
 **N° 13 — « Planification des signatures »** *(biome 3, salle Synergie)* — inédite
-> La signature de la cession est reprogrammée à la fin du prochain service, faute de créneau commun au Sondage.
+> La signature du Contrat-cadre de libéralisation est reprogrammée à la fin du prochain service, faute de créneau commun au Sondage (Privatix Rail Mobility ne peut que le jeudi).
 > Le traiteur est maintenu. Les petits fours seront congelés puis décongelés autant de fois que nécessaire.
 
 **N° 14 — « Mobilité interne fluide »** *(biome 2, page du classeur du Fluidifieur)* — inédite
@@ -966,7 +978,7 @@ Objets de lore ramassés dans les consignes, les salles Café, les événements 
 > Le café gratuit de la salle des pauses est remplacé par des capsules premium à 3,90 €, « pour valoriser le moment café ».
 > Toute cafetière non référencée sera considérée comme un local inexistant (voir Note n° 6).
 
-### 9.2 Glossaire satirique (20 termes)
+### 9.2 Glossaire satirique (22 termes)
 
 1. **3x8** — Système horaire permettant à un être humain de vivre trois vies sans en réussir aucune. On dit « bonjour » à 22h et « bonne nuit » à 6h.
 2. **Roulement** — Grille mystique qui décide de ta vie sociale six semaines à l'avance. Plus fiable que l'horoscope, moins négociable que la météo.
@@ -988,6 +1000,8 @@ Objets de lore ramassés dans les consignes, les salles Café, les événements 
 18. **Bus de substitution** — Train qui a renoncé à ses rêves. Arrive partout, sauf à la gare.
 19. **Badge vert** — Talisman de l'horaire de bureau. Ouvre les portes, ferme les yeux.
 20. **Le train de 7h12** — Symbole de tout ce qui marchait très bien jusqu'à ce que quelqu'un décide de l'améliorer.
+21. **Ouverture à la concurrence** — Procédure par laquelle trois filiales d'une même entreprise se disputent un marché qu'elle a déjà gagné.
+22. **Lot** — Morceau de réseau assez petit pour être vendu, assez grand pour que personne n'en soit responsable. Se dit aussi « périmètre ».
 
 ---
 

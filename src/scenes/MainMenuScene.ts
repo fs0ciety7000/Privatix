@@ -70,7 +70,7 @@ export class MainMenuScene extends Phaser.Scene {
       .text(
         GAME_WIDTH / 2,
         88,
-        'Gare de Mons, 6 h du matin. Les consultants arrivent. Le 7h12 n’arrivera pas.',
+        'Gare de Mons, 6 h du matin. Le rail est à vendre. Le 7h12 n’arrivera pas.',
         { ...style, color: Css.ballast },
       )
       .setOrigin(0.5)
