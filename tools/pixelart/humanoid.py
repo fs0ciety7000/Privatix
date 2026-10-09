@@ -7,6 +7,7 @@ main) et colorés en tons proche / lointain. Tout est contouré en #14101A.
 import numpy as np
 
 import lib
+import modern
 from lib import blit, canvas
 from palette import CHAR, K
 
@@ -137,7 +138,7 @@ class Humanoid:
         lib.rect(layer, hand[0], hand[1], hs, hs, self.hand[1] if far else self.hand[0])
         if hs > 1:
             lib.px(layer, hand[0] + hs - 1, hand[1] + hs - 1, self.hand[1])
-        blit(a, layer, 0, 0, edge=edge)
+        blit(a, layer, 0, 0, edge=edge, cast=not far)
 
     # ---------------------------------------------------------------- frame
     def frame(self, view, P):
@@ -181,10 +182,10 @@ class Humanoid:
             self.arm(a, sh_item, h_item)
             self.arm(a, sh_other, h_other)
         blit(a, legs, 0, 0)
-        blit(a, torso, g["tx"] + lean, g["torso_y"])
+        blit(a, torso, g["tx"] + lean, g["torso_y"], cast=True)
         if il == "mid":
             blit(a, item, 0, 0, edge=K)
-        blit(a, head, g["hx"] + lean + hdx, g["head_y"] + hdy)
+        blit(a, head, g["hx"] + lean + hdx, g["head_y"] + hdy, cast=True)
         if il == "front":
             blit(a, item, 0, 0, edge=K)
         if arms and view == "down":
@@ -196,10 +197,27 @@ class Humanoid:
             blit(a, item, 0, 0, edge=K)
         if P.get("pre_outline"):
             P["pre_outline"](a, g)
+        if P.get("stretch"):
+            a = stretch(a, *P["stretch"], cx=S / 2, cy=self.F + 1)
         a = lib.outline(a)
+        if not P.get("raw"):
+            a = modern.shade(a, ground=self.F)
         if P.get("overlay"):
             P["overlay"](a, g)
         return a
+
+
+def stretch(a, sx, sy, cx, cy):
+    """Squash & stretch : rééchantillonnage au plus proche autour des pieds
+    (avant contour, pour garder un contour d'1 px)."""
+    H, W = a.shape
+    ys, xs = np.mgrid[0:H, 0:W]
+    srcx = np.floor(cx + (xs + 0.5 - cx) / sx).astype(int)
+    srcy = np.floor(cy + (ys + 0.5 - cy) / sy).astype(int)
+    ok = (srcx >= 0) & (srcx < W) & (srcy >= 0) & (srcy < H)
+    out = np.zeros_like(a)
+    out[ok] = a[srcy[ok], srcx[ok]]
+    return out
 
 
 def flash_white(f):

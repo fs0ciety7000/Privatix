@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { EnemyKind, ShiftId } from '@/config/balance';
 import { SHIFTS } from '@/config/balance';
-import { NPCS } from '@/config/assets';
+import { NPCS, originOf, sheetOf } from '@/config/assets';
 import { Css, Depth, FONT, SceneKeys } from '@/config/constants';
 import { metaSave } from '@/platform/save';
 import { AttackTokens } from '@/systems/combat/AttackTokens';
@@ -167,8 +167,8 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
       const npc = NPCS[char];
       const key = `${npc.id}-idle`;
       const sprite = this.add
-        .sprite(m.x, m.y + 8, `${npc.id}_idle_strip4`)
-        .setOrigin(0.5, 0.875)
+        .sprite(m.x, m.y + 8, sheetOf(key))
+        .setOrigin(...originOf(key))
         .setDepth(m.y + 8);
       if (this.anims.exists(key)) sprite.play({ key, startFrame: Math.floor(Math.random() * 4) });
       this.add
@@ -197,7 +197,7 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
     const coffee = this.room.markPositions('coffee')[0];
     if (coffee) {
       const machine = this.add
-        .sprite(coffee.x, coffee.y + 8, 'vieille-dame_idle_strip4')
+        .sprite(coffee.x, coffee.y + 8, sheetOf('vieille-dame-idle'))
         .setOrigin(0.5, 1)
         .setDepth(coffee.y + 8);
       machine.setLighting(true);

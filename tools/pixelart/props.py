@@ -9,6 +9,7 @@ import os
 import numpy as np
 
 import lib
+import modern
 from font3x5 import draw_text, text_mask
 from lib import canvas, blit, parse
 from palette import CHAR
@@ -30,7 +31,9 @@ def box(a, x, y, w, h, top, front, side=None, top_h=3, hi=None):
 
 
 def finish(a, col):
-    return lib.outline(a, col)
+    """Contour sel-out teinté puis passe de volume « moderne » (sans rim :
+    le liseré néon est réservé aux acteurs)."""
+    return modern.shade(lib.outline(a, col), rim=False, outline=col)
 
 
 def mk(w, h):
@@ -248,9 +251,13 @@ def signal_prop(green=False):
     lib.rect(a, 7, 14, 2, 17, c["s"])
     lib.rect(a, 4, 1, 8, 14, c["K"])
     lib.rect(a, 4, 1, 8, 1, c["d"])
-    lib.rect(a, 6, 3, 4, 4, c["x"] if not green else c["R"])
+    lib.rect(a, 6, 3, 4, 4, c["x"] if not green else c["C"])
     lib.rect(a, 6, 9, 4, 4, c["L"] if green else c["G"])
-    lib.px(a, 6, 3 if not green else 9, c["w"])
+    # feu allumé : cœur clair et visière (émissif, nourrit le bloom)
+    y = 3 if not green else 9
+    lib.rect(a, 7, y + 1, 2, 2, c["l"] if not green else c["Z"])
+    lib.px(a, 7, y + 1, c["W"])
+    lib.rect(a, 5, y - 1, 6, 1, c["s"])
     return finish(a, QO)
 
 
@@ -431,8 +438,9 @@ def lanterne(f=0):
     a = mk(16, 16)
     lib.rect(a, 6, 1, 4, 2, c["d"])
     lib.rect(a, 4, 3, 8, 10, c["h"])
-    lib.rect(a, 5, 4, 6, 8, c[("a", "y", "a", "q")[f]])
-    lib.rect(a, 7, 5, 2, 4, c["W"] if f == 1 else c["y"])
+    lib.rect(a, 5, 4, 6, 8, c[("a", "y", "a", "y")[f]])
+    lib.rect(a, 6, 5, 4, 6, c[("y", "Z", "y", "Z")[f]])
+    lib.rect(a, 7, 6, 2, 3, c["W"] if f in (1, 3) else c["Z"])
     lib.rect(a, 4, 13, 8, 2, c["d"])
     lib.rect(a, 4, 3, 1, 10, c["z"])
     return finish(a, OO)
@@ -443,31 +451,54 @@ def lanterne(f=0):
 # --------------------------------------------------------------------------
 
 def train(motrice):
+    """Rame vue de dessus : toit cylindrique en bandes (rehaut froid en haut,
+    ombre en bas), salissures, livrée bleue / jaune, vitrages sombres à
+    reflet, phare émissif sur la motrice."""
     a = mk(192, 48)
-    lib.rect(a, 2, 6, 188, 36, c["b"])
-    lib.rect(a, 2, 6, 188, 3, c["w"])
-    lib.rect(a, 2, 39, 188, 3, c["g"])
+    bands = ["w", "7", "7", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "g", "g", "g", "g",
+             "g", "s"]
+    for k, col in enumerate(bands):
+        lib.rect(a, 2, 6 + k, 188, 1, c[col])
+    g = lib.rng(7 if motrice else 8)
+    for _ in range(60):  # salissures du toit
+        x, y = int(g.integers(4, 186)), int(g.integers(9, 26))
+        if a[y, x] == c["b"]:
+            a[y, x] = c["g"]
+    # flanc : vitrages + livrée
+    lib.rect(a, 2, 29, 188, 1, c["s"])
     lib.rect(a, 2, 30, 188, 4, c["I"])
+    lib.rect(a, 2, 30, 188, 1, c["c"])
     lib.rect(a, 2, 34, 188, 2, c["y"])
-    # toit : bloc de climatisation, aérations
+    lib.rect(a, 2, 34, 188, 1, c["Z"])
+    lib.rect(a, 2, 36, 188, 3, c["s"])
+    lib.rect(a, 2, 39, 188, 3, c["D"])
+    lib.rect(a, 2, 39, 188, 1, c["d"])
+    # toit : blocs de climatisation (volume éclairé haut-gauche), aérations
     for x in range(20, 170, 50):
+        lib.rect(a, x + 1, 13, 24, 12, c["s"])  # ombre portée
         lib.rect(a, x, 12, 24, 12, c["g"])
-        lib.rect(a, x, 12, 24, 1, c["w"])
+        lib.rect(a, x, 12, 24, 1, c["7"])
+        lib.rect(a, x, 12, 1, 12, c["b"])
         for k in range(x + 2, x + 22, 3):
-            lib.rect(a, k, 14, 1, 8, c["s"])
+            lib.rect(a, k, 14, 1, 8, c["d"])
+            lib.px(a, k, 14, c["s"])
     if motrice:
         # nez profilé et pantographe
         lib.rect(a, 172, 8, 18, 32, c["g"])
+        lib.rect(a, 172, 8, 18, 1, c["7"])
         lib.rect(a, 182, 10, 8, 28, c["n"])
         lib.rect(a, 183, 11, 3, 26, c["c"])
+        lib.rect(a, 183, 11, 1, 26, c["v"])
         lib.line(a, 100, 18, 130, 12, c["d"])
         lib.line(a, 100, 18, 130, 24, c["d"])
-        lib.line(a, 130, 12, 130, 24, c["s"])
+        lib.line(a, 130, 12, 130, 24, c["7"])
         lib.rect(a, 98, 16, 4, 4, c["d"])
-        lib.rect(a, 186, 30, 3, 3, c["y"])
+        lib.rect(a, 186, 30, 3, 3, c["Z"])
+        lib.px(a, 187, 31, c["W"])
     else:
         for x in range(8, 186, 12):
             lib.rect(a, x, 27, 8, 2, c["n"])
+            lib.px(a, x, 27, c["v"])
     lib.rect(a, 0, 20, 2, 8, c["d"])
     lib.rect(a, 190, 20, 2, 8, c["d"])
     return finish(a, QO)

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { sheetOf } from '@/config/assets';
 import { Colors, Css, Depth, FONT } from '@/config/constants';
 
 export type PickupKind = 'avantage' | 'gobelet' | 'tickets' | 'ps' | 'grains' | 'cornet';
@@ -39,7 +40,11 @@ export class Pickup extends Phaser.GameObjects.Container {
     let icon: Phaser.GameObjects.GameObject;
     if (look.anim && scene.anims.exists(look.anim)) {
       icon = scene.add
-        .sprite(0, -2, kind === 'gobelet' ? 'pickup-cafe_idle_strip4' : 'pickup-grain_spin_strip6')
+        .sprite(
+          0,
+          -2,
+          kind === 'gobelet' ? sheetOf('pickup-cafe-idle') : sheetOf('pickup-grain-spin'),
+        )
         .play(look.anim);
     } else {
       const shape = scene.add.rectangle(0, -2, 8, 10, look.color).setStrokeStyle(1, Colors.outline);

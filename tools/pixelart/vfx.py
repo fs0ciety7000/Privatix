@@ -9,6 +9,7 @@ import math
 import numpy as np
 
 import lib
+import modern
 from font3x5 import draw_text
 from lib import canvas, blit, parse
 from palette import CHAR, K
@@ -27,31 +28,47 @@ def _paint(a, mask, col):
 # --------------------------------------------------------------------------
 
 def slash(rot=0.0, S=64):
-    """Croissant à bandes : bord extérieur blanc, puis jaune, ambre, orange."""
+    """Croissant façon Dead Cells : cœur blanc, bords colorés (éclat chaud à
+    l'extérieur, orange à l'intérieur), tête plus large et plus claire,
+    dissipation en stries et en étincelles."""
     frames = []
     cx = cy = S / 2
     d, ang = lib.polar((S, S), cx, cy)
     ang = (ang - rot + 540) % 360 - 180  # repère local : 0° = direction du coup
     # (début, fin de l'arc en degrés locaux, épaisseur max, rayon ext)
-    keys = [(-80, -40, 4, 24), (-80, 10, 8, 27), (-75, 75, 11, 28), (-40, 80, 8, 28), (10, 85, 4, 27)]
+    keys = [(-85, -45, 5, 24), (-85, 15, 10, 27), (-80, 80, 12, 29), (-45, 85, 9, 29), (10, 88, 5, 28)]
+    g = lib.rng(11)
     for i, (a0, a1, th, ro) in enumerate(keys):
         f = canvas(S)
         span = a1 - a0
         t = np.clip((ang - a0) / max(1, span), 0, 1)
         inside = (ang >= a0) & (ang <= a1)
-        # épaisseur : fine aux extrémités, pleine au tiers avant
-        prof = np.sin(np.pi * np.clip(t, 0, 1)) ** 0.7
+        prof = np.sin(np.pi * np.clip(t, 0, 1) ** 0.8) ** 0.6
         thick = th * prof
         m = inside & (d <= ro) & (d > ro - thick)
         rel = (ro - d) / np.maximum(thick, 0.01)
-        _paint(f, m & (rel >= 0.70), "O")
-        _paint(f, m & (rel >= 0.45) & (rel < 0.70), "a")
-        _paint(f, m & (rel >= 0.18) & (rel < 0.45), "y")
-        _paint(f, m & (rel < 0.18), "W")
+        hot = i <= 2
+        _paint(f, m, "O")
+        _paint(f, m & (rel < 0.85), "a" if not hot else "y")
+        _paint(f, m & (rel < 0.68), "Z" if hot else "y")
+        _paint(f, m & (rel < 0.52) & (rel >= 0.12), "W" if hot else "Z")
+        _paint(f, m & (rel < 0.12), "j")
+        if hot:
+            # tête du coup : noyau blanc élargi
+            _paint(f, m & (t > 0.55) & (t < 0.9) & (rel > 0.1) & (rel < 0.7), "W")
         if i >= 3:
-            # dissipation en tirets
-            cut = inside & (((ang // 9).astype(int) + i) % 3 == 0)
+            # dissipation en stries
+            cut = inside & (((ang // 7).astype(int) + i) % 3 == 0)
             f[cut] = 0
+        # étincelles qui s'échappent de l'arc
+        if i >= 2:
+            for k in range(5 + i):
+                aa = math.radians(a0 + g.random() * span + rot)
+                rr = ro + 1 + g.random() * (2 + i * 2)
+                x, y = int(cx + math.cos(aa) * rr), int(cy + math.sin(aa) * rr)
+                lib.px(f, x, y, c["W" if k % 3 == 0 else "Z" if k % 3 == 1 else "y"])
+                if i == 2 and k % 2 == 0:
+                    lib.px(f, x + 1, y, c["y"])
         frames.append(f)
     return frames
 
@@ -68,31 +85,43 @@ def star(S, r, rays=8, inner=0.35, rot=0.0):
 
 
 def hit(S=32, big=False):
+    """Impact « étoile » : flash blanc, étoile à 8 branches (cœur blanc ->
+    jaune -> orange), halo en anneau qui s'ouvre, éclats."""
     frames = []
     n = 6 if big else 5
-    R = S / 2 - 2
+    R = S / 2 - 1
+    cx = cy = S / 2
     for i in range(n):
         f = canvas(S)
         t = i / (n - 1)
         if i == 0:
-            m = lib.ellipse_mask((S, S), S / 2, S / 2, R * 0.35, R * 0.35)
-            _paint(f, m, "W")
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.55, R * 0.55), "Z")
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.42, R * 0.42), "W")
+            _paint(f, star(S, R * 0.95, rays=4, inner=0.12), "W")
         else:
-            r = R * (0.55 + 0.45 * t)
-            m = star(S, r, rays=8, inner=0.18 + 0.1 * t, rot=22.5 * (i % 2))
-            hole = lib.ellipse_mask((S, S), S / 2, S / 2, r * (0.25 + 0.5 * t), r * (0.25 + 0.5 * t))
-            core = star(S, r * 0.6, rays=8, inner=0.2, rot=22.5 * (i % 2))
-            _paint(f, m & ~hole, "O" if t > 0.6 else "a")
-            _paint(f, core & ~hole, "y")
-            _paint(f, star(S, r * 0.35, 4, 0.3) & ~hole, "W")
+            # halo
+            rh = R * (0.45 + 0.55 * t)
+            ring = lib.ring_mask((S, S), cx, cy, rh, rh - 1)
+            _d, _a = lib.polar((S, S), cx, cy)
+            ring &= ((_a // 30).astype(int) % 2 == i % 2) | (i == 1)
+            _paint(f, ring, "a" if i > 2 else "y")
+            if i < n - 1:
+                r = R * (0.9 - 0.25 * t)
+                m = star(S, r, rays=8, inner=0.14 + 0.08 * t, rot=22.5 * (i % 2))
+                hole = lib.ellipse_mask((S, S), cx, cy, r * 0.3 * t, r * 0.3 * t) if t > 0.6 else np.zeros((S, S), bool)
+                _paint(f, m & ~hole, "O" if t > 0.6 else "f")
+                _paint(f, star(S, r * 0.75, rays=8, inner=0.18, rot=22.5 * (i % 2)) & ~hole, "y")
+                _paint(f, star(S, r * 0.5, rays=4, inner=0.25) & ~hole, "Z")
+                _paint(f, star(S, r * 0.32, rays=4, inner=0.3) & ~hole, "W")
         # éclats
-        g = lib.rng(10 + i)
-        for k in range(6 if big else 4):
-            a_ = k * (2 * math.pi / (6 if big else 4)) + 0.4
-            dist = (R * 0.4) + t * R * 0.6
-            x, y = int(S / 2 + math.cos(a_) * dist), int(S / 2 + math.sin(a_) * dist)
-            if i > 0 and i < n - 1:
-                lib.rect(f, x, y, 2 if big else 1, 2 if big else 1, "O" and c["O"] if k % 2 else c["y"])
+        if 0 < i < n - 1:
+            for k in range(8 if big else 6):
+                a_ = k * (2 * math.pi / (8 if big else 6)) + 0.4
+                dist = R * (0.35 + t * 0.7)
+                x, y = int(cx + math.cos(a_) * dist), int(cy + math.sin(a_) * dist)
+                lib.px(f, x, y, c["W" if k % 2 else "Z"])
+                if big:
+                    lib.px(f, x + (1 if math.cos(a_) > 0 else -1), y, c["y"])
         frames.append(f)
     return frames
 
@@ -128,9 +157,12 @@ def slam(S=64):
                 lib.line(f, x0, y0, x1, y1, c["K"] if i < 5 else c["e"])
         # flash central
         if i <= 2:
-            r = (6, 9, 5)[i]
-            _paint(f, lib.ellipse_mask((S, S), cx, cy, r * 1.4, r * 0.8), "y" if i else "W")
+            r = (8, 10, 5)[i]
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, r * 1.6, r * 0.9), "a" if i else "Z")
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, r * 1.3, r * 0.72), "y" if i else "W")
             _paint(f, lib.ellipse_mask((S, S), cx, cy, r * 0.8, r * 0.45), "W")
+            if i == 0:
+                _paint(f, star(S, 22, rays=4, inner=0.06) & lib.ellipse_mask((S, S), cx, cy, 30, 16), "W")
         # gravats
         if 1 <= i <= 5:
             for k, (aa, sp) in enumerate(rocks):
@@ -179,7 +211,9 @@ def dust(S=16, n=5, big=False):
                 x, y = S / 2 + math.cos(aa) * d, S / 2 + 6 + math.sin(aa) * d * 0.45 - t * 2
                 r = max(0.0, 3 - t * 2.4)
                 if r > 0.5:
-                    _paint(f, lib.ellipse_mask((S, S), x, y, r + 0.5, r), "q" if t < 0.5 else "b")
+                    _paint(f, lib.ellipse_mask((S, S), x, y, r + 0.5, r), "b" if t < 0.5 else "g")
+                    _paint(f, lib.ellipse_mask((S, S), x - 0.6, y - 0.6, (r + 0.5) * 0.6, r * 0.6),
+                           "q" if t < 0.4 else "7")
             for k in range(2):
                 x = S / 2 + (k * 2 - 1) * (6 + t * 8)
                 r = max(0.0, 2.5 - t * 2)
@@ -191,23 +225,30 @@ def dust(S=16, n=5, big=False):
                 y = S / 2 + 3 - t * 3
                 r = max(0.0, 2.6 - t * 2.2)
                 if r > 0.5:
-                    _paint(f, lib.ellipse_mask((S, S), x, y, r + 0.4, r), "q" if t < 0.5 else "b")
+                    _paint(f, lib.ellipse_mask((S, S), x, y, r + 0.4, r), "b" if t < 0.5 else "g")
+                    _paint(f, lib.ellipse_mask((S, S), x - 0.5, y - 0.5, (r + 0.4) * 0.55, r * 0.55),
+                           "q" if t < 0.4 else "7")
         frames.append(f)
     return frames
 
 
 def sparks(S=16):
+    """Gerbe d'étincelles : têtes blanches, traînes jaune -> ambre, gravité."""
     frames = []
-    dirs = [(1, -1), (-1, -1), (1, 0), (-1, 0.5), (0.4, -1)]
+    g = lib.rng(21)
+    dirs = [(math.cos(a_), math.sin(a_)) for a_ in np.linspace(-2.6, -0.5, 7)] + [(1, 0.3), (-1, 0.2)]
+    sp = [0.8 + g.random() * 0.6 for _ in dirs]
     for i in range(4):
         f = canvas(S)
-        for k, (dx, dy) in enumerate(dirs):
-            d = 2 + i * 2
-            x0, y0 = S / 2 + dx * d, S / 2 + dy * d + i * 0.5 * (i)
-            x1, y1 = x0 + dx * (2 - i * 0.4), y0 + dy * (2 - i * 0.4)
-            lib.line(f, x0, y0, x1, y1, c["y" if k % 2 else "W"])
         if i == 0:
-            _paint(f, lib.ellipse_mask((S, S), S / 2, S / 2, 2, 2), "W")
+            _paint(f, lib.ellipse_mask((S, S), S / 2, S / 2 + 2, 2.5, 2.5), "Z")
+            _paint(f, lib.ellipse_mask((S, S), S / 2, S / 2 + 2, 1.5, 1.5), "W")
+        for k, ((dx, dy), v) in enumerate(zip(dirs, sp)):
+            d = (2 + i * 2.2) * v
+            x0, y0 = S / 2 + dx * d, S / 2 + 2 + dy * d + 0.45 * i * i
+            x1, y1 = x0 - dx * (2.5 - i * 0.5), y0 - dy * (2.5 - i * 0.5) - 0.4 * i
+            lib.line(f, x1, y1, x0, y0, c["a" if i >= 2 else "y"])
+            lib.px(f, int(round(x0)), int(round(y0)), c["W" if i < 3 else "Z"])
         frames.append(f)
     return frames
 
@@ -267,6 +308,10 @@ def _ticket_rot(k, S=16):
     halo = lib.outline((f > 0).astype(np.uint8) * 1, c["M"])
     m = (halo == c["M"]) & (f == 0)
     f[m] = c["M"]
+    # second halo plus clair, en pointillés (le bloom le fait vibrer)
+    halo2 = lib.outline((f > 0).astype(np.uint8) * 1, c["k"])
+    m2 = (halo2 == c["k"]) & (f == 0) & lib.checker(f.shape)
+    f[m2] = c["k"]
     return f
 
 
@@ -327,83 +372,105 @@ def amende_spin():
 # --------------------------------------------------------------------------
 
 def explosion(S=64, n=10, seed=1):
+    """Flash blanc, boule de feu (blanc -> néon -> turquoise -> magenta : c'est
+    une machine Privatix qui saute), onde, puis fumée froide qui monte et se
+    dissout par grains, débris (boulons, tickets)."""
     frames = []
     g = lib.rng(seed)
-    debris = [(g.random() * 2 * math.pi, 0.6 + g.random() * 0.8, g.integers(0, 3)) for _ in range(10)]
+    debris = [(g.random() * 2 * math.pi, 0.6 + g.random() * 0.8, g.integers(0, 3)) for _ in range(12)]
+    noise = np.kron(lib.rng(seed + 9).random((S // 2 + 1, S // 2 + 1)), np.ones((2, 2)))[:S, :S]
     R = S / 2 - 3
+    cx, cy = S / 2, S / 2 + 2
     for i in range(n):
         f = canvas(S)
         t = i / (n - 1)
-        cx, cy = S / 2, S / 2 + 2
         if i == 0:
-            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.25, R * 0.25), "W")
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.55, R * 0.55), "Z")
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.45, R * 0.45), "W")
+            _paint(f, star(S, R * 0.95, rays=4, inner=0.1), "W")
+        elif i == 1:
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.75, R * 0.7), "N")
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, R * 0.62, R * 0.58), "X")
+            _paint(f, lib.ellipse_mask((S, S), cx - 1, cy - 1, R * 0.5, R * 0.46), "W")
         elif i < n * 0.5:
-            r = R * (0.35 + t * 1.1)
+            r = R * (0.45 + t * 1.0)
             blob = np.zeros((S, S), dtype=bool)
-            for k in range(5):
-                aa = k * 1.3 + i
-                bx, by = cx + math.cos(aa) * r * 0.35, cy + math.sin(aa) * r * 0.3
-                blob |= lib.ellipse_mask((S, S), bx, by, r * 0.6, r * 0.55)
-            _paint(f, blob, "M")
-            _paint(f, lib.ellipse_mask((S, S), cx, cy, r * 0.7, r * 0.62) & blob, "T")
-            _paint(f, lib.ellipse_mask((S, S), cx - 1, cy - 1, r * 0.45, r * 0.4), "N")
-            _paint(f, lib.ellipse_mask((S, S), cx - 1, cy - 2, r * 0.25, r * 0.22), "W")
+            for k in range(6):
+                aa = k * 1.05 + i
+                bx, by = cx + math.cos(aa) * r * 0.38, cy + math.sin(aa) * r * 0.32
+                blob |= lib.ellipse_mask((S, S), bx, by, r * 0.55, r * 0.5)
+            _paint(f, blob, "J")
+            _paint(f, blob & lib.ellipse_mask((S, S), cx - 1, cy - 1, r * 0.82, r * 0.75), "M")
+            _paint(f, lib.ellipse_mask((S, S), cx - 1, cy - 1, r * 0.62, r * 0.56) & blob, "T")
+            _paint(f, lib.ellipse_mask((S, S), cx - 2, cy - 2, r * 0.42, r * 0.38), "N")
+            _paint(f, lib.ellipse_mask((S, S), cx - 2, cy - 3, r * 0.22, r * 0.2), "W")
+            # anneau de souffle
+            ro = R * (0.5 + t * 1.3)
+            _paint(f, lib.ring_mask((S, S), cx, cy, ro, ro - 1.5, sy=0.8) & (f == 0), "k")
         else:
-            # fumée qui monte et se disperse
-            r = R * (0.8 - (t - 0.5) * 0.6)
+            # fumée froide qui monte et se dissout par grains
+            k_ = (t - 0.5) / 0.5
+            r = R * (0.85 - k_ * 0.35)
             smoke = np.zeros((S, S), dtype=bool)
-            for k in range(5):
-                aa = k * 1.25
-                bx = cx + math.cos(aa) * R * 0.45
-                by = cy + math.sin(aa) * R * 0.3 - (t - 0.5) * 16
+            for k in range(6):
+                aa = k * 1.05
+                bx = cx + math.cos(aa) * R * 0.42
+                by = cy + math.sin(aa) * R * 0.28 - k_ * 14
                 smoke |= lib.ellipse_mask((S, S), bx, by, r * 0.45, r * 0.4)
-            smoke &= ~(lib.checker((S, S)) & (t > 0.8))
-            _paint(f, smoke, "g")
-            _paint(f, smoke & lib.ellipse_mask((S, S), cx - 3, cy - 4 - (t - 0.5) * 16, r * 0.6, r * 0.45), "b")
-        # débris : boulons, tickets
+            smoke &= noise > k_ * 0.85
+            _paint(f, smoke, "s")
+            _paint(f, smoke & lib.ellipse_mask((S, S), cx - 3, cy - 4 - k_ * 14, r * 0.7, r * 0.5), "g")
+            _paint(f, smoke & lib.ellipse_mask((S, S), cx - 5, cy - 7 - k_ * 14, r * 0.4, r * 0.28), "b")
+            if i == int(n * 0.5):
+                _paint(f, smoke & lib.ellipse_mask((S, S), cx, cy, r * 0.3, r * 0.25), "M")
+        # débris : boulons, tickets, braises
         if 1 <= i <= n - 2:
             for aa, sp, kind in debris:
-                d = R * sp * t * 1.2
+                d = R * sp * t * 1.25
                 x = int(cx + math.cos(aa) * d)
-                y = int(cy + math.sin(aa) * d - 6 * math.sin(math.pi * t))
+                y = int(cy + math.sin(aa) * d - 7 * math.sin(math.pi * t))
                 if kind == 0:
                     lib.rect(f, x, y, 3, 2, c["w"])
                     lib.px(f, x, y + 1, c["M"])
                 elif kind == 1:
                     lib.rect(f, x, y, 2, 2, c["s"])
-                    lib.px(f, x, y, c["b"])
+                    lib.px(f, x, y, c["7"])
                 else:
-                    lib.px(f, x, y, c["y"])
+                    lib.px(f, x, y, c["Z" if i < n * 0.6 else "y"])
         frames.append(f)
     return frames
 
 
 def shockwave(S=128):
+    """Onde de choc lumineuse : front blanc épais, dégradé jaune -> ambre ->
+    orange vers l'intérieur, lueur intérieure, poussière soulevée."""
     frames = []
     cx, cy = S / 2, S / 2
     for i in range(8):
         f = canvas(S)
         t = i / 7
-        r = 8 + t * 52
-        th = max(2, 7 - i * 0.7)
-        m = lib.ring_mask((S, S), cx, cy, r, r - th, sy=0.75)
-        outer = lib.ring_mask((S, S), cx, cy, r, r - 1.5, sy=0.75)
-        inner = lib.ring_mask((S, S), cx, cy, r - th + 1.5, r - th, sy=0.75)
-        _paint(f, m, "a")
-        _paint(f, inner, "O")
-        _paint(f, outer, "W" if i < 4 else "y")
+        r = 8 + t * 54
+        th = max(3, 10 - i * 1.0)
+        sy = 0.75
+        for frac, col in ((1.0, "O"), (0.75, "a"), (0.5, "y"), (0.3, "Z")):
+            _paint(f, lib.ring_mask((S, S), cx, cy, r, r - th * frac, sy=sy), col)
+        _paint(f, lib.ring_mask((S, S), cx, cy, r, r - 1.6, sy=sy), "W" if i < 5 else "Z")
+        # lueur intérieure tramée (paliers nets, pas de dégradé)
+        if 1 <= i <= 4:
+            glow = lib.ring_mask((S, S), cx, cy, r - th - 1, r - th - 4, sy=sy) & lib.checker((S, S), i)
+            _paint(f, glow, "a")
         if i >= 5:
-            f[lib.checker((S, S), i) & m & ~outer] = 0
+            f[lib.checker((S, S), i) & (f > 0) & ~lib.ring_mask((S, S), cx, cy, r, r - 1.6, sy=sy)] = 0
         if i <= 1:
+            _paint(f, lib.ellipse_mask((S, S), cx, cy, 9 - i * 3, 7 - i * 2), "Z")
             _paint(f, lib.ellipse_mask((S, S), cx, cy, 6 - i * 2, 4.5 - i * 1.5), "W")
         # poussière soulevée
-        g = lib.rng(50 + i)
-        for k in range(10):
-            aa = k * 2 * math.pi / 10 + 0.3
-            x = cx + math.cos(aa) * (r - 3)
-            y = cy + math.sin(aa) * (r - 3) * 0.75 - 2
+        for k in range(12):
+            aa = k * 2 * math.pi / 12 + 0.3
+            x = cx + math.cos(aa) * (r + 2)
+            y = cy + math.sin(aa) * (r + 2) * sy - 2
             if i >= 2:
-                lib.rect(f, int(x), int(y), 2, 1, c["q"])
+                lib.rect(f, int(x), int(y), 2, 1, c["q" if k % 2 else "7"])
         frames.append(f)
     return frames
 
@@ -422,6 +489,8 @@ def charge(S=48):
         r = 6 + (i % 3)
         m = lib.ring_mask((S, S), S / 2, S / 2, r, r - 1, sy=0.8)
         _paint(f, m & lib.checker((S, S), i), "O")
+        _paint(f, lib.ellipse_mask((S, S), S / 2, S / 2, 2.5 + (i % 2), 2 + (i % 2)), "Z")
+        _paint(f, lib.ellipse_mask((S, S), S / 2, S / 2, 1.2, 1.2), "W")
         frames.append(f)
     return frames
 
@@ -468,8 +537,11 @@ def poof(S=32):
         f = canvas(S)
         t = i / 6
         if i <= 1:
-            _paint(f, lib.ellipse_mask((S, S), 16, 18, 6 + i * 3, 7 + i * 3), "N" if i == 0 else "T")
-            _paint(f, lib.ellipse_mask((S, S), 16, 18, 3 + i * 2, 4 + i * 2), "W")
+            _paint(f, lib.ellipse_mask((S, S), 16, 18, 7 + i * 3, 8 + i * 3), "T" if i == 0 else "t")
+            _paint(f, lib.ellipse_mask((S, S), 16, 18, 5 + i * 2.5, 6 + i * 2.5), "N")
+            _paint(f, lib.ellipse_mask((S, S), 16, 18, 3 + i * 2, 4 + i * 2), "X" if i else "W")
+            if i == 0:
+                _paint(f, lib.ellipse_mask((S, S), 16, 18, 2, 2.5), "W")
         for aa, sp in slides:
             d = 4 + t * 12 * sp
             x = int(16 + math.cos(aa) * d)
@@ -477,6 +549,8 @@ def poof(S=32):
             if i >= 1 and not (i >= 5 and (x + y) % 2):
                 lib.rect(f, x, y, 4, 3, c["T"])
                 lib.rect(f, x, y, 4, 1, c["N"])
+                lib.px(f, x, y, c["X"])
+                lib.px(f, x + 3, y + 2, c["t"])
                 lib.px(f, x + 1, y + 2, c["W"])
         frames.append(f)
     return frames
@@ -496,6 +570,12 @@ def telegraph(S):
         fill = lib.ellipse_mask((S, S), S / 2, S / 2, r * (0.3 + 0.2 * i), r * (0.3 + 0.2 * i))
         _paint(f, fill & lib.checker((S, S)) & ~lib.ellipse_mask((S, S), S / 2, S / 2, r * (0.3 + 0.2 * i) - 1.2,
                                                                        r * (0.3 + 0.2 * i) - 1.2), "M")
+        # quatre repères blancs qui tournent sur l'anneau (lecture « danger imminent »)
+        for k in range(4):
+            aa = math.radians(k * 90 + i * 22.5)
+            x, y = S / 2 + math.cos(aa) * (r - 0.5), S / 2 + math.sin(aa) * (r - 0.5)
+            lib.px(f, int(x), int(y), c["W"])
+            lib.px(f, int(S / 2 + math.cos(aa) * (r - 1.6)), int(S / 2 + math.sin(aa) * (r - 1.6)), c["k"])
         lib.rect(f, S // 2 - 2, S // 2, 4, 1, c["W"])
         lib.rect(f, S // 2, S // 2 - 2, 1, 4, c["W"])
         frames.append(f)
@@ -510,8 +590,13 @@ def reward(S=48):
         if i < 4:
             m = star(S, 6 + i * 5, rays=8, inner=0.15, rot=i * 11)
             _paint(f, m, "a")
-            _paint(f, star(S, 4 + i * 3, rays=4, inner=0.25), "y")
+            _paint(f, star(S, 5 + i * 4, rays=8, inner=0.18, rot=i * 11), "y")
+            _paint(f, star(S, 4 + i * 3, rays=4, inner=0.25), "Z")
             _paint(f, lib.ellipse_mask((S, S), S / 2, S / 2, 3 + i, 3 + i), "W")
+        if 1 <= i <= 5:
+            rr = 6 + i * 3.5
+            _paint(f, lib.ring_mask((S, S), S / 2, S / 2, rr, rr - 1) & (lib.checker((S, S), i) | (i < 3)),
+                   "Z" if i < 3 else "a")
         for k in range(8):
             aa = k * math.pi / 4 + 0.2
             d = 6 + t * 16
@@ -764,6 +849,37 @@ def light_cone(S=64):
     return a
 
 
+def _pickup_finish(frames, sparkle=None):
+    """Pickups « modernes » : volume éclairé (sans rim), reflet clair d'1 px
+    qui glisse le long de l'arête haut-gauche, étincelle à 4 branches sur une
+    frame (objet interactif lisible, cf. guide §7.4-5)."""
+    n = len(frames)
+    out = []
+    for i, f in enumerate(frames):
+        f = modern.shade(f, rim=False)
+        body = (f > 0) & (f != K)
+        up = np.zeros_like(body)
+        up[1:, :] = body[1:, :] & ~body[:-1, :]
+        left = np.zeros_like(body)
+        left[:, 1:] = body[:, 1:] & ~body[:, :-1]
+        edge = np.argwhere(up | left)
+        if len(edge):
+            edge = edge[np.lexsort((edge[:, 0], edge[:, 1]))]
+            y, x = edge[(i * len(edge)) // n]
+            if not modern.EMIT[f[y, x]]:
+                f[y, x] = c["W"]
+        if sparkle is not None and i == sparkle % n:
+            ys, xs = np.nonzero(f)
+            if len(xs):
+                sx, sy = min(f.shape[1] - 2, xs.max() + 1), max(1, ys.min())
+                for (dx, dy, col) in ((0, 0, "W"), (1, 0, "Z"), (-1, 0, "Z"), (0, 1, "Z"), (0, -1, "Z")):
+                    xx, yy = sx + dx, sy + dy
+                    if 0 <= xx < f.shape[1] and 0 <= yy < f.shape[0] and f[yy, xx] == 0:
+                        f[yy, xx] = c[col]
+        out.append(f)
+    return out
+
+
 def build(emit):
     v = "sprites/vfx"
     emit(v, "vfx_slash-e_strip5", slash(0), 33)
@@ -791,13 +907,13 @@ def build(emit):
     emit(v, "vfx_telegraph-96_strip4", telegraph(96), 100, loop=True)
     emit(v, "vfx_reward_strip8", reward(), 50)
     p = "sprites/pickups"
-    emit(p, "chest-cafe_idle_strip6", chest_idle(), 150, loop=True)
-    emit(p, "chest-cafe_open_strip8", chest_open(), 70, events={"vfx": {"3": "vfx_reward"}})
-    emit(p, "pickup-grain_spin_strip6", grain_spin(), 80, loop=True)
-    emit(p, "pickup-cafe_idle_strip4", cafe_idle(), 150, loop=True)
-    emit(p, "pickup-tract_idle_strip6", tract_idle(), 100, loop=True)
-    emit(p, "pickup-ticket_idle_strip4", ticket_pick_idle(), 150, loop=True)
-    emit(p, "pickup-ps_idle_strip6", ps_idle(), 100, loop=True)
+    emit(p, "chest-cafe_idle_strip6", _pickup_finish(chest_idle(), sparkle=2), 150, loop=True)
+    emit(p, "chest-cafe_open_strip8", _pickup_finish(chest_open()), 70, events={"vfx": {"3": "vfx_reward"}})
+    emit(p, "pickup-grain_spin_strip6", _pickup_finish(grain_spin()), 80, loop=True)
+    emit(p, "pickup-cafe_idle_strip4", _pickup_finish(cafe_idle(), sparkle=1), 150, loop=True)
+    emit(p, "pickup-tract_idle_strip6", _pickup_finish(tract_idle(), sparkle=3), 100, loop=True)
+    emit(p, "pickup-ticket_idle_strip4", _pickup_finish(ticket_pick_idle(), sparkle=2), 150, loop=True)
+    emit(p, "pickup-ps_idle_strip6", _pickup_finish(ps_idle(), sparkle=2), 100, loop=True)
 
 
 def build_images(emit_image):

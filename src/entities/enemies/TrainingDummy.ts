@@ -9,15 +9,7 @@ export class TrainingDummy extends Enemy {
   protected readonly animPrefix = 'consultant';
 
   public constructor(world: CombatWorld, x: number, y: number) {
-    super(
-      world,
-      'consultant',
-      x,
-      y,
-      'consultant_idle_down_strip4',
-      { hp: 1000, damage: 0, speed: 0 },
-      32,
-    );
+    super(world, 'consultant', x, y, 'consultant-idle-down', { hp: 1000, damage: 0, speed: 0 });
     this.setTint(0xff9a3a);
   }
 

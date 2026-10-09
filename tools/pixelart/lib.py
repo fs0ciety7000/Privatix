@@ -8,7 +8,9 @@ import math
 import numpy as np
 from PIL import Image
 
-from palette import CHAR, K, RGBA
+from palette import CHAR, DARK, K, RGBA
+
+DARK_A = np.array(DARK, dtype=np.uint8)
 
 # --------------------------------------------------------------------------
 # Création / parsing
@@ -67,11 +69,14 @@ def rot90(a, k=1):
 # --------------------------------------------------------------------------
 
 
-def blit(dst, src, x, y, edge=None, only_on=None):
+def blit(dst, src, x, y, edge=None, only_on=None, cast=False):
     """Colle src (transparence = 0) dans dst en (x, y) (coin haut-gauche).
 
     edge : indice de couleur posé sur les pixels déjà opaques de dst qui
-    bordent la pièce (séparation interne / sel-out entre pièces).
+    bordent la pièce (séparation interne), ou "selout" : ces pixels prennent
+    le ton deux crans plus sombre de leur propre matériau.
+    cast : ombre portée de la pièce (lumière haut-gauche) sur dst, décalée
+    de (+1, +1), un ton plus sombre (occlusion sous les bras, le menton…).
     """
     h, w = src.shape
     H, W = dst.shape
@@ -80,11 +85,22 @@ def blit(dst, src, x, y, edge=None, only_on=None):
     if x0 >= x1 or y0 >= y1:
         return dst
     sub = src[y0 - y : y1 - y, x0 - x : x1 - x]
-    if edge is not None:
+    if edge is not None or cast:
         mask = np.zeros_like(dst, dtype=bool)
         mask[y0:y1, x0:x1] = sub > 0
+    if cast:
+        sh = np.zeros_like(mask)
+        sh[1:, 1:] = mask[:-1, :-1]
+        sh[1:, :] |= mask[:-1, :]
+        ring = sh & ~mask & (dst > 0) & (dst != K)
+        dst[ring] = DARK_A[dst[ring]]
+    if edge is not None:
         ring = _dilate4(mask) & ~mask & (dst > 0)
-        dst[ring] = edge
+        if isinstance(edge, str) and edge == "selout":
+            ring &= dst != K
+            dst[ring] = DARK_A[DARK_A[dst[ring]]]
+        else:
+            dst[ring] = edge
     region = dst[y0:y1, x0:x1]
     m = sub > 0
     if only_on is not None:

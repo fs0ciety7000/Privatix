@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { originOf, sheetOf } from '@/config/assets';
 import {
   Colors,
   Css,
@@ -37,14 +38,14 @@ export class MainMenuScene extends Phaser.Scene {
         .fillRect(0, y + 14, GAME_WIDTH, 2);
     }
     const hero = this.add
-      .sprite(GAME_WIDTH / 2 - 120, GAME_HEIGHT - 82, 'player_idle_side_strip6')
+      .sprite(GAME_WIDTH / 2 - 120, GAME_HEIGHT - 82, sheetOf('player-idle-side'))
       .setScale(3)
-      .setOrigin(0.5, 0.9167);
+      .setOrigin(...originOf('player-idle-side'));
     if (this.anims.exists('player-idle-side')) hero.play('player-idle-side');
     const foe = this.add
-      .sprite(GAME_WIDTH / 2 + 130, GAME_HEIGHT - 82, 'consultant_idle_side_strip4')
+      .sprite(GAME_WIDTH / 2 + 130, GAME_HEIGHT - 82, sheetOf('consultant-idle-side'))
       .setScale(3)
-      .setOrigin(0.5, 0.875)
+      .setOrigin(...originOf('consultant-idle-side'))
       .setFlipX(true);
     if (this.anims.exists('consultant-idle-side')) foe.play('consultant-idle-side');
 

@@ -22,7 +22,7 @@ export class ManagerKpi extends Enemy {
   private broken = false;
 
   public constructor(world: CombatWorld, x: number, y: number, scale: EnemyScale) {
-    super(world, 'manager', x, y, 'manager-kpi_idle_down_strip4', scale, 48);
+    super(world, 'manager', x, y, 'manager-kpi-idle-down', scale);
     const now = world.now();
     this.nextChrono = now + 2500;
     this.nextReport = now + MANAGER.REPORT_FIRST_AT_MS;

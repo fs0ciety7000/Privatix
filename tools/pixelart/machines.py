@@ -4,6 +4,7 @@ import math
 import numpy as np
 
 import lib
+import modern
 from font3x5 import draw_text
 from humanoid import dissolve, flash_white
 from lib import parse, canvas, blit
@@ -93,6 +94,7 @@ def borne_frame(screen="hs", blink=0, slot=None, ticket=0, crack=False, dy=0, dx
         lib.rect(t, BX + 7 + dx, BY + 19 + dy + ticket - 1, 4, 1, c["M"])
         blit(a, t, 0, 0)
     a = lib.outline(a)
+    a = modern.shade(a, ground=26)
     if flash:
         a = flash_white(a)
     return a
@@ -237,6 +239,7 @@ def drone_frame(phase=0, dy=0, eye="N", led=None, tilt=0, flash=False, antenna=T
         lib.line(a, cx + 3, by - 1, cx + 4, by - 3, c["s"])
         lib.px(a, cx + 4, by - 4, c[led or "T"])
     a = lib.outline(a)
+    a = modern.shade(a)
     if led == "M":
         for (x, y) in ((cx + 4, by - 6), (cx + 6, by - 4), (cx + 2, by - 5)):
             lib.px(a, x, y, c["M"])

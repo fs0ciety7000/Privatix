@@ -183,7 +183,9 @@ export class GameFeel {
       alpha: 0,
       duration: ms,
       ease: 'Quad.easeOut',
-      onComplete: () => { ghost.destroy(); },
+      onComplete: () => {
+        ghost.destroy();
+      },
     });
   }
 

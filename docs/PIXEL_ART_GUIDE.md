@@ -2,7 +2,7 @@
 
 > **Rôle** : Direction artistique pixel art · **Statut** : cahier des charges **contractuel** pour toute commande, tout achat et toute intégration d'asset graphique.
 > **Jeu** : Hack 'n' Slash / Roguelite top-down, Phaser 4.2.1 + TypeScript + Vite, Arcade Physics, `pixelArt: true`, `roundPixels: true`.
-> **Références visuelles** : Hyper Light Drifter (couleurs franches, VFX nets), Hades (rythme, télégraphes, lecture des menaces), Enter the Gungeon (densité de pixel modeste, projectiles saturés).
+> **Références visuelles** : **pixel art moderne — Dead Cells** (volumes éclairés, rim light, smears, animation fluide à anticipation / follow-through, VFX généreux) **et Celeste** (palette saturée à rampes à décalage de teinte, squash & stretch, élément secondaire qui traîne : l'écharpe du héros comme les cheveux de Madeline). Pour la lecture du combat : Hades (télégraphes), Hyper Light Drifter (couleurs franches), Enter the Gungeon (projectiles saturés).
 > **Usage** : le porteur du projet s'en sert pour **commander ou télécharger** les bons assets (itch.io ou freelance). Un fichier qui ne respecte pas ce guide **n'entre pas** dans `public/`.
 
 Vocabulaire : **doit** = obligatoire (refus en revue sinon) ; **recommandé** = préférence de la direction artistique ; « P0/P1/P2 » = priorité de production (§10).
@@ -15,7 +15,7 @@ Vocabulaire : **doit** = obligatoire (refus en revue sinon) ; **recommandé** = 
 4. Ennemis, élite et boss (MVP) — annexe post-MVP
 5. Tilesets, props, trains et couches de décor
 6. VFX, projectiles, pickups, ombres, lumières, UI, polices, portraits
-7. Palette « Privatix 32 » et lisibilité
+7. Palette « Privatix Moderne 57 » et lisibilité
 8. Guide d'achat itch.io (et commande à un freelance)
 9. Assets originaux du dépôt (générateur `tools/pixelart/`)
 10. Liste exhaustive du MVP et récapitulatif chiffré
@@ -74,6 +74,21 @@ Règles de pivot :
 - Animations **mono-direction** (pas de suffixe de direction) : cinématiques (spawn, death, special, whistle), ennemis symétriques (Borne, Drone), boss 96/128 (face caméra).
 - Pas de diagonales dessinées, ni pour le héros ni pour les ennemis.
 
+### 1.4 Direction artistique : pixel art **moderne** (Dead Cells, Celeste)
+
+Le pixel art reste **net** (1 texel = 1 pixel, alpha binaire, contour extérieur sans anti-aliasing), mais il n'est plus « rétro plat » :
+
+| Pilier | Ce qu'on attend dans chaque feuille |
+|---|---|
+| **Palette** | Rampes de **4 à 8 tons par matériau** à **décalage de teinte** : ombres vers le bleu / violet froid, lumières vers le jaune / orange chaud ; saturation franche ; aucun noir pur (contour `#14101A`, lignes internes en sel-out coloré). Palette « Privatix Moderne 57 » (§7.1). |
+| **Volume et lumière** | Lumière **haut-gauche** ; arêtes tournées vers la lumière un ton plus clair, arêtes opposées un ton plus sombre ; **rim light** `#6FD6FF` (néon froid des quais) sur le **bord droit** de la silhouette des acteurs ; **ombre portée / AO** d'un ton sous les bras, le menton, le torse et au contact du sol ; **anti-aliasing manuel sélectif à l'intérieur** des formes uniquement. |
+| **Animation** | Plus de frames sur les actions clés (§3.1) ; **anticipation → action → follow-through** ; **smear** (traînée pleine de l'arme, cœur blanc, bords colorés, stries de vitesse) sur la frame active ; **squash & stretch** dessiné (écrasé à l'appui / à l'impact, étiré au départ du dash et en suspension) ; **élément secondaire** : l'écharpe syndicale rouge du héros, simulée, en retard d'1–2 frames. |
+| **Lisibilité** | Couleurs de lecture inchangées : héros orange `#FF7A1A`, ennemis turquoise `#19C3B1`, ce qui blesse magenta `#FF3EA5`. **Émissifs** (écrans, LED, néons, télégraphes, VFX) très saturés et clairs : ils ne sont jamais assombris et alimentent le bloom du moteur. |
+| **VFX** | Plus lumineux et plus généreux : slash à cœur blanc et bords colorés, étincelles, impacts « étoile » avec halo, explosion flash blanc → boule de feu → fumée, onde de choc lumineuse. Toujours sans contour. |
+| **Pickups et UI** | Pickups modelés avec un **reflet qui glisse** et une étincelle sur la boucle ; barres de vie / jauges en **rampe verticale** avec liseré spéculaire et reflets obliques ; cadres et panneaux biseautés (lumière haut-gauche), centre uni pour le 9-slice. |
+| **Décor** | Sol en **valeur moyenne** (micro-variations, biseaux, grain, reflets humides), murs **sombres** avec matière ; néons et écrans émissifs ; quais en **bleu nuit profond**, OCC en **brique chaude** éclairée par des lanternes. |
+| **Éclairage dynamique** | Chaque feuille de personnage, tileset et prop est livrée avec sa **normal map** `<nom>_n.png` (§2.6) pour l'éclairage Phaser 4. |
+
 ---
 
 ## 2. Règles de format (non négociables)
@@ -92,11 +107,12 @@ Règles de pivot :
 | R8 | **Largeur max 2 048 px** par fichier. Au-delà : réduire le nombre de frames ou découper en deux animations (`death-a`, `death-b`). |
 | R9 | **Pivot aux pieds** aux coordonnées exactes du §1.2, identiques sur toutes les frames et tous les fichiers de l'entité. |
 | R10 | **Frame d'impact** (§2.4) : à l'index indiqué dans les tableaux de ce guide, ni avant ni après. |
-| R11 | **Couleurs** : uniquement celles de la palette Privatix 32 (§7), contours compris. |
+| R11 | **Couleurs** : uniquement celles de la palette Privatix Moderne 57 (§7), contours compris. |
 | R12 | **Fichiers statiques** (une seule image, non animée) : `<catégorie>_<nom>.png` (ex. `shadow_m.png`, `ui_energy-frame.png`, `tiles_quais.png`, `train_motrice.png`). Ils peuvent être non carrés. |
 | R13 | **Bandes d'icônes / d'états** (non animées mais indexées) : même format qu'une animation ; l'ordre des frames est celui listé dans ce guide. |
+| R14 | **Normal map** : `<nom du PNG sans .png>_n.png`, à côté du PNG, mêmes dimensions, même alpha (§2.6). Ce suffixe est la seule exception à la regex R2. |
 
-**Clés Phaser** : clé de texture = nom de fichier sans `.png` ; clé d'animation = champs joints par `-` sans `strip<N>` (ex. `player_run_down_strip8.png` → `player-run-down`). Les durées par frame, frames actives et boucles vivent dans la table de données du code (recopiée des tableaux de ce guide), **jamais** dans le PNG. Le parseur de noms du code doit accepter le `-` à l'intérieur des champs (R1).
+**Clés Phaser** : clé de texture = nom de fichier sans `.png` ; clé d'animation = champs joints par `-` sans `strip<N>` (ex. `player_run_down_strip10.png` → `player-run-down`). Les durées par frame, frames actives et boucles vivent dans la table de données du code (recopiée des tableaux de ce guide), **jamais** dans le PNG. Le parseur de noms du code doit accepter le `-` à l'intérieur des champs (R1).
 
 ### 2.2 Dossiers imposés
 
@@ -140,17 +156,29 @@ La bande reste le format de livraison et de relecture. Une entité peut **en plu
 
 - Un `.aseprite` par entité ; **tags nommés `<anim>_<dir>`** (ex. `run_down`, `death`), durées saisies dans Aseprite.
 - Export des bandes depuis la source (une commande par tag) :
-  `aseprite -b art/src/player/player.aseprite --tag run_down --sheet-type horizontal --sheet public/assets/sprites/player/player_run_down_strip8.png`
+  `aseprite -b art/src/player/player.aseprite --tag run_down --sheet-type horizontal --sheet public/assets/sprites/player/player_run_down_strip10.png`
 - Export atlas (sans `--trim`, sans `--split-layers`) :
   `aseprite -b art/src/player/player.aseprite --sheet public/assets/sprites/player/player.png --data public/assets/sprites/player/player.json --format json-hash --sheet-type packed --list-tags --filename-format '{title}_{tag}_{tagframe}' --shape-padding 2 --inner-padding 0`
 - Noms de frames de l'atlas : `<entité>_<anim>_<dir>_<index>` (ex. `player_run_down_3`), c'est-à-dire **le nom de la bande sans `_strip<N>`** suivi de l'index. Chargement : `this.load.aseprite(...)` ou `this.load.atlas(...)` + `generateFrameNames`.
 - L'atlas est un **artefact généré**, jamais retouché à la main ; un `.json` d'atlas ne doit contenir aucun `trimmed: true`.
 
+### 2.6 Normal maps (éclairage dynamique Phaser 4)
+
+| Règle | Valeur |
+|---|---|
+| Fichiers concernés | **toutes** les feuilles de `sprites/player`, `sprites/enemies`, `sprites/bosses`, `sprites/npcs` et **tout** `tilesets/` (tilesets extrudés, props, atlas de props, trains, bandes animées de props). **Pas** de normal map pour les VFX, projectiles, pickups, UI, portraits, polices, ombres ni lumières `light_*`. |
+| Nom | `<nom>_n.png` à côté de `<nom>.png` (ex. `player_run_side_strip10_n.png`, `tiles_quais_n.png`, `props/prop_banc-h_n.png`). |
+| Format | PNG RGBA, **mêmes dimensions** que le PNG, **même alpha** (binaire, identique pixel à pixel) ; pixels transparents = `(128, 128, 255, 0)`. |
+| Encodage | R = X (droite), **G = Y vers le haut (vert = haut, convention OpenGL)**, B = Z vers la caméra ; `composante = (n + 1) / 2 × 255`. |
+| Calcul (générateur) | Hauteur = **bombé de la silhouette** (distance au bord) + **luminance du matériau** ; gradient → normale. Chaque frame (ou tuile de 18×18 dans un tileset extrudé) est traitée seule : aucune pente entre deux frames ou deux tuiles. Tuiles : luminance seule (sol plat en relief). |
+| Manifeste | champ **`"normalMap": "assets/…_n.png"`** sur chaque entrée concernée (`animations[]`, `images[]`, `tilesets[]`). Chargement Phaser 4 : `load.spritesheet(key, [file, normalMap], frameConfig)` ou `load.spritesheet({ key, url: file, normalMap, frameConfig })` ; `load.image(key, [file, normalMap])` pour les images et tilesets ; `load.atlas({ key, textureURL, atlasURL, normalMap })` pour les atlas de props ; puis `setLighting(true)` (WebGL). |
+| Asset acheté | livrer sa normal map au même nom (dessinée, ou générée avec `tools/pixelart/modern.py` → `normal_map`) ; à défaut, le moteur éclaire à plat. |
+
 ---
 
 ## 3. Héros
 
-**Le cheminot en 3x8** : gilet orange haute visibilité (seul porteur de l'orange `#FF7A1A`), pantalon bleu institution, casque ou bonnet de chantier, bandes réfléchissantes, **clé à tire-fond** (arme unique). Silhouette lisible en noir plein. Dossier : `public/assets/sprites/player/`. Frame **48×48**, pivot **(24, 44)**.
+**Le cheminot en 3x8** : gilet orange haute visibilité (seul porteur de l'orange `#FF7A1A`), pantalon bleu institution, casque ou bonnet de chantier, bandes réfléchissantes, **clé à tire-fond** (arme unique) et **écharpe syndicale rouge** (élément secondaire animé, §3.2). Silhouette lisible en noir plein. Dossier : `public/assets/sprites/player/`. Frame **48×48**, pivot **(24, 44)**.
 
 ### 3.1 Animations du MVP
 
@@ -158,22 +186,22 @@ Durées **par frame** en ms. « Active » = index (base 0) de la frame d'impact.
 
 | Anim | Action de jeu | Dir | Frames | Durées (ms) | Total | FPS nominal | Boucle | Active / événements | Fichier(s) exact(s) | Feuille |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `idle` | repos | 3 | 6 | 150 ×6 | 900 | 6,7 | oui | respiration, clé qui bascule sur l'épaule | `player_idle_{down,up,side}_strip6.png` | 288×48 |
-| `run` | course | 3 | 8 | 80 ×8 | 640 | 12,5 | oui | contacts au sol frames **0 et 4** → `vfx_dust` + son de pas | `player_run_{down,up,side}_strip8.png` | 384×48 |
-| `attack1` | Frappe, coup 1 (balayage) : startup 90, active 60, recovery 160 | 3 | 5 | 50, 40, **60**, 70, 90 | 310 | 16 | non | **active 2** ; enchaînement possible dès 80 ms de recovery (frame 4) | `player_attack1_{down,up,side}_strip5.png` | 240×48 |
-| `attack2` | Frappe, coup 2 (revers) : 80 / 60 / 170 | 3 | 5 | 40, 40, **60**, 80, 90 | 310 | 16 | non | **active 2** ; enchaînement dès la frame 4 | `player_attack2_{down,up,side}_strip5.png` | 240×48 |
-| `attack3` | Frappe, coup 3 (tire-fond au sol) : 200 / 80 / 320 | 3 | 7 | 80, 70, 50, **80**, 100, 100, 120 | 600 | 11,7 | non | **active 3** → `vfx_slam-*`, hitstop 110 ms ; dash interdit après 120 ms de startup | `player_attack3_{down,up,side}_strip7.png` | 336×48 |
-| `dash` | Dash : 72 px en 140 ms | 3 | 5 | 30, 30, 30, 30, 20 | 140 | 35,7 | non | **invulnérable frames 0–3** (0–120 ms) ; `vfx_dash` frame 0 | `player_dash_{down,up,side}_strip5.png` | 240×48 |
+| `idle` | repos | 3 | **8** | 140 ×8 | 1 120 | 7,1 | oui | respiration (léger écrasement frames 4–5), clé qui bascule sur l'épaule, écharpe qui ondule | `player_idle_{down,up,side}_strip8.png` | 384×48 |
+| `run` | course | 3 | **10** | 64 ×10 | 640 | 15,6 | oui | cycle contact / appui (écrasé) / passage / poussée / suspension (étiré) ; contacts au sol frames **0 et 5** (`events.footstep`) → `vfx_dust` + son de pas ; écharpe au vent | `player_run_{down,up,side}_strip10.png` | 480×48 |
+| `attack1` | Frappe, coup 1 (balayage) : startup 90, active 60, recovery 160 | 3 | **7** | 40, 50, **60**, 40, 40, 40, 40 | 310 | 22,6 | non | 0 armé, 1 anticipation max (écrasé) ; **active 2 = smear** (traînée pleine, corps étiré) ; 3 follow-through (fin de smear) ; 4–6 retour ; enchaînement dès la frame 4 | `player_attack1_{down,up,side}_strip7.png` | 336×48 |
+| `attack2` | Frappe, coup 2 (revers) : 80 / 60 / 170 | 3 | **7** | 40, 40, **60**, 40, 40, 40, 50 | 310 | 22,6 | non | **active 2 = smear** ; 3 follow-through ; enchaînement dès la frame 4 | `player_attack2_{down,up,side}_strip7.png` | 336×48 |
+| `attack3` | Frappe, coup 3 (tire-fond au sol) : 200 / 80 / 320 | 3 | **9** | 60, 50, 50, 40, **80**, 100, 90, 70, 60 | 600 | 15 | non | anticipation marquée : 0 accroupi (écrasé), 1–3 clé levée au maximum, corps étiré ; **active 4 = smear** → `vfx_slam-*`, hitstop 110 ms ; 5 impact (écrasé) + fin de smear ; 6–8 relevé ; dash interdit après 120 ms de startup | `player_attack3_{down,up,side}_strip9.png` | 432×48 |
+| `dash` | Dash : 72 px en 140 ms | 3 | **6** | 20, 25, 25, 25, 25, 20 | 140 | 42,9 | non | 0 anticipation (écrasé), 1–3 **étirement** dans l'axe + lignes de vitesse, 4 freinage (écrasé), 5 retour ; **invulnérable frames 0–4** (0–120 ms) ; `vfx_dash` frame 0 | `player_dash_{down,up,side}_strip6.png` | 288×48 |
 | `dash-attack` | Attaque de correspondance (estoc) : 60 / 80 / 200 | 3 | 5 | 30, 30, **80**, 100, 100 | 340 | 14,7 | non | **active 2** → `vfx_thrust-*` | `player_dash-attack_{down,up,side}_strip5.png` | 240×48 |
 | `drink` | Café : boire un Gobelet (600 ms, déplacement 50 %) | 3 | 6 | 100 ×6 | 600 | 10 | non | soin appliqué frame **4** → `vfx_heal` | `player_drink_{down,up,side}_strip6.png` | 288×48 |
-| `hurt` | coup reçu | 3 | 3 | 60, 80, 100 | 240 | 12,5 | non | flash blanc par le moteur | `player_hurt_{down,up,side}_strip3.png` | 144×48 |
+| `hurt` | coup reçu | 3 | **4** | 50, 60, 60, 70 | 240 | 16,7 | non | 0 impact (écrasé), 1 recul max (étiré), 2–3 retour ; flash blanc par le moteur | `player_hurt_{down,up,side}_strip4.png` | 192×48 |
 | `whistle` | Coup de sifflet (tap) : 150 / 100 / 250 | 1 | 8 | 50, 50, 50, **50**, **50**, 80, 80, 90 | 500 | 16 | non | invulnérable 0–2 ; **actives 3–4** → `vfx_shockwave` (rayon 72) | `player_whistle_strip8.png` | 384×48 |
 | `special` | Préavis de grève (maintien 600 ms) : 600 / 120 / 400 | 1 | 12 | 150 ×4, **120**, 50, 50, 50, 60, 60, 60, 70 | 1 120 | 10,7 | non | frames 0–3 = maintien (+ `vfx_charge` en boucle) ; **active 4** → `vfx_shockwave-big` (rayon 120) | `player_special_strip12.png` | 576×48 |
 | `rage` | entrée en Pétage de plombs | 1 | 8 | 60 ×8 | 480 | 16,7 | non | vapeur du casque frame 3 → `vfx_steam` en boucle ensuite | `player_rage_strip8.png` | 384×48 |
 | `spawn` | Prise de poste (entrée de salle) | 1 | 10 | 80 ×9, 120 | 840 | 12 | non | dans `vfx_spawn-player` ; clé plantée frame **6** → `vfx_dust-land` | `player_spawn_strip10.png` | 480×48 |
 | `death` | fin de Shift | 1 | 12 | 100 ×11, 400 | 1 500 | 8 | non | dernière frame tenue : assis, clé posée, thermos renversé | `player_death_strip12.png` | 576×48 |
 
-**Total héros MVP : 32 fichiers, 200 frames** (50 frames × 3 directions + 50 frames mono-direction).
+**Total héros MVP : 32 fichiers, 236 frames** (62 frames × 3 directions + 50 frames mono-direction). Les durées du tableau sont des valeurs de départ : le moteur recale chaque coup sur les timings du GDD (startup / active / recovery) en lisant le manifeste.
 
 ### 3.2 Règles d'animation propres au héros
 
@@ -183,6 +211,9 @@ Durées **par frame** en ms. « Active » = index (base 0) de la frame d'impact.
 - `dash` : corps penché, clé tenue en arrière, pieds hors sol frames 1–3 (seule exception au pivot). Les images rémanentes **orange** (`setTintFill(0xFF7A1A)`, 3 copies espacées de 45 ms, effacées en 180 ms) sont générées par le moteur.
 - `drink` : le gobelet (blanc 06, café 14) est tenu de la main libre ; les jambes restent en pose neutre (le moteur fait glisser à 50 %).
 - Pendant le Pétage de plombs, le moteur teinte le héros en rouge à 15 % : aucune variante dessinée.
+- **Écharpe syndicale rouge** (élément secondaire « à la Madeline ») : nœud au col sur toutes les directions (+ court pan sur la poitrine de face), queue de 4 segments (rouge rebelle, dessous rouge sombre, liseré blanc et frange au bout) qui **traîne derrière le mouvement avec 1–2 frames de retard** (chaîne simulée sur toute l'animation : elle flotte en course, fouette au moment du coup, retombe en follow-through). De face elle passe dans le dos (visible sur les côtés), de dos elle couvre le gilet, de profil elle part vers l'arrière.
+- **Smear** : sur la frame active de chaque coup, la tête de la clé laisse une **traînée pleine** en croissant (fine à la queue, large à la tête), **cœur blanc**, bords jaune / orange, stries de vitesse dans la queue ; la frame suivante garde la fin de la traînée en tons chauds (follow-through). Le smear fait partie du sprite ; le slash `vfx_slash-*` (§6) se superpose par le moteur.
+- **Squash & stretch** : écrasé à l'appui de course, à l'armé et à l'impact (≈ ×1,1 / ×0,9), étiré au départ du dash et pendant la suspension (jusqu'à ×1,2 dans l'axe du mouvement), toujours autour du pivot (les pieds ne bougent pas).
 
 ### 3.3 Héros post-MVP (annexe, mêmes règles)
 
@@ -213,13 +244,13 @@ Petit et fin, costume cintré trop court, baskets blanches, laptop sous le bras,
 | Anim | Comportement | Dir | Frames | Durées (ms) | Boucle | Active / télégraphe | Fichier(s) | Feuille |
 |---|---|---|---|---|---|---|---|---|
 | `idle` | Errance (arrêt) | 3 | 4 | 150 ×4 | oui | — | `consultant_idle_{down,up,side}_strip4.png` | 128×32 |
-| `run` | Errance, Approche (strafe en arc) | 3 | 6 | 90 ×6 | oui | — | `consultant_run_{down,up,side}_strip6.png` | 192×32 |
-| `attack` | Préparation (450 ms) + ruée « Quick win » (6 tuiles) | 3 | 6 | 150, 150, 150, **40**, 60, 100 | non | frames 0–2 : ajuste sa cravate, **éclat magenta** sur le laptop (frame 2) ; **active 3** (le moteur tient la frame 3 pendant la ruée) ; 4–5 freinage | `consultant_attack_{down,up,side}_strip6.png` | 192×32 |
+| `run` | Errance, Approche (strafe en arc) | 3 | **8** | 68 ×8 | oui | contact / appui / passage / suspension ; pas frames 0 et 4 | `consultant_run_{down,up,side}_strip8.png` | 256×32 |
+| `attack` | Préparation (450 ms) + ruée « Quick win » (6 tuiles) | 3 | **8** | 120, 120, 120, 90, **40**, 60, 80, 100 | non | frames 0–2 : ajuste sa cravate, reflet (frame 2) ; 3 anticipation (armé, écrasé, écran **magenta**) ; **active 4 = smear du « diaporama »** (traînée magenta à cœur blanc, slides turquoise qui s'en détachent, corps étiré) ; 5 follow-through ; 6–7 freinage | `consultant_attack_{down,up,side}_strip8.png` | 256×32 |
 | `hurt` | coup reçu | 3 | 2 | 80, 80 | non | — | `consultant_hurt_{down,up,side}_strip2.png` | 64×32 |
 | `death` | mort | 1 | 8 | 80 ×8 | non | finit laptop au sol ; `vfx_poof` frame 5 | `consultant_death_strip8.png` | 256×32 |
 | `recover` *(P2, optionnel)* | Récupération (800 ms, essoufflé, dos tourné) | 3 | 4 | 200 ×4 | non | à défaut, le moteur tient la frame 5 d'`attack` | `consultant_recover_{down,up,side}_strip4.png` | 128×32 |
 
-→ **13 fichiers, 62 frames** (+ 3 fichiers / 12 frames optionnels).
+→ **13 fichiers, 74 frames** (+ 3 fichiers / 12 frames optionnels).
 
 ### 4.2 Borne Automatique (MVP) — tourelle, salves de tickets, ruban-laser
 
@@ -450,7 +481,7 @@ Aucun élément ne doit permettre d'identifier un bâtiment réel ou son archite
 
 ### 6.1 Règles des VFX et projectiles
 
-- **Pas de contour** sur les VFX. **Noyau blanc `#FFFFFF` + 2 teintes** au plus par effet.
+- **Pas de contour** sur les VFX, **pas de normal map**. **Noyau blanc `#FFFFFF` + une rampe de 3–4 teintes** de la même famille (ex. joueur : 40 jaune éclat → 23 → 19 → 22 ; menace : 45 → 29 → 44). Style Dead Cells : généreux et lumineux (flash blanc sur la 1re frame d'un impact ou d'une explosion, halo en anneau, étincelles à tête blanche, fumée froide qui se dissout par grains), paliers nets, jamais de dégradé lisse.
 - VFX du **joueur** : blanc, orange 22, ambre 19, jaune 23. Ce qui **blesse le joueur** : **magenta 29 + blanc**. Effets ennemis non offensifs (apparition, mort, bouclier, aura) : turquoise 25/26.
 - **Rotations** : uniquement par multiples de 90° et miroirs (sans perte), autour du pivot indiqué. Rotation libre tolérée seulement pour les projectiles ≤ 16 px et les particules.
 - Durée par frame des impacts : 33 à 60 ms (nerveux mais lisible). Toutes les durées ci-dessous sont des valeurs de départ, ajustables en jeu sans redessiner.
@@ -611,9 +642,11 @@ Plus `vieille-dame_idle_strip4.png` (128×32, 200 ms) : **la Vieille Dame**, caf
 
 ---
 
-## 7. Palette « Privatix 32 » et lisibilité
+## 7. Palette « Privatix Moderne 57 » et lisibilité
 
-### 7.1 Palette maître (fichier de référence `privatix32.gpl`, livré avec le générateur §9 ; à défaut, ce tableau fait foi)
+### 7.1 Palette maître (fichier de référence `tools/pixelart/privatix32.gpl`, nom historique conservé ; à défaut, ce tableau fait foi)
+
+57 couleurs : les **32 couleurs historiques** (n° 01–32, rôles de lecture inchangés) et **25 tons de rampe** (n° 33–57) qui donnent à chaque matériau 4 à 8 tons à **décalage de teinte**. Le générateur (`tools/pixelart/palette.py`) associe à chaque couleur une lettre et une rampe ; ses voisins « plus sombre » / « plus clair » servent à l'éclairage, au sel-out et à l'occlusion.
 
 | # | Hex | Nom | Rôle |
 |---|---|---|---|
@@ -649,10 +682,39 @@ Plus `vieille-dame_idle_strip4.png` (128×32, 200 ms) : **la Vieille Dame**, caf
 | 30 | `#B48CFF` | Violet burnout | jauge de Burnout, rareté Statutaire |
 | 31 | `#1E5B3A` | Vert signal sombre | plantes, ombre des signaux |
 | 32 | `#5BD17A` | Vert soin / feu vert | soins, feu vert |
+| 33 | `#1C1A2E` | Abysse violet | ombre la plus profonde de l'acier (jamais du noir pur) |
+| 34 | `#D3DEEA` | Acier reflet | rehaut froid de l'acier, de la clé, des rails |
+| 35 | `#6E1F33` | Gilet creux | ombre profonde du gilet (orange → bordeaux) |
+| 36 | `#FFA244` | Gilet lumière | gilet éclairé |
+| 37 | `#FFD98C` | Gilet éclat | rehaut chaud du gilet, bord du smear |
+| 38 | `#FBD3A6` | Peau éclat | rehaut de peau, bois clair |
+| 39 | `#9C4A1C` | Ambre creux | ombre de l'ambre / du jaune |
+| 40 | `#FFF3A8` | Jaune éclat | cœur chaud des VFX, LED d'affichage |
+| 41 | `#10877F` | Turquoise moyen | ombre de la turquoise ennemie |
+| 42 | `#DFFFF8` | Turquoise éclat | cœur des émissifs ennemis |
+| 43 | `#5E1242` | Magenta creux | ombre du magenta |
+| 44 | `#B81E7E` | Magenta moyen | bord de traînée / d'explosion menaçante |
+| 45 | `#FF99D2` | Magenta éclat | halo du magenta (avec noyau blanc) |
+| 46 | `#4A1427` | Rouge creux | ombre profonde du rouge |
+| 47 | `#F2675E` | Rouge éclat | rehaut de l'écharpe, des rouges |
+| 48 | `#2F9A5C` | Vert moyen | ton intermédiaire des verts |
+| 49 | `#4A3388` | Violet creux | ombre du violet |
+| 50 | `#4A1D22` | Brique creux | joints et ombres des briques de l'OCC |
+| 51 | `#B65A3A` | Brique lumière | briques éclairées par les lanternes |
+| 52 | `#131C33` | Quai creux | ballast, ombres du sol de nuit |
+| 53 | `#222F4D` | Quai ombre | joints, dessus de murs des quais |
+| 54 | `#33446A` | Quai base | ombre propre des dalles |
+| 55 | `#475C87` | Quai lumière | **valeur moyenne du sol des quais** |
+| 56 | `#6B84B0` | Quai reflet | biseau éclairé, reflets humides |
+| 57 | `#6FD6FF` | Néon rim | **rim light des acteurs**, tubes néon du décor (émissif) |
+
+Rampes (sombre → clair) : acier 33·02·03·04·05·34·06·07 ; bleu 08·09·10·11·12 ; sol des quais 52·53·54·55·56 ; chaud (bois, café, peau) 13·14·15·16·17·38 ; gilet 35·21·22·36·37 ; ambre 39·19·23·40 ; turquoise 24·41·25·26·42 ; magenta 43·44·29·45 ; rouge 46·27·28·47 ; vert 31·48·32 ; violet 49·30 ; brique 50·20·51. Raccords : l'ombre de la crème 18 est le gris bleuté 05 (ombre froide), l'éclat de chaque rampe chaude tend vers le jaune.
+
+Couleur modifiée : la 04 passe de `#7D828C` (gris neutre) à `#737E98` (acier clair bleuté) pour que l'ombre ne soit jamais grise neutre.
 
 Les teintes indicatives des notes de narration (violet Privatix `#7B5CFF`, ciels d'aube, moquettes) **ne sont pas** dans la palette : elles sont remappées sur les couleurs ci-dessus (turquoise pour ce qui appartient à l'ennemi, magenta pour ce qui blesse, 04/05/12 pour les moquettes et verres).
 
-### 7.2 Sous-palettes (16 couleurs max par tileset ; 16 max par personnage, contour compris)
+### 7.2 Sous-palettes (recommandé : 24 couleurs max par tileset ; 24 max par personnage, contour, rim et émissifs compris)
 
 | Usage | Couleurs (n°) | Dominante |
 |---|---|---|
@@ -660,13 +722,17 @@ Les teintes indicatives des notes de narration (violet Privatix `#7B5CFF`, ciels
 | **Hub OCC** | 01, 13, 14, 15, 16, 17, 18, 19, 20, 27, 28, 31, 32 | espresso → ambre : sécurité et chaleur |
 | **La Passerelle** (aube, post-MVP) | 01, 02, 03, 04, 05, 06, 08, 09, 10, 11, 12, 19, 23 | blancs et bleus, ombres bleutées (jamais grises neutres) |
 | **Hall & BAG** (post-MVP) | 01, 02, 03, 04, 05, 06, 09, 12, 16, 18, 24, 27, 31 | gris clinique, verre, bois clair du hall ; turquoise **profond** seulement |
-| **Héros** | 01, 02, 03, 05, 06, 07, 09, 14, 15, 16, 17, 19, 21, 22 | orange gilet sur bleu institution |
-| **Ennemis Privatix** | 01, 02, 03, 04, 06, 07, 08, 09, 15–17 (peaux), 24, 25, 26, 29 (attaque) | costumes froids + turquoise |
+| **Héros** | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 13–17, 21, 22, 27, 28, 33–38, 47, 57 | orange gilet sur bleu institution, écharpe rouge, rim néon |
+| **Ennemis Privatix** | 01–04, 06–10, 15–17 (peaux), 24, 25, 26, 29, 33, 34, 41–45 (attaque), 57 | costumes froids + turquoise, rim néon |
 
-### 7.3 Ombrage et contours
+### 7.3 Ombrage et contours (pixel art moderne)
 
 - **Lumière haut-gauche** partout : rehauts sur les arêtes haut et gauche, ombres propres en bas-droite.
-- Acteurs : **3 tons + 1 rehaut** par matériau, **décalage de teinte** (ombres vers le bleu/violet, lumières vers le jaune), pas de « pillow shading », **pas de tramage sur les acteurs**.
+- Acteurs : **4 à 6 tons par matériau**, **décalage de teinte** (ombres vers le bleu/violet, lumières vers le jaune), modelé **par le volume** de la silhouette (pas de « pillow shading » : le bord droit est plus sombre que le bord gauche), **pas de tramage sur les acteurs**.
+- **Rim light** : liseré 1 px `#6FD6FF` (57) sur le **bord droit extérieur** de la silhouette des acteurs (lumière d'ambiance des néons, opposée à la lumière principale), continu (≥ 2 px), jamais sur la peau, les semelles ni les pièces de 1–2 px de large. Pas de rim sur le décor.
+- **Ombre portée / AO** : un ton plus sombre sous chaque pièce posée sur une autre (bras sur le torse, tête sur le col, torse sur les hanches, arme sur le corps), décalée bas-droite ; un ton plus sombre sur la rangée de contact au sol.
+- **Anti-aliasing manuel** : seulement **à l'intérieur** des formes (ton intermédiaire au coin d'une marche d'escalier entre deux tons d'une même rampe) ; **jamais** sur le contour extérieur.
+- **Émissifs** (07, 23, 25, 26, 29, 40, 42, 45, 57 : écrans, LED, néons, télégraphes, VFX) : jamais assombris par l'ombrage, toujours au plus clair ; ce sont eux que le bloom du moteur fait briller.
 - Décor : tramage 50 % (damier) autorisé seulement sur les grandes surfaces et les lumières.
 - **Contours** : acteurs, pickups, projectiles et icônes = **contour extérieur 1 px `#14101A`** + lignes internes en **sel-out** (teinte sombre du matériau). Décor = sel-out uniquement, **pas de contour noir**. VFX = pas de contour.
 - Pas de pixels orphelins, pas de « jaggies » (escaliers irréguliers) sur les courbes ; lignes de 1 px d'épaisseur constante.
@@ -676,9 +742,10 @@ Les teintes indicatives des notes de narration (violet Privatix `#7B5CFF`, ciels
 1. **Héros orange `#FF7A1A`** : seul porteur de la couleur 22 ; identifiable en **silhouette noire** et sur **capture désaturée** dans chaque biome (test obligatoire à chaque livraison).
 2. **Ennemis turquoise `#19C3B1`** : costumes froids + touche turquoise 25/26 sur ≥ 15 % de la silhouette ; **aucune nuance d'orange**.
 3. **Danger magenta `#FF3EA5`** : très saturé + noyau blanc ; jamais utilisé pour le joueur ni pour le décor.
-4. **Décor désaturé**, en valeurs moyennes : couleurs 07, 22, 25, 26, 29 **interdites** au décor ; 32 seulement pour un feu de signal ponctuel ; turquoise du décor limité à 24.
+4. **Décor** en valeurs moyennes (sol) et sombres (murs) : couleurs 07, 22, 25, 26, 29 (et leurs éclats 36, 37, 41, 42, 44, 45) **interdites** au décor ; 32 seulement pour un feu de signal ponctuel ; turquoise du décor limité à 24. Les néons et écrans du décor utilisent 57, 11, 12, 19, 23, 40 (émissifs autorisés).
 5. Récompenses = ambre 19, crème 18, vert 32 ; objets interactifs = reflet clair 1 px + animation de 2 frames minimum.
 6. Télégraphes : ≥ 300 ms (ennemi standard), ≥ 700 ms (élite), ≥ 500 ms (boss ; 800–1 200 ms recommandé), portés par une frame magenta et/ou un `vfx_telegraph-*`.
+7. **Rim et lisibilité** : le rim 57 ne remplace jamais une couleur de lecture ; un héros doit rester lisible si l'on retire le rim (test sur capture désaturée).
 
 ---
 
@@ -727,17 +794,17 @@ Les teintes indicatives des notes de narration (violet Privatix `#7B5CFF`, ciels
 2. **Recadrer** chaque frame dans le canvas de sa classe (§1.2) **sans redimensionner** : Aseprite, `Sprite > Canvas Size`, ancrage bas-centre, puis aligner les pieds sur la ligne du pivot (y = 44 pour 48×48, y = 28 pour 32×32). En lot, si les pieds de la source sont sur sa dernière rangée : `magick frame.png -background none -gravity south -extent 48x45 -gravity north -extent 48x48 out.png`.
 3. **Découper / réassembler** en bandes : `magick sheet.png -crop 32x32 +repage +adjoin f_%02d.png` puis `magick f_00.png f_01.png … +append consultant_run_side_strip6.png`. Garder **uniquement** les directions `down`, `up` et `side` (vers la **droite**) ; supprimer les diagonales et la gauche.
 4. **Ajuster le nombre de frames** à celui du guide (dupliquer une frame tenue plutôt que d'interpoler ; supprimer les frames en trop de la récupération), puis placer la frame d'impact à l'index exigé.
-5. **Recolorer sur Privatix 32** : Aseprite, charger `privatix32.gpl`, `Sprite > Color Mode > Indexed` **sans tramage**, puis corriger à la main ; en lot : `magick in.png +dither -remap privatix32.png out.png` (`privatix32.png` = image 32×1 des 32 couleurs, tirée du `.gpl`). **Remapper par valeur, pas par teinte** (chaque rampe sombre → clair vers la rampe Privatix de même rôle). Remplacer les contours noirs par `#14101A` (acteurs) ou les supprimer (décor). Respecter les rôles : orange → héros, turquoise → ennemis, magenta → menaces.
+5. **Recolorer sur Privatix Moderne 57** : Aseprite, charger `privatix32.gpl` (57 couleurs, nom de fichier historique), `Sprite > Color Mode > Indexed` **sans tramage**, puis corriger à la main ; en lot : `magick in.png +dither -remap privatix57.png out.png` (`privatix57.png` = image 57×1 des couleurs, tirée du `.gpl`). Ajouter le rim 57 et générer la normal map (§2.6). **Remapper par valeur, pas par teinte** (chaque rampe sombre → clair vers la rampe Privatix de même rôle). Remplacer les contours noirs par `#14101A` (acteurs) ou les supprimer (décor). Respecter les rôles : orange → héros, turquoise → ennemis, magenta → menaces.
 6. **Alpha binaire** : `magick in.png -channel A -threshold 50% +channel out.png` ; repasser en RGBA 32 bits (`PNG32:out.png`).
 7. **Renommer** selon R1 et déposer dans le dossier du §2.2 ; ajouter l'entrée `CREDITS.md` (titre, auteur, URL, licence et version, modifications) **dans le même commit**.
-8. Au plus **2 packs externes par biome**, unifiés par des détails maison (signalétique satirique, Privatix 32).
+8. Au plus **2 packs externes par biome**, unifiés par des détails maison (signalétique satirique, Privatix Moderne 57).
 
 ### 8.5 Checklist de validation avant intégration
 
 - [ ] Nom conforme à la regex R2, dossier conforme au §2.2.
 - [ ] Largeur = N × hauteur ; hauteur = taille de frame de la classe ; largeur ≤ 2 048.
 - [ ] PNG RGBA 32 bits ; alpha ∈ {0, 255} (hors exceptions §2.3).
-- [ ] Toutes les couleurs ∈ Privatix 32 ; ≤ 16 couleurs par personnage ou tileset.
+- [ ] Toutes les couleurs ∈ Privatix Moderne 57 ; ≤ 24 couleurs par personnage ou tileset ; normal map `_n.png` livrée (personnages, tilesets, props).
 - [ ] Pivot : pieds sur la bonne rangée sur **toutes** les frames (superposer les frames en pelure d'oignon).
 - [ ] Frame d'impact à l'index du guide ; télégraphe magenta sur les frames précédentes (ennemis).
 - [ ] Héros testé en silhouette noire et en capture désaturée sur chaque biome.
@@ -790,7 +857,7 @@ Joindre à la commande : ce guide (sections concernées), la **liste exacte des 
 
 ## 9. Assets originaux du dépôt (générateur `tools/pixelart/`)
 
-- Le dépôt contient un générateur **`tools/pixelart/`** (Python 3 + Pillow) qui produit des **sprites originaux** (propriété du projet, aucun crédit tiers) **conformes à ce guide** : mêmes chemins et noms de fichiers, mêmes tailles de frame, nombres de frames, pivots, frames d'impact, palette Privatix 32 et alpha binaire.
+- Le dépôt contient un générateur **`tools/pixelart/`** (Python 3 + Pillow + NumPy) qui produit des **sprites originaux** (propriété du projet, aucun crédit tiers) **conformes à ce guide** : mêmes chemins et noms de fichiers, mêmes tailles de frame, nombres de frames, pivots, frames d'impact, palette Privatix Moderne 57 et alpha binaire. Sa passe « moderne » (`modern.py` : volume, rim light, sel-out, AO, anti-aliasing interne) et son générateur de **normal maps** appliquent automatiquement les règles des §1.4, §2.6 et §7.3 ; l'écharpe, les smears et le squash & stretch du héros sont dans `hero.py`.
 - **`npm run assets`** régénère l'ensemble de ces fichiers dans `public/assets/`. Ce sont de vrais assets jouables et cohérents entre eux, pas de simples rectangles de remplacement.
 - **Règle de remplacement** : tout asset acheté ou commandé qui respecte **le nom, les dimensions et le nombre de frames** du guide **remplace le fichier généré sans toucher au code** (le code charge les mêmes chemins). Si le nombre de frames change (ex. `_strip6` → `_strip8`), ce n'est plus un remplacement : la table d'animations du code doit être mise à jour par le Lead Dev.
 - **Protéger un asset remplacé** : avant de relancer `npm run assets`, vérifier le mécanisme d'exclusion prévu par le générateur (voir son README) ; à défaut, relancer puis restaurer l'asset acheté avec `git checkout -- <fichier>` (ou depuis `art/vendor/` s'il est hors de git) et contrôler avec `git status`.
@@ -805,14 +872,14 @@ Chemins relatifs à `public/assets/`. `{down,up,side}` = 3 fichiers. « Frame »
 
 | Chemin | Feuille(s) | Frame | Frames | Fichiers PNG | Prio |
 |---|---|---|---|---|---|
-| `sprites/player/player_{idle,run}_{down,up,side}_strip{6,8}.png` | 288×48 · 384×48 | 48 | 42 | 6 | P0 |
-| `sprites/player/player_{attack1,attack2,attack3}_{down,up,side}_strip{5,5,7}.png` | 240×48 · 240×48 · 336×48 | 48 | 51 | 9 | P0 |
-| `sprites/player/player_{dash,hurt}_{down,up,side}_strip{5,3}.png` | 240×48 · 144×48 | 48 | 24 | 6 | P0 |
+| `sprites/player/player_{idle,run}_{down,up,side}_strip{8,10}.png` (+ `_n.png`) | 384×48 · 480×48 | 48 | 54 | 6 | P0 |
+| `sprites/player/player_{attack1,attack2,attack3}_{down,up,side}_strip{7,7,9}.png` (+ `_n.png`) | 336×48 · 336×48 · 432×48 | 48 | 69 | 9 | P0 |
+| `sprites/player/player_{dash,hurt}_{down,up,side}_strip{6,4}.png` (+ `_n.png`) | 288×48 · 192×48 | 48 | 30 | 6 | P0 |
 | `sprites/player/player_death_strip12.png` | 576×48 | 48 | 12 | 1 | P0 |
 | `sprites/player/player_{dash-attack,drink}_{down,up,side}_strip{5,6}.png` | 240×48 · 288×48 | 48 | 33 | 6 | P1 |
 | `sprites/player/player_{whistle_strip8,special_strip12,spawn_strip10}.png` | 384×48 · 576×48 · 480×48 | 48 | 30 | 3 | P1 |
 | `sprites/player/player_rage_strip8.png` | 384×48 | 48 | 8 | 1 | P2 |
-| `sprites/enemies/consultant_{idle,run,attack,hurt}_{down,up,side}_strip{4,6,6,2}.png` | 128 · 192 · 192 · 64 ×32 | 32 | 54 | 12 | P0 |
+| `sprites/enemies/consultant_{idle,run,attack,hurt}_{down,up,side}_strip{4,8,8,2}.png` (+ `_n.png`) | 128 · 256 · 256 · 64 ×32 | 32 | 66 | 12 | P0 |
 | `sprites/enemies/consultant_death_strip8.png` | 256×32 | 32 | 8 | 1 | P0 |
 | `sprites/enemies/borne_{idle_strip4,wake_strip6,attack_strip6,hurt_strip2,death_strip4,wreck_strip1}.png` | 128 · 192 · 192 · 64 · 128 · 32 ×32 | 32 | 23 | 6 | P0 |
 | `sprites/enemies/drone_{fly_strip4,attack_strip8,scan_strip6,hurt_strip2,death_strip6}.png` | 128 · 256 · 192 · 64 · 192 ×32 | 32 | 26 | 5 | P1 |
@@ -868,8 +935,8 @@ Chemins relatifs à `public/assets/`. `{down,up,side}` = 3 fichiers. « Frame »
 
 | Lot | Fichiers PNG | Frames animées | dont P0 | dont P1 | dont P2 |
 |---|---|---|---|---|---|
-| Héros | 32 | 200 | 22 | 9 | 1 |
-| Ennemis | 30 | 137 | 19 | 5 | 6 |
+| Héros | 32 | 236 | 22 | 9 | 1 |
+| Ennemis | 30 | 149 | 19 | 5 | 6 |
 | Élite | 17 | 98 | 0 | 16 | 1 |
 | Boss 1 | 14 | 132 | 0 | 13 | 1 |
 | PNJ | 19 | 76 | 0 | 19 | 0 |
@@ -879,6 +946,6 @@ Chemins relatifs à `public/assets/`. `{down,up,side}` = 3 fichiers. « Frame »
 | UI | 29 | 87 | 11 | 16 | 2 |
 | Polices | 4 | 0 | 2 | 2 | 0 |
 | Portraits | 11 | 33 | 0 | 4 | 7 |
-| **Total** | **241 PNG** | **1146** | **80** | **141** | **20** |
+| **Total** | **241 PNG** | **1194** | **80** | **141** | **20** |
 
-Par priorité : **P0 = 80 PNG / 350 frames** (tranche jouable), **P1 = 141 PNG / 720 frames**, **P2 = 20 PNG / 76 frames** (dont les anims optionnelles *(P2)* du §4, qui ont un repli dans le code). S'y ajoutent **5 fichiers de données** (`props_quais.json`, `props_occ.json`, `font_body.xml`, `font_title.xml`, `font_led.xml`) et **576 tuiles** (256 Quais & Voies + 256 OCC + 64 communes). Hors MVP (annexes §3.3, §4.6, §5.9) : actions post-MVP du héros, Agent de sécurité, Pense-bête Vivant, Coach Agile, Réorganisateur RH, Gontran Vanderslide et ses Clauses, biomes 2 et 3, `shadow_xxl`, portraits et PNJ supplémentaires.
+Par priorité : **P0 = 80 PNG / 398 frames** (tranche jouable), **P1 = 141 PNG / 720 frames**, **P2 = 20 PNG / 76 frames** (dont les anims optionnelles *(P2)* du §4, qui ont un repli dans le code). Chaque PNG de personnage, de tileset et de prop est accompagné de sa **normal map** `_n.png` (§2.6), non comptée ici. S'y ajoutent **5 fichiers de données** (`props_quais.json`, `props_occ.json`, `font_body.xml`, `font_title.xml`, `font_led.xml`) et **576 tuiles** (256 Quais & Voies + 256 OCC + 64 communes). Hors MVP (annexes §3.3, §4.6, §5.9) : actions post-MVP du héros, Agent de sécurité, Pense-bête Vivant, Coach Agile, Réorganisateur RH, Gontran Vanderslide et ses Clauses, biomes 2 et 3, `shadow_xxl`, portraits et PNJ supplémentaires.

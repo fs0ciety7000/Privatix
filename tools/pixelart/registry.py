@@ -4,12 +4,30 @@ import os
 import numpy as np
 
 import lib
+import modern
+from PIL import Image
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 PUBLIC = os.path.join(ROOT, "public", "assets")
 
 ENTRIES = []  # dicts du manifeste
 PREVIEW = []  # (groupe, nom, tableau strip, taille de frame)
+
+
+NORMAL_FOLDERS = ("sprites/player", "sprites/enemies", "sprites/bosses", "sprites/npcs", "tilesets")
+
+
+def wants_normal(folder, name):
+    """Normal map pour les personnages, tilesets et props (pas les VFX, l'UI, les lumières)."""
+    return folder.startswith(NORMAL_FOLDERS) and not name.startswith("light_")
+
+
+def write_normal(arr, path_png, cell=None, mode="sprite"):
+    """Écrit <nom>_n.png à côté de <nom>.png et renvoie son chemin relatif à public/."""
+    nm = modern.normal_map(arr, cell=cell, mode=mode)
+    npath = path_png[:-4] + "_n.png"
+    Image.fromarray(nm, "RGBA").save(npath, optimize=True)
+    return _rel(npath)
 
 
 def _rel(path):
@@ -61,6 +79,8 @@ def emit_strip(folder, name, frames, durations=None, loop=False, pivot=None, act
         entry["events"] = events
     if notes:
         entry["notes"] = notes
+    if wants_normal(folder, name):
+        entry["normalMap"] = write_normal(a, path, cell=(w, h))
     ENTRIES.append(entry)
     PREVIEW.append((group or folder, name, a, w))
     return entry
@@ -77,19 +97,25 @@ def emit_image(folder, name, img, kind="image", group=None, pivot=None, extra=No
         entry["origin"] = {"x": round(pivot[0] / w, 4), "y": round(pivot[1] / h, 4)}
     if extra:
         entry.update(extra)
+    if wants_normal(folder, name):
+        entry["normalMap"] = write_normal(img, path)
     ENTRIES.append(entry)
     if preview:
         PREVIEW.append((group or folder, name, img, None))
     return entry
 
 
-def emit_raw(folder, filename, pil_image, entry_extra, group=None, preview_arr=None):
-    """Pour les fichiers déjà en RGBA (tilesets extrudés)."""
+def emit_raw(folder, filename, pil_image, entry_extra, group=None, preview_arr=None, normal_src=None,
+             normal_cell=None):
+    """Pour les fichiers déjà en RGBA (tilesets extrudés). normal_src : image
+    indexée de même taille d'où dériver la normal map (par cellule)."""
     path = os.path.join(PUBLIC, folder, filename)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     pil_image.save(path, optimize=True)
     entry = {"file": _rel(path), "texture": filename[:-4]}
     entry.update(entry_extra)
+    if normal_src is not None and wants_normal(folder, filename):
+        entry["normalMap"] = write_normal(normal_src, path, cell=normal_cell, mode="surface")
     ENTRIES.append(entry)
     if preview_arr is not None:
         PREVIEW.append((group or folder, filename[:-4], preview_arr, None))
@@ -108,4 +134,8 @@ def check_binary_alpha():
         al = np.asarray(im)[:, :, 3]
         if not np.all((al == 0) | (al == 255)):
             bad.append(e["file"])
+        if e.get("normalMap"):
+            nm = np.asarray(Image.open(os.path.join(ROOT, "public", e["normalMap"])).convert("RGBA"))
+            if nm.shape[:2] != al.shape or not np.array_equal(nm[:, :, 3], al):
+                bad.append(e["normalMap"])
     return bad

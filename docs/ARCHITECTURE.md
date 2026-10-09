@@ -719,7 +719,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite implements PlayerCtx, H
   public readonly anim = { frame: 0, done: false };
   private readonly fsm: StateMachine<PlayerCtx, PlayerStates>;
   public constructor(scene: Phaser.Scene, x: number, y: number, private readonly deps: PlayerDeps) {
-    super(scene, x, y, 'player_idle_down_strip6', 0);
+    super(scene, x, y, 'player_idle_down_strip8', 0);
     scene.add.existing(this); scene.physics.add.existing(this);
     this.setOrigin(0.5, 44 / 48);                           // pivot aux pieds (ligne y = 44 de la frame 48×48)
     this.body.setCircle(6, 18, 34);                          // collision au sol : cercle de 6 px centré sur les pieds
@@ -862,7 +862,7 @@ public kill(): void { this.disableBody(true, true); }        // retour au pool, 
 ### 7.1 Conventions (contrat avec l'art)
 - **Fichier** : `public/assets/sprites/<catégorie>/<entité>_<anim>[_<dir>]_strip<N>.png` ; à l'intérieur d'un champ, `-` (ex. `manager_attack_side_strip8.png`, `vfx_slash-e_strip5.png`). Regex : `^([a-z0-9-]+)_([a-z0-9-]+)(?:_(down|up|side))?_strip(\d+)\.png$`.
 - **Géométrie** : bande horizontale, frames **carrées** sans marge ni espacement (largeur = N × hauteur), PNG 32 bits, alpha binaire, pas de trim. Héros **48×48**, ennemis et PNJ **32×32**, élites **48×48**, boss **96×96** (B1, B2) et **128×128** (boss final), tuiles **16×16**.
-- **Clés** : clé de texture = nom du fichier sans `.png` (`player_run_down_strip8`) ; clé d'animation = `<entité>-<anim>[-<dir>]` en kebab-case (`player-run-down`, `consultant-attack-side`, `player-death`). Une seule fonction construit les clés d'animation : `animKey(entity, name, dir?)`.
+- **Clés** : clé de texture = nom du fichier sans `.png` (`player_run_down_strip10`) ; clé d'animation = `<entité>-<anim>[-<dir>]` en kebab-case (`player-run-down`, `consultant-attack-side`, `player-death`). Une seule fonction construit les clés d'animation : `animKey(entity, name, dir?)`.
 - **Directions** : 4 directions logiques, 3 dessinées (`down`, `up`, `side` dessiné vers la droite) ; gauche = `side` + `flipX`. Les anims cinématiques (`death`, `spawn`, `special`) et les ennemis symétriques (Borne, Drone, boss mécaniques) sont mono-direction.
 
 ```ts
@@ -881,7 +881,7 @@ export function facingFromAngle(rad: number): { readonly facing: Facing; readonl
 export type Direction = 'down' | 'up' | 'side';
 export const DIRECTIONS: readonly Direction[] = ['down', 'up', 'side'];
 export interface SheetDef {                      // une bande PNG = une texture
-  readonly key: string; readonly path: string;   // 'player_run_down_strip8', 'assets/sprites/player/player_run_down_strip8.png'
+  readonly key: string; readonly path: string;   // 'player_run_down_strip10', 'assets/sprites/player/player_run_down_strip10.png'
   readonly frameWidth: number; readonly frameHeight: number; readonly frames: number;
   readonly tint: number; readonly category: SpriteCategory;    // couleur du placeholder, sous-dossier de sprites/
 }

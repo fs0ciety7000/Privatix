@@ -6,36 +6,65 @@ import numpy as np
 import lib
 from font3x5 import draw_text
 from lib import canvas, blit, parse
-from palette import CHAR, K
+from palette import CHAR, DARK, K, LIGHT
+
+import modern
 
 c = CHAR
 
 
 def bar_frame(w, h, accent, notch=True):
-    """Cadre de barre : contour sombre, biseau acier, coins en accent."""
+    """Cadre de barre « moderne » : contour sombre, biseau acier éclairé en
+    haut à gauche, réservoir creusé (ombre interne en haut), embouts en accent
+    avec reflet."""
     a = canvas(w, h)
     a[:] = c["K"]
     lib.rect(a, 1, 1, w - 2, h - 2, c["d"])
-    lib.rect(a, 1, 1, w - 2, 1, c["s"])
-    lib.rect(a, 1, h - 2, w - 2, 1, c["n"])
-    lib.rect(a, 2, 2, w - 4, h - 4, c["K"])  # fond du réservoir
+    lib.rect(a, 1, 1, w - 2, 1, c["g"])
+    lib.rect(a, 1, 1, 1, h - 2, c["s"])
+    lib.rect(a, 1, h - 2, w - 2, 1, c["D"])
+    lib.rect(a, w - 2, 1, 1, h - 2, c["D"])
+    lib.rect(a, 2, 2, w - 4, h - 4, c["D"])  # fond du réservoir
+    lib.rect(a, 2, 2, w - 4, 1, c["K"])  # ombre interne
+    acc = c[accent]
     for x in (1, w - 2):
-        lib.rect(a, x, 1, 1, h - 2, c[accent])
+        lib.rect(a, x, 1, 1, h - 2, acc)
+        lib.px(a, x, 1, LIGHT[acc])
+        lib.px(a, x, h - 2, DARK[acc])
     if notch and w > 40:
         for x in range(w // 4, w - 4, w // 4):
             lib.px(a, x, h - 2, c["s"])
+            lib.px(a, x, 1, c["7"])
     a[0, 0] = a[0, w - 1] = a[h - 1, 0] = a[h - 1, w - 1] = 0
     return a
 
 
 def bar_fill(w, h, mid, hi, sh):
+    """Remplissage en rampe verticale (rehaut chaud en haut, ombre froide en
+    bas), liseré spéculaire et reflets obliques réguliers."""
     a = canvas(w, h)
-    a[:] = c[mid]
-    lib.rect(a, 0, 0, w, 1, c[hi])
-    if h > 2:
-        lib.rect(a, 0, h - 1, w, 1, c[sh])
+    m = c[mid]
+    for y in range(h):
+        if y == 0:
+            col = c[hi]
+        elif y == h - 1 and h > 2:
+            col = c[sh]
+        elif y == 1 and h > 3:
+            col = LIGHT[m]
+        elif y == h - 2 and h > 4:
+            col = DARK[m]
+        else:
+            col = m
+        a[y, :] = col
     for x in range(3, w, 6):
         lib.px(a, x, 0, c["W"] if hi != "W" else c["w"])
+    # reflets obliques (bande claire de 2 px tous les 24 px)
+    for x0 in range(8, w, 24):
+        for y in range(1, h - 1):
+            for k in range(2):
+                xx = x0 + k - y
+                if 0 <= xx < w:
+                    a[y, xx] = LIGHT[a[y, xx]]
     return a
 
 
@@ -291,7 +320,7 @@ def icon(name, S=16):
     m = parse(ICONS[name])
     h, w = m.shape
     blit(a, m, (S - w) // 2, (S - h) // 2)
-    return lib.outline(a)
+    return modern.shade(lib.outline(a), rim=False)
 
 
 def icon8(name):
@@ -311,6 +340,7 @@ def rarity(kind):
     cols = {"commun": ("b", "s", "d"), "rare": ("c", "I", "i"), "epique": ("W", "V", "d"), "syndical": ("y", "a", "x")}[
         kind]
     a[:] = c[cols[1]]
+    lib.rect(a, 1, 1, 18, 1, LIGHT[c[cols[1]]])
     lib.rect(a, 0, 0, 20, 1, c[cols[0]])
     lib.rect(a, 0, 0, 1, 20, c[cols[0]])
     lib.rect(a, 19, 0, 1, 20, c[cols[2]])
@@ -368,22 +398,34 @@ def prompt(kind):
 
 
 def panel(kind):
+    """Panneaux 9-slice (bord 8 px) : biseau éclairé haut-gauche, ombre
+    bas-droite, liseré lumineux interne, rivets ; centre uni (il est étiré)."""
     a = canvas(24)
+    a[:] = c["K"]
     if kind == "occ":
-        a[:] = c["e"]
-        lib.rect(a, 0, 0, 24, 24, c["K"])
-        lib.rect(a, 1, 1, 22, 22, c["m"])
-        lib.rect(a, 2, 2, 20, 20, c["h"])
+        lib.rect(a, 1, 1, 22, 22, c["h"])
+        lib.rect(a, 1, 1, 22, 1, c["S"])
+        lib.rect(a, 1, 1, 1, 22, c["z"])
+        lib.rect(a, 1, 22, 22, 1, c["B"])
+        lib.rect(a, 22, 1, 1, 22, c["B"])
+        lib.rect(a, 2, 2, 20, 20, c["m"])
         lib.rect(a, 3, 3, 18, 18, c["e"])
-        lib.rect(a, 1, 1, 22, 1, c["z"])
+        lib.rect(a, 3, 3, 18, 1, c["D"])
+        lib.rect(a, 4, 4, 16, 16, c["e"])
         for (x, y) in ((2, 2), (21, 2), (2, 21), (21, 21)):
             lib.px(a, x, y, c["a"])
+        lib.px(a, 2, 2, c["Z"])
     elif kind == "privatix":
-        a[:] = c["K"]
-        lib.rect(a, 1, 1, 22, 22, c["T"])
-        lib.rect(a, 2, 2, 20, 20, c["n"])
+        lib.rect(a, 1, 1, 22, 22, c["t"])
         lib.rect(a, 1, 1, 22, 1, c["N"])
+        lib.rect(a, 1, 1, 1, 22, c["T"])
+        lib.rect(a, 1, 22, 22, 1, c["u"])
+        lib.rect(a, 22, 1, 1, 22, c["u"])
+        lib.rect(a, 2, 2, 20, 20, c["n"])
         lib.rect(a, 3, 3, 18, 1, c["u"])
+        lib.rect(a, 3, 3, 1, 18, c["u"])
+        lib.px(a, 1, 1, c["X"])
+    a[0, 0] = a[0, 23] = a[23, 0] = a[23, 23] = 0
     return a
 
 
@@ -391,10 +433,14 @@ def card():
     a = canvas(32)
     a[:] = c["K"]
     lib.rect(a, 1, 1, 30, 30, c["s"])
+    lib.rect(a, 1, 1, 30, 1, c["7"])
+    lib.rect(a, 1, 1, 1, 30, c["b"])
+    lib.rect(a, 1, 30, 30, 1, c["D"])
+    lib.rect(a, 30, 1, 1, 30, c["d"])
     lib.rect(a, 2, 2, 28, 28, c["d"])
     lib.rect(a, 3, 3, 26, 26, c["n"])
-    lib.rect(a, 1, 1, 30, 1, c["b"])
-    lib.rect(a, 1, 1, 1, 30, c["g"])
+    lib.rect(a, 3, 3, 26, 1, c["D"])
+    lib.rect(a, 4, 4, 24, 1, c["i"])
     for (x, y) in ((0, 0), (31, 0), (0, 31), (31, 31)):
         a[y, x] = 0
     return a

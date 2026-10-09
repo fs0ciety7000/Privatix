@@ -1,32 +1,35 @@
 {
  "generator": "tools/pixelart/build.py",
- "palette": "Privatix 32 (tools/pixelart/privatix32.gpl)",
+ "palette": "Privatix Moderne 57 (tools/pixelart/privatix32.gpl)",
  "conventions": {
   "naming": "<entite>_<anim>[_<dir>]_strip<N>.png ; clé de texture = nom sans .png ; clé d'animation Phaser = champ 'anim' (<entite>-<anim>[-<dir>])",
   "strips": "bandes horizontales, frames carrées, marge 0, espacement 0, pas de trim, alpha binaire",
   "directions": "down, up, side (dessiné vers la droite ; gauche = flipX)",
   "durations": "ms par frame (Phaser : frames[i].duration)",
   "pivot": "pixels dans la frame ; origin = pivot / taille (setOrigin)",
-  "active": "indices (base 0) des frames où la hitbox / le tir est actif"
+  "active": "indices (base 0) des frames où la hitbox / le tir est actif",
+  "normalMap": "chemin (depuis public/) de la normal map <nom>_n.png, même taille et même alpha que le PNG ; RGB = normale (convention OpenGL : X droite, Y haut = vert, Z vers la caméra) ; personnages, tilesets et props uniquement (pas les VFX, l'UI ni les lumières)"
  },
  "animations": [
   {
-   "file": "assets/sprites/player/player_idle_down_strip6.png",
-   "texture": "player_idle_down_strip6",
+   "file": "assets/sprites/player/player_idle_down_strip8.png",
+   "texture": "player_idle_down_strip8",
    "anim": "player-idle-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 6,
+   "frames": 8,
    "durations": [
-    150,
-    150,
-    150,
-    150,
-    150,
-    150
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140
    ],
-   "fps": 6.67,
+   "fps": 7.14,
    "loop": true,
    "pivot": {
     "x": 24,
@@ -36,27 +39,30 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/player/player_idle_down_strip8_n.png"
   },
   {
-   "file": "assets/sprites/player/player_run_down_strip8.png",
-   "texture": "player_run_down_strip8",
+   "file": "assets/sprites/player/player_run_down_strip10.png",
+   "texture": "player_run_down_strip10",
    "anim": "player-run-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 8,
+   "frames": 10,
    "durations": [
-    80,
-    80,
-    80,
-    80,
-    80,
-    80,
-    80,
-    80
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64
    ],
-   "fps": 12.5,
+   "fps": 15.62,
    "loop": true,
    "pivot": {
     "x": 24,
@@ -70,26 +76,29 @@
    "events": {
     "footstep": [
      0,
-     4
+     5
     ]
-   }
+   },
+   "normalMap": "assets/sprites/player/player_run_down_strip10_n.png"
   },
   {
-   "file": "assets/sprites/player/player_attack1_down_strip5.png",
-   "texture": "player_attack1_down_strip5",
+   "file": "assets/sprites/player/player_attack1_down_strip7.png",
+   "texture": "player_attack1_down_strip7",
    "anim": "player-attack1-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 5,
+   "frames": 7,
    "durations": [
-    50,
     40,
     50,
-    70,
-    90
+    60,
+    40,
+    40,
+    40,
+    40
    ],
-   "fps": 16.67,
+   "fps": 22.58,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -103,25 +112,32 @@
     2
    ],
    "events": {
-    "comboWindow": 3
-   }
+    "comboWindow": 4,
+    "smear": [
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack1_down_strip7_n.png"
   },
   {
-   "file": "assets/sprites/player/player_attack2_down_strip5.png",
-   "texture": "player_attack2_down_strip5",
+   "file": "assets/sprites/player/player_attack2_down_strip7.png",
+   "texture": "player_attack2_down_strip7",
    "anim": "player-attack2-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 5,
+   "frames": 7,
    "durations": [
-    50,
     40,
-    50,
-    70,
-    90
+    40,
+    60,
+    40,
+    40,
+    40,
+    50
    ],
-   "fps": 16.67,
+   "fps": 22.58,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -135,27 +151,34 @@
     2
    ],
    "events": {
-    "comboWindow": 3
-   }
+    "comboWindow": 4,
+    "smear": [
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack2_down_strip7_n.png"
   },
   {
-   "file": "assets/sprites/player/player_attack3_down_strip7.png",
-   "texture": "player_attack3_down_strip7",
+   "file": "assets/sprites/player/player_attack3_down_strip9.png",
+   "texture": "player_attack3_down_strip9",
    "anim": "player-attack3-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 7,
+   "frames": 9,
    "durations": [
+    60,
+    50,
+    50,
+    40,
+    80,
+    100,
     90,
     70,
-    40,
-    50,
-    100,
-    100,
-    110
+    60
    ],
-   "fps": 12.5,
+   "fps": 15.0,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -166,36 +189,42 @@
     "y": 0.9167
    },
    "active": [
-    3
+    4
    ],
    "events": {
     "vfx": {
-     "3": "vfx_slam"
+     "4": "vfx_slam"
     },
     "shake": {
-     "frame": 3,
+     "frame": 4,
      "px": 2,
      "ms": 100
     },
-    "hitstop": 60
-   }
+    "hitstop": 60,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack3_down_strip9_n.png"
   },
   {
-   "file": "assets/sprites/player/player_dash_down_strip5.png",
-   "texture": "player_dash_down_strip5",
+   "file": "assets/sprites/player/player_dash_down_strip6.png",
+   "texture": "player_dash_down_strip6",
    "anim": "player-dash-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 5,
+   "frames": 6,
    "durations": [
-    30,
-    40,
-    40,
-    40,
-    50
+    20,
+    25,
+    25,
+    25,
+    25,
+    20
    ],
-   "fps": 25.0,
+   "fps": 42.86,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -211,24 +240,27 @@
      0,
      1,
      2,
-     3
+     3,
+     4
     ]
-   }
+   },
+   "normalMap": "assets/sprites/player/player_dash_down_strip6_n.png"
   },
   {
-   "file": "assets/sprites/player/player_hurt_down_strip3.png",
-   "texture": "player_hurt_down_strip3",
+   "file": "assets/sprites/player/player_hurt_down_strip4.png",
+   "texture": "player_hurt_down_strip4",
    "anim": "player-hurt-down",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 3,
+   "frames": 4,
    "durations": [
+    50,
     60,
-    80,
-    100
+    60,
+    70
    ],
-   "fps": 12.5,
+   "fps": 16.67,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -238,25 +270,28 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/player/player_hurt_down_strip4_n.png"
   },
   {
-   "file": "assets/sprites/player/player_idle_up_strip6.png",
-   "texture": "player_idle_up_strip6",
+   "file": "assets/sprites/player/player_idle_up_strip8.png",
+   "texture": "player_idle_up_strip8",
    "anim": "player-idle-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 6,
+   "frames": 8,
    "durations": [
-    150,
-    150,
-    150,
-    150,
-    150,
-    150
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140
    ],
-   "fps": 6.67,
+   "fps": 7.14,
    "loop": true,
    "pivot": {
     "x": 24,
@@ -266,27 +301,30 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/player/player_idle_up_strip8_n.png"
   },
   {
-   "file": "assets/sprites/player/player_run_up_strip8.png",
-   "texture": "player_run_up_strip8",
+   "file": "assets/sprites/player/player_run_up_strip10.png",
+   "texture": "player_run_up_strip10",
    "anim": "player-run-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 8,
+   "frames": 10,
    "durations": [
-    80,
-    80,
-    80,
-    80,
-    80,
-    80,
-    80,
-    80
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64
    ],
-   "fps": 12.5,
+   "fps": 15.62,
    "loop": true,
    "pivot": {
     "x": 24,
@@ -300,92 +338,29 @@
    "events": {
     "footstep": [
      0,
-     4
+     5
     ]
-   }
+   },
+   "normalMap": "assets/sprites/player/player_run_up_strip10_n.png"
   },
   {
-   "file": "assets/sprites/player/player_attack1_up_strip5.png",
-   "texture": "player_attack1_up_strip5",
+   "file": "assets/sprites/player/player_attack1_up_strip7.png",
+   "texture": "player_attack1_up_strip7",
    "anim": "player-attack1-up",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 5,
-   "durations": [
-    50,
-    40,
-    50,
-    70,
-    90
-   ],
-   "fps": 16.67,
-   "loop": false,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": [
-    2
-   ],
-   "events": {
-    "comboWindow": 3
-   }
-  },
-  {
-   "file": "assets/sprites/player/player_attack2_up_strip5.png",
-   "texture": "player_attack2_up_strip5",
-   "anim": "player-attack2-up",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 5,
-   "durations": [
-    50,
-    40,
-    50,
-    70,
-    90
-   ],
-   "fps": 16.67,
-   "loop": false,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": [
-    2
-   ],
-   "events": {
-    "comboWindow": 3
-   }
-  },
-  {
-   "file": "assets/sprites/player/player_attack3_up_strip7.png",
-   "texture": "player_attack3_up_strip7",
-   "anim": "player-attack3-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
    "frames": 7,
    "durations": [
-    90,
-    70,
     40,
     50,
-    100,
-    100,
-    110
+    60,
+    40,
+    40,
+    40,
+    40
    ],
-   "fps": 12.5,
+   "fps": 22.58,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -396,36 +371,35 @@
     "y": 0.9167
    },
    "active": [
-    3
+    2
    ],
    "events": {
-    "vfx": {
-     "3": "vfx_slam"
-    },
-    "shake": {
-     "frame": 3,
-     "px": 2,
-     "ms": 100
-    },
-    "hitstop": 60
-   }
+    "comboWindow": 4,
+    "smear": [
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack1_up_strip7_n.png"
   },
   {
-   "file": "assets/sprites/player/player_dash_up_strip5.png",
-   "texture": "player_dash_up_strip5",
-   "anim": "player-dash-up",
+   "file": "assets/sprites/player/player_attack2_up_strip7.png",
+   "texture": "player_attack2_up_strip7",
+   "anim": "player-attack2-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 5,
+   "frames": 7,
    "durations": [
-    30,
+    40,
+    40,
+    60,
     40,
     40,
     40,
     50
    ],
-   "fps": 25.0,
+   "fps": 22.58,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -435,30 +409,38 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": [],
+   "active": [
+    2
+   ],
    "events": {
-    "invulnerable": [
-     0,
-     1,
+    "comboWindow": 4,
+    "smear": [
      2,
      3
     ]
-   }
+   },
+   "normalMap": "assets/sprites/player/player_attack2_up_strip7_n.png"
   },
   {
-   "file": "assets/sprites/player/player_hurt_up_strip3.png",
-   "texture": "player_hurt_up_strip3",
-   "anim": "player-hurt-up",
+   "file": "assets/sprites/player/player_attack3_up_strip9.png",
+   "texture": "player_attack3_up_strip9",
+   "anim": "player-attack3-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 3,
+   "frames": 9,
    "durations": [
     60,
+    50,
+    50,
+    40,
     80,
-    100
+    100,
+    90,
+    70,
+    60
    ],
-   "fps": 12.5,
+   "fps": 15.0,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -468,194 +450,43 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [
+    4
+   ],
+   "events": {
+    "vfx": {
+     "4": "vfx_slam"
+    },
+    "shake": {
+     "frame": 4,
+     "px": 2,
+     "ms": 100
+    },
+    "hitstop": 60,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack3_up_strip9_n.png"
   },
   {
-   "file": "assets/sprites/player/player_idle_side_strip6.png",
-   "texture": "player_idle_side_strip6",
-   "anim": "player-idle-side",
+   "file": "assets/sprites/player/player_dash_up_strip6.png",
+   "texture": "player_dash_up_strip6",
+   "anim": "player-dash-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
    "frames": 6,
    "durations": [
-    150,
-    150,
-    150,
-    150,
-    150,
-    150
+    20,
+    25,
+    25,
+    25,
+    25,
+    20
    ],
-   "fps": 6.67,
-   "loop": true,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": []
-  },
-  {
-   "file": "assets/sprites/player/player_run_side_strip8.png",
-   "texture": "player_run_side_strip8",
-   "anim": "player-run-side",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 8,
-   "durations": [
-    80,
-    80,
-    80,
-    80,
-    80,
-    80,
-    80,
-    80
-   ],
-   "fps": 12.5,
-   "loop": true,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": [],
-   "events": {
-    "footstep": [
-     0,
-     4
-    ]
-   }
-  },
-  {
-   "file": "assets/sprites/player/player_attack1_side_strip5.png",
-   "texture": "player_attack1_side_strip5",
-   "anim": "player-attack1-side",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 5,
-   "durations": [
-    50,
-    40,
-    50,
-    70,
-    90
-   ],
-   "fps": 16.67,
-   "loop": false,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": [
-    2
-   ],
-   "events": {
-    "comboWindow": 3
-   }
-  },
-  {
-   "file": "assets/sprites/player/player_attack2_side_strip5.png",
-   "texture": "player_attack2_side_strip5",
-   "anim": "player-attack2-side",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 5,
-   "durations": [
-    50,
-    40,
-    50,
-    70,
-    90
-   ],
-   "fps": 16.67,
-   "loop": false,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": [
-    2
-   ],
-   "events": {
-    "comboWindow": 3
-   }
-  },
-  {
-   "file": "assets/sprites/player/player_attack3_side_strip7.png",
-   "texture": "player_attack3_side_strip7",
-   "anim": "player-attack3-side",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 7,
-   "durations": [
-    90,
-    70,
-    40,
-    50,
-    100,
-    100,
-    110
-   ],
-   "fps": 12.5,
-   "loop": false,
-   "pivot": {
-    "x": 24,
-    "y": 44
-   },
-   "origin": {
-    "x": 0.5,
-    "y": 0.9167
-   },
-   "active": [
-    3
-   ],
-   "events": {
-    "vfx": {
-     "3": "vfx_slam"
-    },
-    "shake": {
-     "frame": 3,
-     "px": 2,
-     "ms": 100
-    },
-    "hitstop": 60
-   }
-  },
-  {
-   "file": "assets/sprites/player/player_dash_side_strip5.png",
-   "texture": "player_dash_side_strip5",
-   "anim": "player-dash-side",
-   "type": "spritesheet",
-   "frameWidth": 48,
-   "frameHeight": 48,
-   "frames": 5,
-   "durations": [
-    30,
-    40,
-    40,
-    40,
-    50
-   ],
-   "fps": 25.0,
+   "fps": 42.86,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -671,24 +502,27 @@
      0,
      1,
      2,
-     3
+     3,
+     4
     ]
-   }
+   },
+   "normalMap": "assets/sprites/player/player_dash_up_strip6_n.png"
   },
   {
-   "file": "assets/sprites/player/player_hurt_side_strip3.png",
-   "texture": "player_hurt_side_strip3",
-   "anim": "player-hurt-side",
+   "file": "assets/sprites/player/player_hurt_up_strip4.png",
+   "texture": "player_hurt_up_strip4",
+   "anim": "player-hurt-up",
    "type": "spritesheet",
    "frameWidth": 48,
    "frameHeight": 48,
-   "frames": 3,
+   "frames": 4,
    "durations": [
+    50,
     60,
-    80,
-    100
+    60,
+    70
    ],
-   "fps": 12.5,
+   "fps": 16.67,
    "loop": false,
    "pivot": {
     "x": 24,
@@ -698,7 +532,270 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/player/player_hurt_up_strip4_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_idle_side_strip8.png",
+   "texture": "player_idle_side_strip8",
+   "anim": "player-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140
+   ],
+   "fps": 7.14,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "normalMap": "assets/sprites/player/player_idle_side_strip8_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_run_side_strip10.png",
+   "texture": "player_run_side_strip10",
+   "anim": "player-run-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 10,
+   "durations": [
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64
+   ],
+   "fps": 15.62,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_run_side_strip10_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_attack1_side_strip7.png",
+   "texture": "player_attack1_side_strip7",
+   "anim": "player-attack1-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 7,
+   "durations": [
+    40,
+    50,
+    60,
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 22.58,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 4,
+    "smear": [
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack1_side_strip7_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_side_strip7.png",
+   "texture": "player_attack2_side_strip7",
+   "anim": "player-attack2-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 7,
+   "durations": [
+    40,
+    40,
+    60,
+    40,
+    40,
+    40,
+    50
+   ],
+   "fps": 22.58,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 4,
+    "smear": [
+     2,
+     3
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack2_side_strip7_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_side_strip9.png",
+   "texture": "player_attack3_side_strip9",
+   "anim": "player-attack3-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 9,
+   "durations": [
+    60,
+    50,
+    50,
+    40,
+    80,
+    100,
+    90,
+    70,
+    60
+   ],
+   "fps": 15.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "vfx": {
+     "4": "vfx_slam"
+    },
+    "shake": {
+     "frame": 4,
+     "px": 2,
+     "ms": 100
+    },
+    "hitstop": 60,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_attack3_side_strip9_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_dash_side_strip6.png",
+   "texture": "player_dash_side_strip6",
+   "anim": "player-dash-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    20,
+    25,
+    25,
+    25,
+    25,
+    20
+   ],
+   "fps": 42.86,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "invulnerable": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_dash_side_strip6_n.png"
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_side_strip4.png",
+   "texture": "player_hurt_side_strip4",
+   "anim": "player-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 4,
+   "durations": [
+    50,
+    60,
+    60,
+    70
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "normalMap": "assets/sprites/player/player_hurt_side_strip4_n.png"
   },
   {
    "file": "assets/sprites/player/player_death_strip12.png",
@@ -732,7 +829,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/player/player_death_strip12_n.png"
   },
   {
    "file": "assets/sprites/player/player_spawn_strip10.png",
@@ -769,7 +867,8 @@
     "vfx": {
      "6": "vfx_dust-land"
     }
-   }
+   },
+   "normalMap": "assets/sprites/player/player_spawn_strip10_n.png"
   },
   {
    "file": "assets/sprites/player/player_special_strip12.png",
@@ -811,7 +910,8 @@
      "0": "vfx_charge",
      "4": "vfx_shockwave"
     }
-   }
+   },
+   "normalMap": "assets/sprites/player/player_special_strip12_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_idle_down_strip4.png",
@@ -837,25 +937,28 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/consultant_idle_down_strip4_n.png"
   },
   {
-   "file": "assets/sprites/enemies/consultant_run_down_strip6.png",
-   "texture": "consultant_run_down_strip6",
+   "file": "assets/sprites/enemies/consultant_run_down_strip8.png",
+   "texture": "consultant_run_down_strip8",
    "anim": "consultant-run-down",
    "type": "spritesheet",
    "frameWidth": 32,
    "frameHeight": 32,
-   "frames": 6,
+   "frames": 8,
    "durations": [
-    90,
-    90,
-    90,
-    90,
-    90,
-    90
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
    ],
-   "fps": 11.11,
+   "fps": 14.71,
    "loop": true,
    "pivot": {
     "x": 16,
@@ -865,25 +968,34 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_run_down_strip8_n.png"
   },
   {
-   "file": "assets/sprites/enemies/consultant_attack_down_strip6.png",
-   "texture": "consultant_attack_down_strip6",
+   "file": "assets/sprites/enemies/consultant_attack_down_strip8.png",
+   "texture": "consultant_attack_down_strip8",
    "anim": "consultant-attack-down",
    "type": "spritesheet",
    "frameWidth": 32,
    "frameHeight": 32,
-   "frames": 6,
+   "frames": 8,
    "durations": [
     120,
     120,
     120,
+    90,
     40,
     60,
+    80,
     100
    ],
-   "fps": 10.71,
+   "fps": 10.96,
    "loop": false,
    "pivot": {
     "x": 16,
@@ -894,16 +1006,22 @@
     "y": 0.875
    },
    "active": [
-    3
+    4
    ],
    "events": {
     "telegraph": [
      0,
      1,
-     2
+     2,
+     3
     ],
-    "warnFlash": 2
-   }
+    "warnFlash": 2,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_attack_down_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_hurt_down_strip2.png",
@@ -927,7 +1045,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/consultant_hurt_down_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_idle_up_strip4.png",
@@ -953,25 +1072,28 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/consultant_idle_up_strip4_n.png"
   },
   {
-   "file": "assets/sprites/enemies/consultant_run_up_strip6.png",
-   "texture": "consultant_run_up_strip6",
+   "file": "assets/sprites/enemies/consultant_run_up_strip8.png",
+   "texture": "consultant_run_up_strip8",
    "anim": "consultant-run-up",
    "type": "spritesheet",
    "frameWidth": 32,
    "frameHeight": 32,
-   "frames": 6,
+   "frames": 8,
    "durations": [
-    90,
-    90,
-    90,
-    90,
-    90,
-    90
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
    ],
-   "fps": 11.11,
+   "fps": 14.71,
    "loop": true,
    "pivot": {
     "x": 16,
@@ -981,25 +1103,34 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_run_up_strip8_n.png"
   },
   {
-   "file": "assets/sprites/enemies/consultant_attack_up_strip6.png",
-   "texture": "consultant_attack_up_strip6",
+   "file": "assets/sprites/enemies/consultant_attack_up_strip8.png",
+   "texture": "consultant_attack_up_strip8",
    "anim": "consultant-attack-up",
    "type": "spritesheet",
    "frameWidth": 32,
    "frameHeight": 32,
-   "frames": 6,
+   "frames": 8,
    "durations": [
     120,
     120,
     120,
+    90,
     40,
     60,
+    80,
     100
    ],
-   "fps": 10.71,
+   "fps": 10.96,
    "loop": false,
    "pivot": {
     "x": 16,
@@ -1010,16 +1141,22 @@
     "y": 0.875
    },
    "active": [
-    3
+    4
    ],
    "events": {
     "telegraph": [
      0,
      1,
-     2
+     2,
+     3
     ],
-    "warnFlash": 2
-   }
+    "warnFlash": 2,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_attack_up_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_hurt_up_strip2.png",
@@ -1043,7 +1180,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/consultant_hurt_up_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_idle_side_strip4.png",
@@ -1069,25 +1207,28 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/consultant_idle_side_strip4_n.png"
   },
   {
-   "file": "assets/sprites/enemies/consultant_run_side_strip6.png",
-   "texture": "consultant_run_side_strip6",
+   "file": "assets/sprites/enemies/consultant_run_side_strip8.png",
+   "texture": "consultant_run_side_strip8",
    "anim": "consultant-run-side",
    "type": "spritesheet",
    "frameWidth": 32,
    "frameHeight": 32,
-   "frames": 6,
+   "frames": 8,
    "durations": [
-    90,
-    90,
-    90,
-    90,
-    90,
-    90
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68,
+    68
    ],
-   "fps": 11.11,
+   "fps": 14.71,
    "loop": true,
    "pivot": {
     "x": 16,
@@ -1097,25 +1238,34 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_run_side_strip8_n.png"
   },
   {
-   "file": "assets/sprites/enemies/consultant_attack_side_strip6.png",
-   "texture": "consultant_attack_side_strip6",
+   "file": "assets/sprites/enemies/consultant_attack_side_strip8.png",
+   "texture": "consultant_attack_side_strip8",
    "anim": "consultant-attack-side",
    "type": "spritesheet",
    "frameWidth": 32,
    "frameHeight": 32,
-   "frames": 6,
+   "frames": 8,
    "durations": [
     120,
     120,
     120,
+    90,
     40,
     60,
+    80,
     100
    ],
-   "fps": 10.71,
+   "fps": 10.96,
    "loop": false,
    "pivot": {
     "x": 16,
@@ -1126,16 +1276,22 @@
     "y": 0.875
    },
    "active": [
-    3
+    4
    ],
    "events": {
     "telegraph": [
      0,
      1,
-     2
+     2,
+     3
     ],
-    "warnFlash": 2
-   }
+    "warnFlash": 2,
+    "smear": [
+     4,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/enemies/consultant_attack_side_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_hurt_side_strip2.png",
@@ -1159,7 +1315,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/consultant_hurt_side_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/consultant_death_strip8.png",
@@ -1194,7 +1351,8 @@
     "vfx": {
      "5": "vfx_poof"
     }
-   }
+   },
+   "normalMap": "assets/sprites/enemies/consultant_death_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/borne_idle_strip4.png",
@@ -1220,7 +1378,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/borne_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/enemies/borne_wake_strip6.png",
@@ -1258,7 +1417,8 @@
      4,
      5
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/borne_wake_strip6_n.png"
   },
   {
    "file": "assets/sprites/enemies/borne_attack_strip6.png",
@@ -1298,7 +1458,8 @@
     ],
     "shoot": 4,
     "projectile": "proj-ticket"
-   }
+   },
+   "normalMap": "assets/sprites/enemies/borne_attack_strip6_n.png"
   },
   {
    "file": "assets/sprites/enemies/borne_hurt_strip2.png",
@@ -1322,7 +1483,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/borne_hurt_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/borne_death_strip4.png",
@@ -1353,7 +1515,8 @@
     "vfx": {
      "3": "vfx_explosion"
     }
-   }
+   },
+   "normalMap": "assets/sprites/enemies/borne_death_strip4_n.png"
   },
   {
    "file": "assets/sprites/enemies/borne_wreck_strip1.png",
@@ -1376,7 +1539,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/borne_wreck_strip1_n.png"
   },
   {
    "file": "assets/sprites/enemies/drone_fly_strip4.png",
@@ -1403,7 +1567,8 @@
     "y": 0.875
    },
    "active": [],
-   "notes": "ombre shadow_s 8 px sous le drone"
+   "notes": "ombre shadow_s 8 px sous le drone",
+   "normalMap": "assets/sprites/enemies/drone_fly_strip4_n.png"
   },
   {
    "file": "assets/sprites/enemies/drone_attack_strip8.png",
@@ -1450,7 +1615,8 @@
      4,
      7
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/drone_attack_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/drone_hurt_strip2.png",
@@ -1474,7 +1640,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/drone_hurt_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/drone_death_strip6.png",
@@ -1507,7 +1674,8 @@
     "vfx": {
      "5": "vfx_poof"
     }
-   }
+   },
+   "normalMap": "assets/sprites/enemies/drone_death_strip6_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_idle_down_strip4.png",
@@ -1533,7 +1701,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_idle_down_strip4_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_walk_down_strip6.png",
@@ -1561,7 +1730,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_walk_down_strip6_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_attack_down_strip8.png",
@@ -1600,7 +1770,8 @@
      2,
      3
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_attack_down_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_shield_down_strip8.png",
@@ -1639,7 +1810,8 @@
      1,
      2
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_shield_down_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_hurt_down_strip2.png",
@@ -1663,7 +1835,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_hurt_down_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_idle_up_strip4.png",
@@ -1689,7 +1862,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_idle_up_strip4_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_walk_up_strip6.png",
@@ -1717,7 +1891,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_walk_up_strip6_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_attack_up_strip8.png",
@@ -1756,7 +1931,8 @@
      2,
      3
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_attack_up_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_shield_up_strip8.png",
@@ -1795,7 +1971,8 @@
      1,
      2
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_shield_up_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_hurt_up_strip2.png",
@@ -1819,7 +1996,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_hurt_up_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_idle_side_strip4.png",
@@ -1845,7 +2023,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_idle_side_strip4_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_walk_side_strip6.png",
@@ -1873,7 +2052,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_walk_side_strip6_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_attack_side_strip8.png",
@@ -1912,7 +2092,8 @@
      2,
      3
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_attack_side_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_shield_side_strip8.png",
@@ -1951,7 +2132,8 @@
      1,
      2
     ]
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_shield_side_strip8_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_hurt_side_strip2.png",
@@ -1975,7 +2157,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/enemies/manager-kpi_hurt_side_strip2_n.png"
   },
   {
    "file": "assets/sprites/enemies/manager-kpi_death_strip8.png",
@@ -2010,7 +2193,8 @@
     "vfx": {
      "6": "vfx_poof"
     }
-   }
+   },
+   "normalMap": "assets/sprites/enemies/manager-kpi_death_strip8_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_intro_strip14.png",
@@ -2046,7 +2230,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/bosses/auditeur_intro_strip14_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_idle_strip6.png",
@@ -2074,7 +2259,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/bosses/auditeur_idle_strip6_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_move_strip8.png",
@@ -2110,7 +2296,8 @@
      0,
      4
     ]
-   }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_move_strip8_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_attack-sweep_strip12.png",
@@ -2155,7 +2342,8 @@
      3,
      4
     ]
-   }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_attack-sweep_strip12_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_attack-barrage_strip8.png",
@@ -2195,7 +2383,8 @@
      6
     ],
     "projectile": "proj-ticket"
-   }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_attack-barrage_strip8_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_attack-stamp_strip14.png",
@@ -2239,7 +2428,8 @@
     "vfx": {
      "8": "vfx_dust-land"
     }
-   }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_attack-stamp_strip14_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_phase_strip12.png",
@@ -2273,7 +2463,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/bosses/auditeur_phase_strip12_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_idle-p2_strip6.png",
@@ -2301,7 +2492,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/bosses/auditeur_idle-p2_strip6_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_move-p2_strip8.png",
@@ -2337,7 +2529,8 @@
      0,
      4
     ]
-   }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_move-p2_strip8_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_hurt_strip2.png",
@@ -2361,7 +2554,8 @@
     "x": 0.5,
     "y": 0.9167
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/bosses/auditeur_hurt_strip2_n.png"
   },
   {
    "file": "assets/sprites/bosses/auditeur_death_strip20.png",
@@ -2408,7 +2602,8 @@
     "vfx": {
      "19": "vfx_explosion-big"
     }
-   }
+   },
+   "normalMap": "assets/sprites/bosses/auditeur_death_strip20_n.png"
   },
   {
    "file": "assets/sprites/npcs/marcel_idle_strip4.png",
@@ -2434,7 +2629,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/marcel_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/josiane_idle_strip4.png",
@@ -2460,7 +2656,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/josiane_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/fatou_idle_strip4.png",
@@ -2486,7 +2683,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/fatou_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/kevin_idle_strip4.png",
@@ -2512,7 +2710,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/kevin_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/bene_idle_strip4.png",
@@ -2538,7 +2737,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/bene_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/yasmina_idle_strip4.png",
@@ -2564,7 +2764,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/yasmina_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/rudy_idle_strip4.png",
@@ -2590,7 +2791,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/rudy_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/npcs/jeanmi_idle_strip4.png",
@@ -2616,7 +2818,8 @@
     "x": 0.5,
     "y": 0.875
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/sprites/npcs/jeanmi_idle_strip4_n.png"
   },
   {
    "file": "assets/sprites/vfx/vfx_slash-e_strip5.png",
@@ -3838,7 +4041,8 @@
     "x": 0.5,
     "y": 1.0
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/tilesets/props/poubelle_break_strip5_n.png"
   },
   {
    "file": "assets/tilesets/props/distributeur_break_strip6.png",
@@ -3866,7 +4070,8 @@
     "x": 0.5,
     "y": 1.0
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/tilesets/props/distributeur_break_strip6_n.png"
   },
   {
    "file": "assets/tilesets/props/sortie-portique_open_strip6.png",
@@ -3894,7 +4099,8 @@
     "x": 0.5,
     "y": 1.0
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/tilesets/props/sortie-portique_open_strip6_n.png"
   },
   {
    "file": "assets/tilesets/props/vieille-dame_idle_strip4.png",
@@ -3920,7 +4126,8 @@
     "x": 0.5,
     "y": 1.0
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/tilesets/props/vieille-dame_idle_strip4_n.png"
   },
   {
    "file": "assets/tilesets/props/lanterne_idle_strip4.png",
@@ -3946,7 +4153,8 @@
     "x": 0.5,
     "y": 1.0
    },
-   "active": []
+   "active": [],
+   "normalMap": "assets/tilesets/props/lanterne_idle_strip4_n.png"
   }
  ],
  "images": [
@@ -4175,7 +4383,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_banc-h_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_banc-v.png",
@@ -4190,7 +4399,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_banc-v_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_poubelle.png",
@@ -4205,7 +4415,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_poubelle_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_distributeur.png",
@@ -4220,7 +4431,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_distributeur_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_compostage.png",
@@ -4235,7 +4447,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_compostage_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_panneau-voie1.png",
@@ -4250,7 +4463,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_panneau-voie1_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_panneau-voie2.png",
@@ -4265,7 +4479,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_panneau-voie2_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_horloge.png",
@@ -4280,7 +4495,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_horloge_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_ecran-departs.png",
@@ -4295,7 +4511,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_ecran-departs_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_pilier.png",
@@ -4310,7 +4527,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_pilier_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_extincteur.png",
@@ -4325,7 +4543,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_extincteur_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_cone.png",
@@ -4340,7 +4559,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_cone_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_barriere.png",
@@ -4355,7 +4575,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_barriere_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_valise-a.png",
@@ -4370,7 +4591,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_valise-a_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_valise-b.png",
@@ -4385,7 +4607,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_valise-b_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_chariot.png",
@@ -4400,7 +4623,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_chariot_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_catenaire.png",
@@ -4415,7 +4639,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_catenaire_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_signal-rouge.png",
@@ -4430,7 +4655,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_signal-rouge_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_signal-vert.png",
@@ -4445,7 +4671,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_signal-vert_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_portique.png",
@@ -4460,7 +4687,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_portique_n.png"
   },
   {
    "file": "assets/tilesets/props_quais.png",
@@ -4468,7 +4696,8 @@
    "type": "atlas",
    "width": 256,
    "height": 256,
-   "atlas": "assets/tilesets/props_quais.json"
+   "atlas": "assets/tilesets/props_quais.json",
+   "normalMap": "assets/tilesets/props_quais_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_comptoir.png",
@@ -4483,7 +4712,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_comptoir_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_canape.png",
@@ -4498,7 +4728,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_canape_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_canape-neuf.png",
@@ -4513,7 +4744,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_canape-neuf_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_table-tasses.png",
@@ -4528,7 +4760,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_table-tasses_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_etagere-lanternes.png",
@@ -4543,7 +4776,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_etagere-lanternes_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_casiers.png",
@@ -4558,7 +4792,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_casiers_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_tableau-palettes.png",
@@ -4573,7 +4808,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_tableau-palettes_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_tableau-liege.png",
@@ -4588,7 +4824,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_tableau-liege_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_etabli.png",
@@ -4603,7 +4840,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_etabli_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_porte-service.png",
@@ -4618,7 +4856,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_porte-service_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_vieille-dame.png",
@@ -4633,7 +4872,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_vieille-dame_n.png"
   },
   {
    "file": "assets/tilesets/props/prop_lanterne.png",
@@ -4648,7 +4888,8 @@
    "origin": {
     "x": 0.5,
     "y": 1.0
-   }
+   },
+   "normalMap": "assets/tilesets/props/prop_lanterne_n.png"
   },
   {
    "file": "assets/tilesets/props_occ.png",
@@ -4656,7 +4897,8 @@
    "type": "atlas",
    "width": 256,
    "height": 256,
-   "atlas": "assets/tilesets/props_occ.json"
+   "atlas": "assets/tilesets/props_occ.json",
+   "normalMap": "assets/tilesets/props_occ_n.png"
   },
   {
    "file": "assets/tilesets/train_motrice.png",
@@ -4671,7 +4913,8 @@
    "origin": {
     "x": 0.5,
     "y": 0.5
-   }
+   },
+   "normalMap": "assets/tilesets/train_motrice_n.png"
   },
   {
    "file": "assets/tilesets/train_voiture.png",
@@ -4686,7 +4929,8 @@
    "origin": {
     "x": 0.5,
     "y": 0.5
-   }
+   },
+   "normalMap": "assets/tilesets/train_voiture_n.png"
   }
  ],
  "tilesets": [
@@ -4935,7 +5179,8 @@
       250
      ]
     }
-   }
+   },
+   "normalMap": "assets/tilesets/tiles_quais_n.png"
   },
   {
    "file": "assets/tilesets/tiles_occ.png",
@@ -5142,7 +5387,8 @@
       200
      ]
     }
-   }
+   },
+   "normalMap": "assets/tilesets/tiles_occ_n.png"
   },
   {
    "file": "assets/tilesets/tiles_commun.png",
@@ -5180,7 +5426,8 @@
     "debug-void": 26,
     "debug-trigger": 27
    },
-   "animations": {}
+   "animations": {},
+   "normalMap": "assets/tilesets/tiles_commun_n.png"
   }
  ]
 }

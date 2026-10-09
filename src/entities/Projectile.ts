@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { sheetOf } from '@/config/assets';
 import { Depth } from '@/config/constants';
 
 export interface ProjectileSpec {
@@ -25,7 +26,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   private lifeLeft = 0;
 
   public constructor(scene: Phaser.Scene, x = 0, y = 0) {
-    super(scene, x, y, 'proj-ticket_spin_strip4', 0);
+    super(scene, x, y, sheetOf('proj-ticket-spin'), 0);
   }
 
   public fire(spec: ProjectileSpec): void {

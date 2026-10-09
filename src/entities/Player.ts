@@ -16,6 +16,7 @@ import {
 } from '@/config/balance';
 import { Css, Depth } from '@/config/constants';
 import type { Direction } from '@/config/assets';
+import { animInfo, sheetOf } from '@/config/assets';
 import {
   canChain,
   canDashCancel,
@@ -138,12 +139,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     x: number,
     y: number,
   ) {
-    super(world.stage, x, y, 'player_idle_down_strip6', 0);
+    super(world.stage, x, y, sheetOf('player-idle-down'), 0);
     world.stage.add.existing(this);
     world.stage.physics.add.existing(this);
-    // Pivot aux pieds (24, 44) dans une frame de 48×48.
-    this.setOrigin(0.5, 44 / 48);
-    this.body.setCircle(HERO.FEET_RADIUS, 24 - HERO.FEET_RADIUS, 44 - HERO.FEET_RADIUS);
+    // Pivot aux pieds, lu dans le manifeste (taille de frame et pivot dépendent des sprites livrés).
+    const { frameSize, pivot } = animInfo('player-idle-down');
+    this.setOrigin(pivot.x / frameSize, pivot.y / frameSize);
+    this.body.setCircle(HERO.FEET_RADIUS, pivot.x - HERO.FEET_RADIUS, pivot.y - HERO.FEET_RADIUS);
     this.body.setMaxSpeed(1200);
     this.weapon = new Weapon(world);
     this.shadow = world.stage.add.image(x, y, 'shadow_m').setAlpha(0.5).setDepth(Depth.Shadow);
@@ -397,9 +399,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     _anim: Phaser.Animations.Animation,
     frame: Phaser.Animations.AnimationFrame,
   ): void {
-    // Phaser 4 : AnimationFrame.index commence à 1. Poussière aux contacts au sol (frames 0 et 4).
-    if (this.fsm.is('run') && (frame.index - 1) % 4 === 0)
+    // Phaser 4 : AnimationFrame.index commence à 1. Poussière aux contacts au sol (frames du manifeste).
+    if (this.fsm.is('run') && animInfo(this.currentAnim).footsteps.includes(frame.index - 1)) {
       this.world.feel.dustAt(this.x, this.y, 2);
+    }
   }
 
   // ─── Actions ───────────────────────────────────────────────────────────────

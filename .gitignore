@@ -14,3 +14,6 @@ coverage/
 # Python (générateur de sprites)
 __pycache__/
 *.pyc
+
+# Environnement Blender (bpy) du rendu 3D → pixel
+tools/render3d/.venv/

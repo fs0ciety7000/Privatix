@@ -32,17 +32,24 @@ export class PreloaderScene extends Phaser.Scene {
       .setResolution(2);
     this.load.on(Phaser.Loader.Events.PROGRESS, (p: number) => bar.setSize(240 * p, 6));
 
+    // Les normal maps (`_n.png`) sont chargées avec leur feuille : éclairage dynamique (Atmosphere).
     for (const s of SPRITE_SHEETS) {
-      this.load.spritesheet(s.key, s.path, {
-        frameWidth: s.frameWidth,
-        frameHeight: s.frameHeight,
+      this.load.spritesheet({
+        key: s.key,
+        url: s.path,
+        frameConfig: { frameWidth: s.frameWidth, frameHeight: s.frameHeight },
+        ...(s.normalMap ? { normalMap: s.normalMap } : {}),
       });
     }
     for (const img of IMAGES) {
-      if (img.atlas) this.load.atlas(img.key, img.path, img.atlas);
-      else this.load.image(img.key, img.path);
+      const normal = img.normalMap ? { normalMap: img.normalMap } : {};
+      if (img.atlas) {
+        this.load.atlas({ key: img.key, textureURL: img.path, atlasURL: img.atlas, ...normal });
+      } else this.load.image({ key: img.key, url: img.path, ...normal });
     }
-    for (const t of TILESETS) this.load.image(t.key, t.path);
+    for (const t of TILESETS) {
+      this.load.image({ key: t.key, url: t.path, ...(t.normalMap ? { normalMap: t.normalMap } : {}) });
+    }
   }
 
   public create(): void {

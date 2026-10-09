@@ -13,7 +13,9 @@ from PIL import Image
 import lib
 from font3x5 import draw_text
 from lib import canvas, blit, parse
-from palette import CHAR, RGBA
+from palette import CHAR, LIGHT, RGBA
+
+LIGHT_A = LIGHT
 
 c = CHAR
 T = 16
@@ -68,8 +70,45 @@ def speckle(t, seed, n, cols, region=None):
 # QUAIS
 # ==========================================================================
 
+FLOOR_MAP = {"s": "4", "d": "2", "n": "1", "g": "5"}
+
+
 def quai_floor(seed, detail=None):
-    """Dalle de béton de quai (bleu-gris nuit), joints sur le haut et la gauche."""
+    """Dalle de béton de quai, nuit bleue : valeur moyenne (le sol se lit
+    entre les murs sombres et les acteurs), biseau éclairé haut-gauche,
+    micro-variations, grain, reflets humides du néon."""
+    t = _quai_floor_old(seed, detail)
+    out = t.copy()
+    for a_, b_ in FLOOR_MAP.items():
+        out[t == c[a_]] = c[b_]
+    t = out
+    g = lib.rng(seed * 7 + 3)
+    base = t == c["4"]
+    # micro-variations (taches de béton plus sombres, usure plus claire)
+    for _ in range(2):
+        x, y = int(g.integers(2, 12)), int(g.integers(3, 13))
+        w, h = int(g.integers(2, 5)), int(g.integers(1, 3))
+        reg = np.zeros_like(base)
+        reg[y : y + h, x : x + w] = True
+        t[reg & base & ~lib.checker((T, T), seed)] = c["3"]
+    # biseau : bas et droite de la dalle dans l'ombre
+    t[T - 1, 1:][t[T - 1, 1:] == c["4"]] = c["3"]
+    t[1:, T - 1][t[1:, T - 1] == c["4"]] = c["3"]
+    # grain
+    for _ in range(5):
+        x, y = int(g.integers(1, T)), int(g.integers(1, T))
+        if t[y, x] == c["4"]:
+            t[y, x] = c["3"] if g.random() < 0.7 else c["5"]
+    # reflet humide (néon froid) sur une dalle sur trois
+    if detail is None and seed % 3 == 0:
+        y = int(g.integers(5, 13))
+        x = int(g.integers(3, 9))
+        t[y, x : x + 4] = c["5"]
+        t[y, x + 1] = c["c"]
+    return t
+
+
+def _quai_floor_old(seed, detail=None):
     t = tile("s")
     # joints discrets : ligne sombre en haut/gauche, rehaut ponctuel au coin
     t[0, :] = c["d"]
@@ -126,17 +165,24 @@ def quai_floor(seed, detail=None):
 
 def ballast(seed):
     """Ballast : pierres anguleuses gris / rouille, valeurs sombres."""
-    t = tile("d")
+    t = tile("1")
     g = lib.rng(seed)
-    for _ in range(26):
+    # fond : graviers sombres en petites taches (pas de damier)
+    for _ in range(18):
         x, y = int(g.integers(0, T)), int(g.integers(0, T))
-        col = ("s", "g", "s", "m", "h")[int(g.integers(0, 5))]
-        t[y, x] = c[col]
+        t[y, x] = c["2"]
         if x + 1 < T:
-            t[y, x + 1] = c[col] if col != "g" else c["s"]
-        if y + 1 < T:
-            t[y + 1, x] = c["n"]
-    speckle(t, seed + 3, 4, "b")
+            t[y, x + 1] = c["2"]
+    # pierres anguleuses 2×2 : arête éclairée haut-gauche, ombre propre bas-droite
+    for _ in range(16):
+        x, y = int(g.integers(0, T - 1)), int(g.integers(0, T - 1))
+        col = ("s", "3", "s", "m", "g", "3")[int(g.integers(0, 6))]
+        hi = {"s": "g", "3": "4", "m": "z", "g": "b"}[col]
+        t[y, x] = c[hi]
+        t[y, x + 1] = c[col]
+        t[y + 1, x] = c[col]
+        t[y + 1, x + 1] = c["D"]
+    speckle(t, seed + 3, 2, "7")
     return t
 
 
@@ -158,11 +204,14 @@ def corner_tile(mask, inside_fn, outside_fn, seed=0):
         q[h:, h:] = True
     # adoucir les coins pleins en arrondis (pas d'angle de 90° visible)
     t[q] = a[q]
-    # bord : sel-out sombre côté ballast, rehaut clair côté quai
+    # bord : ombre portée côté ballast (2 px, bas-droite plus marquée),
+    # nez de dalle éclairé côté quai
     edge_out = lib._dilate4(q) & ~q
-    t[edge_out] = c["n"]
+    t[edge_out] = c["1"]
+    edge_out2 = lib._dilate4(edge_out | q) & ~q & ~edge_out
+    t[edge_out2 & lib.checker((T, T))] = c["D"]
     edge_in = q & ~lib._erode4(np.pad(q, 1, constant_values=True))[1:-1, 1:-1]
-    t[edge_in & q] = c["g"]
+    t[edge_in & q] = c["5"]
     return t
 
 
@@ -202,6 +251,12 @@ def wall_top(mask, base="d", rim_hi="g", rim_lo="n", inner="s"):
     if not e:
         t[:, T - 1] = c[rim_lo]
         t[:, T - 2] = c[inner]
+    # matière : grain et éclats sur le chaperon
+    g = lib.rng(sum(v << k for k, v in enumerate(mask)) + 7)
+    for _ in range(6):
+        x, y = int(g.integers(2, T - 2)), int(g.integers(2, T - 2))
+        if t[y, x] == c[base]:
+            t[y, x] = c[inner] if g.random() < 0.6 else c[rim_hi]
     # coins intérieurs
     if n and w and not nw:
         t[0, 0] = c[rim_lo]
@@ -234,6 +289,14 @@ def wall_face(kind, lower, pal):
         for y in range(1, T, 4):
             for x in range(1, T, 8):
                 t[y, x : x + 2] = c[hi]
+                t[y + 1, x] = c[hi]
+        # reflet spéculaire du carrelage émaillé (néon froid)
+        t[5, 2] = c["c"]
+        t[13, 10] = c["c"]
+        if lower:
+            # salissures qui coulent au-dessus de la plinthe
+            for x in (3, 4, 9, 13):
+                t[T - 6 : T - 4 + (x % 2), x] = c[sh]
     else:  # briques
         for y in range(0, T, 4):
             t[y, :] = c[grout]
@@ -271,34 +334,56 @@ def wall_face(kind, lower, pal):
     elif kind == "midC":
         if lower:
             t[6, 9:14] = c[sh]
+        elif pal[5] == "tiles":
+            # tube néon froid (émissif) et son halo sur le carrelage
+            lib.rect(t, 1, 6, 14, 1, c["c"])
+            lib.rect(t, 1, 10, 14, 1, c["c"])
+            lib.rect(t, 1, 7, 14, 3, c["D"])
+            lib.rect(t, 2, 8, 12, 1, c["6"])
+            lib.rect(t, 3, 8, 8, 1, c["w"])
+            t[7, 1] = t[7, 14] = c["s"]
     return t
 
 
 def quai_edge(kind):
-    """Bord de quai (vu de dessus 3/4) : béton, ligne jaune, nez de quai, chute."""
+    """Bord de quai (vu de dessus 3/4) : béton, ligne jaune de sécurité (rehaut
+    chaud, usure), nez de quai en granit éclairé, face de chute dans l'ombre."""
     t = quai_floor(5)
+
+    def yellow_h(y):
+        lib.rect(t, 0, y, T, 1, c["y"])
+        lib.rect(t, 0, y + 1, T, 1, c["a"])
+        t[y, ::5] = c["Z"]
+        t[y + 1, 2::6] = c["U"]
+
+    def yellow_v(x):
+        lib.rect(t, x, 0, 1, T, c["y"])
+        lib.rect(t, x + 1, 0, 1, T, c["a"])
+        t[::5, x] = c["Z"]
+        t[2::6, x + 1] = c["U"]
+
     if kind == "S":  # le vide (voie) est au sud
-        lib.rect(t, 0, 3, T, 2, c["y"])
-        t[3, ::4] = c["h"]
-        lib.rect(t, 0, 9, T, 2, c["b"])
+        yellow_h(3)
+        lib.rect(t, 0, 9, T, 1, c["7"])
+        lib.rect(t, 0, 10, T, 1, c["b"])
         lib.rect(t, 0, 11, T, 1, c["g"])
-        lib.rect(t, 0, 12, T, 4, c["d"])
-        lib.rect(t, 0, 14, T, 2, c["n"])
-        t[12:14, ::5] = c["s"]
+        lib.rect(t, 0, 12, T, 2, c["2"])
+        lib.rect(t, 0, 14, T, 2, c["1"])
+        t[12, ::5] = c["s"]
+        t[14, ::4] = c["D"]
     elif kind == "N":  # voie au nord : on voit seulement le nez du quai
-        lib.rect(t, 0, 0, T, 2, c["n"])
-        lib.rect(t, 0, 2, T, 1, c["b"])
+        lib.rect(t, 0, 0, T, 2, c["1"])
+        lib.rect(t, 0, 2, T, 1, c["7"])
         lib.rect(t, 0, 3, T, 1, c["g"])
-        lib.rect(t, 0, 10, T, 2, c["y"])
-        t[11, ::4] = c["h"]
+        yellow_h(10)
     elif kind == "E":
-        lib.rect(t, 9, 0, 2, T, c["y"])
+        yellow_v(9)
         lib.rect(t, 13, 0, 1, T, c["b"])
-        lib.rect(t, 14, 0, 2, T, c["n"])
+        lib.rect(t, 14, 0, 2, T, c["1"])
     elif kind == "W":
-        lib.rect(t, 5, 0, 2, T, c["y"])
-        lib.rect(t, 2, 0, 1, T, c["b"])
-        lib.rect(t, 0, 0, 2, T, c["n"])
+        yellow_v(5)
+        lib.rect(t, 2, 0, 1, T, c["7"])
+        lib.rect(t, 0, 0, 2, T, c["1"])
     return t
 
 
@@ -318,16 +403,17 @@ def edge_inner(a, b):
     # petit coin de vide dans l'angle
     xs = slice(12, 16) if "E" in (a, b) else slice(0, 4)
     ys = slice(12, 16) if "S" in (a, b) else slice(0, 4)
-    t[ys, xs] = c["n"]
+    t[ys, xs] = c["1"]
     return t
 
 
 def edge_end(kind):
     t = quai_floor(5)
-    if kind in ("Sl", "Sr"):
-        lib.rect(t, 0 if kind == "Sr" else 4, 3, 12, 2, c["y"])
-    else:
-        lib.rect(t, 0 if kind == "Nr" else 4, 10, 12, 2, c["y"])
+    y = 3 if kind in ("Sl", "Sr") else 10
+    x0 = 0 if kind in ("Sr", "Nr") else 4
+    lib.rect(t, x0, y, 12, 1, c["y"])
+    lib.rect(t, x0, y + 1, 12, 1, c["a"])
+    t[y, x0 : x0 + 12 : 5] = c["Z"]
     return t
 
 
@@ -341,10 +427,14 @@ def track(kind, seed=0):
             lib.rect(t, x, y0, 3, y1 - y0, c["m"])
             lib.rect(t, x, y0, 1, y1 - y0, c["z"])
             lib.rect(t, x + 2, y0, 1, y1 - y0, c["h"])
+            t[(y0 + y1) // 2 + (x % 3) - 1, x + 1] = c["h"]  # fente du bois
+            if y1 < T:
+                lib.rect(t, x + 1, y1, 3, 1, c["D"])  # ombre portée
         ry = 9 if kind == "H-top" else 6 if kind == "H-bot" else 7
-        lib.rect(t, 0, ry, T, 2, c["s"])
-        lib.rect(t, 0, ry, T, 1, c["b"])
-        lib.rect(t, 0, ry + 2, T, 1, c["n"])
+        lib.rect(t, 0, ry, T, 2, c["g"])
+        lib.rect(t, 0, ry, T, 1, c["7"])
+        t[ry, (seed * 5) % 12 : (seed * 5) % 12 + 3] = c["v"]  # éclat de néon sur le rail
+        lib.rect(t, 0, ry + 2, T, 1, c["D"])
     elif kind in ("V-left", "V-right"):
         x0, x1 = (6, 16) if kind == "V-left" else (0, 10)
         for y in range(1, T, 5):
@@ -352,9 +442,9 @@ def track(kind, seed=0):
             lib.rect(t, x0, y, x1 - x0, 1, c["z"])
             lib.rect(t, x0, y + 2, x1 - x0, 1, c["h"])
         rx = 9 if kind == "V-left" else 5
-        lib.rect(t, rx, 0, 2, T, c["s"])
-        lib.rect(t, rx, 0, 1, T, c["b"])
-        lib.rect(t, rx + 2, 0, 1, T, c["n"])
+        lib.rect(t, rx, 0, 2, T, c["g"])
+        lib.rect(t, rx, 0, 1, T, c["7"])
+        lib.rect(t, rx + 2, 0, 1, T, c["D"])
     elif kind == "sleepers":
         for x in range(1, T, 5):
             lib.rect(t, x, 2, 3, 12, c["m"])
@@ -466,25 +556,30 @@ def verriere_shadow(phase):
 
 def neon(frame):
     t = canvas(T)
-    t[:] = c["d"]
-    lib.rect(t, 1, 6, 14, 4, c["s"])
+    t[:] = c["2"]
+    lib.rect(t, 1, 6, 14, 4, c["D"])
     on = frame in (0, 1, 3)
-    lib.rect(t, 2, 7, 12, 2, c["v"] if on else c["g"])
+    if on:
+        lib.rect(t, 0, 5, T, 1, c["c"])
+        lib.rect(t, 0, 10, T, 1, c["c"])
+    lib.rect(t, 2, 7, 12, 2, c["6"] if on else c["s"])
     if on:
         lib.rect(t, 3, 7, 10, 1, c["w"])
     if frame == 2:
         t[7, 6] = c["v"]
-    lib.rect(t, 1, 10, 14, 1, c["n"])
+    lib.rect(t, 1, 11, 14, 1, c["1"])
     return t
 
 
 def puddle_anim(frame):
     t = quai_floor(11)
     m = lib.ellipse_mask((T, T), 8, 9, 6, 3)
-    t[m] = c["n"]
+    t[m] = c["2"]
+    t[lib.ellipse_mask((T, T), 8, 9.5, 5, 2.2)] = c["1"]
     x = 4 + frame * 2
-    t[8, x : x + 3] = c["c"]
-    t[9, x + 1] = c["i"]
+    t[8, x : x + 3] = c["6"]
+    t[8, x + 1] = c["w"]
+    t[10, x - 1 : x + 1] = c["c"]
     return t
 
 
@@ -521,10 +616,11 @@ def build_quais():
     # ---- rangées 2-4 : dessus de mur blob 47
     masks = blob_masks()
     for i, mk in enumerate(masks):
-        sh.put(i % 16, 2 + i // 16, wall_top(mk), "walltop-" + "".join(map(str, mk)))
+        sh.put(i % 16, 2 + i // 16, wall_top(mk, base="2", rim_hi="3", rim_lo="D", inner="1"),
+               "walltop-" + "".join(map(str, mk)))
     sh.put(15, 4, quai_floor(99), "blob-spare")
     # ---- rangées 5-6 : façades (carreaux émaillés bleus) + façades spéciales
-    pal = ("i", "n", "I", "n", "d", "tiles")
+    pal = ("i", "n", "I", "n", "2", "tiles")
     kinds = ["left", "midA", "midB", "midC", "right", "doorL", "doorR", "plinth"]
     for i, k in enumerate(kinds):
         sh.put(i, 5, wall_face(k, False, pal), f"wall-{k}-top")
@@ -587,31 +683,47 @@ def build_quais():
 def _facades_quais():
     def poster(txt, col):
         def fn():
-            top = wall_face("midA", False, ("i", "n", "I", "n", "d", "tiles"))
-            bot = wall_face("midA", True, ("i", "n", "I", "n", "d", "tiles"))
+            top = wall_face("midA", False, ("i", "n", "I", "n", "2", "tiles"))
+            bot = wall_face("midA", True, ("i", "n", "I", "n", "2", "tiles"))
+            # affiche éclairée : papier crème, rehaut haut-gauche, ombre froide
+            # bas-droite, coin corné, scotch
             lib.rect(top, 2, 3, 12, 13, c["q"])
             lib.rect(top, 2, 3, 12, 3, c[col])
+            lib.rect(top, 2, 3, 12, 1, LIGHT_A[c[col]])
+            lib.rect(top, 2, 6, 1, 10, c["w"])
+            lib.rect(top, 13, 6, 1, 10, c["b"])
             draw_text(top, txt[:3], 2, 8, c["d"])
+            lib.px(top, 3, 3, c["v"])
+            lib.px(top, 12, 3, c["v"])
             lib.rect(bot, 2, 0, 12, 7, c["q"])
+            lib.rect(bot, 2, 0, 1, 7, c["w"])
+            lib.rect(bot, 13, 0, 1, 6, c["b"])
+            lib.rect(bot, 2, 6, 12, 1, c["b"])
             lib.rect(bot, 3, 2, 10, 1, c["g"])
             lib.rect(bot, 3, 4, 7, 1, c["g"])
+            bot[5, 13] = bot[6, 13] = bot[6, 12] = c["n"]  # coin corné
             return top, bot
         return fn
 
     def vitrine():
-        top = wall_face("midA", False, ("i", "n", "I", "n", "d", "tiles"))
-        bot = wall_face("midA", True, ("i", "n", "I", "n", "d", "tiles"))
+        top = wall_face("midA", False, ("i", "n", "I", "n", "2", "tiles"))
+        bot = wall_face("midA", True, ("i", "n", "I", "n", "2", "tiles"))
+        # vitrine : verre bleuté plus sombre en bas, reflets obliques du néon
         lib.rect(top, 1, 4, 14, 12, c["v"])
-        lib.rect(top, 1, 4, 14, 1, c["s"])
-        lib.line(top, 3, 6, 6, 9, c["w"])
-        lib.rect(bot, 1, 0, 14, 9, c["v"])
+        lib.rect(top, 1, 10, 14, 6, c["c"])
+        lib.rect(top, 1, 4, 14, 1, c["g"])
+        lib.line(top, 3, 6, 7, 10, c["w"])
+        lib.line(top, 4, 6, 8, 10, c["7"])
+        lib.line(top, 10, 5, 12, 7, c["w"])
+        lib.rect(bot, 1, 0, 14, 9, c["c"])
         lib.rect(bot, 1, 8, 14, 1, c["s"])
-        bot[3:6, 4:12] = c["c"]
+        bot[3:6, 4:12] = c["I"]
+        bot[3, 4:12] = c["v"]
         return top, bot
 
     def guichet():
-        top = wall_face("midA", False, ("i", "n", "I", "n", "d", "tiles"))
-        bot = wall_face("midA", True, ("i", "n", "I", "n", "d", "tiles"))
+        top = wall_face("midA", False, ("i", "n", "I", "n", "2", "tiles"))
+        bot = wall_face("midA", True, ("i", "n", "I", "n", "2", "tiles"))
         lib.rect(top, 1, 3, 14, 4, c["q"])
         draw_text(top, "FERM", -1, 3, c["x"]) if False else draw_text(top, "HS", 4, 3, c["x"])
         lib.rect(top, 1, 8, 14, 8, c["n"])
@@ -621,19 +733,25 @@ def _facades_quais():
         return top, bot
 
     def horaires():
-        top = wall_face("midA", False, ("i", "n", "I", "n", "d", "tiles"))
-        bot = wall_face("midA", True, ("i", "n", "I", "n", "d", "tiles"))
-        lib.rect(top, 2, 2, 12, 14, c["w"])
-        for y in range(4, 16, 2):
-            lib.rect(top, 3, y, 10 - (y % 4), 1, c["g"])
-        lib.rect(bot, 2, 0, 12, 8, c["w"])
-        for y in range(1, 8, 2):
-            lib.rect(bot, 3, y, 8, 1, c["g"])
+        top = wall_face("midA", False, ("i", "n", "I", "n", "2", "tiles"))
+        bot = wall_face("midA", True, ("i", "n", "I", "n", "2", "tiles"))
+        # tableau des départs à LED (émissif : le bloom du moteur le fait briller)
+        lib.rect(top, 1, 2, 14, 14, c["s"])
+        lib.rect(top, 2, 3, 12, 13, c["D"])
+        lib.rect(top, 3, 4, 10, 1, c["y"])
+        for y in range(6, 16, 2):
+            lib.rect(top, 3, y, 3, 1, c["a"])
+            lib.rect(top, 7, y, 6 - (y % 4), 1, c["Z"] if y % 4 else c["a"])
+        lib.rect(bot, 1, 0, 14, 8, c["s"])
+        lib.rect(bot, 2, 0, 12, 7, c["D"])
+        for y in range(1, 7, 2):
+            lib.rect(bot, 3, y, 3, 1, c["a"])
+            lib.rect(bot, 7, y, 5, 1, c["Z"])
         return top, bot
 
     def extincteur():
-        top = wall_face("midB", False, ("i", "n", "I", "n", "d", "tiles"))
-        bot = wall_face("midB", True, ("i", "n", "I", "n", "d", "tiles"))
+        top = wall_face("midB", False, ("i", "n", "I", "n", "2", "tiles"))
+        bot = wall_face("midB", True, ("i", "n", "I", "n", "2", "tiles"))
         lib.rect(top, 6, 8, 4, 8, c["x"])
         lib.rect(top, 6, 8, 1, 8, c["R"] if False else c["x"])
         lib.rect(top, 9, 8, 1, 8, c["R"])
@@ -653,20 +771,30 @@ def _facades_quais():
 
 def occ_floor(seed, kind="beton"):
     if kind == "beton":
-        t = tile("h")
-        t[0, :] = c["e"]
-        t[:, 0] = c["e"]
-        t[1, 1:] = c["m"]
-        t[1:, 1] = c["m"]
-        speckle(t, seed, 8, "eme")
-        speckle(t, seed + 1, 2, "z")
+        t = tile("m")
+        g = lib.rng(seed + 31)
+        for _ in range(2):
+            x, y = int(g.integers(2, 12)), int(g.integers(3, 13))
+            reg = np.zeros((T, T), bool)
+            reg[y : y + int(g.integers(1, 3)), x : x + int(g.integers(2, 5))] = True
+            t[reg & ~lib.checker((T, T), seed)] = c["r"]
+        t[0, :] = c["h"]
+        t[:, 0] = c["h"]
+        t[1, 1:7] = c["z"]
+        t[1:5, 1] = c["z"]
+        t[T - 1, 1:] = c["B"]
+        t[1:, T - 1] = c["B"]
+        speckle(t, seed, 7, "hhB")
+        speckle(t, seed + 1, 3, "zp")
         return t
     if kind == "planche":  # traverses de bois réemployées
-        t = tile("m")
+        t = tile("z")
         for y in (0, 5, 10, 15):
-            t[y, :] = c["e"]
+            t[y, :] = c["h"]
         for y in (1, 6, 11):
-            t[y, :] = c["z"]
+            t[y, :] = c["p"]
+        for y in (4, 9, 14):
+            t[y, :] = c["m"]
         g = lib.rng(seed)
         for y0 in (2, 7, 12):
             x = int(g.integers(2, 14))
@@ -727,15 +855,16 @@ def build_occ():
     for m in range(16):
         mask = (bool(m & 8), bool(m & 4), bool(m & 2), bool(m & 1))
         t = corner_tile(mask, lambda s: occ_floor(s, "planche"), lambda s: occ_floor(s, "beton"), seed=40 + m)
-        t[t == c["n"]] = c["e"]
-        t[t == c["g"]] = c["z"]
+        t[t == c["1"]] = c["e"]
+        t[t == c["D"]] = c["h"]
+        t[t == c["5"]] = c["p"]
         sh.put(m, 1, t, f"wang-planche-beton-{m}")
     masks = blob_masks()
     for i, mk in enumerate(masks):
-        sh.put(i % 16, 2 + i // 16, wall_top(mk, base="e", rim_hi="r", rim_lo="K", inner="h"),
+        sh.put(i % 16, 2 + i // 16, wall_top(mk, base="h", rim_hi="m", rim_lo="e", inner="B"),
                "walltop-" + "".join(map(str, mk)))
     sh.put(15, 4, occ_floor(99), "blob-spare")
-    pal = ("r", "e", "z", "R", "h", "bricks")
+    pal = ("r", "B", "S", "B", "h", "bricks")
     kinds = ["left", "midA", "midB", "midC", "right", "doorL", "doorR", "plinth"]
     for i, k in enumerate(kinds):
         sh.put(i, 5, wall_face(k, False, pal), f"wall-{k}-top")
@@ -789,10 +918,15 @@ def build_occ():
     # animées : lanterne murale, vapeur
     for f in range(4):
         t = wall_face("midA", False, pal)
+        # halo chaud sur les briques autour de la lanterne
+        glow = lib.ellipse_mask((T, T), 8, 9, 7.5, 7.5)
+        t[glow & (t == c["r"])] = c["S"]
+        t[glow & (t == c["S"]) & lib.ellipse_mask((T, T), 8, 9, 5, 5)] = c["z"]
         lib.rect(t, 6, 4, 4, 2, c["d"])
         lib.rect(t, 5, 6, 6, 6, c["h"])
-        lib.rect(t, 6, 7, 4, 4, c[("a", "y", "a", "q")[f]])
-        t[8, 7] = c["W"] if f == 1 else c["y"]
+        lib.rect(t, 6, 7, 4, 4, c[("a", "y", "a", "Z")[f]])
+        lib.rect(t, 7, 8, 2, 2, c["Z"] if f != 2 else c["y"])
+        t[8, 7] = c["w"] if f == 1 else c["Z"]
         lib.rect(t, 5, 12, 6, 1, c["d"])
         sh.put(f, 14, t, f"anim-lantern-{f}")
         st = occ_floor(90)
@@ -913,7 +1047,7 @@ def _vault(i):
     """Arche de briques (2 tuiles de haut), 8 colonnes formant 2 arches."""
     W, H = 4 * T, 2 * T
     a = canvas(W, H)
-    pal = ("r", "e", "z", "R", "h", "bricks")
+    pal = ("r", "B", "S", "B", "h", "bricks")
     for x in range(4):
         a[:T, x * T : (x + 1) * T] = wall_face("midA", False, pal)
         a[T:, x * T : (x + 1) * T] = wall_face("midA", True, pal)
@@ -997,4 +1131,4 @@ def build_tiles(emit_raw):
             "type": "tileset", "tileWidth": T, "tileHeight": T, "margin": 1, "spacing": 2,
             "columns": sheet.cols, "rows": sheet.rows, "width": ext.shape[1], "height": ext.shape[0],
             "tiles": sheet.names, "animations": sheet.anims,
-        }, preview_arr=sheet.a)
+        }, preview_arr=sheet.a, normal_src=ext, normal_cell=(T + 2, T + 2))

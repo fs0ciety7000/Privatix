@@ -66,6 +66,8 @@ interface ManifestAnimation {
   readonly durations: readonly number[];
   readonly loop: boolean;
   readonly normalMap?: string;
+  readonly pivot?: { readonly x: number; readonly y: number };
+  readonly events?: { readonly footstep?: readonly number[] } | null;
 }
 
 interface ManifestImage {
@@ -151,6 +153,47 @@ export function tileset(key: TilesetKey): TilesetDef {
   const t = TILESETS.find((d) => d.key === key);
   if (!t) throw new Error(`Tileset ${key} absent du manifeste`);
   return t;
+}
+
+/** Données d'une animation utiles au code : feuille, taille de frame, pivot aux pieds, frames de pas. */
+export interface AnimInfo {
+  readonly sheet: string;
+  readonly frameSize: number;
+  readonly pivot: { readonly x: number; readonly y: number };
+  readonly footsteps: readonly number[];
+}
+
+const ANIM_INFO: ReadonlyMap<string, AnimInfo> = new Map(
+  M.animations.map((a) => [
+    a.anim,
+    {
+      sheet: a.texture,
+      frameSize: a.frameWidth,
+      pivot: a.pivot ?? { x: a.frameWidth / 2, y: a.frameHeight - 4 },
+      footsteps: a.events?.footstep ?? [],
+    },
+  ]),
+);
+
+/**
+ * Infos d'une animation du manifeste. Les tailles et les pivots ne sont jamais codés en dur :
+ * changer de sprites (générateur, rendu 3D, pack itch.io) ne demande aucune modification du code.
+ */
+export function animInfo(animKey: string): AnimInfo {
+  const info = ANIM_INFO.get(animKey);
+  if (!info) throw new Error(`Animation absente du manifeste : ${animKey}`);
+  return info;
+}
+
+/** Clé de texture de la feuille d'une animation (pour créer un sprite avant de jouer l'animation). */
+export function sheetOf(animKey: string): string {
+  return animInfo(animKey).sheet;
+}
+
+/** Origine Phaser (pivot / taille de frame) d'une animation. */
+export function originOf(animKey: string): [number, number] {
+  const { frameSize, pivot } = animInfo(animKey);
+  return [pivot.x / frameSize, pivot.y / frameSize];
 }
 
 /** PNJ du hub : clé de texture et d'animation (`marcel_idle_strip4`, `marcel-idle`). */

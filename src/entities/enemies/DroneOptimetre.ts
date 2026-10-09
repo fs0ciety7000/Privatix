@@ -25,7 +25,7 @@ export class DroneOptimetre extends Enemy {
   private bob = 0;
 
   public constructor(world: CombatWorld, x: number, y: number, scale: EnemyScale) {
-    super(world, 'drone', x, y, 'drone_fly_strip4', scale, 32);
+    super(world, 'drone', x, y, 'drone-fly', scale);
     this.orbitDir = world.rng() < 0.5 ? -1 : 1;
     const now = world.now();
     this.lastShot = now - world.rng() * DRONE.SHOT_PERIOD_MS;
@@ -38,7 +38,7 @@ export class DroneOptimetre extends Enemy {
     // Vol : léger flottement du sprite au-dessus de son ombre.
     this.bob += dtMs;
     if (!this.grounded && !this.isDead)
-      this.setDisplayOrigin(16, 28 + Math.sin(this.bob / 180) * 1.5);
+      this.setDisplayOrigin(this.pivot.x, this.pivot.y + Math.sin(this.bob / 180) * 1.5);
   }
 
   protected think(): string | null {
@@ -131,7 +131,7 @@ export class DroneOptimetre extends Enemy {
       if (elapsed >= DRONE.DIVE_DURATION_MS || !this.body.blocked.none) {
         this.halt();
         this.grounded = true;
-        this.setDisplayOrigin(16, 24);
+        this.setDisplayOrigin(this.pivot.x, this.pivot.y - 4);
         this.world.feel.dustAt(this.x, this.y, 5);
         this.scene.time.delayedCall(DRONE.GROUNDED_MS, () => (this.grounded = false));
         return DRONE.GROUNDED_MS;

@@ -10,6 +10,7 @@ import math
 import numpy as np
 
 import lib
+import modern
 from font3x5 import draw_text, text_mask
 from humanoid import dissolve, flash_white
 from lib import canvas, blit, parse
@@ -129,7 +130,7 @@ def frame(P):
     # le pilote est rentré dans l'écoutille : on coupe sous le rebord
     hatch_y = 34 + by
     pilot[hatch_y:, :] = 0
-    blit(a, pilot, 0, 0)
+    blit(a, pilot, 0, 0, cast=True)
 
     # ------------------------------------------------ châssis
     x0, y0, w = 22 + bx, 30 + by, 52
@@ -219,7 +220,7 @@ def frame(P):
         shy = y0 + 13
         boom = canvas(S)
         lib.draw_rotated(boom, shx + 0.5, shy + 0.5, ang, _boom(28, tip))
-        blit(a, boom, 0, 0, edge=K)
+        blit(a, boom, 0, 0, edge=K, cast=True)
         j = canvas(S)
         lib.ellipse(j, shx + 0.5, shy + 0.5, 5, 5, c["s"])
         lib.ellipse(j, shx - 0.5, shy - 0.5, 3, 3, c["g"])
@@ -227,6 +228,7 @@ def frame(P):
         blit(a, j, 0, 0, edge=K)
 
     a = lib.outline(a)
+    a = modern.shade(a, ground=FOOT)
     for ov in P.get("overlays", []):
         ov(a)
     if P.get("flash"):

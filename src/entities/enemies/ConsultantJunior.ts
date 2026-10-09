@@ -25,7 +25,7 @@ export class ConsultantJunior extends Enemy {
   private exposed = false;
 
   public constructor(world: CombatWorld, x: number, y: number, scale: EnemyScale) {
-    super(world, 'consultant', x, y, 'consultant_idle_down_strip4', scale, 32);
+    super(world, 'consultant', x, y, 'consultant-idle-down', scale);
     this.strafeDir = world.rng() < 0.5 ? -1 : 1;
   }
 

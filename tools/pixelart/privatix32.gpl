@@ -1,11 +1,13 @@
 GIMP Palette
-Name: Privatix 32
+Name: Privatix Moderne 57
 Columns: 8
+#
+# 01-32 : couleurs historiques (canon de lecture) ; 33-57 : tons des rampes modernes
 #
  20  16  26	01 contour-sombre
  42  48  64	02 acier-sombre
  78  86 104	03 acier
-125 130 140	04 beton-ombre
+115 126 152	04 acier-clair
 159 176 198	05 gris-ballast
 244 246 248	06 blanc-affiche
 255 255 255	07 blanc-pur
@@ -34,3 +36,28 @@ Columns: 8
 180 140 255	30 violet-burnout
  30  91  58	31 vert-signal-sombre
  91 209 122	32 vert-soin
+ 28  26  46	33 abysse-violet
+211 222 234	34 acier-reflet
+110  31  51	35 gilet-creux
+255 162  68	36 gilet-lumiere
+255 217 140	37 gilet-eclat
+251 211 166	38 peau-eclat
+156  74  28	39 ambre-creux
+255 243 168	40 jaune-eclat
+ 16 135 127	41 turquoise-moyen
+223 255 248	42 turquoise-eclat
+ 94  18  66	43 magenta-creux
+184  30 126	44 magenta-moyen
+255 153 210	45 magenta-eclat
+ 74  20  39	46 rouge-creux
+242 103  94	47 rouge-eclat
+ 47 154  92	48 vert-moyen
+ 74  51 136	49 violet-creux
+ 74  29  34	50 brique-creux
+182  90  58	51 brique-lumiere
+ 19  28  51	52 quai-creux
+ 34  47  77	53 quai-ombre
+ 51  68 106	54 quai-base
+ 71  92 135	55 quai-lumiere
+107 132 176	56 quai-reflet
+111 214 255	57 neon-rim

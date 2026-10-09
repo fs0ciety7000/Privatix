@@ -34,7 +34,7 @@ export class Auditeur extends Enemy {
   private stunnedByTrain = 0;
 
   public constructor(world: CombatWorld, x: number, y: number, scale: EnemyScale) {
-    super(world, 'auditeur', x, y, 'auditeur_idle_strip6', scale, 96);
+    super(world, 'auditeur', x, y, 'auditeur-idle', scale);
     const now = world.now();
     this.nextPatternAt = now + 1500;
   }

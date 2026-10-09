@@ -3,6 +3,7 @@ import type { EnemyKind, EnemyStats } from '@/config/balance';
 import { ENEMY_NAMES, ENEMY_RULES, ENEMY_STATS, HERO } from '@/config/balance';
 import { Colors, Depth } from '@/config/constants';
 import type { Direction } from '@/config/assets';
+import { animInfo, sheetOf } from '@/config/assets';
 import type { TokenKind } from '@/systems/combat/AttackTokens';
 import type { EnemyScale } from '@/systems/combat/damage';
 import { incoming } from '@/systems/combat/damage';
@@ -62,6 +63,9 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
   public facing = Math.PI / 2;
   protected readonly fsm: StateMachine<Enemy, EnemyStates>;
   protected readonly shadow: Phaser.GameObjects.Image;
+  protected readonly frameSize: number;
+  /** Pivot aux pieds dans la frame (pixels). */
+  protected readonly pivot: { readonly x: number; readonly y: number };
   private telegraph: Phaser.GameObjects.Graphics | null = null;
   private kbLeft = 0;
   private kbVx = 0;
@@ -84,11 +88,10 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     public readonly kind: EnemyKind,
     x: number,
     y: number,
-    texture: string,
+    idleAnim: string,
     scale: EnemyScale,
-    protected readonly frameSize: number,
   ) {
-    super(world.stage, x, y, texture, 0);
+    super(world.stage, x, y, sheetOf(idleAnim), 0);
     world.stage.add.existing(this);
     world.stage.physics.add.existing(this);
     this.stats = ENEMY_STATS[kind];
@@ -96,11 +99,13 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.hp = this.maxHp;
     this.damageMult = scale.damage;
     this.speedMult = scale.speed;
-    // Pivot aux pieds (PIXEL_ART_GUIDE § 1.2) : 28/32 pour les ennemis, 44/48 pour les élites, 88/96 pour les boss.
-    const feet = frameSize === 32 ? 28 : frameSize === 48 ? 44 : 88;
-    this.setOrigin(0.5, feet / frameSize);
+    // Pivot aux pieds et taille de frame lus dans le manifeste (PIXEL_ART_GUIDE § 1.2).
+    const { frameSize, pivot } = animInfo(idleAnim);
+    this.frameSize = frameSize;
+    this.pivot = pivot;
+    this.setOrigin(pivot.x / frameSize, pivot.y / frameSize);
     const r = Math.max(5, Math.round(this.stats.hurtRadius * 0.7));
-    this.body.setCircle(r, frameSize / 2 - r, feet - r);
+    this.body.setCircle(r, pivot.x - r, pivot.y - r);
     this.body.setCollideWorldBounds(false);
     this.shadow = world.stage.add
       .image(x, y, frameSize >= 96 ? 'shadow_xl' : frameSize >= 48 ? 'shadow_l' : 'shadow_s')

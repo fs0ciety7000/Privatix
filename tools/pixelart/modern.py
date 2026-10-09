@@ -27,7 +27,7 @@ Y haut = vert, Z vers la caméra), alpha identique au sprite.
 """
 import numpy as np
 
-from palette import DARK, EMISSIVE, K, LIGHT, RGBA, RIM
+from palette import CHAR, DARK, EMISSIVE, K, LIGHT, RGBA, RIM
 
 DARK_A = np.array(DARK, dtype=np.uint8)
 LIGHT_A = np.array(LIGHT, dtype=np.uint8)
@@ -38,6 +38,10 @@ EMIT = np.zeros(len(RGBA), dtype=bool)
 for _e in EMISSIVE:
     EMIT[_e] = True
 EMIT[K] = True  # le noir n'est jamais éclairé
+# peau : pas de liseré néon sur les visages
+NO_RIM = np.zeros(len(RGBA), dtype=bool)
+for _ch in "mzpE":
+    NO_RIM[CHAR[_ch]] = True
 
 # lumière haut-gauche, légèrement de face
 _L = np.array([-0.55, -0.65, 0.52], dtype=np.float32)
@@ -137,12 +141,15 @@ def selout(a):
         comp = lab == i
         if comp.sum() < 3:
             continue  # yeux, rivets : restent noirs
+        full = comp & _nb(comp, 1, 0) & _nb(comp, -1, 0) & _nb(comp, 0, 1) & _nb(comp, 0, -1)
+        if full.any():
+            continue  # aplat noir (fond d'écran, trou) : ce n'est pas une ligne
         ring = np.zeros_like(comp)
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             ring |= _nb(comp, dx, dy)
         ring &= ~comp & mask & (a != K)
         cols = a[ring]
-        if len(cols) == 0 or EMIT[cols].any() and (cols == 7).sum() + EMIT[cols].sum() > len(cols) // 3:
+        if len(cols) == 0 or EMIT[cols].mean() > 0.25:
             continue  # cadre d'écran / de LED : on garde le noir
         vals, cnt = np.unique(cols, return_counts=True)
         base = vals[np.argmax(cnt)]
@@ -153,12 +160,13 @@ def selout(a):
     return out
 
 
-def shade(a, rim=True, ground=None, light=1.0, rim_color=RIM, aa=True):
-    """Passe complète sur une frame d'acteur déjà contourée."""
+def shade(a, rim=True, ground=None, light=1.0, rim_color=RIM, aa=True, outline=K):
+    """Passe complète sur une frame d'acteur déjà contourée (outline = couleur
+    du contour extérieur : #14101A pour les acteurs, sel-out teinté pour le décor)."""
     a = selout(a)
     mask = a > 0
     trans = ~mask
-    outer = (a == K) & (_nb(trans, 1, 0, True) | _nb(trans, -1, 0, True) | _nb(trans, 0, 1, True)
+    outer = (a == outline) & (_nb(trans, 1, 0, True) | _nb(trans, -1, 0, True) | _nb(trans, 0, 1, True)
                         | _nb(trans, 0, -1, True))
     body = mask & ~outer
     h = _blur(bulge(body, 3.5), 1) * body
@@ -181,8 +189,11 @@ def shade(a, rim=True, ground=None, light=1.0, rim_color=RIM, aa=True):
         out = _inner_aa(out, body)
     # rim light : bord droit (opposé à la lumière)
     if rim:
-        r = body & _nb(outer, 1, 0) & _nb(body, -1, 0) & (nx > 0.25)
-        r &= ~(out == K)
+        # liseré sur la silhouette extérieure droite uniquement (rien à droite dans la rangée)
+        right_count = np.cumsum(body[:, ::-1], axis=1)[:, ::-1] - body
+        r = body & _nb(outer, 1, 0) & (right_count == 0) & _nb(body, -1, 0) & _nb(body, -2, 0) & (nx > 0.2)
+        r &= ~(_nb(a == K, -1, 0) | _nb(a == K, -2, 0))  # pas sur les pièces fines détachées
+        r &= ~NO_RIM[out]
         ys = np.nonzero(body.any(axis=1))[0]
         if len(ys):
             r[max(0, ys.max() - 2) :, :] = False  # pas sur les semelles

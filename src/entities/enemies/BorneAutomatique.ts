@@ -18,7 +18,7 @@ export class BorneAutomatique extends Enemy {
   private lastShot = 0;
 
   public constructor(world: CombatWorld, x: number, y: number, scale: EnemyScale) {
-    super(world, 'borne', x, y, 'borne_idle_strip4', scale, 32);
+    super(world, 'borne', x, y, 'borne-idle', scale);
     this.body.setImmovable(true);
   }
 
