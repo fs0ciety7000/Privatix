@@ -46,6 +46,25 @@ node tools/elevenlabs/generate.mjs --only 'trailer.*'
 
 **Voix** : par défaut, Voice Design ne produit que les **aperçus** (aucune voix créée : le workspace est plein) ; quand un emplacement est libre, on choisit puis on relance avec `--pick voix=n --create-voices`.
 
+## Musique avec Lyria (API Gemini)
+
+L'API musique d'ElevenLabs est réservée aux plans payants (402 sur l'offre gratuite). Le type `music` peut
+passer par **Lyria** (Google, API Gemini, endpoint `interactions`) avec `--music-backend lyria` :
+
+```sh
+export GEMINI_API_KEY=…                      # clé Google AI Studio, facturation activée (pas d'offre gratuite)
+node tools/elevenlabs/generate.mjs --dry-run --type music --music-backend lyria
+node tools/elevenlabs/generate.mjs --samples --type music --music-backend lyria        # 2 extraits
+node tools/elevenlabs/generate.mjs --only trailer.musique-60s --takes 1 --music-backend lyria
+```
+
+- Modèle : `lyria-3-clip-preview` (30 s fixes, 0,04 $) pour les pistes ≤ 30 s, `lyria-3.5` (0,08 $ le
+  morceau, durée guidée par le prompt) au-delà ; `--music-model` force l'un ou l'autre.
+- Le plan de composition est réécrit en sections horodatées `[m:ss - m:ss]` ; pas de seed (résultats non
+  déterministes). Toute sortie porte le filigrane inaudible SynthID.
+- OST complète (14 morceaux × 2 prises + trailer × 3) ≈ 2,50 $. La séparation en stems reste une
+  opération ElevenLabs (plan payant) ou se fait en local.
+
 ## Options de `generate.mjs`
 
 | Option | Effet |
@@ -57,6 +76,7 @@ node tools/elevenlabs/generate.mjs --only 'trailer.*'
 | `--takes n` | Plafonne le nombre de prises. |
 | `--concurrency n` · `--interval ms` | Débit : 2 requêtes simultanées et 600 ms entre deux départs par défaut ; 429, 409 et 5xx sont réessayés (en-tête `Retry-After`, sinon attente exponentielle, 5 essais). |
 | `--tts-model id` · `--music-model id` | Force un modèle (`eleven_v4`, `eleven_multilingual_v2` ; `music_v1`, `music_v2_5`). Les balises d'émotion sont retirées pour les modèles qui ne les comprennent pas. |
+| `--music-backend elevenlabs\|lyria` | Fournisseur du type `music` (Lyria : clé `GEMINI_API_KEY`). |
 | `--pick voix=n` · `--create-voices` | Choix de l'aperçu de Voice Design ; création de la voix (sinon : aperçus seuls). |
 | `--include-validated` | Reprend aussi les assets `validé` (bruitages et réplique déjà retenus). |
 | `--force` · `--yes` | Régénère l'existant ; supprime la pause de 5 s avant la dépense. |

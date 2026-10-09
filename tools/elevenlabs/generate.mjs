@@ -14,7 +14,10 @@
 //   --concurrency n      requêtes simultanées (défaut 2)
 //   --interval ms        écart minimal entre deux départs de requête (défaut 600)
 //   --tts-model id       force le modèle TTS (eleven_v3 par défaut ; eleven_v4, eleven_multilingual_v2…)
-//   --music-model id     force le modèle de musique (music_v2 par défaut)
+//   --music-model id     force le modèle de musique (music_v2 par défaut ; avec Lyria : lyria-3-clip-preview
+//                        pour ≤ 30 s, lyria-3.5 au-delà)
+//   --music-backend b    elevenlabs (défaut) ou lyria (API Gemini, clé GEMINI_API_KEY) pour le type music ;
+//                        la séparation en stems reste une opération ElevenLabs
 //   --pick voix=n,…      aperçu de Voice Design retenu (1 à 3) avant création de la voix
 //   --create-voices      crée les voix choisies (POST /v1/text-to-voice) ; sans cette option, Voice
 //                        Design ne produit que les aperçus (le workspace est plein : 3/3 voix)
@@ -51,6 +54,14 @@ const CONCURRENCY = Math.max(1, Number(opt('concurrency', 2)));
 const INTERVAL = Math.max(0, Number(opt('interval', 600)));
 const TTS_MODEL = opt('tts-model', null);
 const MUSIC_MODEL = opt('music-model', null);
+const MUSIC_BACKEND = opt('music-backend', process.env.MUSIC_BACKEND ?? 'elevenlabs');
+if (!['elevenlabs', 'lyria'].includes(MUSIC_BACKEND))
+  throw new Error(`--music-backend inconnu : ${MUSIC_BACKEND} (elevenlabs | lyria)`);
+const LYRIA = MUSIC_BACKEND === 'lyria';
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const LYRIA_BASE = process.env.LYRIA_BASE_URL ?? 'https://generativelanguage.googleapis.com/v1beta';
+// Tarifs de l'API Gemini relevés sur ai.google.dev/gemini-api/docs/pricing le 2026-10-09 (par requête).
+const LYRIA_USD = { 'lyria-3-clip-preview': 0.04, 'lyria-3-pro-preview': 0.08, 'lyria-3.5': 0.08 };
 const ONLY = opt('only', null)?.split(',').filter(Boolean) ?? null;
 const TYPES = opt('type', null)?.split(',').filter(Boolean) ?? null;
 const PICKS = Object.fromEntries(
@@ -89,6 +100,14 @@ function ttsText(a) {
   // Les balises d'émotion ne sont comprises que par eleven_v3 / eleven_v4 ; ailleurs on les retire.
   return /^eleven_v[34]/.test(model) ? a.params.text : stripTags(a.params.text);
 }
+function musicSeconds(a) {
+  const ms =
+    a.params.music_length_ms ??
+    (a.params.composition_plan?.chunks ?? []).reduce((s, c) => s + c.duration_ms, 0);
+  return ms / 1000;
+}
+const lyriaModel = (a) =>
+  MUSIC_MODEL ?? (musicSeconds(a) <= 30 ? 'lyria-3-clip-preview' : 'lyria-3.5');
 function estimate(list, samples = SAMPLES) {
   const r = MANIFEST.rates;
   const e = { calls: 0, ttsChars: 0, designChars: 0, sfxSeconds: 0, musicSeconds: 0, stems: 0 };
@@ -99,10 +118,8 @@ function estimate(list, samples = SAMPLES) {
     if (a.type === 'voice-design') e.designChars += (a.params.text?.length ?? 0) * 3;
     if (a.type === 'sfx') e.sfxSeconds += a.params.duration_seconds * n;
     if (a.type === 'music') {
-      const ms =
-        a.params.music_length_ms ??
-        (a.params.composition_plan?.chunks ?? []).reduce((s, c) => s + c.duration_ms, 0);
-      e.musicSeconds += (ms / 1000) * n;
+      e.musicSeconds += musicSeconds(a) * n;
+      if (LYRIA) e.lyriaUsd = (e.lyriaUsd ?? 0) + (LYRIA_USD[lyriaModel(a)] ?? 0.08) * n;
     }
     if (a.type === 'stem-split') e.stems += 1;
   }
@@ -112,7 +129,7 @@ function estimate(list, samples = SAMPLES) {
   e.usd =
     ((e.ttsChars + e.designChars) / 1000) * r.ttsUsdPer1kChars +
     (e.sfxSeconds / 60) * r.sfxUsdPerMinute +
-    (e.musicSeconds / 60) * r.musicUsdPerMinute;
+    (LYRIA ? (e.lyriaUsd ?? 0) : (e.musicSeconds / 60) * r.musicUsdPerMinute);
   return e;
 }
 function printEstimate(list, label, samples = SAMPLES) {
@@ -130,7 +147,7 @@ function printEstimate(list, label, samples = SAMPLES) {
     `  Bruitages     : ${e.sfxSeconds.toFixed(1)} s (${(e.sfxSeconds * MANIFEST.rates.sfxCreditsPerSecond).toLocaleString('fr-BE')} crédits)`,
   );
   console.log(
-    `  Musique       : ${e.musicSeconds.toFixed(0)} s (${(e.musicSeconds / 60).toFixed(1)} min)`,
+    `  Musique       : ${e.musicSeconds.toFixed(0)} s (${(e.musicSeconds / 60).toFixed(1)} min)${LYRIA ? ` · Lyria ≈ ${(e.lyriaUsd ?? 0).toFixed(2)} $` : ''}`,
   );
   console.log(`  Stems         : ${e.stems} séparations (coût non publié)`);
   console.log(
@@ -382,7 +399,77 @@ async function sfx(a) {
   return res;
 }
 
+// Lyria (API Gemini, endpoint Interactions) : un prompt texte, pas de seed ni de durée exacte. Le clip
+// fait toujours 30 s ; lyria-3.5 suit la durée demandée dans le prompt. Le plan de composition
+// d'ElevenLabs est réécrit en sections horodatées « [m:ss - m:ss] », format que Lyria comprend.
+const clock = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+function lyriaPrompt(a) {
+  const secs = Math.round(musicSeconds(a));
+  const chunks = a.params.composition_plan?.chunks;
+  let body = a.params.prompt ?? '';
+  if (chunks?.length) {
+    let t0 = 0;
+    body = chunks
+      .map((c) => {
+        const t1 = t0 + c.duration_ms / 1000;
+        const line = `[${clock(t0)} - ${clock(t1)}] ${c.text.replace(/[[\]{}]/g, '')}: ${c.positive_styles.join(', ')}${c.negative_styles?.length ? `; avoid ${c.negative_styles.join(', ')}` : ''}.`;
+        t0 = t1;
+        return line;
+      })
+      .join('\n');
+  }
+  const len =
+    lyriaModel(a) === 'lyria-3-clip-preview' ? '' : `Total duration: about ${secs} seconds. `;
+  return `${body}\n${len}Instrumental only, no vocals, no lyrics.`;
+}
+async function lyriaMusic(a) {
+  if (!GEMINI_KEY) throw new Error('GEMINI_API_KEY absente (backend lyria)');
+  const model = lyriaModel(a);
+  for (let attempt = 1; ; attempt += 1) {
+    await slot();
+    let res;
+    try {
+      res = await fetch(`${LYRIA_BASE}/interactions`, {
+        method: 'POST',
+        headers: { 'x-goog-api-key': GEMINI_KEY, 'content-type': 'application/json' },
+        body: JSON.stringify({ model, input: lyriaPrompt(a) }),
+      });
+    } catch (err) {
+      res = {
+        ok: false,
+        status: 0,
+        statusText: String(err),
+        headers: new Headers(),
+        text: async () => '',
+      };
+    } finally {
+      release();
+    }
+    if (res.ok) {
+      const data = await res.json();
+      const audio = (data.steps ?? [])
+        .filter((s) => s.type === 'model_output')
+        .flatMap((s) => s.content ?? [])
+        .filter((c) => c.type === 'audio' && c.data)
+        .at(-1);
+      if (!audio)
+        throw new Error(
+          `${a.id} : réponse Lyria sans bloc audio (${JSON.stringify(data).slice(0, 300)})`,
+        );
+      return new Response(Buffer.from(audio.data, 'base64'));
+    }
+    const body = await res.text();
+    const retriable = [0, 429, 500, 502, 503, 504].includes(res.status);
+    if (!retriable || attempt >= 5)
+      throw new Error(`Lyria ${model} → ${res.status} ${res.statusText} ${body.slice(0, 400)}`);
+    const after = Number(res.headers.get('retry-after')) * 1000 || 2000 * 2 ** (attempt - 1);
+    console.warn(`  … Lyria ${res.status}, nouvel essai dans ${(after / 1000).toFixed(1)} s`);
+    await new Promise((r) => setTimeout(r, after));
+  }
+}
+
 async function music(a, t) {
+  if (LYRIA) return lyriaMusic(a);
   const seed = (a.params.seed ?? 0) + t;
   const body = { ...a.params, seed };
   if (MUSIC_MODEL) body.model_id = MUSIC_MODEL;
@@ -486,10 +573,15 @@ if (DRY) {
     );
   process.exit(0);
 }
-if (!KEY) {
+const needsEleven = todo.some((a) => !(LYRIA && a.type === 'music'));
+if (needsEleven && !KEY) {
   console.error(
     '\nELEVENLABS_API_KEY absente : rien n’est généré (utiliser --dry-run pour estimer).',
   );
+  process.exit(2);
+}
+if (LYRIA && todo.some((a) => a.type === 'music') && !GEMINI_KEY) {
+  console.error('\nGEMINI_API_KEY absente : la musique Lyria n’est pas générée.');
   process.exit(2);
 }
 if (!YES) {
