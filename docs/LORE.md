@@ -126,10 +126,10 @@ L'histoire avance par **trois fils** : **le Dossier** (les 3 Preuves du PHR-2030
 | # | Condition de déclenchement | Scène / dialogue | Conséquence |
 |---|---|---|---|
 | J0 | Lancement de la partie | **Prologue, quai 2, 4h47.** Annonce coupée, Rudy : « Pas retardé. Supprimé. » Josiane envoie le héros au bureau du sous-chef. L'imprimante crache les 3 slides. Tutoriel jusqu'à une mort scriptée face à une marée de consultants. | Débloque la boucle. |
-| J1 | Première mort (scriptée) | **Marcel ramène le héros.** Il compose 7-1-2 sur le distributeur. « Bienvenue dans le seul endroit de la gare où on n'entend pas les annonces. » Le héros boit la Vieille Dame sans grimacer. Jean-Mi l'inscrit au registre : « Stagiaire de la Cafetière ». | OCC débloquée, Tableau des revendications, Tasse de Relève de base. |
+| J1 | Première mort (scriptée) | **Marcel ramène le héros.** Il compose 7-1-2 sur le distributeur. « Bienvenue dans le seul endroit de la gare qui ne ferme jamais. » Le héros boit la Vieille Dame sans grimacer. Jean-Mi l'inscrit au registre : « Stagiaire de la Cafetière ». | OCC débloquée, Tableau des revendications, Tasse de Relève de base. |
 | J2 | Retour du Shift 1 | **Marcel explique le Sondage.** « Tant qu'ils trouvent pas de date, ils signent pas. Et tant qu'on les dérange, ils trouvent pas de date. » | Premier objectif affiché : « Atteindre le BAG ». |
-| J3 | Retour du Shift 2 | **Fatou arrive** avec une trousse de secours et un formulaire « Arrêt de travail de 0 jour ». Elle prend la garde de la Vieille Dame. | Infirmerie, améliorations des Tasses de Relève en Grains. |
-| J4 | Retour du Shift 3 | **Béné arrive** avec son classeur, Le Règlement, sous le bras : « On m'a fermé le guichet. Je l'ai emporté. » | Guichet de l'OCC (échanges, archives, codex). |
+| J3 | Retour du Shift 2 | **Fatou arrive** avec une trousse de secours et un formulaire « Arrêt de travail de 0 jour ». Elle rallume le pupitre RCCA et prend la garde de la Vieille Dame. | Salle de repos de nuit (réapparition, soins), améliorations des Tasses de Relève en Grains. |
+| J4 | Retour du Shift 3 | **Béné arrive** avec son classeur, Le Règlement, sous le bras : « On m'a fermé le guichet. Je l'ai emporté. » Elle visse son hygiaphone sur le pupitre PACO, resté vacant. | Pupitre PACO (Recours, archives, codex). |
 | J5 | Premier kill de l'Auditeur des Quais | Le chronomètre de l'Auditeur s'arrête sur **7:12**. « Le train de 7h12, il existe encore ? » **Preuve n° 1 « Fermeture des guichets »** en main. | Si elle est rapportée : Preuve archivée. **Kevin** et **Yasmina** rejoignent l'OCC au retour. |
 | J6 | Première Preuve archivée | Béné ouvre une chemise cartonnée « DOSSIER — NE PAS PERDRE » et punaise la Preuve. Marcel : « Une. Il en faut trois. Et il faut qu'elles tiennent. » | Le **Cahier de revendications** apparaît à côté du Tableau (vraie fin, 1 case cochée). |
 | J7 | Premier kill du Fluidifieur | « Personne ne lit jamais l'alinéa 3. » **Preuve n° 2 « Suppression des accompagnateurs »**. | Rudy découvre au retour que **les annonces de la gare sont pilotées depuis le BAG**. Kevin ouvre le raccourci vers la Passerelle. |
@@ -244,32 +244,47 @@ MARCEL : De mon temps, on appelait ça une victoire. Aujourd'hui aussi, tiens.
 
 ### 3.1 Histoire
 
-**Hiver 1987.** Pour « maîtriser les coûts », la direction remplace la cafetière collective de la salle des pauses par un distributeur payant. Le soir même, Marcel, jeune conducteur, et une poignée d'accompagnateurs récupèrent l'ancienne cafetière et l'installent dans une **ancienne lampisterie** oubliée des plans : le local où l'on remplissait et réglait autrefois les lanternes de signalisation. À **22h47**, la cafetière sert son premier café clandestin. On l'appelle aussitôt **la Vieille Dame**.
+**Ce qu'est l'OCC.** Le centre opérationnel de la gare : la salle où l'on gère, en temps réel, tout ce qui fait qu'un train part, arrive ou est remplacé. On y travaille jour et nuit, en 3x8, devant un mur d'écrans et une rangée de pupitres. Chaque pupitre porte une fonction :
 
-**La gare change, l'OCC reste.** Quand on construit la nouvelle gare et sa passerelle, les plans classent la lampisterie « local technique non conforme, ne pas toucher ». Les architectes, de bonne foi, bâtissent autour. Elle se retrouve **sous la passerelle**, au bout d'un couloir technique qui sent l'huile et la poussière. Depuis, l'OCC est le lieu où l'on se dit la vérité, où l'on s'échange les roulements, où l'on prépare toutes les résistances et où l'on fait la sieste entre deux nuits.
+| Pupitre | Ce qu'il gère dans la vraie vie du rail | Tenu par |
+|---|---|---|
+| **PACO** | Bus de remplacement, correspondances | **Béné** |
+| **RTS** | Régulation et gestion du matériel roulant (automotrices, locomotives, voitures), échanges de matériel | **Yasmina** (régulation) et **Kevin** (matériel roulant) |
+| **TLI & AIT** | Annonces en gare | **Rudy** |
+| **RCCA** | Prise en charge des voyageurs à mobilité réduite (PMR) | **Fatou** |
+| **Permanence conduite** | Gestion des conducteurs | **Marcel** |
+| **DPD** | Gestion des accompagnateurs de train | **Josiane** |
 
-**La Vieille Dame.** Cafetière d'origine, inox cabossé, posée sur un autel de traverses. Jamais détartrée : c'est ce qui lui donne son goût. Elle **siffle** avant chaque événement important (le joueur apprend vite à reconnaître ce sifflement : une scène Essentielle l'attend). Après le saccage, Kevin la redresse ; elle garde une bosse, que personne ne veut réparer.
+Jean-Mi, sous-chef de gare, n'a pas de pupitre : il passe de l'un à l'autre, le café à la main, et connaît donc les roulements de tout le monde (c'est ce qui rend sa trahison possible, §2.5).
 
-**L'entrée.** Couloir technique, porte « Réservé au personnel — Accès interdit même au personnel ». Derrière, un distributeur barré d'un « HORS SERVICE » au marqueur. Code : **7 × Expresso, 1 × Lungo, 2 × Sucre +** (7-1-2, en hommage au train de 7h12). L'écran affiche « Boisson indisponible pour raison de circulation » et le mur pivote. Après la trahison : **2-2-4-7**.
+**Hiver 1987.** Pour « maîtriser les coûts », la direction remplace la cafetière collective de la salle des pauses par un distributeur payant. Le soir même, Marcel, jeune conducteur de permanence, et une poignée d'accompagnateurs portent l'ancienne cafetière jusqu'à l'OCC et la posent entre deux pupitres, « parce que c'est le seul endroit de la gare qui ne ferme jamais ». À **22h47**, elle sert son premier café. On l'appelle aussitôt **la Vieille Dame**, et l'OCC devient, pour ceux qui y travaillent, l'**Operation Coffee Center**.
 
-### 3.2 Géographie du hub, station par station
+**Le BAG change de mains, l'OCC reste.** L'OCC occupe le rez-de-chaussée arrière du **BAG**, côté Cour intérieure. Privatix a pris les étages un par un, « en phase de transition », mais elle ne peut pas fermer le rez-de-chaussée : sans centre opérationnel, plus aucun train ne roule, et un réseau à l'arrêt se vend mal. Le PHR-2030 prévoit de remplacer l'OCC par « une IA prédictive, version bêta » (voir Yasmina) ; en attendant, Privatix a simplement **retiré l'OCC des nouveaux plans du bâtiment** (Note de service n° 6) et condamné l'escalier intérieur. Depuis, l'OCC est le lieu où l'on fait rouler les trains, où l'on se dit la vérité, où l'on prépare toutes les résistances et où l'on fait la sieste entre deux nuits.
 
-Une salle voûtée de briques de 40 × 28 tuiles, explorable à pied (on peut y tester ses commandes), éclairée par des **lanternes de signalisation récupérées** (rouge, vert, blanc). Le joueur entre par le sud (le distributeur pivotant) et sort par le nord-est (la porte du couloir technique qui mène au sas de départ).
+**La Vieille Dame.** Cafetière d'origine, inox cabossé, posée sur un autel de traverses dans le coin café de la salle des opérations. Jamais détartrée : c'est ce qui lui donne son goût. Elle **siffle** avant chaque événement important (le joueur apprend vite à reconnaître ce sifflement : une scène Essentielle l'attend). Après le saccage, Kevin la redresse ; elle garde une bosse, que personne ne veut réparer.
 
-| # | Station | Emplacement | PNJ | Ce qu'on y fait | Détails de décor |
+**L'entrée.** Le couloir technique qui vient des quais débouche dans un **sas** au rez-de-chaussée du BAG. La porte officielle de l'OCC a été couverte de stickers Privatix « Local en transition » ; on entre par le sas, où trône un distributeur barré d'un « HORS SERVICE » au marqueur. Code : **7 × Expresso, 1 × Lungo, 2 × Sucre +** (7-1-2, en hommage au train de 7h12). L'écran affiche « Boisson indisponible pour raison de circulation » et le panneau du fond pivote. Après la trahison : **2-2-4-7**.
+
+### 3.2 Géographie du hub et de ses alentours
+
+Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le **sas** (sud) et part prendre son poste par la **Cour intérieure** (nord), d'où une grille mène aux quais. Éclairage : les écrans de la salle des opérations, des **lanternes de signalisation récupérées** (rouge, vert, blanc) accrochées par Marcel, et le ciel de la Cour selon le roulement.
+
+| # | Lieu | Station | PNJ | Ce qu'on y fait | Détails de décor |
 |---|---|---|---|---|---|
-| 1 | **Le distributeur pivotant** | Entrée sud | — | Arrivée après la mort ; animation de pivot | Sticker « HORS SERVICE » repassé au marqueur à chaque saison ; boîte à badges et téléphones « on les laisse ici » |
-| 2 | **Le canapé-infirmerie** | Sud-ouest, près de l'entrée | **Fatou** | Point de réapparition (« Arrêt de travail de 0 jour. Bienvenue. »), réinitialisation gratuite du Tableau | Canapé de première classe éventré, lit de camp, affiche « Pause légale : 15 min. Pause réelle : ? » |
-| 3 | **Le comptoir de la Vieille Dame** | Centre | **Jean-Mi** (barista), **Fatou** (gardienne) | **Tasse de Relève** du Shift ; améliorations des Tasses en Grains ; Double Expresso | Autel de traverses, registre des membres tenu à la main, photo encadrée « 22h47, 1987 », boîte à jurons « Optimisation » |
-| 4 | **Le Tableau des revendications** | Mur ouest | **Marcel** | Dépense des **PS** (talents permanents) ; le **Cahier de revendications** (vraie fin) punaisé à côté | Panneau de liège géant couvert de tracts, fils rouges, Preuves punaisées au fil de l'histoire |
-| 5 | **L'établi** | Nord-ouest | **Kevin** | **Montages de clé** en Pièces détachées ; raccourci vers la Passerelle | Étau, bobines de câble, rapport de trois pages « punaisé, enfin », pince à caténaire accrochée |
-| 6 | **Le guichet de l'OCC** | Nord | **Béné** | Échanges de ressources « tarif plein », **archives** des Preuves et Notes de service, **Le Règlement** (codex des ennemis) | Hygiaphone récupéré, tampon « Numéro suivant », ticket d'attente n° 001 coincé à jamais |
-| 7 | **Le tableau des roulements / radio** | Nord-est, près de la sortie | **Yasmina** | Annonce du roulement du Shift ; **Plan d'Économies** ; défis | Grille de roulement couverte de flèches, radio à molettes, carte du réseau punaisée |
-| 8 | **Le mannequin de formation** | Est | **Josiane** | Zone d'entraînement (dégâts affichés), essai des Montages ; **casier des Souvenirs** | Mannequin de formation sécurité en gilet orange, thermos posé sur un tabouret, sifflet rayé |
-| 9 | **L'écran des départs** | Au-dessus de la sortie | **Rudy** | Statistiques et historique des Shifts présentés comme des trains ; annonce de début de Shift | Vieux tableau à palettes qui claque ; ligne du Sondage en bas |
-| 10 | **Le coin du wagon-bar** | Sud-est | **Le Fantôme** | **Rénovations** de l'OCC en Grains ; marchand légendaire de l'OCC | D'abord vide (une photo de 1994, un tablier), puis reconstruit pièce par pièce |
-| 11 | **Les casiers** | Le long du mur est | — | Un casier par membre, ouvrable, chacun avec un objet de lore | Casier de Jean-Mi : Note n° 11 ; plus tard, sa tasse à l'envers ou son badge rendu |
-| 12 | **La plaque des 7 commandements** | Au-dessus du comptoir | — | Lecture | Plaque de quai émaillée récupérée, gravée à la main |
+| 1 | **Le sas** | Le distributeur pivotant | — | Arrivée après la mort ; animation de pivot | Sticker « HORS SERVICE » repassé au marqueur à chaque saison ; boîte à badges et téléphones « on les laisse ici » |
+| 2 | **La salle de repos de nuit** (contiguë au pupitre RCCA) | Le canapé | **Fatou** | Point de réapparition (« Arrêt de travail de 0 jour. Bienvenue. »), soins, réinitialisation gratuite du Tableau | Canapé de première classe éventré, lit de camp, affiche « Pause légale : 15 min. Pause réelle : ? » |
+| 3 | **La salle des opérations** (centre) | Le coin café de la Vieille Dame | **Jean-Mi** (barista), **Fatou** (gardienne) | **Tasse de Relève** du Shift ; améliorations des Tasses en Grains ; Double Expresso | Autel de traverses, registre des membres tenu à la main, photo encadrée « 22h47, 1987 », boîte à jurons « Optimisation » |
+| 4 | **La salle des opérations** | Le pupitre RTS, côté régulation | **Yasmina** | Annonce du roulement du Shift ; **Plan d'Économies** ; défis | Mur d'écrans du réseau, grille de roulement couverte de flèches, radio à molettes |
+| 5 | **La salle des opérations** | Le pupitre RTS, côté matériel roulant | **Kevin** | **Montages de clé** montés avec les Pièces détachées récupérées sur le matériel réformé ; **échanges de matériel** (Grains ↔ PS ↔ Pièces) | Classeur des numéros d'automotrices, pince à caténaire, rapport de trois pages « punaisé, enfin » |
+| 6 | **La salle des opérations** | Le pupitre PACO | **Béné** | **Recours** (relances, « bus de remplacement ») ; **correspondances** (itinéraire direct vers la Passerelle après J7) ; **archives** des Preuves et Notes de service ; **Le Règlement** (codex des ennemis) | Hygiaphone récupéré de son guichet, tampon « Numéro suivant », ticket d'attente n° 001 coincé à jamais |
+| 7 | **La salle des opérations** | Le pupitre TLI & AIT et l'écran des départs | **Rudy** | Statistiques et historique des Shifts présentés comme des trains ; annonce de début de Shift | Micro de la sonorisation, vieux tableau à palettes qui claque au-dessus de la porte de la Cour, ligne du Sondage en bas |
+| 8 | **La salle des opérations** | Le pupitre de la Permanence conduite | **Marcel** | Accueil des retours, tenue du **Cahier de revendications** | Registre des conducteurs, sifflet de 1974, casquette accrochée à la lampe |
+| 9 | **La Salle photocopieuse** (contiguë à la Permanence) | Le **Tableau des revendications** | **Marcel** | Dépense des **PS** (talents permanents) : chaque revendication obtenue est imprimée et punaisée ; le **Cahier de revendications** (vraie fin) y est affiché | Photocopieuse de 1987 qui imprime les tracts (et a imprimé les trois slides du prologue), panneau de liège géant, fils rouges, Preuves punaisées au fil de l'histoire |
+| 10 | **La Cour intérieure** | Les casiers et le mannequin | **Josiane** (DPD) | **Casiers** des agents de bord (Souvenirs et, le cas échéant, équipement personnel) ; **mannequin de formation** (zone d'entraînement, dégâts affichés, essai des Montages) | Rangée de casiers en tôle sous un auvent, mannequin de formation sécurité en gilet orange, thermos posé sur un tabouret, banc des fumeurs reconverti en banc des buveurs de café |
+| 11 | **La Cour intérieure** | La voie de garage | **Le Fantôme** | **Rénovations** de l'OCC en Grains ; marchand légendaire | Un tronçon de voie qui finit en heurtoir au fond de la Cour : d'abord vide (une photo de 1994, un tablier), puis le wagon-bar reconstruit pièce par pièce |
+| 12 | **La Cour intérieure** | La grille des quais | — | Sortie vers le couloir technique et le Shift | Grille grinçante, panneau « Accès réservé au personnel en service » ; on aperçoit la Passerelle au-dessus des toits |
+| 13 | **La salle des opérations** | La plaque des 7 commandements | — | Lecture | Plaque de quai émaillée récupérée, gravée à la main, vissée au-dessus du coin café |
+| 14 | **L'escalier condamné** | — | — | Décor : la porte vers les étages du BAG, sous scellés Privatix. | Ruban violet « Accès réservé — Phase de transition », bruits de réunion au-dessus |
 
 ### 3.3 Les 7 commandements
 
@@ -306,15 +321,15 @@ Une salle voûtée de briques de 40 × 28 tuiles, explorable à pied (on peut y 
 
 | Étape | Déclencheur | État de l'OCC |
 |---|---|---|
-| **Lampisterie nue** | Premier retour | Marcel, Jean-Mi, Josiane, Rudy. Néons tièdes, poussière, la moitié des lanternes éteintes, le coin wagon-bar vide. |
-| **L'équipe s'étoffe** | Shifts 2 à 3 | Fatou installe l'infirmerie (canapé, trousse) ; Béné apporte son guichet en pièces détachées. |
-| **L'Infra et le réseau** | 1er kill du boss 1 | Kevin installe l'établi (des étincelles éclairent le mur nord) ; Yasmina accroche la carte du réseau et la radio. |
-| **Le Dossier** | Chaque Preuve archivée | Une Preuve de plus punaisée au Tableau, reliée par des fils rouges ; la Vieille Dame siffle. |
-| **Le saccage** | 1re victoire sur Vanderslide | Stickers violets « Propriété de Privatix Rail Solutions » partout, Vieille Dame renversée, lanternes brisées, registre arraché, QR code sur la plaque des commandements. Combat-défense dans le hub. |
+| **Effectif réduit** | Premier retour | Marcel, Jean-Mi, Josiane, Rudy. La moitié des pupitres sont éteints (PACO, RCCA et RTS « non pourvus »), la moitié des lanternes aussi, la voie de garage de la Cour est vide. |
+| **L'équipe s'étoffe** | Shifts 2 à 3 | Fatou rallume le pupitre RCCA et installe la salle de repos de nuit (canapé, trousse) ; Béné rallume le pupitre PACO et y visse l'hygiaphone de son guichet. |
+| **Le RTS reprend** | 1er kill du boss 1 | Yasmina et Kevin rallument les deux postes du pupitre RTS : le mur d'écrans affiche enfin tout le réseau, la radio grésille. |
+| **Le Dossier** | Chaque Preuve archivée | Une Preuve de plus photocopiée et punaisée au Tableau de la Salle photocopieuse, reliée par des fils rouges ; la Vieille Dame siffle. |
+| **Le saccage** | 1re victoire sur Vanderslide | Stickers violets « Propriété de Privatix Rail Solutions » partout, Vieille Dame renversée, lanternes brisées, registre arraché, écrans des pupitres basculés sur une mire « IA prédictive — bêta », QR code sur la plaque des commandements, casiers de la Cour forcés. Combat-défense dans le hub. |
 | **Le chantier** | Shifts suivant le saccage | Les stickers partent un par un (un par retour, Josiane les décolle en grommelant) ; la Vieille Dame redressée garde sa bosse ; la plaque est nettoyée par Béné. |
-| **Les rénovations** | Achats chez le Fantôme (Grains) | Guirlandes de lanternes rallumées, canapé neuf « de deuxième classe, faut pas exagérer », juke-box des annonces, mannequin avancé, 2e emplacement de Souvenir, horloge de gare qui marche, bannière « OCC » brodée par Josiane, wagon-bar reconstitué. |
+| **Les rénovations** | Achats chez le Fantôme (Grains) | Guirlandes de lanternes rallumées dans la Cour, canapé neuf « de deuxième classe, faut pas exagérer », juke-box des annonces au pupitre TLI & AIT, mannequin avancé, auvent refait au-dessus des casiers, 2e emplacement de Souvenir, horloge de gare qui marche, bannière « OCC » brodée par Josiane, wagon-bar reconstitué. |
 | **La veillée** | Conditions de la vraie fin | Toutes les lanternes allumées, tout le monde debout ; la musique se tait. |
-| **Après la vraie fin** | Mode Plan Horizon 2040 | Plaque officielle « Salle de pause conventionnée » vissée sous la plaque des commandements ; la porte reste… cachée quand même, « on sait jamais ». |
+| **Après la vraie fin** | Mode Plan Horizon 2040 | Plaque officielle « Salle de pause conventionnée » vissée sous la plaque des commandements ; le distributeur du sas reste en place quand même, « on sait jamais ». |
 
 ---
 
