@@ -1,0 +1,5186 @@
+{
+ "generator": "tools/pixelart/build.py",
+ "palette": "Privatix 32 (tools/pixelart/privatix32.gpl)",
+ "conventions": {
+  "naming": "<entite>_<anim>[_<dir>]_strip<N>.png ; clé de texture = nom sans .png ; clé d'animation Phaser = champ 'anim' (<entite>-<anim>[-<dir>])",
+  "strips": "bandes horizontales, frames carrées, marge 0, espacement 0, pas de trim, alpha binaire",
+  "directions": "down, up, side (dessiné vers la droite ; gauche = flipX)",
+  "durations": "ms par frame (Phaser : frames[i].duration)",
+  "pivot": "pixels dans la frame ; origin = pivot / taille (setOrigin)",
+  "active": "indices (base 0) des frames où la hitbox / le tir est actif"
+ },
+ "animations": [
+  {
+   "file": "assets/sprites/player/player_idle_down_strip6.png",
+   "texture": "player_idle_down_strip6",
+   "anim": "player-idle-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_run_down_strip8.png",
+   "texture": "player_run_down_strip8",
+   "anim": "player-run-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack1_down_strip5.png",
+   "texture": "player_attack1_down_strip5",
+   "anim": "player-attack1-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    50,
+    40,
+    50,
+    70,
+    90
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 3
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_down_strip5.png",
+   "texture": "player_attack2_down_strip5",
+   "anim": "player-attack2-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    50,
+    40,
+    50,
+    70,
+    90
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 3
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_down_strip7.png",
+   "texture": "player_attack3_down_strip7",
+   "anim": "player-attack3-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 7,
+   "durations": [
+    90,
+    70,
+    40,
+    50,
+    100,
+    100,
+    110
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "vfx": {
+     "3": "vfx_slam"
+    },
+    "shake": {
+     "frame": 3,
+     "px": 2,
+     "ms": 100
+    },
+    "hitstop": 60
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_dash_down_strip5.png",
+   "texture": "player_dash_down_strip5",
+   "anim": "player-dash-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    30,
+    40,
+    40,
+    40,
+    50
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "invulnerable": [
+     0,
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_down_strip3.png",
+   "texture": "player_hurt_down_strip3",
+   "anim": "player-hurt-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 3,
+   "durations": [
+    60,
+    80,
+    100
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_idle_up_strip6.png",
+   "texture": "player_idle_up_strip6",
+   "anim": "player-idle-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_run_up_strip8.png",
+   "texture": "player_run_up_strip8",
+   "anim": "player-run-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack1_up_strip5.png",
+   "texture": "player_attack1_up_strip5",
+   "anim": "player-attack1-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    50,
+    40,
+    50,
+    70,
+    90
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 3
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_up_strip5.png",
+   "texture": "player_attack2_up_strip5",
+   "anim": "player-attack2-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    50,
+    40,
+    50,
+    70,
+    90
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 3
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_up_strip7.png",
+   "texture": "player_attack3_up_strip7",
+   "anim": "player-attack3-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 7,
+   "durations": [
+    90,
+    70,
+    40,
+    50,
+    100,
+    100,
+    110
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "vfx": {
+     "3": "vfx_slam"
+    },
+    "shake": {
+     "frame": 3,
+     "px": 2,
+     "ms": 100
+    },
+    "hitstop": 60
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_dash_up_strip5.png",
+   "texture": "player_dash_up_strip5",
+   "anim": "player-dash-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    30,
+    40,
+    40,
+    40,
+    50
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "invulnerable": [
+     0,
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_up_strip3.png",
+   "texture": "player_hurt_up_strip3",
+   "anim": "player-hurt-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 3,
+   "durations": [
+    60,
+    80,
+    100
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_idle_side_strip6.png",
+   "texture": "player_idle_side_strip6",
+   "anim": "player-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_run_side_strip8.png",
+   "texture": "player_run_side_strip8",
+   "anim": "player-run-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack1_side_strip5.png",
+   "texture": "player_attack1_side_strip5",
+   "anim": "player-attack1-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    50,
+    40,
+    50,
+    70,
+    90
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 3
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_side_strip5.png",
+   "texture": "player_attack2_side_strip5",
+   "anim": "player-attack2-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    50,
+    40,
+    50,
+    70,
+    90
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2
+   ],
+   "events": {
+    "comboWindow": 3
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_side_strip7.png",
+   "texture": "player_attack3_side_strip7",
+   "anim": "player-attack3-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 7,
+   "durations": [
+    90,
+    70,
+    40,
+    50,
+    100,
+    100,
+    110
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "vfx": {
+     "3": "vfx_slam"
+    },
+    "shake": {
+     "frame": 3,
+     "px": 2,
+     "ms": 100
+    },
+    "hitstop": 60
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_dash_side_strip5.png",
+   "texture": "player_dash_side_strip5",
+   "anim": "player-dash-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 5,
+   "durations": [
+    30,
+    40,
+    40,
+    40,
+    50
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "invulnerable": [
+     0,
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_side_strip3.png",
+   "texture": "player_hurt_side_strip3",
+   "anim": "player-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 3,
+   "durations": [
+    60,
+    80,
+    100
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_death_strip12.png",
+   "texture": "player_death_strip12",
+   "anim": "player-death",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    400
+   ],
+   "fps": 8.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/player/player_spawn_strip10.png",
+   "texture": "player_spawn_strip10",
+   "anim": "player-spawn",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 10,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    120
+   ],
+   "fps": 11.9,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "6": "vfx_dust-land"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/player/player_special_strip12.png",
+   "texture": "player_special_strip12",
+   "anim": "player-special",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    40,
+    60,
+    80,
+    80,
+    100,
+    100,
+    100,
+    120
+   ],
+   "fps": 11.11,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "vfx": {
+     "0": "vfx_charge",
+     "4": "vfx_shockwave"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_idle_down_strip4.png",
+   "texture": "consultant_idle_down_strip4",
+   "anim": "consultant-idle-down",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_run_down_strip6.png",
+   "texture": "consultant_run_down_strip6",
+   "anim": "consultant-run-down",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ],
+   "fps": 11.11,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_attack_down_strip6.png",
+   "texture": "consultant_attack_down_strip6",
+   "anim": "consultant-attack-down",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    120,
+    120,
+    120,
+    40,
+    60,
+    100
+   ],
+   "fps": 10.71,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ],
+    "warnFlash": 2
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_hurt_down_strip2.png",
+   "texture": "consultant_hurt_down_strip2",
+   "anim": "consultant-hurt-down",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_idle_up_strip4.png",
+   "texture": "consultant_idle_up_strip4",
+   "anim": "consultant-idle-up",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_run_up_strip6.png",
+   "texture": "consultant_run_up_strip6",
+   "anim": "consultant-run-up",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ],
+   "fps": 11.11,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_attack_up_strip6.png",
+   "texture": "consultant_attack_up_strip6",
+   "anim": "consultant-attack-up",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    120,
+    120,
+    120,
+    40,
+    60,
+    100
+   ],
+   "fps": 10.71,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ],
+    "warnFlash": 2
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_hurt_up_strip2.png",
+   "texture": "consultant_hurt_up_strip2",
+   "anim": "consultant-hurt-up",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_idle_side_strip4.png",
+   "texture": "consultant_idle_side_strip4",
+   "anim": "consultant-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_run_side_strip6.png",
+   "texture": "consultant_run_side_strip6",
+   "anim": "consultant-run-side",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ],
+   "fps": 11.11,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_attack_side_strip6.png",
+   "texture": "consultant_attack_side_strip6",
+   "anim": "consultant-attack-side",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    120,
+    120,
+    120,
+    40,
+    60,
+    100
+   ],
+   "fps": 10.71,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ],
+    "warnFlash": 2
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_hurt_side_strip2.png",
+   "texture": "consultant_hurt_side_strip2",
+   "anim": "consultant-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/consultant_death_strip8.png",
+   "texture": "consultant_death_strip8",
+   "anim": "consultant-death",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "5": "vfx_poof"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/borne_idle_strip4.png",
+   "texture": "borne_idle_strip4",
+   "anim": "borne-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/borne_wake_strip6.png",
+   "texture": "borne_wake_strip6",
+   "anim": "borne-wake",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": {
+    "invulnerable": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/borne_attack_strip6.png",
+   "texture": "borne_attack_strip6",
+   "anim": "borne-attack",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    80,
+    60,
+    120
+   ],
+   "fps": 10.71,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [
+    4
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "shoot": 4,
+    "projectile": "proj-ticket"
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/borne_hurt_strip2.png",
+   "texture": "borne_hurt_strip2",
+   "anim": "borne-hurt",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/borne_death_strip4.png",
+   "texture": "borne_death_strip4",
+   "anim": "borne-death",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "3": "vfx_explosion"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/borne_wreck_strip1.png",
+   "texture": "borne_wreck_strip1",
+   "anim": "borne-wreck",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 1,
+   "durations": [
+    1000
+   ],
+   "fps": 1.0,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/drone_fly_strip4.png",
+   "texture": "drone_fly_strip4",
+   "anim": "drone-fly",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "notes": "ombre shadow_s 8 px sous le drone"
+  },
+  {
+   "file": "assets/sprites/enemies/drone_attack_strip8.png",
+   "texture": "drone_attack_strip8",
+   "anim": "drone-attack",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    120,
+    120,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 11.11,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [
+    4,
+    5,
+    6,
+    7
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "loopFrames": [
+     4,
+     7
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/drone_hurt_strip2.png",
+   "texture": "drone_hurt_strip2",
+   "anim": "drone-hurt",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/drone_death_strip6.png",
+   "texture": "drone_death_strip6",
+   "anim": "drone-death",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "5": "vfx_poof"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_idle_down_strip4.png",
+   "texture": "manager-kpi_idle_down_strip4",
+   "anim": "manager-kpi-idle-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_walk_down_strip6.png",
+   "texture": "manager-kpi_walk_down_strip6",
+   "anim": "manager-kpi-walk-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_attack_down_strip8.png",
+   "texture": "manager-kpi_attack_down_strip8",
+   "anim": "manager-kpi-attack-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    150,
+    150,
+    60,
+    80,
+    120,
+    150
+   ],
+   "fps": 8.42,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    5
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_shield_down_strip8.png",
+   "texture": "manager-kpi_shield_down_strip8",
+   "anim": "manager-kpi-shield-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110
+   ],
+   "fps": 9.09,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_hurt_down_strip2.png",
+   "texture": "manager-kpi_hurt_down_strip2",
+   "anim": "manager-kpi-hurt-down",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_idle_up_strip4.png",
+   "texture": "manager-kpi_idle_up_strip4",
+   "anim": "manager-kpi-idle-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_walk_up_strip6.png",
+   "texture": "manager-kpi_walk_up_strip6",
+   "anim": "manager-kpi-walk-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_attack_up_strip8.png",
+   "texture": "manager-kpi_attack_up_strip8",
+   "anim": "manager-kpi-attack-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    150,
+    150,
+    60,
+    80,
+    120,
+    150
+   ],
+   "fps": 8.42,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    5
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_shield_up_strip8.png",
+   "texture": "manager-kpi_shield_up_strip8",
+   "anim": "manager-kpi-shield-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110
+   ],
+   "fps": 9.09,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_hurt_up_strip2.png",
+   "texture": "manager-kpi_hurt_up_strip2",
+   "anim": "manager-kpi-hurt-up",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_idle_side_strip4.png",
+   "texture": "manager-kpi_idle_side_strip4",
+   "anim": "manager-kpi-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_walk_side_strip6.png",
+   "texture": "manager-kpi_walk_side_strip6",
+   "anim": "manager-kpi-walk-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_attack_side_strip8.png",
+   "texture": "manager-kpi_attack_side_strip8",
+   "anim": "manager-kpi-attack-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    120,
+    120,
+    150,
+    150,
+    60,
+    80,
+    120,
+    150
+   ],
+   "fps": 8.42,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    5
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_shield_side_strip8.png",
+   "texture": "manager-kpi_shield_side_strip8",
+   "anim": "manager-kpi-shield-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110,
+    110
+   ],
+   "fps": 9.09,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    3
+   ],
+   "events": {
+    "telegraph": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_hurt_side_strip2.png",
+   "texture": "manager-kpi_hurt_side_strip2",
+   "anim": "manager-kpi-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/enemies/manager-kpi_death_strip8.png",
+   "texture": "manager-kpi_death_strip8",
+   "anim": "manager-kpi-death",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 44
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "6": "vfx_poof"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_intro_strip14.png",
+   "texture": "auditeur_intro_strip14",
+   "anim": "auditeur-intro",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 14,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_idle_strip6.png",
+   "texture": "auditeur_idle_strip6",
+   "anim": "auditeur-idle",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 6,
+   "durations": [
+    120,
+    120,
+    120,
+    120,
+    120,
+    120
+   ],
+   "fps": 8.33,
+   "loop": true,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_move_strip8.png",
+   "texture": "auditeur_move_strip8",
+   "anim": "auditeur-move",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 8,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ],
+   "fps": 11.11,
+   "loop": true,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "shake": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_attack-sweep_strip12.png",
+   "texture": "auditeur_attack-sweep_strip12",
+   "anim": "auditeur-attack-sweep",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    40,
+    40,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 11.11,
+   "loop": false,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    5,
+    6
+   ],
+   "events": {
+    "telegraph": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_attack-barrage_strip8.png",
+   "texture": "auditeur_attack-barrage_strip8",
+   "anim": "auditeur-attack-barrage",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 8,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": true,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    2,
+    6
+   ],
+   "events": {
+    "shoot": [
+     2,
+     6
+    ],
+    "projectile": "proj-ticket"
+   }
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_attack-stamp_strip14.png",
+   "texture": "auditeur_attack-stamp_strip14",
+   "anim": "auditeur-attack-stamp",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 14,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    40,
+    60,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.77,
+   "loop": false,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [
+    8
+   ],
+   "events": {
+    "telegraph": "vfx_telegraph-96",
+    "vfx": {
+     "8": "vfx_dust-land"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_phase_strip12.png",
+   "texture": "auditeur_phase_strip12",
+   "anim": "auditeur-phase",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_idle-p2_strip6.png",
+   "texture": "auditeur_idle-p2_strip6",
+   "anim": "auditeur-idle-p2",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_move-p2_strip8.png",
+   "texture": "auditeur_move-p2_strip8",
+   "anim": "auditeur-move-p2",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 8,
+   "durations": [
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75,
+    75
+   ],
+   "fps": 13.33,
+   "loop": true,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "shake": [
+     0,
+     4
+    ]
+   }
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_hurt_strip2.png",
+   "texture": "auditeur_hurt_strip2",
+   "anim": "auditeur-hurt",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 2,
+   "durations": [
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": false,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/bosses/auditeur_death_strip20.png",
+   "texture": "auditeur_death_strip20",
+   "anim": "auditeur-death",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 20,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 48,
+    "y": 88
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.9167
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "19": "vfx_explosion-big"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/npcs/marcel_idle_strip4.png",
+   "texture": "marcel_idle_strip4",
+   "anim": "marcel-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/josiane_idle_strip4.png",
+   "texture": "josiane_idle_strip4",
+   "anim": "josiane-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/fatou_idle_strip4.png",
+   "texture": "fatou_idle_strip4",
+   "anim": "fatou-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/kevin_idle_strip4.png",
+   "texture": "kevin_idle_strip4",
+   "anim": "kevin-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/bene_idle_strip4.png",
+   "texture": "bene_idle_strip4",
+   "anim": "bene-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/yasmina_idle_strip4.png",
+   "texture": "yasmina_idle_strip4",
+   "anim": "yasmina-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/rudy_idle_strip4.png",
+   "texture": "rudy_idle_strip4",
+   "anim": "rudy-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/npcs/jeanmi_idle_strip4.png",
+   "texture": "jeanmi_idle_strip4",
+   "anim": "jeanmi-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 28
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.875
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_slash-e_strip5.png",
+   "texture": "vfx_slash-e_strip5",
+   "anim": "vfx-slash-e",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "durations": [
+    33,
+    33,
+    33,
+    33,
+    33
+   ],
+   "fps": 30.3,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_slash-se_strip5.png",
+   "texture": "vfx_slash-se_strip5",
+   "anim": "vfx-slash-se",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 5,
+   "durations": [
+    33,
+    33,
+    33,
+    33,
+    33
+   ],
+   "fps": 30.3,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_slam_strip7.png",
+   "texture": "vfx_slam_strip7",
+   "anim": "vfx-slam",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 7,
+   "durations": [
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_hit_strip5.png",
+   "texture": "vfx_hit_strip5",
+   "anim": "vfx-hit",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "durations": [
+    33,
+    33,
+    33,
+    33,
+    33
+   ],
+   "fps": 30.3,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_hit-big_strip6.png",
+   "texture": "vfx_hit-big_strip6",
+   "anim": "vfx-hit-big",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    40,
+    40,
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 24
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_dash_strip5.png",
+   "texture": "vfx_dash_strip5",
+   "anim": "vfx-dash",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "durations": [
+    40,
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_dust_strip5.png",
+   "texture": "vfx_dust_strip5",
+   "anim": "vfx-dust",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 5,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_dust-land_strip6.png",
+   "texture": "vfx_dust-land_strip6",
+   "anim": "vfx-dust-land",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_sparks_strip4.png",
+   "texture": "vfx_sparks_strip4",
+   "anim": "vfx-sparks",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_particles_strip8.png",
+   "texture": "vfx_particles_strip8",
+   "anim": "vfx-particles",
+   "type": "spritesheet",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 8,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 4,
+    "y": 4
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "0 pixel, 1 étincelle, 2 braise, 3 verre, 4 ticket, 5 goutte de café, 6 fumée, 7 grain"
+  },
+  {
+   "file": "assets/sprites/vfx/proj-ticket_spin_strip4.png",
+   "texture": "proj-ticket_spin_strip4",
+   "anim": "proj-ticket-spin",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": true,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/proj-ticket_pop_strip4.png",
+   "texture": "proj-ticket_pop_strip4",
+   "anim": "proj-ticket-pop",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/proj-amende_spin_strip4.png",
+   "texture": "proj-amende_spin_strip4",
+   "anim": "proj-amende-spin",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_explosion_strip10.png",
+   "texture": "vfx_explosion_strip10",
+   "anim": "vfx-explosion",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 10,
+   "durations": [
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "fps": 20.0,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_explosion-big_strip12.png",
+   "texture": "vfx_explosion-big_strip12",
+   "anim": "vfx-explosion-big",
+   "type": "spritesheet",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 12,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 64,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_shockwave_strip8.png",
+   "texture": "vfx_shockwave_strip8",
+   "anim": "vfx-shockwave",
+   "type": "spritesheet",
+   "frameWidth": 128,
+   "frameHeight": 128,
+   "frames": 8,
+   "durations": [
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40
+   ],
+   "fps": 25.0,
+   "loop": false,
+   "pivot": {
+    "x": 64,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_charge_strip6.png",
+   "texture": "vfx_charge_strip6",
+   "anim": "vfx-charge",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": true,
+   "pivot": {
+    "x": 24,
+    "y": 24
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_spawn-player_strip8.png",
+   "texture": "vfx_spawn-player_strip8",
+   "anim": "vfx-spawn-player",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 8,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_spawn-privatix_strip8.png",
+   "texture": "vfx_spawn-privatix_strip8",
+   "anim": "vfx-spawn-privatix",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 8,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_poof_strip7.png",
+   "texture": "vfx_poof_strip7",
+   "anim": "vfx-poof",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 7,
+   "durations": [
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "fps": 20.0,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_telegraph-32_strip4.png",
+   "texture": "vfx_telegraph-32_strip4",
+   "anim": "vfx-telegraph-32",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_telegraph-96_strip4.png",
+   "texture": "vfx_telegraph-96_strip4",
+   "anim": "vfx-telegraph-96",
+   "type": "spritesheet",
+   "frameWidth": 96,
+   "frameHeight": 96,
+   "frames": 4,
+   "durations": [
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 48,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/vfx/vfx_reward_strip8.png",
+   "texture": "vfx_reward_strip8",
+   "anim": "vfx-reward",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 8,
+   "durations": [
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "fps": 20.0,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 24
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/pickups/chest-cafe_idle_strip6.png",
+   "texture": "chest-cafe_idle_strip6",
+   "anim": "chest-cafe-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 6,
+   "durations": [
+    150,
+    150,
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/pickups/chest-cafe_open_strip8.png",
+   "texture": "chest-cafe_open_strip8",
+   "anim": "chest-cafe-open",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 8,
+   "durations": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+   ],
+   "fps": 14.29,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "events": {
+    "vfx": {
+     "3": "vfx_reward"
+    }
+   }
+  },
+  {
+   "file": "assets/sprites/pickups/pickup-grain_spin_strip6.png",
+   "texture": "pickup-grain_spin_strip6",
+   "anim": "pickup-grain-spin",
+   "type": "spritesheet",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 6,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+   ],
+   "fps": 12.5,
+   "loop": true,
+   "pivot": {
+    "x": 4,
+    "y": 4
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/pickups/pickup-cafe_idle_strip4.png",
+   "texture": "pickup-cafe_idle_strip4",
+   "anim": "pickup-cafe-idle",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/pickups/pickup-tract_idle_strip6.png",
+   "texture": "pickup-tract_idle_strip6",
+   "anim": "pickup-tract-idle",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/pickups/pickup-ticket_idle_strip4.png",
+   "texture": "pickup-ticket_idle_strip4",
+   "anim": "pickup-ticket-idle",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    150,
+    150,
+    150,
+    150
+   ],
+   "fps": 6.67,
+   "loop": true,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/pickups/pickup-ps_idle_strip6.png",
+   "texture": "pickup-ps_idle_strip6",
+   "anim": "pickup-ps-idle",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 6,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": true,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/ui/ui_dash-pip_strip3.png",
+   "texture": "ui_dash-pip_strip3",
+   "anim": "ui-dash-pip",
+   "type": "spritesheet",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 3,
+   "durations": [
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 4,
+    "y": 4
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/ui/ui_upgrades_strip24.png",
+   "texture": "ui_upgrades_strip24",
+   "anim": "ui-upgrades",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 24,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "cle, gobelet, mobilisation, lanterne, radio, poing, horloge, bouclier, eclair, energie, etoile, train, ticket, rail, botte, casque, megaphone, tract, burnout, ps, grain, thermos, dash, crane"
+  },
+  {
+   "file": "assets/sprites/ui/ui_icons_strip8.png",
+   "texture": "ui_icons_strip8",
+   "anim": "ui-icons",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "0 charge de dash, 1 Gobelet, 2 Tickets, 3 Points de Syndicalisme, 4 grains, 5 Énergie, 6 Burnout, 7 Mobilisation"
+  },
+  {
+   "file": "assets/sprites/ui/ui_rarity_strip4.png",
+   "texture": "ui_rarity_strip4",
+   "anim": "ui-rarity",
+   "type": "spritesheet",
+   "frameWidth": 20,
+   "frameHeight": 20,
+   "frames": 4,
+   "durations": [
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 10,
+    "y": 10
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/ui/ui_res_strip8.png",
+   "texture": "ui_res_strip8",
+   "anim": "ui-res",
+   "type": "spritesheet",
+   "frameWidth": 8,
+   "frameHeight": 8,
+   "frames": 8,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 4,
+    "y": 4
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/ui/ui_door-reward_strip8.png",
+   "texture": "ui_door-reward_strip8",
+   "anim": "ui-door-reward",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 8,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "café, tract, grains, boutique, élite, boss, hub, mystère"
+  },
+  {
+   "file": "assets/sprites/ui/ui_cursor_strip4.png",
+   "texture": "ui_cursor_strip4",
+   "anim": "ui-cursor",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    100,
+    100,
+    40,
+    60
+   ],
+   "fps": 13.33,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/ui/ui_prompt_strip4.png",
+   "texture": "ui_prompt_strip4",
+   "anim": "ui-prompt",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    100,
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 8,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": []
+  },
+  {
+   "file": "assets/sprites/portraits/portrait_player_strip3.png",
+   "texture": "portrait_player_strip3",
+   "anim": "portrait-player",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 3,
+   "durations": [
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "0 neutre, 1 ironique, 2 fâché"
+  },
+  {
+   "file": "assets/sprites/portraits/portrait_josiane_strip3.png",
+   "texture": "portrait_josiane_strip3",
+   "anim": "portrait-josiane",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 3,
+   "durations": [
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "0 neutre, 1 ironique, 2 fâché"
+  },
+  {
+   "file": "assets/sprites/portraits/portrait_marcel_strip3.png",
+   "texture": "portrait_marcel_strip3",
+   "anim": "portrait-marcel",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 3,
+   "durations": [
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "0 neutre, 1 ironique, 2 fâché"
+  },
+  {
+   "file": "assets/sprites/portraits/portrait_auditeur_strip3.png",
+   "texture": "portrait_auditeur_strip3",
+   "anim": "portrait-auditeur",
+   "type": "spritesheet",
+   "frameWidth": 64,
+   "frameHeight": 64,
+   "frames": 3,
+   "durations": [
+    100,
+    100,
+    100
+   ],
+   "fps": 10.0,
+   "loop": false,
+   "pivot": {
+    "x": 32,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "active": [],
+   "notes": "0 neutre, 1 ironique, 2 fâché"
+  },
+  {
+   "file": "assets/tilesets/props/poubelle_break_strip5.png",
+   "texture": "poubelle_break_strip5",
+   "anim": "poubelle-break",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 5,
+   "durations": [
+    60,
+    60,
+    60,
+    60,
+    60
+   ],
+   "fps": 16.67,
+   "loop": false,
+   "pivot": {
+    "x": 16,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   },
+   "active": []
+  },
+  {
+   "file": "assets/tilesets/props/distributeur_break_strip6.png",
+   "texture": "distributeur_break_strip6",
+   "anim": "distributeur-break",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+   ],
+   "fps": 14.29,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   },
+   "active": []
+  },
+  {
+   "file": "assets/tilesets/props/sortie-portique_open_strip6.png",
+   "texture": "sortie-portique_open_strip6",
+   "anim": "sortie-portique-open",
+   "type": "spritesheet",
+   "frameWidth": 48,
+   "frameHeight": 48,
+   "frames": 6,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+   ],
+   "fps": 11.11,
+   "loop": false,
+   "pivot": {
+    "x": 24,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   },
+   "active": []
+  },
+  {
+   "file": "assets/tilesets/props/vieille-dame_idle_strip4.png",
+   "texture": "vieille-dame_idle_strip4",
+   "anim": "vieille-dame-idle",
+   "type": "spritesheet",
+   "frameWidth": 32,
+   "frameHeight": 32,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 16,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   },
+   "active": []
+  },
+  {
+   "file": "assets/tilesets/props/lanterne_idle_strip4.png",
+   "texture": "lanterne_idle_strip4",
+   "anim": "lanterne-idle",
+   "type": "spritesheet",
+   "frameWidth": 16,
+   "frameHeight": 16,
+   "frames": 4,
+   "durations": [
+    200,
+    200,
+    200,
+    200
+   ],
+   "fps": 5.0,
+   "loop": true,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   },
+   "active": []
+  }
+ ],
+ "images": [
+  {
+   "file": "assets/sprites/vfx/shadow_s.png",
+   "texture": "shadow_s",
+   "type": "image",
+   "width": 16,
+   "height": 8,
+   "pivot": {
+    "x": 8,
+    "y": 4
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "alpha": 0.5,
+   "note": "opacité appliquée par le moteur"
+  },
+  {
+   "file": "assets/sprites/vfx/shadow_m.png",
+   "texture": "shadow_m",
+   "type": "image",
+   "width": 24,
+   "height": 8,
+   "pivot": {
+    "x": 12,
+    "y": 4
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "alpha": 0.5,
+   "note": "opacité appliquée par le moteur"
+  },
+  {
+   "file": "assets/sprites/vfx/shadow_l.png",
+   "texture": "shadow_l",
+   "type": "image",
+   "width": 48,
+   "height": 16,
+   "pivot": {
+    "x": 24,
+    "y": 8
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "alpha": 0.5,
+   "note": "opacité appliquée par le moteur"
+  },
+  {
+   "file": "assets/sprites/vfx/shadow_xl.png",
+   "texture": "shadow_xl",
+   "type": "image",
+   "width": 80,
+   "height": 24,
+   "pivot": {
+    "x": 40,
+    "y": 12
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   },
+   "alpha": 0.5,
+   "note": "opacité appliquée par le moteur"
+  },
+  {
+   "file": "assets/tilesets/light_round-64.png",
+   "texture": "light_round-64",
+   "type": "image",
+   "width": 64,
+   "height": 64,
+   "blend": "ADD",
+   "alpha": [
+    0.3,
+    0.6
+   ]
+  },
+  {
+   "file": "assets/tilesets/light_round-128.png",
+   "texture": "light_round-128",
+   "type": "image",
+   "width": 128,
+   "height": 128,
+   "blend": "ADD",
+   "alpha": [
+    0.3,
+    0.6
+   ]
+  },
+  {
+   "file": "assets/tilesets/light_cone-64.png",
+   "texture": "light_cone-64",
+   "type": "image",
+   "width": 64,
+   "height": 64,
+   "blend": "ADD",
+   "alpha": [
+    0.3,
+    0.6
+   ]
+  },
+  {
+   "file": "assets/sprites/ui/ui_hp-frame.png",
+   "texture": "ui_hp-frame",
+   "type": "image",
+   "width": 104,
+   "height": 12
+  },
+  {
+   "file": "assets/sprites/ui/ui_hp-fill.png",
+   "texture": "ui_hp-fill",
+   "type": "image",
+   "width": 100,
+   "height": 8
+  },
+  {
+   "file": "assets/sprites/ui/ui_hp-ghost.png",
+   "texture": "ui_hp-ghost",
+   "type": "image",
+   "width": 100,
+   "height": 8
+  },
+  {
+   "file": "assets/sprites/ui/ui_burnout-frame.png",
+   "texture": "ui_burnout-frame",
+   "type": "image",
+   "width": 76,
+   "height": 8
+  },
+  {
+   "file": "assets/sprites/ui/ui_burnout-fill.png",
+   "texture": "ui_burnout-fill",
+   "type": "image",
+   "width": 72,
+   "height": 4
+  },
+  {
+   "file": "assets/sprites/ui/ui_burnout-crit.png",
+   "texture": "ui_burnout-crit",
+   "type": "image",
+   "width": 80,
+   "height": 4,
+   "tileSprite": true
+  },
+  {
+   "file": "assets/sprites/ui/ui_mobilisation-frame.png",
+   "texture": "ui_mobilisation-frame",
+   "type": "image",
+   "width": 76,
+   "height": 8
+  },
+  {
+   "file": "assets/sprites/ui/ui_mobilisation-fill.png",
+   "texture": "ui_mobilisation-fill",
+   "type": "image",
+   "width": 72,
+   "height": 4
+  },
+  {
+   "file": "assets/sprites/ui/ui_boss-frame.png",
+   "texture": "ui_boss-frame",
+   "type": "image",
+   "width": 320,
+   "height": 14
+  },
+  {
+   "file": "assets/sprites/ui/ui_boss-fill.png",
+   "texture": "ui_boss-fill",
+   "type": "image",
+   "width": 316,
+   "height": 6
+  },
+  {
+   "file": "assets/sprites/ui/ui_panel-occ.png",
+   "texture": "ui_panel-occ",
+   "type": "image",
+   "width": 24,
+   "height": 24,
+   "nineSlice": 8
+  },
+  {
+   "file": "assets/sprites/ui/ui_panel-privatix.png",
+   "texture": "ui_panel-privatix",
+   "type": "image",
+   "width": 24,
+   "height": 24,
+   "nineSlice": 8
+  },
+  {
+   "file": "assets/sprites/ui/ui_card.png",
+   "texture": "ui_card",
+   "type": "image",
+   "width": 32,
+   "height": 32,
+   "nineSlice": 10
+  },
+  {
+   "file": "assets/fonts/font_dmg.png",
+   "texture": "font_dmg",
+   "type": "image",
+   "width": 84,
+   "height": 9,
+   "retroFont": {
+    "chars": "0123456789-!",
+    "width": 7,
+    "height": 9,
+    "charsPerRow": 12
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_banc-h.png",
+   "texture": "prop_banc-h",
+   "type": "image",
+   "width": 32,
+   "height": 16,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_banc-v.png",
+   "texture": "prop_banc-v",
+   "type": "image",
+   "width": 16,
+   "height": 32,
+   "pivot": {
+    "x": 8,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_poubelle.png",
+   "texture": "prop_poubelle",
+   "type": "image",
+   "width": 16,
+   "height": 16,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_distributeur.png",
+   "texture": "prop_distributeur",
+   "type": "image",
+   "width": 32,
+   "height": 32,
+   "pivot": {
+    "x": 16,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_compostage.png",
+   "texture": "prop_compostage",
+   "type": "image",
+   "width": 16,
+   "height": 32,
+   "pivot": {
+    "x": 8,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_panneau-voie1.png",
+   "texture": "prop_panneau-voie1",
+   "type": "image",
+   "width": 32,
+   "height": 16,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_panneau-voie2.png",
+   "texture": "prop_panneau-voie2",
+   "type": "image",
+   "width": 32,
+   "height": 16,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_horloge.png",
+   "texture": "prop_horloge",
+   "type": "image",
+   "width": 16,
+   "height": 32,
+   "pivot": {
+    "x": 8,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_ecran-departs.png",
+   "texture": "prop_ecran-departs",
+   "type": "image",
+   "width": 48,
+   "height": 32,
+   "pivot": {
+    "x": 24,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_pilier.png",
+   "texture": "prop_pilier",
+   "type": "image",
+   "width": 32,
+   "height": 48,
+   "pivot": {
+    "x": 16,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_extincteur.png",
+   "texture": "prop_extincteur",
+   "type": "image",
+   "width": 16,
+   "height": 16,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_cone.png",
+   "texture": "prop_cone",
+   "type": "image",
+   "width": 16,
+   "height": 16,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_barriere.png",
+   "texture": "prop_barriere",
+   "type": "image",
+   "width": 32,
+   "height": 16,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_valise-a.png",
+   "texture": "prop_valise-a",
+   "type": "image",
+   "width": 16,
+   "height": 16,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_valise-b.png",
+   "texture": "prop_valise-b",
+   "type": "image",
+   "width": 16,
+   "height": 16,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_chariot.png",
+   "texture": "prop_chariot",
+   "type": "image",
+   "width": 32,
+   "height": 16,
+   "pivot": {
+    "x": 16,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_catenaire.png",
+   "texture": "prop_catenaire",
+   "type": "image",
+   "width": 16,
+   "height": 48,
+   "pivot": {
+    "x": 8,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_signal-rouge.png",
+   "texture": "prop_signal-rouge",
+   "type": "image",
+   "width": 16,
+   "height": 32,
+   "pivot": {
+    "x": 8,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_signal-vert.png",
+   "texture": "prop_signal-vert",
+   "type": "image",
+   "width": 16,
+   "height": 32,
+   "pivot": {
+    "x": 8,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_portique.png",
+   "texture": "prop_portique",
+   "type": "image",
+   "width": 48,
+   "height": 48,
+   "pivot": {
+    "x": 24,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props_quais.png",
+   "texture": "props_quais",
+   "type": "atlas",
+   "width": 256,
+   "height": 256,
+   "atlas": "assets/tilesets/props_quais.json"
+  },
+  {
+   "file": "assets/tilesets/props/prop_comptoir.png",
+   "texture": "prop_comptoir",
+   "type": "image",
+   "width": 48,
+   "height": 32,
+   "pivot": {
+    "x": 24,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_canape.png",
+   "texture": "prop_canape",
+   "type": "image",
+   "width": 48,
+   "height": 32,
+   "pivot": {
+    "x": 24,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_canape-neuf.png",
+   "texture": "prop_canape-neuf",
+   "type": "image",
+   "width": 48,
+   "height": 32,
+   "pivot": {
+    "x": 24,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_table-tasses.png",
+   "texture": "prop_table-tasses",
+   "type": "image",
+   "width": 32,
+   "height": 32,
+   "pivot": {
+    "x": 16,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_etagere-lanternes.png",
+   "texture": "prop_etagere-lanternes",
+   "type": "image",
+   "width": 32,
+   "height": 48,
+   "pivot": {
+    "x": 16,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_casiers.png",
+   "texture": "prop_casiers",
+   "type": "image",
+   "width": 32,
+   "height": 48,
+   "pivot": {
+    "x": 16,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_tableau-palettes.png",
+   "texture": "prop_tableau-palettes",
+   "type": "image",
+   "width": 48,
+   "height": 32,
+   "pivot": {
+    "x": 24,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_tableau-liege.png",
+   "texture": "prop_tableau-liege",
+   "type": "image",
+   "width": 32,
+   "height": 32,
+   "pivot": {
+    "x": 16,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_etabli.png",
+   "texture": "prop_etabli",
+   "type": "image",
+   "width": 48,
+   "height": 32,
+   "pivot": {
+    "x": 24,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_porte-service.png",
+   "texture": "prop_porte-service",
+   "type": "image",
+   "width": 32,
+   "height": 48,
+   "pivot": {
+    "x": 16,
+    "y": 48
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_vieille-dame.png",
+   "texture": "prop_vieille-dame",
+   "type": "image",
+   "width": 32,
+   "height": 32,
+   "pivot": {
+    "x": 16,
+    "y": 32
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props/prop_lanterne.png",
+   "texture": "prop_lanterne",
+   "type": "image",
+   "width": 16,
+   "height": 16,
+   "pivot": {
+    "x": 8,
+    "y": 16
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  {
+   "file": "assets/tilesets/props_occ.png",
+   "texture": "props_occ",
+   "type": "atlas",
+   "width": 256,
+   "height": 256,
+   "atlas": "assets/tilesets/props_occ.json"
+  },
+  {
+   "file": "assets/tilesets/train_motrice.png",
+   "texture": "train_motrice",
+   "type": "image",
+   "width": 192,
+   "height": 48,
+   "pivot": {
+    "x": 96,
+    "y": 24
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  },
+  {
+   "file": "assets/tilesets/train_voiture.png",
+   "texture": "train_voiture",
+   "type": "image",
+   "width": 192,
+   "height": 48,
+   "pivot": {
+    "x": 96,
+    "y": 24
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.5
+   }
+  }
+ ],
+ "tilesets": [
+  {
+   "file": "assets/tilesets/tiles_quais.png",
+   "texture": "tiles_quais",
+   "type": "tileset",
+   "tileWidth": 16,
+   "tileHeight": 16,
+   "margin": 1,
+   "spacing": 2,
+   "columns": 16,
+   "rows": 16,
+   "width": 288,
+   "height": 288,
+   "tiles": {
+    "quai-0": 0,
+    "quai-1": 1,
+    "quai-2": 2,
+    "quai-3": 3,
+    "quai-crack": 4,
+    "quai-stain": 5,
+    "quai-gum": 6,
+    "quai-drain": 7,
+    "quai-podo": 8,
+    "quai-podo-line": 9,
+    "quai-grille": 10,
+    "quai-regard": 11,
+    "ballast-0": 12,
+    "ballast-1": 13,
+    "ballast-2": 14,
+    "ballast-3": 15,
+    "wang-quai-ballast-0": 16,
+    "wang-quai-ballast-1": 17,
+    "wang-quai-ballast-2": 18,
+    "wang-quai-ballast-3": 19,
+    "wang-quai-ballast-4": 20,
+    "wang-quai-ballast-5": 21,
+    "wang-quai-ballast-6": 22,
+    "wang-quai-ballast-7": 23,
+    "wang-quai-ballast-8": 24,
+    "wang-quai-ballast-9": 25,
+    "wang-quai-ballast-10": 26,
+    "wang-quai-ballast-11": 27,
+    "wang-quai-ballast-12": 28,
+    "wang-quai-ballast-13": 29,
+    "wang-quai-ballast-14": 30,
+    "wang-quai-ballast-15": 31,
+    "walltop-00000000": 32,
+    "walltop-00000010": 33,
+    "walltop-00001000": 34,
+    "walltop-00100000": 35,
+    "walltop-10000000": 36,
+    "walltop-00001010": 37,
+    "walltop-00100010": 38,
+    "walltop-00101000": 39,
+    "walltop-10000010": 40,
+    "walltop-10001000": 41,
+    "walltop-10100000": 42,
+    "walltop-00001110": 43,
+    "walltop-00101010": 44,
+    "walltop-00111000": 45,
+    "walltop-10000011": 46,
+    "walltop-10001010": 47,
+    "walltop-10100010": 48,
+    "walltop-10101000": 49,
+    "walltop-11100000": 50,
+    "walltop-00101110": 51,
+    "walltop-00111010": 52,
+    "walltop-10001011": 53,
+    "walltop-10001110": 54,
+    "walltop-10100011": 55,
+    "walltop-10101010": 56,
+    "walltop-10111000": 57,
+    "walltop-11100010": 58,
+    "walltop-11101000": 59,
+    "walltop-00111110": 60,
+    "walltop-10001111": 61,
+    "walltop-10101011": 62,
+    "walltop-10101110": 63,
+    "walltop-10111010": 64,
+    "walltop-11100011": 65,
+    "walltop-11101010": 66,
+    "walltop-11111000": 67,
+    "walltop-10101111": 68,
+    "walltop-10111011": 69,
+    "walltop-10111110": 70,
+    "walltop-11101011": 71,
+    "walltop-11101110": 72,
+    "walltop-11111010": 73,
+    "walltop-10111111": 74,
+    "walltop-11101111": 75,
+    "walltop-11111011": 76,
+    "walltop-11111110": 77,
+    "walltop-11111111": 78,
+    "blob-spare": 79,
+    "wall-left-top": 80,
+    "wall-left-bot": 96,
+    "wall-midA-top": 81,
+    "wall-midA-bot": 97,
+    "wall-midB-top": 82,
+    "wall-midB-bot": 98,
+    "wall-midC-top": 83,
+    "wall-midC-bot": 99,
+    "wall-right-top": 84,
+    "wall-right-bot": 100,
+    "wall-doorL-top": 85,
+    "wall-doorL-bot": 101,
+    "wall-doorR-top": 86,
+    "wall-doorR-bot": 102,
+    "wall-plinth-top": 87,
+    "wall-plinth-bot": 103,
+    "facade-privatix-top": 88,
+    "facade-privatix-bot": 104,
+    "facade-greve-top": 89,
+    "facade-greve-bot": 105,
+    "facade-vitrine-top": 90,
+    "facade-vitrine-bot": 106,
+    "facade-guichet-top": 91,
+    "facade-guichet-bot": 107,
+    "facade-horaires-top": 92,
+    "facade-horaires-bot": 108,
+    "facade-extincteur-top": 93,
+    "facade-extincteur-bot": 109,
+    "facade-affiche-7h12-top": 94,
+    "facade-affiche-7h12-bot": 110,
+    "facade-plan-top": 95,
+    "facade-plan-bot": 111,
+    "edge-S": 112,
+    "edge-N": 113,
+    "edge-E": 114,
+    "edge-W": 115,
+    "edge-outer-SE": 116,
+    "edge-inner-SE": 120,
+    "edge-outer-SW": 117,
+    "edge-inner-SW": 121,
+    "edge-outer-NE": 118,
+    "edge-inner-NE": 122,
+    "edge-outer-NW": 119,
+    "edge-inner-NW": 123,
+    "edge-end-Sl": 124,
+    "edge-end-Sr": 125,
+    "edge-end-Nl": 126,
+    "edge-end-Nr": 127,
+    "track-H-top": 128,
+    "track-H-bot": 129,
+    "track-H-full": 130,
+    "track-V-left": 131,
+    "track-V-right": 132,
+    "track-sleepers": 133,
+    "track-cross": 134,
+    "track-buffer": 135,
+    "switch-0": 136,
+    "switch-1": 137,
+    "switch-2": 138,
+    "switch-3": 139,
+    "switch-4": 152,
+    "switch-5": 153,
+    "switch-6": 154,
+    "switch-7": 155,
+    "track-H-var0": 144,
+    "track-H-var1": 145,
+    "track-H-var2": 146,
+    "track-H-var3": 147,
+    "track-H-var4": 148,
+    "track-H-var5": 149,
+    "track-H-var6": 150,
+    "track-H-var7": 151,
+    "cable-0": 140,
+    "cable-1": 141,
+    "cable-2": 142,
+    "cable-3": 143,
+    "gutter-0": 156,
+    "gutter-1": 157,
+    "gutter-2": 158,
+    "gutter-3": 159,
+    "mark-arrow": 176,
+    "mark-voie": 177,
+    "mark-hatch": 178,
+    "mark-vent": 179,
+    "mark-trash": 180,
+    "mark-puddle": 181,
+    "mark-leaf": 182,
+    "mark-chalk": 183,
+    "verriere-shadow-0": 192,
+    "verriere-shadow-1": 193,
+    "verriere-shadow-2": 194,
+    "verriere-shadow-3": 195,
+    "void-black": 208,
+    "void-night": 209,
+    "void-drop": 210,
+    "void-drop-ballast": 211,
+    "anim-neon-0": 224,
+    "anim-puddle-0": 228,
+    "anim-signal-0": 232,
+    "anim-neon-1": 225,
+    "anim-puddle-1": 229,
+    "anim-signal-1": 233,
+    "anim-neon-2": 226,
+    "anim-puddle-2": 230,
+    "anim-signal-2": 234,
+    "anim-neon-3": 227,
+    "anim-puddle-3": 231,
+    "anim-signal-3": 235
+   },
+   "animations": {
+    "anim-neon": {
+     "tiles": [
+      224,
+      225,
+      226,
+      227
+     ],
+     "durations": [
+      200,
+      150,
+      60,
+      250
+     ]
+    },
+    "anim-puddle": {
+     "tiles": [
+      228,
+      229,
+      230,
+      231
+     ],
+     "durations": [
+      250,
+      250,
+      250,
+      250
+     ]
+    },
+    "anim-signal": {
+     "tiles": [
+      232,
+      233,
+      234,
+      235
+     ],
+     "durations": [
+      250,
+      250,
+      250,
+      250
+     ]
+    }
+   }
+  },
+  {
+   "file": "assets/tilesets/tiles_occ.png",
+   "texture": "tiles_occ",
+   "type": "tileset",
+   "tileWidth": 16,
+   "tileHeight": 16,
+   "margin": 1,
+   "spacing": 2,
+   "columns": 16,
+   "rows": 16,
+   "width": 288,
+   "height": 288,
+   "tiles": {
+    "occ-beton-0": 0,
+    "occ-beton-1": 1,
+    "occ-beton-2": 2,
+    "occ-beton-3": 3,
+    "occ-planche-0": 4,
+    "occ-planche-1": 5,
+    "occ-planche-2": 6,
+    "occ-planche-3": 7,
+    "occ-tapis-0": 8,
+    "occ-tapis-1": 9,
+    "occ-carrelage-0": 10,
+    "occ-carrelage-1": 11,
+    "occ-detail-stain": 12,
+    "occ-detail-crack": 13,
+    "occ-detail-drain": 14,
+    "occ-detail-rails": 15,
+    "wang-planche-beton-0": 16,
+    "wang-planche-beton-1": 17,
+    "wang-planche-beton-2": 18,
+    "wang-planche-beton-3": 19,
+    "wang-planche-beton-4": 20,
+    "wang-planche-beton-5": 21,
+    "wang-planche-beton-6": 22,
+    "wang-planche-beton-7": 23,
+    "wang-planche-beton-8": 24,
+    "wang-planche-beton-9": 25,
+    "wang-planche-beton-10": 26,
+    "wang-planche-beton-11": 27,
+    "wang-planche-beton-12": 28,
+    "wang-planche-beton-13": 29,
+    "wang-planche-beton-14": 30,
+    "wang-planche-beton-15": 31,
+    "walltop-00000000": 32,
+    "walltop-00000010": 33,
+    "walltop-00001000": 34,
+    "walltop-00100000": 35,
+    "walltop-10000000": 36,
+    "walltop-00001010": 37,
+    "walltop-00100010": 38,
+    "walltop-00101000": 39,
+    "walltop-10000010": 40,
+    "walltop-10001000": 41,
+    "walltop-10100000": 42,
+    "walltop-00001110": 43,
+    "walltop-00101010": 44,
+    "walltop-00111000": 45,
+    "walltop-10000011": 46,
+    "walltop-10001010": 47,
+    "walltop-10100010": 48,
+    "walltop-10101000": 49,
+    "walltop-11100000": 50,
+    "walltop-00101110": 51,
+    "walltop-00111010": 52,
+    "walltop-10001011": 53,
+    "walltop-10001110": 54,
+    "walltop-10100011": 55,
+    "walltop-10101010": 56,
+    "walltop-10111000": 57,
+    "walltop-11100010": 58,
+    "walltop-11101000": 59,
+    "walltop-00111110": 60,
+    "walltop-10001111": 61,
+    "walltop-10101011": 62,
+    "walltop-10101110": 63,
+    "walltop-10111010": 64,
+    "walltop-11100011": 65,
+    "walltop-11101010": 66,
+    "walltop-11111000": 67,
+    "walltop-10101111": 68,
+    "walltop-10111011": 69,
+    "walltop-10111110": 70,
+    "walltop-11101011": 71,
+    "walltop-11101110": 72,
+    "walltop-11111010": 73,
+    "walltop-10111111": 74,
+    "walltop-11101111": 75,
+    "walltop-11111011": 76,
+    "walltop-11111110": 77,
+    "walltop-11111111": 78,
+    "blob-spare": 79,
+    "wall-left-top": 80,
+    "wall-left-bot": 96,
+    "wall-midA-top": 81,
+    "wall-midA-bot": 97,
+    "wall-midB-top": 82,
+    "wall-midB-bot": 98,
+    "wall-midC-top": 83,
+    "wall-midC-bot": 99,
+    "wall-right-top": 84,
+    "wall-right-bot": 100,
+    "wall-doorL-top": 85,
+    "wall-doorL-bot": 101,
+    "wall-doorR-top": 86,
+    "wall-doorR-bot": 102,
+    "wall-plinth-top": 87,
+    "wall-plinth-bot": 103,
+    "facade-photo-top": 88,
+    "facade-photo-bot": 104,
+    "facade-commandements-top": 89,
+    "facade-commandements-bot": 105,
+    "facade-lanternes-top": 90,
+    "facade-lanternes-bot": 106,
+    "facade-palettes-top": 91,
+    "facade-palettes-bot": 107,
+    "facade-liege-top": 92,
+    "facade-liege-bot": 108,
+    "facade-casiers-top": 93,
+    "facade-casiers-bot": 109,
+    "facade-horloge-712-top": 94,
+    "facade-horloge-712-bot": 110,
+    "facade-enseigne-top": 95,
+    "facade-enseigne-bot": 111,
+    "counter-top-left": 112,
+    "counter-top": 113,
+    "counter-top-right": 114,
+    "counter-front-left": 115,
+    "counter-front": 116,
+    "counter-front-right": 117,
+    "counter-end-left": 118,
+    "counter-end-right": 119,
+    "vault-0-top": 128,
+    "vault-0-bot": 144,
+    "vault-1-top": 129,
+    "vault-1-bot": 145,
+    "vault-2-top": 130,
+    "vault-2-bot": 146,
+    "vault-3-top": 131,
+    "vault-3-bot": 147,
+    "vault-4-top": 132,
+    "vault-4-bot": 148,
+    "vault-5-top": 133,
+    "vault-5-bot": 149,
+    "vault-6-top": 134,
+    "vault-6-bot": 150,
+    "vault-7-top": 135,
+    "vault-7-bot": 151,
+    "occ-rail-0": 160,
+    "occ-rail-1": 161,
+    "occ-rail-2": 162,
+    "occ-rail-3": 163,
+    "occ-mark-0": 176,
+    "occ-mark-1": 177,
+    "occ-mark-2": 178,
+    "occ-mark-3": 179,
+    "occ-mark-4": 180,
+    "occ-mark-5": 181,
+    "occ-mark-6": 182,
+    "occ-mark-7": 183,
+    "occ-arch-shadow-0": 192,
+    "occ-arch-shadow-1": 193,
+    "occ-arch-shadow-2": 194,
+    "occ-arch-shadow-3": 195,
+    "void-black": 208,
+    "void-dark": 209,
+    "anim-lantern-0": 224,
+    "anim-steam-0": 228,
+    "anim-lantern-1": 225,
+    "anim-steam-1": 229,
+    "anim-lantern-2": 226,
+    "anim-steam-2": 230,
+    "anim-lantern-3": 227,
+    "anim-steam-3": 231
+   },
+   "animations": {
+    "anim-lantern": {
+     "tiles": [
+      224,
+      225,
+      226,
+      227
+     ],
+     "durations": [
+      200,
+      150,
+      200,
+      250
+     ]
+    },
+    "anim-steam": {
+     "tiles": [
+      228,
+      229,
+      230,
+      231
+     ],
+     "durations": [
+      200,
+      200,
+      200,
+      200
+     ]
+    }
+   }
+  },
+  {
+   "file": "assets/tilesets/tiles_commun.png",
+   "texture": "tiles_commun",
+   "type": "tileset",
+   "tileWidth": 16,
+   "tileHeight": 16,
+   "margin": 1,
+   "spacing": 2,
+   "columns": 8,
+   "rows": 8,
+   "width": 144,
+   "height": 144,
+   "tiles": {
+    "shadow-0": 0,
+    "shadow-1": 1,
+    "shadow-2": 2,
+    "shadow-3": 3,
+    "shadow-4": 4,
+    "shadow-5": 5,
+    "shadow-6": 6,
+    "shadow-7": 7,
+    "shadow-8": 8,
+    "shadow-9": 9,
+    "shadow-10": 10,
+    "shadow-11": 11,
+    "shadow-12": 12,
+    "shadow-13": 13,
+    "shadow-14": 14,
+    "shadow-15": 15,
+    "void-black": 16,
+    "void-night": 17,
+    "debug-solid": 24,
+    "debug-hazard": 25,
+    "debug-void": 26,
+    "debug-trigger": 27
+   },
+   "animations": {}
+  }
+ ]
+}

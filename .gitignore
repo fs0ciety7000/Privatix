@@ -10,3 +10,7 @@ coverage/
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Python (générateur de sprites)
+__pycache__/
+*.pyc

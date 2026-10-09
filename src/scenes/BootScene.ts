@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import { RegistryKeys, SceneKeys } from '@/config/constants';
-import { createInitialGameState } from '@/systems/GameState';
+import { loadMeta } from '@/platform/save';
+import { NO_TOUCH } from '@/systems/meta/session';
 
 /**
- * Boot : configuration minimale et initialisation du registry.
- * Ne charge AUCUN asset lourd (c'est le rôle du Preloader).
+ * Première scène : initialise TOUTES les clés partagées du registry (la création d'une clé émet `setdata`,
+ * pas `changedata` : un écouteur raterait sinon la première valeur), charge la progression, puis passe au Preloader.
  */
 export class BootScene extends Phaser.Scene {
   public constructor() {
@@ -12,14 +13,13 @@ export class BootScene extends Phaser.Scene {
   }
 
   public create(): void {
-    // Toutes les clés partagées sont créées ici. Phaser émet `setdata` à la création d'une clé et
-    // `changedata` ensuite seulement : les scènes n'écoutent que `changedata`, donc une clé créée plus tard
-    // perdrait sa première valeur (premier bandeau, premier appui sur le bouton A tactile).
-    this.registry.set(RegistryKeys.GameState, createInitialGameState());
-    this.registry.set(RegistryKeys.InteractionHint, null);
-    this.registry.set(RegistryKeys.Notice, null);
-    this.registry.set(RegistryKeys.VirtualDir, null);
-    this.registry.set(RegistryKeys.VirtualAction, 0);
+    const reg = this.registry;
+    reg.set(RegistryKeys.Meta, loadMeta());
+    reg.set(RegistryKeys.Hud, null);
+    reg.set(RegistryKeys.Notice, { seq: 0, text: '' });
+    reg.set(RegistryKeys.LastResult, null);
+    reg.set(RegistryKeys.Touch, NO_TOUCH);
+    this.input.mouse?.disableContextMenu();
     this.scene.start(SceneKeys.Preloader);
   }
 }

@@ -2,7 +2,7 @@
   "name": "privatix",
   "version": "0.1.0",
   "private": true,
-  "description": "Privatix - RPG 2D satirique sur le rail belge (gare de Mons). Phaser 4 + TypeScript + Vite.",
+  "description": "Privatix - Hack 'n' Slash / Roguelite 2D satirique sur le rail belge (gare de Mons). Phaser 4 (Arcade) + TypeScript + Vite.",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -15,7 +15,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,json}\" \"tests/**/*.ts\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "assets": "python3 tools/pixelart/build.py"
   },
   "dependencies": {
     "phaser": "^4.2.1"

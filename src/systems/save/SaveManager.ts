@@ -1,7 +1,3 @@
-import { STARTING_INVENTORY } from '@/data/combat';
-import type { GameState } from '@/systems/GameState';
-import { isGameState } from '@/systems/GameState';
-
 /** Sous-ensemble de l'API Storage du navigateur (injecté : un Map suffit en test). */
 export interface KeyValueStorage {
   getItem(key: string): string | null;
@@ -9,75 +5,60 @@ export interface KeyValueStorage {
   removeItem(key: string): void;
 }
 
-export type SaveSlot = 'slot-1' | 'auto';
-
-export interface SaveData {
+export interface SaveData<T> {
   readonly savedAt: string;
-  readonly state: GameState;
+  readonly state: T;
 }
 
-export type LoadResult =
-  | { readonly ok: true; readonly data: SaveData }
+export type LoadResult<T> =
+  | { readonly ok: true; readonly data: SaveData<T> }
   | {
       readonly ok: false;
       readonly reason: 'empty' | 'corrupted' | 'too-new' | 'storage-unavailable';
     };
 
-/** Version courante du GameState sauvegardé. */
-export const CURRENT_SAVE_VERSION = 2;
-
 type Raw = Record<string, unknown>;
 
-/**
- * Migrations `vN → vN+1` appliquées au chargement, dans l'ordre. Vide tant que le format n'a pas changé :
- * toute modification incompatible du GameState incrémente `version` et ajoute une entrée ici (+ test).
- */
-export const MIGRATIONS: Readonly<Record<number, (state: Raw) => Raw>> = {
-  /** v1 → v2 (jalon M2) : XP, collègues, inventaire de départ, Gobelets, Grains, ennemis vaincus. */
-  1: (state) => ({
-    ...state,
-    version: 2,
-    player: { ...(isRecord(state.player) ? state.player : {}), xp: 0 },
-    allies: {},
-    inventory: { ...STARTING_INVENTORY },
-    gobelets: 0,
-    gobeletsShiftIndex: null,
-    coffeeBeans: 0,
-    defeatedEncounters: {},
-  }),
-};
+export interface SaveSchema<T> {
+  /** Version courante (champ `version` de l'état sauvegardé). */
+  readonly version: number;
+  /** Migrations `vN → vN+1`, appliquées dans l'ordre au chargement. */
+  readonly migrations: Readonly<Record<number, (state: Raw) => Raw>>;
+  readonly validate: (value: unknown) => value is T;
+}
 
 function isRecord(value: unknown): value is Raw {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 /**
- * Sauvegardes versionnées dans le localStorage (ARCHITECTURE § 7).
+ * Sauvegardes versionnées dans le localStorage (docs/ARCHITECTURE.md, « Sauvegarde »).
  * Aucune méthode ne lève : stockage absent, plein ou bloqué renvoie un échec que l'UI affiche.
  */
-export class SaveManager {
+export class SaveManager<T> {
   public constructor(
     private readonly storage: KeyValueStorage | null,
-    private readonly prefix = 'privatix.save',
+    private readonly schema: SaveSchema<T>,
+    private readonly key = 'privatix.meta',
     private readonly now: () => Date = () => new Date(),
   ) {}
 
-  public save(slot: SaveSlot, state: GameState): boolean {
+  public save(state: T): boolean {
     if (!this.storage) return false;
-    const payload: SaveData = { savedAt: this.now().toISOString(), state };
+    const payload: SaveData<T> = { savedAt: this.now().toISOString(), state };
     try {
-      this.storage.setItem(this.key(slot), JSON.stringify(payload));
+      this.storage.setItem(this.key, JSON.stringify(payload));
       return true;
     } catch {
       return false;
     }
   }
 
-  public load(slot: SaveSlot): LoadResult {
+  public load(): LoadResult<T> {
     if (!this.storage) return { ok: false, reason: 'storage-unavailable' };
     let raw: string | null;
     try {
-      raw = this.storage.getItem(this.key(slot));
+      raw = this.storage.getItem(this.key);
     } catch {
       return { ok: false, reason: 'storage-unavailable' };
     }
@@ -96,31 +77,22 @@ export class SaveManager {
     let state: Raw = parsed.state;
     const version = state.version;
     if (typeof version !== 'number') return { ok: false, reason: 'corrupted' };
-    if (version > CURRENT_SAVE_VERSION) return { ok: false, reason: 'too-new' };
-    for (let v = version; v < CURRENT_SAVE_VERSION; v += 1) {
-      const migrate = MIGRATIONS[v];
+    if (version > this.schema.version) return { ok: false, reason: 'too-new' };
+    for (let v = version; v < this.schema.version; v += 1) {
+      const migrate = this.schema.migrations[v];
       if (!migrate) return { ok: false, reason: 'corrupted' };
       state = migrate(state);
     }
-    return isGameState(state)
+    return this.schema.validate(state)
       ? { ok: true, data: { savedAt: parsed.savedAt, state } }
       : { ok: false, reason: 'corrupted' };
   }
 
-  /** Vrai si l'emplacement contient une sauvegarde chargeable. */
-  public has(slot: SaveSlot): boolean {
-    return this.load(slot).ok;
-  }
-
-  /** Sauvegarde la plus récente parmi les emplacements chargeables. */
-  public latest(): SaveData | null {
-    const loaded = (['slot-1', 'auto'] as const)
-      .map((slot) => this.load(slot))
-      .flatMap((r) => (r.ok ? [r.data] : []));
-    return loaded.sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0] ?? null;
-  }
-
-  private key(slot: SaveSlot): string {
-    return `${this.prefix}.${slot}`;
+  public clear(): void {
+    try {
+      this.storage?.removeItem(this.key);
+    } catch {
+      // Stockage bloqué : rien à effacer.
+    }
   }
 }

@@ -1,0 +1,36 @@
+GIMP Palette
+Name: Privatix 32
+Columns: 8
+#
+ 20  16  26	01 contour-sombre
+ 42  48  64	02 acier-sombre
+ 78  86 104	03 acier
+125 130 140	04 beton-ombre
+159 176 198	05 gris-ballast
+244 246 248	06 blanc-affiche
+255 255 255	07 blanc-pur
+ 11  31  58	08 bleu-nuit-quai
+ 18  60 115	09 bleu-institution
+ 31  90 166	10 bleu-signal
+ 95 168 232	11 bleu-ciel-catenaire
+156 199 217	12 verre-verriere
+ 43  26  18	13 espresso
+ 74  46  31	14 cafe-torrefie
+122  78  51	15 moka
+168 115  74	16 noisette
+227 169 130	17 peau-claire
+242 230 207	18 creme
+242 165  65	19 ambre-lampe
+138  59  46	20 brique-montoise
+184  71  15	21 gilet-ombre
+255 122  26	22 gilet-orange
+255 210   0	23 jaune-quai
+ 10  79  76	24 turquoise-profond
+ 25 195 177	25 turquoise-disruption
+143 245 228	26 turquoise-neon
+142  31  40	27 rouge-sombre
+200  50  60	28 rouge-rebelle
+255  62 165	29 magenta-menace
+180 140 255	30 violet-burnout
+ 30  91  58	31 vert-signal-sombre
+ 91 209 122	32 vert-soin

@@ -1,9 +1,9 @@
 # Crédits des assets
 
-Chaque asset tiers ajouté dans `public/assets/` doit être listé ici (voir `docs/ASSETS_GUIDE.md`).
+Chaque asset tiers ajouté dans `public/assets/` doit être listé ici (voir `docs/PIXEL_ART_GUIDE.md`, § achat sur itch.io).
 
 | Fichier(s) | Auteur / source | Licence | Modifications |
 |---|---|---|---|
-| _(aucun asset tiers pour l'instant)_ | | | |
+| `public/assets/sprites/**`, `public/assets/tilesets/**`, `public/assets/fonts/font_dmg.png` | Originaux, générés par `tools/pixelart/` (ce dépôt) | Même licence que le projet | — |
 
-Polices : à compléter lors de l'intégration (Press Start 2P, Pixelify Sans : SIL Open Font License).
+Aucun asset tiers pour l'instant. Polices de texte prévues : m6x11 ou Press Start 2P (SIL Open Font License), à créditer ici lors de l'intégration.

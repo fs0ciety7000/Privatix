@@ -23,3 +23,6 @@ Dockerfile
 docs
 *.md
 assets-src
+
+# Planches de contrôle des sprites (inutiles au build)
+tools/pixelart/preview

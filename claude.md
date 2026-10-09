@@ -1,133 +1,125 @@
 # claude.md — Instructions système pour Privatix
 
-Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépôt. Il fait autorité sur la manière de travailler ici. Les documents de conception (`docs/`) font autorité sur *ce qu'est* le jeu.
+Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépôt. Il fait autorité sur **la manière de travailler**. Les documents de `docs/` font autorité sur **ce qu'est le jeu** :
+
+| Document | Fait foi sur |
+|---|---|
+| `docs/GDD.md` | Règles, chiffres (annexe A → `src/config/balance.ts`), boucle roguelite, ennemis, progression |
+| `docs/LORE.md` | Canon narratif, PNJ de l'OCC, répliques, ton (aucune personne ni marque réelle) |
+| `docs/ARCHITECTURE.md` | Structure du code, scènes, StateMachine, combat Arcade, sauvegarde, performance |
+| `docs/PIXEL_ART_GUIDE.md` | Liste exacte des PNG, dimensions, nommage, palette, achat sur itch.io |
 
 ## 1. Le projet en 30 secondes
 
-- **Privatix** : RPG 2D pixel-art au tour par tour. Un·e agent·e SNCB en horaires 3x8 à la gare de Mons rejoint l'OCC (Operation Coffee Center) pour empêcher la privatisation du rail par « Privatix Rail Solutions ». Gameplay sérieux, lore satirique.
-- **Stack** : Phaser **4.2** (API de scènes héritée de Phaser 3, nouveau renderer WebGL), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3. Node 22.
-- **Résolution logique** : 960×540, tuiles 16 px, `pixelArt: true`, `Scale.FIT`.
-- **Déploiement** : image Docker (build Node → nginx) sur Coolify, domaine `privatix.fs0ciety.org`. Le `Dockerfile`, `nginx.conf` et `.dockerignore` à la racine sont la vérité du déploiement.
-- **Langue** : code et identifiants en anglais, commentaires, docs, textes de jeu et messages de commit en français.
-
-Lire avant toute feature : `docs/GDD.md` (règles), `docs/STORY_AND_LORE.md` (canon narratif), `docs/ARCHITECTURE.md` (structure technique), `docs/ASSETS_GUIDE.md` (assets et nommage).
+- **Privatix** : Hack 'n' Slash / Roguelite 2D en vue de dessus. Un cheminot en 3x8, armé d'une **clé à tire-fond**, affronte les consultants et automates de la mégacorporation Privatix dans la gare de Mons. Chaque run est un **Shift** ; après un échec, on revient à l'**OCC** (Operation Coffee Center) dépenser ses **Points de Syndicalisme** au Tableau des revendications.
+- **Stack** : Phaser **4.2.1** (Arcade Physics), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3, Node 22. Sprites générés par `tools/pixelart/` (Python + Pillow).
+- **Rendu** : 640×360 logiques, mise à l'échelle entière, tuiles 16 px, `pixelArt: true`, `roundPixels: true`, WebGL.
+- **Déploiement** : Docker (build Node → nginx) sur Coolify, `privatix.fs0ciety.org`.
+- **Langue** : identifiants en anglais ; commentaires, docs, textes du jeu et messages de commit en français.
 
 ## 2. Commandes
 
 ```bash
-npm install --legacy-peer-deps   # première installation (bug npm 10 avec les peers de vitest 4) ; npm ci fonctionne sans flag
-npm run dev                      # serveur Vite sur http://localhost:5173
+npm ci                           # installation (npm install exige --legacy-peer-deps)
+npm run dev                      # http://localhost:5173 (ajouter ?debug pour les corps Arcade, ?cheat pour les raccourcis de test)
 npm run check                    # typecheck + lint + tests : DOIT être vert avant tout commit
-npm run build                    # tsc --noEmit puis vite build → dist/
-npm run preview                  # sert dist/ sur :4173
-npm run format                   # prettier
-docker build -t privatix . && docker run -p 8080:80 privatix   # test du conteneur de prod
+npm run build                    # dist/
+npm run assets                   # régénère les sprites et tilesets depuis tools/pixelart/
 ```
 
-Avant de déclarer une tâche terminée : `npm run check` **et** `npm run build` passent. Si un test échoue, le dire avec la sortie, ne pas le désactiver.
+Raccourcis `?cheat` (dev uniquement, absents du build) : **K** élimine les ennemis, **G** invincibilité, **N** salle suivante (ou un Avantage si la salle n'est pas nettoyée), **B** salle du boss.
 
-## 3. Règles de style de code
+## 3. Règle 1 — Arcade Physics et sensation de combat
 
-### TypeScript strict
-- `tsconfig.json` est en mode strict complet (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, `noUnusedLocals/Parameters`, `verbatimModuleSyntax`). Ne jamais assouplir ces options pour faire passer un fichier.
-- **Interdit** : `any`, `as unknown as X`, `!` (non-null assertion), `// @ts-ignore`, `eslint-disable` sans justification écrite sur la ligne.
-- Typer les retours de fonctions publiques. Préférer `interface` pour les formes de données, `type` pour les unions. Les enums sont remplacés par des objets `as const` + type dérivé (voir `SceneKeys` dans `src/config/constants.ts`).
-- `import type` pour tout ce qui n'est utilisé qu'en type. Chemins via l'alias `@/` (`@/scenes/...`), jamais de `../../`.
-- Modificateurs d'accès explicites (`public`/`private`/`protected`) sur chaque membre de classe. `override` obligatoire quand on surcharge Phaser (`update`, `destroy`, `preUpdate`).
-- Pas de `console.log` (seuls `warn`, `error`, `info` sont tolérés, et retirés avant commit).
+Le combat est le produit. Chaque coup doit **se sentir**.
 
-### Modules ES6
-- `"type": "module"` : uniquement `import`/`export`, jamais `require`. Un fichier = une responsabilité ; une classe exportée par fichier, nom du fichier = nom de la classe (`BattleScene.ts`, `Player.ts`, `CombatEngine.ts`).
-- Pas d'export par défaut (sauf fichiers de config Vite/ESLint). Pas de barrel `index.ts` qui ré-exporte tout : importer la source.
-- Les constantes magiques vivent dans `src/config/constants.ts` (dimensions, vitesses, clés) et `src/config/balance.ts` (équilibrage). Aucun nombre magique dans une scène.
+**Hitboxes précises**
+- Le corps Arcade d'un acteur est sa **hurtbox de déplacement** : un petit cercle aux pieds (héros : rayon 6), jamais la taille du sprite. Il ne sert qu'aux collisions avec le décor.
+- Les **hitboxes d'attaque ne sont pas des corps Arcade**. Ce sont des requêtes géométriques (`src/systems/combat/geometry.ts` : arc, rectangle orienté, cercle) testées pendant les **frames actives** contre la hurtbox circulaire des cibles (`Enemy.hurtCircle`). Un `Set` des cibles déjà touchées garantit un impact par coup (`Weapon.begin()` le vide).
+- Héros ↔ ennemis : **jamais de `collide`**, seulement des tests logiques (sinon les ennemis bloquent et poussent le joueur). Ennemis entre eux : séparation douce, pas de collider dur.
+- Toute attaque ennemie est **télégraphiée en magenta** (`#FF3EA5`) au moins 300 ms avant de blesser (500 ms pour le boss). Si ce n'est pas lisible, ce n'est pas juste.
+- Startup / active / recovery de chaque coup viennent de `balance.ts` (GDD § 5), en millisecondes. L'animation est **mise à l'échelle** sur ces durées (`Player.playAnim(name, angle, durationMs)`), jamais l'inverse.
 
-### Formatage
-- Prettier (`.prettierrc`) est la seule autorité de formatage : single quotes, point-virgules, largeur 100, virgules finales. Ne pas débattre du style, lancer `npm run format`.
+**Game feel** : tout passe par `src/fx/GameFeel.ts`, jamais d'appel direct à `camera.shake` dans une entité.
+- **Hitstop** à chaque impact (50 ms pour les coups 1-2, 110 ms pour le coup 3, +10 ms par cible supplémentaire). `GameFeel.hitstop` gèle la physique et les animations ; la scène reçoit un delta de jeu nul.
+- **Screenshake** en pixels logiques (intensité = px / 640), combinés au maximum, jamais additionnés.
+- **Flash blanc** des cibles touchées (Phaser 4 : `setTint(0xffffff).setTintMode(Phaser.TintModes.FILL)`, puis `clearTint()`).
+- **Particules** (étincelles, feuilles de papier, poussière) et **VFX animés** (`world.vfx('vfx-hit', x, y)`).
+- **Ralenti** sur le dernier ennemi d'une salle (0,25 pendant 450 ms) et sur le dash parfait (0,6 pendant 200 ms). Arcade : `world.timeScale` est **inversé** (2 = plus lent), `GameFeel` s'en charge.
+- Nombres de dégâts, vignette magenta quand le héros est touché, zoom punch sur le coup 3.
+- Un nouveau type d'impact ? Ajouter sa ligne dans le tableau « Game feel » du GDD, puis l'appeler via `GameFeel`.
 
-## 4. Règles spécifiques à Phaser (v4, API héritée de Phaser 3)
+## 4. Règle 2 — Architecture modulaire
 
-### Scene Manager, pas de bricolage
-- Toute scène hérite de `Phaser.Scene`, prend sa clé depuis `SceneKeys` et vit dans `src/scenes/`. Elle est enregistrée dans le tableau `scene` de `src/main.ts`.
-- Transitions : `scene.start(key, data)` pour remplacer, `scene.launch` pour superposer (UI, Dialogue), `scene.pause/resume` pour un overlay modal, `scene.sleep/wake` pour mettre l'exploration en veille pendant un combat, `scene.stop` pour libérer. Le tableau des cas est dans `docs/ARCHITECTURE.md`. Ne jamais instancier une scène à la main ni appeler `create()` soi-même.
-- Les données passées à une scène le sont via le paramètre `data` de `init(data)` avec une interface typée (`BattleSceneData`), jamais via une propriété statique.
-- **`preload()` n'existe que dans `PreloaderScene`**, qui charge `public/assets/asset-pack.json` via `this.load.pack`. ESLint refuse un `preload` ailleurs. Un nouvel asset = une entrée dans `asset-pack.json` + une clé dans `AssetKeys` + une ligne dans `CREDITS.md`.
+**Logique pure séparée de Phaser.** `src/systems/` et `src/utils/` **n'importent jamais `phaser`** (règle ESLint). Machine à états, tampon d'entrées, géométrie, timings, Burnout, dash, Mobilisation, vagues, portes, méta-progression et sauvegarde y sont des classes ou fonctions pures, testées dans `tests/`. L'aléatoire est injecté (`createRng(seed)`), donc chaque Shift est reproductible à partir de sa graine.
 
-### Pas de variables globales
-- Rien sur `window`, `globalThis` ou en module-level mutable. ESLint bloque `window`. L'état partagé passe par **un seul** objet `GameState` dans `this.registry` (clé `RegistryKeys.GameState`), toujours modifié de façon immuable (`registry.set(key, {...state, ...})`) pour que l'événement `changedata` déclenche la mise à jour de l'UI.
-- Lire et écrire le GameState uniquement via `getGameState` / `updateGameState` (`src/utils/registry.ts`), jamais par `registry.get(...) as GameState`.
-- La communication entre scènes passe par le registry (l'événement `changedata` fournit l'ancienne et la nouvelle valeur), jamais par `this.scene.get('X').someProperty`. Un EventBus typé n'est pas encore en place : ne pas en créer un sous forme de singleton de module sans décision.
-- Les transitions de jeu (horloge, Fatigue, combat…) sont des fonctions pures qui renvoient `{ state, events }` (modèle : `src/systems/time/FatigueClock.ts`). La scène applique l'état en une seule écriture registry, puis réagit aux événements.
-- Une seule instance `Phaser.Game`, créée dans `src/main.ts` et jamais exportée.
+**Classes de jeu** (adaptateurs Phaser minces, dans `src/entities/`) :
 
-### Logique pure séparée de Phaser
-- `src/systems/`, `src/data/`, `src/utils/` **n'importent jamais `phaser`** (règle ESLint). Combat, horloge/fatigue, inventaire, sauvegarde, déplacement sur grille sont des fonctions ou classes pures, testées avec Vitest dans `tests/`. L'aléatoire est injecté (`rng: () => number`) pour des tests déterministes.
-- Les scènes et `src/ui/` ne font que : lire l'état, appeler un système, afficher le résultat, jouer les tweens/sons.
-- Les données de jeu (ennemis, objets, compétences, dialogues) sont des fichiers typés dans `src/data/`, jamais des littéraux dans une scène.
+| Classe | Rôle |
+|---|---|
+| `Player` | `Arcade.Sprite` + `StateMachine<Player, PlayerStates>` (idle, run, attack, dashAttack, dash, charge, special, drink, hurt, dead). Lit une `PlayerIntent` par frame, jamais le clavier directement. |
+| `Enemy` | Base abstraite : PV mis à l'échelle de la salle, knockback, étourdissement, jetons d'attaque, états communs (spawn, chase, windup, attack, recover, stagger, dead). Les sous-classes de `entities/enemies/` ne décrivent que leur comportement (`think`, `onWindup`, `updateAttack`). |
+| `Weapon` | La clé à tire-fond : balaie la hitbox du coup courant, applique dégâts, critiques et Avantages, casse les projectiles. |
+| `Room` | Construit une salle depuis un gabarit (`RoomLayout`) : tilemap, collisions, autotiles, props, portes et cadrage caméra. |
+| `Projectile`, `Hazard`, `Pickup` | Projectiles en pool, zones de danger télégraphiées (cercle, anneau, rame, ligne de KPI), récompenses au sol. |
 
-### Gestion propre de la mémoire (garbage collector)
-- Tout ce qu'une scène crée hors de sa display list doit être libéré dans un handler de `Phaser.Scenes.Events.SHUTDOWN` : `off()` sur les écouteurs clavier, registry, EventBus ; `remove()` des timers ; `tweens.killTweensOf()` ; `scene.stop()` des scènes lancées en parallèle (voir `GameScene.onShutdown`).
-- Toujours passer le contexte à `on(event, handler, this)` et le même triplet à `off`. Les écouteurs posés avec `once` sur `this.events` sont acceptables ; ceux posés sur des émetteurs qui survivent à la scène (`this.registry.events`, `this.input.keyboard`, `this.game.events`, EventBus) **doivent** être retirés.
-- Les objets custom (`Player`, composants UI) surchargent `destroy()` pour couper leurs propres références (clés, tweens, timers) avant `super.destroy()`.
-- Pas de création d'objets dans `update()` (texte, graphics, tableaux temporaires) : préparer dans `create()`, réutiliser, ou utiliser un `Group` avec pooling. Pas de closures capturant la scène dans un `setInterval` : utiliser `this.time.addEvent`.
-- Vérifier manuellement qu'un aller-retour (Game → Battle → Game, ×3) ne double pas les écouteurs ni les textes du HUD.
+- Les entités ne connaissent **jamais** la scène concrète : elles passent par l'interface `CombatWorld` (`src/entities/CombatWorld.ts`), implémentée par `RunScene` et `HubScene`.
+- Une seule `RunScene` pour tout le Shift : elle reconstruit la salle derrière un fondu (`goThrough`).
+- **Une donnée de gameplay = une constante de `balance.ts`.** Aucun nombre magique dans une entité ou une scène.
+- État partagé entre scènes : `this.registry`, clés de `RegistryKeys`, **toutes initialisées dans `BootScene`** (la création d'une clé émet `setdata` et non `changedata` : un écouteur raterait la première valeur). Le HUD lit un instantané (`HudSnapshot`) publié par `RunScene`.
+- `preload()` n'existe que dans `PreloaderScene` (règle ESLint). Pas de variable globale, rien sur `window`.
+- Mémoire : ce qui survit à une scène (écouteurs du registry, clavier global) est retiré sur `SHUTDOWN`. Les objets custom surchargent `destroy()`. Pas de création d'objets dans `update()` : pool (projectiles, textes de dégâts) ou création à la construction de la salle.
 
-### Divers Phaser
-- Entrées clavier via `KeyboardEvent.code` (ZQSD et WASD fonctionnent sans réglage) ; prévoir le tactile pour chaque action (voir `docs/GDD.md` § contrôles).
-- Positions et tailles entières (`roundPixels`), textes en police pixel, jamais de scale non entier sur un sprite.
-- Version : **Phaser 4** (`^4.2.1`), décidée par le porteur du projet. Le paquet embarque sa doc de migration et ses guides : `node_modules/phaser/changelog/v4/4.0/MIGRATION-GUIDE.md`, `node_modules/phaser/docs/` et `node_modules/phaser/skills/`. Les consulter avant d'utiliser une API dont le comportement a pu changer depuis la v3.
-- Pièges v4 à connaître : `setTintFill()` n'existe plus (utiliser `setTint(c).setTintMode(Phaser.TintModes.FILL)`), `Geom.Point` est remplacé par `Math.Vector2`, les FX et masques deviennent des filtres, `Math.TAU` vaut désormais 2π, `Struct.Set/Map` sont des `Set`/`Map` natifs, le renderer Canvas est déprécié (WebGL partout), pas d'appel WebGL direct.
-- Pixel-art : la config est sous `render: { pixelArt: true, roundPixels: true }` (`roundPixels` vaut `false` par défaut en v4). L'arrondi des sommets ne s'applique qu'aux objets ni zoomés ni tournés : avec une caméra zoomée, régler `vertexRoundMode` au besoin (voir le guide pixel-art du paquet).
+**Style** : TypeScript strict complet (ne jamais l'assouplir) ; interdits : `any`, `!`, `@ts-ignore`, `eslint-disable` sans justification. `import type` pour les types, alias `@/`, modificateurs d'accès explicites, `override` sur les méthodes Phaser. Prettier fait foi.
 
-## 5. Workflow de développement d'une feature
+## 5. Règle 3 — Animations pixel art via le système d'animation de Phaser
 
-Ordre imposé : **1) interface, 2) logique, 3) intégration.** Ne pas commencer par le code de scène.
+- **Format unique** : bandes horizontales `<entité>_<anim>[_<direction>]_strip<N>.png`, frames carrées, sans marge ni espacement. Clé de texture = nom du fichier sans `.png` ; clé d'animation = `<entité>-<anim>[-<direction>]` (ex. `player-attack3-side`). Voir `docs/PIXEL_ART_GUIDE.md`.
+- **Source de vérité** : `tools/pixelart/manifest.json` (fichier, taille de frame, nombre de frames, durées par frame, boucle, pivot, frames actives). `src/config/assets.ts` le lit ; `PreloaderScene` charge chaque feuille et **crée toutes les animations une seule fois** dans le gestionnaire global (`this.anims` est global en Phaser 4).
+- **Durées par frame** : en Phaser 4, `frames[i].duration` **remplace** la durée par défaut (elle ne s'y ajoute pas).
+- **Directions** : 3 dessinées (`down`, `up`, `side`) ; la gauche est `side` + `flipX`. Choix via `facingFromAngle(angle)`.
+- **Un seul point d'appel de `play()` par entité** (`playAnim`), qui gère direction, miroir et vitesse de lecture. Les états de la StateMachine demandent une animation ; ils ne manipulent jamais les frames à la main.
+- `AnimationFrame.index` **commence à 1** en Phaser 4 (pas de poussière, événements de frame : `frame.index - 1`).
+- Pivot aux pieds : `setOrigin` d'après le manifeste (héros 48×48 : `(0.5, 44/48)`), ombre au sol séparée (`shadow_*`, opacité 0,5 par le moteur). Profondeur = `y` des pieds.
+- Jamais de mise à l'échelle non entière d'un sprite de jeu ; `pixelArt` et `roundPixels` restent activés.
 
-1. **Comprendre et cadrer**
-   - Relire la section concernée du `docs/GDD.md` (ou `STORY_AND_LORE.md`). Si la règle n'y est pas, la proposer d'abord dans le doc (un paragraphe) : le doc est la source de vérité, le code la suit.
-   - Lister les fichiers touchés et les critères d'acceptation en 3-5 lignes avant d'écrire du code.
+## 6. Workflow d'une feature : 1) logique → 2) placeholders → 3) vrais sprites
 
-2. **Interface d'abord (contrats)**
-   - Définir les types et signatures : interfaces de données dans `src/data/types.ts`, API publique du système (`class CombatEngine { resolveTurn(...): TurnResult }`), événements de l'EventBus, forme des `SceneData`.
-   - Ajouter les constantes dans `balance.ts`/`constants.ts`. Compiler (`npm run typecheck`) : le compilateur liste tout ce qu'il faudra brancher.
+1. **Logique d'abord.** Relire la section du GDD (la compléter s'il manque une règle : le doc précède le code). Ajouter les constantes dans `balance.ts`, les types et le système pur dans `src/systems/`, **avec ses tests**. `npm run test` vert avant d'ouvrir une scène.
+2. **Placeholders ensuite.** Brancher dans l'entité ou la scène. Si le PNG n'existe pas encore, il suffit de le déclarer : `PreloaderScene` génère un placeholder animé **aux mêmes dimensions et au même découpage** (`src/ui/placeholders.ts`). Le jeu doit être jouable et lisible ainsi (couleurs du canon : héros orange `#FF7A1A`, ennemis turquoise `#19C3B1`, danger magenta `#FF3EA5`). Régler hitboxes, timings et game feel à ce stade.
+3. **Vrais sprites enfin.** Produire le PNG (générateur `tools/pixelart/`, pack itch.io ou freelance) au nom, à la taille de frame et au nombre de frames prévus ; mettre à jour le manifeste (`npm run assets`) et `CREDITS.md` pour tout asset tiers. Aucun code ne change si le contrat est respecté. Vérifier dans le jeu : pivot, frame active alignée sur la hitbox, lisibilité à ×1.
 
-3. **Logique pure ensuite (testée)**
-   - Implémenter dans `src/systems/` sans Phaser. Écrire les tests Vitest dans `tests/` en même temps : cas nominal, limites (0, max, overflow de minuit, fatigue 100), aléatoire seedé. `npm run test` vert.
+**Finir proprement** : `npm run check` et `npm run build` verts, test manuel dans `npm run dev` (scénario nominal, mort, retour à l'OCC), doc mise à jour si le comportement change, commit atomique en français à l'impératif.
 
-4. **Intégration Phaser enfin**
-   - Brancher dans la scène ou le composant `src/ui/` : entrée joueur → appel du système → mise à jour du registry → rendu/tweens/sons. Ajouter les assets dans `asset-pack.json` + `AssetKeys` + `CREDITS.md`.
-   - Gérer le cycle de vie (shutdown/destroy). Tester à la main dans `npm run dev` : le scénario nominal, une sortie de scène, un retour. Raccourcis de développement en jeu : `T` (+1 h), `N` (acte suivant), absents du build de production (`import.meta.env.DEV`).
+## 7. Pièges Phaser 4 à connaître
 
-5. **Finir proprement**
-   - `npm run check` et `npm run build` verts. Mettre à jour la doc si le comportement a changé. Commit atomique en français à l'impératif (`feat: ajoute la jauge de fatigue au HUD`), un sujet par commit.
-   - Ne pas élargir le périmètre : une feature = une branche/un commit. Signaler les idées annexes dans la réponse, pas dans le code.
+- `setTintFill()` n'existe plus → `setTint(c).setTintMode(Phaser.TintModes.FILL)`.
+- `createLayer` renvoie une union : vérifier `instanceof Phaser.Tilemaps.TilemapLayer`.
+- Les FX et masques sont des filtres ; `Math.TAU` vaut 2π ; `Struct.Set/Map` sont des `Set`/`Map` natifs.
+- Le renderer Canvas est déprécié : `type: Phaser.WEBGL`.
+- Doc embarquée : `node_modules/phaser/changelog/v4/4.0/MIGRATION-GUIDE.md`, `node_modules/phaser/docs/`, `node_modules/phaser/skills/`.
 
-## 6. Ce que Claude ne fait pas sans demander
+## 8. Ce que Claude ne fait pas sans demander
 
-- Changer la stack ou une version majeure, assouplir `tsconfig`/ESLint, ajouter une dépendance runtime (Phaser est la seule aujourd'hui).
-- Modifier le canon narratif (noms, lieux, fins) ou les formules d'équilibrage sans mettre à jour le doc correspondant.
-- Nommer une personne réelle, reproduire un logo ou une marque réelle, intégrer un asset sans licence compatible (CC0 / CC-BY avec crédit).
+- Changer la stack ou une version majeure, assouplir `tsconfig`/ESLint, ajouter une dépendance runtime (Phaser est la seule).
+- Modifier le canon (noms, lieux, fins) ou une formule d'équilibrage sans mettre à jour le GDD.
+- Nommer une personne réelle, reproduire un logo ou une marque, intégrer un asset sans licence compatible (CC0, CC-BY avec crédit, licence commerciale du pack).
 - Supprimer ou désactiver un test, pousser sur une autre branche que celle demandée, créer une PR non demandée.
 
-## 7. Carte du dépôt
+## 9. Carte du dépôt
 
 ```
-src/main.ts              # config Phaser, liste des scènes (unique new Phaser.Game)
-src/config/              # constants.ts (SceneKeys, RegistryKeys, AssetKeys, dimensions), colors.ts (palette SNCB/OCC), balance.ts (équilibrage, fait foi)
-src/scenes/              # Boot, Preloader, MainMenu, Game (exploration), UI (HUD), Dialogue (+ à venir Battle, Pause)
-src/entities/            # objets Phaser : Player (grille), MapView (carte + PNJ + objets)
-src/systems/             # logique pure sans Phaser : GameState, time/, world/, movement/, story/, vending/, save/
-src/platform/            # storage.ts : seul accès au navigateur hors Phaser
-src/ui/                  # composants Phaser réutilisables : Gauge, Clock3x8, VirtualPad, PlaceholderTextures
-src/data/                # contenu typé : types.ts (contrats), maps (ASCII), dialogues, objectives, characters, encounters, story
-src/utils/               # helpers purs : math (clamp), registry (getGameState / updateGameState / pushNotice)
-tests/                   # tests Vitest de la logique pure + data.test.ts (cohérence du contenu)
-public/assets/           # asset-pack.json, images/, audio/, tilemaps/, fonts/
-docs/                    # GDD, STORY_AND_LORE, ARCHITECTURE, ASSETS_GUIDE
-Dockerfile, nginx.conf   # déploiement Coolify
+src/main.ts                 # Phaser.Game : WebGL, 640×360, pixelArt, physics: { default: 'arcade' }
+src/config/                 # constants.ts (scènes, registry, couleurs), balance.ts (fait foi), assets.ts (manifeste)
+src/scenes/                 # Boot, Preloader, MainMenu, Hub (OCC), Run (Shift), UI (HUD, tactile, choix), Pause, Results
+src/entities/               # Player, Enemy (+ enemies/ : ConsultantJunior, BorneAutomatique, DroneOptimetre, ManagerKpi, Auditeur, TrainingDummy), Weapon, Room, Projectile, Hazard, Pickup, CombatWorld
+src/systems/                # PUR : StateMachine, InputBuffer, combat/, procedural/, meta/, save/
+src/fx/GameFeel.ts          # hitstop, ralenti, secousses, flash, particules, nombres
+src/ui/                     # Controls (clavier, souris, manette, tactile), placeholders
+src/platform/               # seul accès au navigateur hors Phaser (localStorage)
+src/utils/                  # rng (graines), math
+tests/                      # Vitest : logique pure et gabarits de salles
+tools/pixelart/             # générateur des sprites et tilesets (+ manifest.json, planches de contrôle)
+public/assets/              # sprites/{player,enemies,bosses,npcs,vfx,pickups,ui,portraits}, tilesets, audio/{sfx,music}, fonts
+docs/                       # GDD, LORE, ARCHITECTURE, PIXEL_ART_GUIDE
 ```
-
-### Ajouter du contenu (cartes, dialogues, quêtes)
-
-- Le contenu vit dans `src/data/` et respecte `src/data/types.ts`. Un PNJ ou un objet se pose comme marqueur dans la grille ASCII de `maps.ts`, avec des `interactions` conditionnelles vers des dialogues de `dialogues.ts`. La progression passe par les drapeaux `StoryFlag` (à déclarer dans `types.ts`) posés par les effets de dialogue.
-- `tests/data.test.ts` doit rester vert : références de dialogues et de cartes, marqueurs, nœuds orphelins, drapeaux jamais posés, et accessibilité de chaque PNJ, objet et portail. Ne jamais l'affaiblir pour faire passer du contenu : corriger le contenu.
-- `tests/act1.test.ts` rejoue le fil principal de l'Acte I sans Phaser : l'étendre quand on ajoute une étape.

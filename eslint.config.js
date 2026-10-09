@@ -33,7 +33,7 @@ export default tseslint.config(
   },
   {
     // Garde-fou d'architecture : la logique pure ne dépend JAMAIS de Phaser (testable en Node).
-    files: ['src/systems/**/*.ts', 'src/data/**/*.ts', 'src/utils/**/*.ts'],
+    files: ['src/systems/**/*.ts', 'src/utils/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -50,7 +50,7 @@ export default tseslint.config(
         'error',
         {
           selector: "MethodDefinition[key.name='preload']",
-          message: 'Le chargement se fait uniquement dans PreloaderScene (asset-pack.json).',
+          message: 'Le chargement se fait uniquement dans PreloaderScene (manifeste des assets).',
         },
       ],
     },

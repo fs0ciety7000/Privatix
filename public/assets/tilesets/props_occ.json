@@ -1,0 +1,302 @@
+{
+ "frames": {
+  "etagere-lanternes": {
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "casiers": {
+   "frame": {
+    "x": 34,
+    "y": 0,
+    "w": 32,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "porte-service": {
+   "frame": {
+    "x": 68,
+    "y": 0,
+    "w": 32,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 48
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "comptoir": {
+   "frame": {
+    "x": 102,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "canape": {
+   "frame": {
+    "x": 152,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "canape-neuf": {
+   "frame": {
+    "x": 202,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "table-tasses": {
+   "frame": {
+    "x": 0,
+    "y": 50,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "tableau-palettes": {
+   "frame": {
+    "x": 34,
+    "y": 50,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "tableau-liege": {
+   "frame": {
+    "x": 84,
+    "y": 50,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "etabli": {
+   "frame": {
+    "x": 118,
+    "y": 50,
+    "w": 48,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "vieille-dame": {
+   "frame": {
+    "x": 168,
+    "y": 50,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  },
+  "lanterne": {
+   "frame": {
+    "x": 202,
+    "y": 50,
+    "w": 16,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 16,
+    "h": 16
+   },
+   "pivot": {
+    "x": 0.5,
+    "y": 1.0
+   }
+  }
+ },
+ "meta": {
+  "app": "Privatix tools/pixelart",
+  "image": "props_occ.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 256,
+   "h": 256
+  },
+  "scale": "1"
+ }
+}
