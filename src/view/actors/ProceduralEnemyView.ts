@@ -26,6 +26,13 @@ export interface EnemyLook {
   readonly topple: boolean;
   /** Échelle du modèle (élites, boss). */
   readonly scale?: number;
+  /**
+   * La mort est animée par le modèle (clip `death` d'un GLB) : ni chute en arrière ni affaissement
+   * procédural, seulement la projection et la dissolution.
+   */
+  readonly animatedDeath?: boolean;
+  /** Durée avant la dissolution du corps (s, défaut 1,2). */
+  readonly deathFallS?: number;
 }
 
 export abstract class ProceduralEnemyView implements EnemyView {
@@ -36,6 +43,8 @@ export abstract class ProceduralEnemyView implements EnemyView {
   protected yaw = 0;
   protected time = Math.random() * 10;
   protected dead = false;
+  /** Éclair blanc bref au début d'un télégraphe (0..1, décroît en temps réel ; GLB). */
+  protected teleFlash = 0;
   private readonly hpBar = new THREE.Group();
   private readonly hpFill: THREE.Mesh;
   private readonly spawnTele: DiscTelegraph;
@@ -142,7 +151,9 @@ export abstract class ProceduralEnemyView implements EnemyView {
     this.rig.root.rotation.y = this.yaw;
     this.hitFlash = Math.max(0, this.hitFlash - f.realDt * 9);
     const peak = this.reducedMotion ? 0.4 : 0.8;
-    this.flash.amount.value = this.hitFlash > 0.01 ? Math.min(peak, this.hitFlash * 1.2) : 0;
+    this.teleFlash = Math.max(0, this.teleFlash - f.realDt * 7);
+    const k = Math.max(this.hitFlash * 1.2, this.teleFlash * 0.45);
+    this.flash.amount.value = k > 0.01 ? Math.min(peak, k) : 0;
     if (this.hpBar.visible) {
       this.hpBar.position.set(this.pos.x, this.look.barY + this.rig.root.position.y, this.pos.z);
       this.hpBar.quaternion.copy(f.camera.quaternion);
@@ -203,11 +214,14 @@ export abstract class ProceduralEnemyView implements EnemyView {
     }
     this.pos.addScaledVector(this.deathKb, dt);
     this.deathKb.multiplyScalar(Math.exp(-6 * dt));
-    if (this.look.topple) this.rig.body.rotation.x = -Math.min(1, this.deathT / 0.38) * 1.45;
-    else this.rig.body.scale.y = Math.max(0.55, 1 - this.deathT * 1.2);
+    if (this.look.animatedDeath !== true) {
+      if (this.look.topple) this.rig.body.rotation.x = -Math.min(1, this.deathT / 0.38) * 1.45;
+      else this.rig.body.scale.y = Math.max(0.55, 1 - this.deathT * 1.2);
+    }
     this.animateDeath(dt);
-    if (this.deathT > DEATH_FALL_S) {
-      const k = Math.min(1, (this.deathT - DEATH_FALL_S) / DEATH_DISSOLVE_S);
+    const fall = this.look.deathFallS ?? DEATH_FALL_S;
+    if (this.deathT > fall) {
+      const k = Math.min(1, (this.deathT - fall) / DEATH_DISSOLVE_S);
       this.rig.root.scale.setScalar(Math.max(0.01, 1 - k * 0.9) * this.size);
       p.y = -k * 0.6;
       if (k >= 1) this.finished = true;

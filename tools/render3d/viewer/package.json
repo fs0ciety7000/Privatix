@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview --port 4180",
     "compress": "node compress.mjs",
+    "lod": "node lod.mjs && node lod.mjs --items --ratio 0.6 casque_antibruit casque_legendaire gilet_porte_outils",
     "shots": "node shots.mjs"
   },
   "dependencies": {

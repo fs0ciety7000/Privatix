@@ -1,0 +1,102 @@
+{
+  "characters": {
+    "hero": {
+      "file": "models/lod/hero.glb",
+      "triangles": 4658,
+      "bytes": 250900,
+      "source": 9316
+    },
+    "consultant": {
+      "file": "models/lod/consultant.glb",
+      "triangles": 4240,
+      "bytes": 175124,
+      "source": 8376
+    },
+    "discosaure": {
+      "file": "models/lod/discosaure.glb",
+      "triangles": 7724,
+      "bytes": 280104,
+      "source": 14320
+    },
+    "furet": {
+      "file": "models/lod/furet.glb",
+      "triangles": 4524,
+      "bytes": 279588,
+      "source": 9050
+    },
+    "dirupo": {
+      "file": "models/lod/dirupo.glb",
+      "triangles": 7486,
+      "bytes": 310232,
+      "source": 14950
+    },
+    "borne": {
+      "file": "models/lod/borne.glb",
+      "triangles": 1326,
+      "bytes": 48756,
+      "source": 2536
+    },
+    "drone": {
+      "file": "models/lod/drone.glb",
+      "triangles": 1588,
+      "bytes": 58264,
+      "source": 3012
+    },
+    "manager": {
+      "file": "models/lod/manager.glb",
+      "triangles": 4038,
+      "bytes": 229156,
+      "source": 7372
+    },
+    "auditeur": {
+      "file": "models/lod/auditeur.glb",
+      "triangles": 4332,
+      "bytes": 250324,
+      "source": 8664
+    },
+    "fluidifieur": {
+      "file": "models/lod/fluidifieur.glb",
+      "triangles": 4224,
+      "bytes": 194760,
+      "source": 6620
+    },
+    "josiane": {
+      "file": "models/lod/josiane.glb",
+      "triangles": 3800,
+      "bytes": 108476,
+      "source": 6112
+    },
+    "bene": {
+      "file": "models/lod/bene.glb",
+      "triangles": 3456,
+      "bytes": 106976,
+      "source": 5900
+    },
+    "kevin": {
+      "file": "models/lod/kevin.glb",
+      "triangles": 3710,
+      "bytes": 108840,
+      "source": 5884
+    }
+  },
+  "items": {
+    "casque_antibruit": {
+      "file": "models/lod/casque_antibruit.glb",
+      "triangles": 1346,
+      "bytes": 19132,
+      "source": 2220
+    },
+    "casque_legendaire": {
+      "file": "models/lod/casque_legendaire.glb",
+      "triangles": 1426,
+      "bytes": 19600,
+      "source": 2352
+    },
+    "gilet_porte_outils": {
+      "file": "models/lod/gilet_porte_outils.glb",
+      "triangles": 1928,
+      "bytes": 27248,
+      "source": 3140
+    }
+  }
+}

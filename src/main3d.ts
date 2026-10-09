@@ -6,12 +6,14 @@ import { Game3D, storedQuality } from '@/scenes3d/Game3D';
 import { Loop } from '@/engine/Loop';
 import type { QualityId } from '@/view/quality';
 import { isQualityId, QUALITY } from '@/view/quality';
+import { installModelLibrary, ModelLibrary } from '@/view/models/ModelLibrary';
 
 /**
  * Entrée 3D (migration Three.js, jalon J4 : un Shift complet) : `play3d.html`. Elle coexiste avec le
  * jeu Phaser (`index.html`, en production jusqu'à la parité). Paramètres d'URL :
  *   ?q=bas|moyen|haut  preset de qualité      ?rm=1 / ?rm=0  réduction des mouvements
  *   ?safe              sans post-traitement   ?seed=N        graine du Shift
+ *   ?procedural        personnages procéduraux (sans les GLB de public/models)
  *   ?cheat             (dev) K tue tout, G invincible, N salle suivante, B boss
  *   ?demo              (dev) outil de pilotage pour les captures automatisées
  */
@@ -51,7 +53,36 @@ function pickReducedMotion(params: URLSearchParams): boolean {
   return matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-function boot(): void {
+/** Personnages préchargés avant le titre (un Shift complet) ; les autres se chargent à la demande. */
+const PRELOAD_CHARACTERS = ['hero', 'consultant', 'borne', 'drone', 'manager', 'auditeur'];
+
+/**
+ * Précharge les GLB (public/models) avec une barre de progression dans l'écran de chargement. Un
+ * manifeste ou un modèle en échec n'empêche pas de jouer : la fabrique retombe sur le procédural.
+ */
+async function preloadModels(loading: HTMLElement, lowDetail: boolean): Promise<void> {
+  const bar = document.createElement('div');
+  bar.className = 'loading-bar';
+  bar.setAttribute('role', 'progressbar');
+  bar.setAttribute('aria-label', 'Chargement des personnages');
+  bar.setAttribute('aria-valuemin', '0');
+  bar.setAttribute('aria-valuemax', '100');
+  const fill = document.createElement('div');
+  bar.appendChild(fill);
+  loading.appendChild(bar);
+  const lib = await ModelLibrary.open(import.meta.env.BASE_URL, lowDetail);
+  if (lib) {
+    await lib.preload(PRELOAD_CHARACTERS, Object.keys(lib.manifest.items), (done, total) => {
+      const pct = Math.round((100 * done) / total);
+      fill.style.width = `${String(pct)}%`;
+      bar.setAttribute('aria-valuenow', String(pct));
+    });
+  }
+  installModelLibrary(lib);
+  bar.remove();
+}
+
+async function boot(): Promise<void> {
   const loading = byId('loading');
   if (!webglAvailable()) {
     loading.classList.add('error');
@@ -65,6 +96,8 @@ function boot(): void {
     Number.isFinite(seedParam) && seedParam > 0 ? Math.floor(seedParam) : Date.now() % 100_000;
   const reducedMotion = pickReducedMotion(params);
   document.body.classList.toggle('reduced-motion', reducedMotion);
+  const quality = pickQuality(params);
+  if (!params.has('procedural')) await preloadModels(loading, quality === 'bas');
   const scene = new Game3D(
     {
       app: byId('app'),
@@ -79,7 +112,7 @@ function boot(): void {
         special: byId('btn-special'),
       },
     },
-    { quality: QUALITY[pickQuality(params)], reducedMotion },
+    { quality: QUALITY[quality], reducedMotion },
     params.has('safe'),
     seed,
     (on) => {
@@ -109,4 +142,4 @@ function boot(): void {
   }
 }
 
-boot();
+void boot();

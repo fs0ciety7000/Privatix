@@ -427,3 +427,22 @@ body.reduced-motion .hud-banner {
     transition: none;
   }
 }
+/* Barre de progression du préchargement des modèles GLB (main3d.ts). */
+#loading .loading-bar {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 46px);
+  width: min(320px, 60vw);
+  height: 6px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+#loading .loading-bar > div {
+  width: 0;
+  height: 100%;
+  background: var(--danger);
+  box-shadow: 0 0 12px var(--danger);
+  transition: width 0.15s;
+}

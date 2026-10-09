@@ -584,13 +584,8 @@ export class Ghosts {
       if (!(o instanceof THREE.Mesh) || o.userData.outline === true || o.userData.noGhost === true)
         return;
       if (!isVisibleChain(o)) return;
-      const geo = o.geometry as THREE.BufferGeometry;
-      const n = geo.getAttribute('normal') as THREE.BufferAttribute | undefined;
-      if (!n) return;
-      const g = new THREE.BufferGeometry();
-      g.setAttribute('position', geo.getAttribute('position').clone());
-      g.setAttribute('normal', n.clone());
-      if (geo.index) g.setIndex(geo.index.clone());
+      const g = bakedGeometry(o, o.geometry as THREE.BufferGeometry);
+      if (!g) return;
       const ng = g.index ? g.toNonIndexed() : g;
       ng.applyMatrix4(o.matrixWorld);
       geos.push(ng);
@@ -630,6 +625,37 @@ export class Ghosts {
       }
     }
   }
+}
+
+/**
+ * Copie en flottants (positions, normales) d'un maillage dans son repère local, pose courante comprise
+ * pour un maillage skinné (GLB : attributs quantifiés par meshopt, squelette animé).
+ */
+function bakedGeometry(o: THREE.Object3D, geo: THREE.BufferGeometry): THREE.BufferGeometry | null {
+  const pos = geo.getAttribute('position') as THREE.BufferAttribute | undefined;
+  const nor = geo.getAttribute('normal') as THREE.BufferAttribute | undefined;
+  if (!pos || !nor) return null;
+  const n = pos.count;
+  const p = new Float32Array(n * 3);
+  const q = new Float32Array(n * 3);
+  const v = new THREE.Vector3();
+  const skinned = o instanceof THREE.SkinnedMesh ? o : null;
+  for (let i = 0; i < n; i += 1) {
+    if (skinned) skinned.getVertexPosition(i, v);
+    else v.fromBufferAttribute(pos, i);
+    p[i * 3] = v.x;
+    p[i * 3 + 1] = v.y;
+    p[i * 3 + 2] = v.z;
+    v.fromBufferAttribute(nor, i);
+    q[i * 3] = v.x;
+    q[i * 3 + 1] = v.y;
+    q[i * 3 + 2] = v.z;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+  g.setAttribute('normal', new THREE.BufferAttribute(q, 3));
+  if (geo.index) g.setIndex(geo.index.clone());
+  return g;
 }
 
 function isVisibleChain(o: THREE.Object3D): boolean {

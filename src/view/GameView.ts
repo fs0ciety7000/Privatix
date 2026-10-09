@@ -9,9 +9,14 @@ import type { RoomLayout } from '@/systems/procedural/RoomLayout';
 import type { DoorState } from '@/sim/RunDirector';
 import { PX_PER_M, pxToM, yawFromAngle } from '@/sim/units';
 import type { Vec2 } from '@/utils/math';
-import type { ActorFrame, EnemyView } from '@/view/actors/ActorView';
-import { createEnemyView } from '@/view/actors/factory';
-import { HeroView } from '@/view/actors/HeroView';
+import type {
+  ActorFrame,
+  ActorFxSink,
+  EnemyView,
+  HeroActorView,
+  HeroEquipment,
+} from '@/view/actors/ActorView';
+import { createEnemyView, createHeroView } from '@/view/actors/factory';
 import type { FloatKind } from '@/view/fx/DamageNumbers';
 import { DamageNumbers } from '@/view/fx/DamageNumbers';
 import { Bursts, Ghosts, Puffs, Rings, Shake, Smear, Sparks } from '@/view/fx/effects';
@@ -78,14 +83,14 @@ function dir(angle: number): THREE.Vector3 {
   return new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));
 }
 
-export class GameView {
+export class GameView implements ActorFxSink {
   public readonly renderer: THREE.WebGLRenderer;
   public readonly scene = new THREE.Scene();
   public readonly camera: THREE.PerspectiveCamera;
   private readonly post: Post;
   private room: RoomDecor;
   private shownLayout: RoomLayout;
-  private readonly hero: HeroView;
+  private readonly hero: HeroActorView;
   private readonly enemies = new Map<number, EnemyView>();
   private readonly hazards: HazardViews;
   private readonly projectiles = new ProjectileView();
@@ -192,8 +197,8 @@ export class GameView {
     );
     for (const s of this.enemySmears) this.scene.add(s.mesh);
 
-    this.hero = new HeroView(settings.reducedMotion);
-    this.scene.add(this.hero.rig.root);
+    this.hero = createHeroView(settings.reducedMotion, this);
+    this.scene.add(this.hero.root);
     this.hazards = new HazardViews(this.scene, settings.reducedMotion);
     this.pickups = new PickupViews(this.scene);
     this.props = new PropViews(this.scene);
@@ -266,6 +271,33 @@ export class GameView {
     if (make)
       return make(layout, this.settings, { scene: this.scene, sun: this.sun, hemi: this.hemi });
     return new RoomView(layout, this.settings.quality, this.settings.reducedMotion);
+  }
+
+  /**
+   * Équipement visible du héros (GLB) pour l'agent loot : `attach(slot, pieceId)` / `detach(slot)`.
+   * `null` si le héros est procédural (repli, `?procedural`).
+   */
+  public get heroEquipment(): HeroEquipment | null {
+    return this.hero.equipment;
+  }
+
+  /** Événements d'animation des modèles GLB (manifeste) : poussière des pas, atterrissages, éclats. */
+  public actorEvent(event: string, at: THREE.Vector3, size: number): void {
+    const k = size / 2;
+    switch (event) {
+      case 'step':
+        this.puffs.dustRing(at, 2, 0.1 * k, 0x50486a, 0.7 * k);
+        break;
+      case 'land':
+        this.puffs.dustRing(at, 10, 0.35 * k, 0x5a5070, 3 * k);
+        break;
+      case 'glint':
+        this.bursts.spawn(at, 0xffffff, 0.9 * k, 0.12, 2.5);
+        break;
+      case 'plates':
+        this.sparks.burst(at, new THREE.Vector3(0, 1, 0), 24, 0xffd27a, 8, 2, 0.5, 0.04, 4);
+        break;
+    }
   }
 
   // ─── Entrées ───────────────────────────────────────────────────────────────
@@ -613,7 +645,7 @@ export class GameView {
       this.ghostAt -= simDt * 1000;
       if (this.ghostAt <= 0) {
         this.ghostAt = 32;
-        this.ghosts.spawn(this.hero.rig.root, 0x6ff3ff, 0.26);
+        this.ghosts.spawn(this.hero.root, 0x6ff3ff, 0.26);
       }
       if (Math.random() < 0.6) {
         const back = dir(world.hero.dashAngle).multiplyScalar(-6);
@@ -677,7 +709,7 @@ export class GameView {
     if (!v) {
       v =
         this.options.enemyView?.(e, this.scene, this.settings.reducedMotion) ??
-        createEnemyView(e.kind, this.scene, this.settings.reducedMotion);
+        createEnemyView(e.kind, this.scene, this.settings.reducedMotion, this);
       this.enemies.set(e.id, v);
     }
     return v;

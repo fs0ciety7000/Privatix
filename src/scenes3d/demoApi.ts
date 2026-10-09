@@ -140,6 +140,16 @@ export function installDemoApi(game: Game3D): void {
       b.prevY = b.y;
       return true;
     },
+    /** Point logique (u) projeté à l'écran (px CSS) : cadrage des gros plans. */
+    screen: (x: number, y: number, height = 1) => game.gameView.toScreen(x, y, height),
+    /** Équipement du héros GLB (agent loot) : pose / retire une pièce du manifeste. */
+    equip: (slot: 'casque' | 'gilet' | 'outil', id: string | null) => {
+      const eq = game.gameView.heroEquipment;
+      if (!eq) return null;
+      if (id === null) eq.detach(slot);
+      else eq.attach(slot, id);
+      return eq.equipped;
+    },
     advance: (ms: number) => {
       game.fastForward(ms);
     },
