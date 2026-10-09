@@ -19,3 +19,6 @@ __pycache__/
 tools/render3d/.venv/
 tools/render3d/*.pkl
 prototypes/*/node_modules
+
+# Worktrees des agents (copies de travail isolées)
+.claude/worktrees/
