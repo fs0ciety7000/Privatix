@@ -61,6 +61,16 @@ Chaque tentative est un **Shift**. Quand le héros tombe, les collègues le ram�
 - **Aucune personne réelle** : ni dirigeant, ni ministre, ni syndicaliste, ni journaliste, ni célébrité, ni sosie reconnaissable. Aucun architecte nommé : on montre la passerelle, jamais son auteur.
 - **Aucune marque réelle** : ni opérateur ferroviaire, ni gestionnaire d'infrastructure, ni marque de café, de capsules ou de logiciel. On détourne : « l'autre boîte », « l'Infra », « capsules premium », « machine à 47 recettes », « le Sondage ».
 - **Aucun parti politique**, aucun slogan ou logo politique réel. La satire vise une logique (la rentabilité contre le service public), pas une formation.
+
+**Exceptions explicitement autorisées par le porteur du projet** (il déclare en détenir les droits ; aucune autre exception sans son accord écrit) :
+1. **« SNCB »**, uniquement dans le nom du dash **« Retard SNCB »**. On ne fait pas apparaître l'opérateur comme personnage ou faction : Privatix reste le seul adversaire.
+2. **« Calatrava »**, surnom de la passerelle (« le Calatrava »). Le surnom est autorisé ; l'architecte lui-même n'apparaît toujours pas comme personnage.
+3. **Elio Di Rupo**, personnalité politique belge et ancien bourgmestre de Mons, en **caricature satirique bon enfant**, comme boss optionnel (§7.5). Cadre obligatoire :
+   - l'humour porte sur son **image publique** (nœud papillon bordeaux, lunettes sans monture, mèche brune, costume bleu marine, attachement à Mons) et sur la **posture politique** (grands discours, inaugurations, rubans) ;
+   - **aucun crime ni délit** attribué, **aucune fausse citation** présentée comme réelle : toutes ses répliques sont des répliques de jeu, inventées et reconnaissables comme telles ;
+   - **pas d'humiliation physique** ni de contenu dégradant ; pas de moquerie de l'âge, de la voix, de l'accent ou de la vie privée ;
+   - **aucun parti, logo ou slogan** affiché : la règle sur les partis politiques reste entière ;
+   - comme tous les ennemis, il est **vaincu, pas tué**, et sa scène de défaite lui laisse une sortie digne.
 - **Pas de moquerie des voyageurs** : ils sont les victimes des « optimisations ». Fatigués, pressés, parfois râleurs, et ils ont toujours raison d'être fatigués. Les voyageurs neutres en run ne sont **jamais** des cibles.
 - **Pas de moquerie des cheminots de terrain**, quel que soit leur métier. Même Jean-Mi est traité avec compassion. Seuls la hiérarchie complice, les consultants et le consortium sont ridicules.
 - **Pas de blague** sur les accidents de personne, les agressions réelles du personnel ou les drames ferroviaires. Les rames qui traversent l'écran ne heurtent que des automates et des consultants qui « partent en réunion ».
@@ -287,6 +297,7 @@ Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le
 | 12 | **La Cour intérieure** | Le côté ouvert | — | Sortie vers le couloir technique et le Shift | Les deux voitures de service garées en épi ; les petits panneaux bleus disent « Réservé Permanence conduite » et « Réservé PACO — bus de remplacement » ; la gaine de ventilation ronronne ; on aperçoit la Passerelle au-dessus des toits |
 | 13 | **La salle des opérations** | La plaque des 7 commandements | — | Lecture | Plaque de quai émaillée récupérée, gravée à la main, vissée au-dessus du coin café |
 | 14 | **La cage d'escalier vitrée** | — | — | Décor : l'escalier vers les étages du BAG, porte du rez-de-chaussée sous scellés Privatix. Au fil des Shifts, des affiches « Phase de transition » se collent sur les vitres, étage par étage. | Ruban violet « Accès réservé — Phase de transition », silhouettes de consultants derrière le verre, bruits de réunion au-dessus |
+| 15 | **La Cour intérieure** | Le coin poubelles | **Le Furet putride** (§6.8) | Rencontre optionnelle depuis le hub (voir §6.8) | Contre un vieux **pignon de brique sombre** à fenêtre murée, au toit abîmé (bâche déchirée qui claque au vent, planche de bois clouée en rustine) : six **conteneurs verts à couvercle jaune** qui débordent, couvercles entrouverts, et un gros **tas de sacs poubelle bleus**. Mousse entre les pavés, papiers qui traînent. Affichette scotchée sur un conteneur : « Collecte externalisée. Passage selon un roulement communiqué la veille. » |
 
 ### 3.3 Les 7 commandements
 
@@ -323,7 +334,7 @@ Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le
 
 | Étape | Déclencheur | État de l'OCC |
 |---|---|---|
-| **Effectif réduit** | Premier retour | Marcel, Jean-Mi, Josiane, Rudy. La moitié des pupitres sont éteints (PACO, RCCA et RTS « non pourvus »), la moitié des lanternes aussi, la voie de garage de la Cour est vide. |
+| **Effectif réduit** | Premier retour | Marcel, Jean-Mi, Josiane, Rudy. La moitié des pupitres sont éteints (PACO, RCCA et RTS « non pourvus »), la moitié des lanternes aussi, les palettes de la Cour attendent le Fantôme. |
 | **L'équipe s'étoffe** | Shifts 2 à 3 | Fatou rallume le pupitre RCCA et installe la salle de repos de nuit (canapé, trousse) ; Béné rallume le pupitre PACO et y visse l'hygiaphone de son guichet. |
 | **Le RTS reprend** | 1er kill du boss 1 | Yasmina et Kevin rallument les deux postes du pupitre RTS : le mur d'écrans affiche enfin tout le réseau, la radio grésille. |
 | **Le Dossier** | Chaque Preuve archivée | Une Preuve de plus photocopiée et punaisée au Tableau de la Salle photocopieuse, reliée par des fils rouges ; la Vieille Dame siffle. |
@@ -346,9 +357,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.1 Marcel « Pépé Rail » Lhoir
 
-- **Poste** : conducteur « officiellement retraité depuis 2011 », toujours là. Fondateur de l'OCC en 1987.
+- **Poste** : conducteur « officiellement retraité depuis 2011 », toujours là. Tient le pupitre de la **Permanence conduite** (gestion des conducteurs) « en attendant un remplaçant » depuis 2011. Fondateur de l'Operation Coffee Center en 1987.
 - **Rôle narratif** : mentor bourru, sentimental en secret ; la **voix de la boucle** (il explique le Sondage, accueille chaque retour, tient le Cahier de revendications).
-- **Service gameplay** : **Tableau des revendications** (talents permanents en PS : Endurance, Métier, Solidarité).
+- **Service gameplay** : **Tableau des revendications** dans la Salle photocopieuse (talents permanents en PS : Endurance, Métier, Solidarité). Logique de poste : la Permanence conduite tient le dossier de carrière de chaque agent ; chaque revendication obtenue y est photocopiée et punaisée.
 - **Personnalité** : raconte des histoires vraies à 70 %, n'a jamais pris un jour de maladie, garde un sifflet de 1974 dans sa poche de poitrine. Il a peur, sans le dire, que l'OCC meure avec lui.
 - **Tic** : « De mon temps… » (la suite change toujours).
 - **Famille d'Avantages acquis** : **D'antan** — critiques, dégâts lourds, second souffle sous faible Énergie (« De mon temps » : +dégâts critiques sous 30 % d'Énergie).
@@ -361,9 +372,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.2 Fatou Ndiaye
 
-- **Poste** : conseillère en prévention (bien-être au travail). Arrive au 3e retour (J3).
+- **Poste** : conseillère en prévention (bien-être au travail), affectée au pupitre **RCCA** (prise en charge des voyageurs à mobilité réduite). Arrive au 3e retour (J3).
 - **Rôle narratif** : la conscience de l'OCC ; celle qui dit que la fatigue est réelle, y compris celle de Jean-Mi.
-- **Service gameplay** : **gardienne de la Vieille Dame** (améliorations des Tasses de Relève en Grains), **infirmerie** et point de réapparition, réinitialisation du Tableau. Reprend le service du café après la trahison.
+- **Service gameplay** : **gardienne de la Vieille Dame** (améliorations des Tasses de Relève en Grains), **salle de repos de nuit** et point de réapparition, soins, réinitialisation du Tableau. Logique de poste : le RCCA organise l'assistance et l'accueil ; c'est elle qui organise aussi le retour du héros tombé. (Règle de ton : on ne fait jamais de blague sur les voyageurs PMR ; l'humour porte sur les procédures.) Reprend le service du café après la trahison.
 - **Personnalité** : douce, scientifique, terrifiante quand on saute la pause légale. Tient des statistiques de Burnout « pour un rapport que personne ne lira, mais qui existera ».
 - **Tic** : « Hydrate-toi. Au café, de préférence. »
 - **Famille** : **Prévention** — soin, bouclier, régénération (« Pause légale » : toutes les 90 s, un bouclier absorbe un coup).
@@ -376,9 +387,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.3 Kevin « Kéké » Lambot — technicien de l'Infra
 
-- **Poste** : technicien caténaires « de l'Infra », l'autre maison qui partage les mêmes rails. Arrive après le 1er kill du boss 1 (avant, il est « en intervention »).
+- **Poste** : technicien caténaires « de l'Infra », l'autre maison qui partage les mêmes rails, détaché au pupitre **RTS, côté matériel roulant** (automotrices, locomotives, voitures, échanges de matériel). Arrive après le 1er kill du boss 1 (avant, il est « en intervention »).
 - **Rôle narratif** : le bricoleur au grand cœur, la rivalité comique entre « les deux boîtes » qui se dissout dans la solidarité.
-- **Service gameplay** : **établi** — Montages de clé (Clé d'origine, Clé recalibrée, Clé de Relève, Clé du Wagon-Bar) en Pièces détachées ; **raccourci** vers la Passerelle.
+- **Service gameplay** : **pupitre RTS (matériel roulant)** — **Montages de clé** (Clé d'origine, Clé recalibrée, Clé de Relève, Clé du Wagon-Bar), montés avec les **Pièces détachées** qu'il récupère sur le matériel roulant réformé ; **échanges de matériel** (Grains ↔ PS ↔ Pièces, taux 3:1). Logique de poste : le RTS compose les rames et gère les échanges de matériel ; Kevin « compose » la clé du Shift comme une rame.
 - **Personnalité** : gentil comme un pain, parle à ses outils, a écrit un rapport de trois pages sur un sous-traitant qui avait posé des câbles de guirlande sur une caténaire. Personne ne l'avait lu, jusqu'à ce que l'OCC le punaise.
 - **Tic** : « C'est pas nous, c'est l'autre boîte. »
 - **Famille** : **Caténaire** — électricité en chaîne (« Coupure de caténaire » : la dernière Frappe déclenche un arc sur 3 cibles).
@@ -391,9 +402,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.4 Bénédicte « Béné » Wautier
 
-- **Poste** : guichetière, dernier guichet ouvert de la gare, fermé par le PHR-2030. Arrive au 4e retour (J4) avec son guichet en pièces détachées.
+- **Poste** : guichetière, dernier guichet ouvert de la gare, fermé par le PHR-2030. Arrive au 4e retour (J4) avec son guichet en pièces détachées et reprend le pupitre **PACO** (bus de remplacement, correspondances), resté vacant : « Un voyageur sans train, c'est un client de guichet. Je connais. »
 - **Rôle narratif** : la mémoire administrative de la résistance ; détient **Le Règlement**, le vieux classeur du statut, clé de la Preuve 3 et de la faiblesse du Fluidifieur.
-- **Service gameplay** : **guichet de l'OCC** — échanges Grains ↔ PS ↔ Pièces « au tarif plein » ; **archives** (Preuves archivées, Notes de service) ; **Le Règlement** (codex des ennemis, fiches remplies avec les kills).
+- **Service gameplay** : **pupitre PACO** — **Recours** (relance des portes ou d'un choix : le « bus de remplacement » du Shift) ; **correspondances** (raccourci vers la Passerelle après J7) ; **archives** (Preuves archivées, Notes de service) ; **Le Règlement** (codex des ennemis, fiches remplies avec les kills).
 - **Personnalité** : pince-sans-rire, a survécu à quatre réformes tarifaires et à une borne qui lui a craché un ticket dans l'œil. Ne s'énerve jamais : elle tamponne.
 - **Tic** : « Numéro suivant ! »
 - **Famille** : **Guichet** — malus aux ennemis, Ralenti, Vulnérable (« File d'attente » : gèle l'ennemi frappé 1,5 s).
@@ -406,9 +417,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.5 Yasmina Benali
 
-- **Poste** : dispatcheuse au Traffic Control. Arrive après le 1er kill du boss 1.
+- **Poste** : régulatrice au pupitre **RTS, côté régulation**. Arrive après le 1er kill du boss 1.
 - **Rôle narratif** : la stratège ; voit tout le réseau, parle en codes ; c'est sa voix à la radio pendant les runs et c'est elle qui diffuse le PHR-2030 dans la vraie fin.
-- **Service gameplay** : **tableau des roulements** (annonce Matin / Après-midi / Nuit), **Plan d'Économies** (difficulté optionnelle), défis.
+- **Service gameplay** : **pupitre RTS (régulation)** — **tableau des roulements** (annonce Matin / Après-midi / Nuit), **Plan d'Économies** (difficulté optionnelle), défis. Logique de poste : la régulation décide quel train part, quand, et dans quelles conditions.
 - **Personnalité** : calme olympien, pense en sillons et en correspondances, ne hausse jamais la voix (« Si je crie, des trains se percutent. »). Elle a vu une slide du PHR-2030 qui la remplace par « une IA prédictive, version bêta, qui pense que Mons est en Bavière ».
 - **Tic** : « Je te mets en voie d'attente. »
 - **Famille** : **Régulation** — mobilité, ralenti du temps, repositionnement (« Voie d'attente » : une bulle de temps ralenti).
@@ -421,9 +432,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.6 Josiane Delhaye
 
-- **Poste** : accompagnatrice de train, 28 ans de maison, menacée par la « suppression des accompagnateurs » (Preuve 2).
+- **Poste** : accompagnatrice de train, 28 ans de maison, affectée au pupitre **DPD** (gestion des accompagnateurs de train), menacée par la « suppression des accompagnateurs » (Preuve 2) : le PHR-2030 supprime à la fois son métier et son pupitre.
 - **Rôle narratif** : la figure maternelle et inflexible ; celle qui envoie le héros chercher la vérité au prologue.
-- **Service gameplay** : **mannequin de formation** (zone d'entraînement, test des Montages, dégâts affichés) ; **casier des Souvenirs** (équiper un Souvenir obtenu).
+- **Service gameplay** : dans la **Cour intérieure** — **mannequin de formation** (zone d'entraînement, test des Montages, dégâts affichés) ; **casiers** (équiper un Souvenir obtenu et, si l'équipement personnel est validé, la dotation du héros). Logique de poste : la DPD affecte les agents de bord, gère leurs casiers et leur dotation.
 - **Personnalité** : a déjà expulsé un sanglier d'un train « avec politesse ». Connaît le prénom de tous les habitués du 7h12. Tricote pendant les pauses ; la bannière de l'OCC, c'est elle.
 - **Tic** : « Ça, c'est pas dans le règlement, mais c'est dans le cœur. »
 - **Famille** : **Contrôle des titres** — défense, renvoi, provocation (« Titre non valable » : la Frappe repousse et renvoie les projectiles).
@@ -436,9 +447,9 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.7 Rudy Courtois
 
-- **Poste** : chef de quai, originellement posté sur la passerelle.
-- **Rôle narratif** : le héraut ; il annonce le début de chaque Shift, le Sondage, et le 7h12 à l'heure dans l'épilogue. Découvre (J7) que les annonces de la gare sont pilotées depuis le BAG.
-- **Service gameplay** : **écran des départs** (statistiques et historique des Shifts présentés comme des trains : `Shift 37 — SUPPRIMÉ — Cause : Consultant Junior`) ; annonces en off pendant les combats.
+- **Poste** : chef de quai, originellement posté sur la passerelle, aujourd'hui au pupitre **TLI & AIT** (annonces en gare).
+- **Rôle narratif** : le héraut ; il annonce le début de chaque Shift, le Sondage, et le 7h12 à l'heure dans l'épilogue. Découvre (J7) que ses propres annonces sont écrasées par une régie installée dans les étages du BAG.
+- **Service gameplay** : **pupitre TLI & AIT et écran des départs** (annonce de début de Shift ; statistiques et historique des Shifts présentés comme des trains : `Shift 37 — SUPPRIMÉ — Cause : Consultant Junior`) ; annonces en off pendant les combats.
 - **Personnalité** : théâtral, ponctuel jusqu'à l'obsession, vit pour son sifflet. Étiquette son yaourt dans le frigo (« Ce yaourt appartient à Rudy. Je sais compter. — Rudy »).
 - **Tic** : « Attention, attention… » avant chaque phrase importante.
 - **Famille** : **Coup de sifflet** — étourdissement, onde de choc (« Fermeture des portes » : le Dash laisse une onde qui étourdit 0,8 s).
@@ -451,7 +462,7 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 ### 4.8 Jean-Michel « Jean-Mi » Dufrasne
 
-- **Poste** : sous-chef de gare, **barista** de l'OCC, gardien du registre.
+- **Poste** : sous-chef de gare, **barista** de l'OCC, gardien du registre. Sans pupitre attitré, il passe de l'un à l'autre : il connaît tous les roulements, ce qui rend sa trahison possible.
 - **Rôle narratif** : la **taupe** (révélée à la 1re victoire), puis, peut-être, le **racheté** (§2.5-2.6).
 - **Service gameplay** : sert la Tasse de Relève quotidienne et offre le **Double Expresso** (bonus de départ cumulable) tant qu'il est là. Après rachat : de retour au comptoir à son niveau 3.
 - **Personnalité** : drôle, serviable, épuisé. Range trop vite son téléphone neuf. Prend des notes « pour le registre ». Absent certains retours (« J'étais en récup »).
@@ -468,7 +479,7 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 - **Poste** : ancien serveur du wagon-bar de la ligne, statut « poste supprimé » depuis 1996.
 - **Rôle narratif** : la mémoire de « ce qui marchait » ; il connaissait le grand-père du héros. Il ne dit jamais s'il est vraiment un fantôme ou simplement quelqu'un que l'administration a oublié de radier.
-- **Service gameplay** : en run, **boutique légendaire du Wagon-Bar** sur la voie 4 (rare, plus fréquente la Nuit). À l'OCC, une fois sa quête terminée : **rénovations** en Grains.
+- **Service gameplay** : en run, **boutique légendaire du Wagon-Bar** sur la voie 4 (rare, plus fréquente la Nuit). À l'OCC, une fois sa quête terminée : **rénovations** en Grains, depuis son comptoir de wagon-bar reconstruit sur les palettes de la Cour intérieure.
 - **Personnalité** : mélancolique, élégant, sent le croque-monsieur, vouvoie tout le monde, y compris le pigeon.
 - **Tic** : « Et pour monsieur-dame, ce sera ? »
 - **Famille** : **aucune** ; il vend des Avantages d'**Acquis historique** (légendaires) toutes familles confondues.
@@ -538,7 +549,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
 
 ### 5.3 Biome 3 — Hall & BAG (« Terminus BAG »)
 
-- **Ambiance** : on redescend dans le hall historique (bois clair, guichets bâchés), puis on passe le portique du **BAG**, le Bâtiment Administratif de la Gare. Open-space, flex office, moquette grise, néons blancs, salles de réunion vitrées, écrans de KPI partout. Musique d'ascenseur qui se déforme en synthé agressif à chaque vague.
+- **Ambiance** : on redescend dans le hall historique (bois clair, guichets bâchés), puis on passe le portique du **BAG** côté hall, à l'opposé de la Cour intérieure où tourne l'OCC. Open-space, flex office, moquette grise, néons blancs, salles de réunion vitrées, écrans de KPI partout. Musique d'ascenseur qui se déforme en synthé agressif à chaque vague.
 - **Histoire du lieu** : le hall a vu passer des générations de navetteurs ; le guichet de Béné y était le dernier ouvert. Le BAG abritait autrefois les services de la gare ; Privatix en a pris les étages, étage par étage, « en phase de transition ». Au 3e : le bureau du Directeur, et derrière une double porte capitonnée, la **Salle du Conseil**, reliée au système d'annonces de toute la gare.
 - **Ce que Privatix y a fait** : remplacé les guichets par le « **Corner Expérience Voyageur** » (un écran tactile et une plante en plastique), installé des portiques à badge qui bipent rouge pour toute chasuble orange, une **Hôtesse holographique**, une salle de sieste « Power Nap Zone » fermée à clé depuis son inauguration, et une salle de réunion « **Synergie** » où une réunion dure depuis 2019.
 - **Étages** : RDC (Hall, Accueil) → 1er (Open-space) → 2e (salle Synergie, **Archives** où dort la Preuve 3) → **Palier du 3e** (repos, machine à café « premium » à 30 Tickets le Gobelet) → Bureau du Directeur et Salle du Conseil.
