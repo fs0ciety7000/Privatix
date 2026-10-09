@@ -219,7 +219,7 @@ export class GameView implements ActorFxSink {
     this.pickups = new PickupViews(this.scene);
     this.props = new PropViews(this.scene);
     this.loot = new LootViews(this.scene, settings.reducedMotion, (p, v, c) => {
-      this.glows.emit(p, v, c, 0.9 + Math.random() * 0.6, 0.12 + Math.random() * 0.1, {
+      this.glows.emit(p, v, c, 0.9 + Math.random() * 0.6, 0.07 + Math.random() * 0.06, {
         drag: 0.6,
         alpha: 0.9,
       });
@@ -608,8 +608,8 @@ export class GameView implements ActorFxSink {
     if (rank >= 3) this.bursts.spawn(at(x, y, 1.2), color, 1.4 + rank * 0.5, 0.25, 3);
     if (rank >= 4) {
       const gold = PATRIMOINE_GOLD;
-      this.rings.spawn(land, gold, 0.4, 4.2, 0.9, 0.18, 0.15, 3);
-      this.bursts.spawn(at(x, y, 2.4), gold, 4.5, 0.4, 4);
+      this.rings.spawn(land, gold, 0.4, 3.2, 0.9, 0.18, 0.12, 2);
+      this.bursts.spawn(at(x, y, 2.4), gold, 3, 0.35, 2.5);
       for (let i = 0; i < 40; i += 1) {
         const a = Math.random() * Math.PI * 2;
         const sp = 1 + Math.random() * 3;

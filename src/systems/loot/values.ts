@@ -103,7 +103,8 @@ export function formatStat(statId: GearStat, value: number): string {
     case 'px':
       return `${sign}${fr(abs)} px`;
     case 'ms':
-      return `${sign}${fr(abs / 1000)} s`;
+      // Sous la seconde (fenêtre du dash parfait) : en ms, sinon « +0 s » ne dirait rien.
+      return abs < 1000 ? `${sign}${fr(abs, 0)} ms` : `${sign}${fr(abs / 1000)} s`;
     case 'perS':
       return `${sign}${fr(abs)}/s`;
   }

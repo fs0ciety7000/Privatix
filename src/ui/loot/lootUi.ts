@@ -155,7 +155,7 @@ export function itemCard(
 
 /** Pourcentage signé lisible (« +6 % », « −3 % », « = »). */
 export function signedPct(v: number): string {
-  if (Math.abs(v) < 0.005) return '=';
+  if (Math.abs(v) < 0.005) return '0 %';
   const s = v > 0 ? '+' : '−';
   return `${s}${String(Math.round(Math.abs(v) * 100))} %`;
 }

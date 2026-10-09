@@ -184,14 +184,14 @@ export class LootViews {
     const color = new THREE.Color(rarityHex(rarity));
     const haloMat = new THREE.MeshBasicMaterial({
       map: radialTexture(),
-      color: color.clone().multiplyScalar(rarity === 'reforme' ? 0.55 : 1.3),
+      color: color.clone().multiplyScalar(rarity === 'reforme' ? 0.45 : 0.75),
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
     mats.push(haloMat);
     const halo = new THREE.Mesh(this.haloGeo, haloMat);
-    const haloSize = rarity === 'patrimoine' ? 2.2 : rarity === 'hors-serie' ? 1.6 : 1.2;
+    const haloSize = rarity === 'patrimoine' ? 1.6 : rarity === 'hors-serie' ? 1.3 : 1.0;
     halo.scale.set(haloSize, 1, haloSize);
     halo.position.y = 0.03;
     halo.renderOrder = 3;
@@ -202,26 +202,28 @@ export class LootViews {
     if (px > 0) {
       const tint = rarity === 'patrimoine' ? new THREE.Color(PATRIMOINE_GOLD) : color;
       const beamMat = new THREE.MeshBasicMaterial({
-        color: tint.clone().multiplyScalar(rarity === 'patrimoine' ? 2.2 : 1.6),
+        color: tint.clone().multiplyScalar(rarity === 'patrimoine' ? 0.42 : 0.6),
         alphaMap: beamTexture(),
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
-        side: THREE.DoubleSide,
+        side: THREE.FrontSide,
         fog: false,
       });
       mats.push(beamMat);
-      const h = pxToM(px) * (rarity === 'patrimoine' ? 2.4 : 1.6);
-      const w = rarity === 'patrimoine' ? 0.42 : rarity === 'hors-serie' ? 0.26 : 0.2;
+      const h = pxToM(px) * (rarity === 'patrimoine' ? 1.5 : 1.4);
+      const w = rarity === 'patrimoine' ? 0.2 : rarity === 'hors-serie' ? 0.14 : 0.11;
       beam = new THREE.Mesh(this.beamGeo, beamMat);
       beam.scale.set(w, h, w);
       beam.renderOrder = 5;
       root.add(beam);
       const coreMat = beamMat.clone();
-      coreMat.color = new THREE.Color(0xffffff).lerp(tint, 0.35).multiplyScalar(1.8);
+      coreMat.color = new THREE.Color(0xffffff)
+        .lerp(tint, 0.45)
+        .multiplyScalar(rarity === 'patrimoine' ? 0.5 : 0.7);
       mats.push(coreMat);
       core = new THREE.Mesh(this.beamGeo, coreMat);
-      core.scale.set(w * 0.28, h * 1.05, w * 0.28);
+      core.scale.set(w * 0.3, h * 1.02, w * 0.3);
       core.renderOrder = 5;
       root.add(core);
     }
@@ -273,7 +275,7 @@ export class LootViews {
     if (landed && (it.rarity === 'patrimoine' || it.rarity === 'hors-serie')) {
       it.dust -= dt;
       if (it.dust <= 0) {
-        it.dust = it.rarity === 'patrimoine' ? 0.05 : 0.16;
+        it.dust = it.rarity === 'patrimoine' ? 0.09 : 0.2;
         const a = Math.random() * Math.PI * 2;
         const r = Math.random() * 0.35;
         this.tmp.set(
