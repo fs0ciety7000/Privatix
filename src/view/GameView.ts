@@ -47,6 +47,10 @@ const CAM_LOOK_BACK = 2.5;
 const FOV_LANDSCAPE = 30;
 const FOV_PORTRAIT = 42;
 const ZOOM_PUNCH_DEG = 2;
+/** Mode capture : intensité de l'enseigne néon de la salle (lisible sous le bloom). */
+const CAPTURE_NEON = 0.5;
+/** Mode capture : force du bloom (0,9 en jeu). */
+const CAPTURE_BLOOM = 0.6;
 
 /** Lumières globales de la scène, prêtées au décor d'une salle (ambiance du hub selon le roulement). */
 export interface SceneLights {
@@ -168,6 +172,7 @@ export class GameView implements ActorFxSink {
       antialias: false,
       powerPreference: 'high-performance',
       stencil: false,
+      preserveDrawingBuffer: settings.capture !== undefined,
     });
     this.renderer.info.autoReset = false;
     this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, this.prCap));
@@ -205,7 +210,8 @@ export class GameView implements ActorFxSink {
     this.sparks = new Sparks(Math.round(900 * pk));
     this.puffs = new Puffs(Math.round(400 * pk), false);
     this.glows = new Puffs(Math.round(300 * pk), true);
-    this.bursts.intensityScale = settings.reducedMotion ? 0.45 : 1;
+    // Mode capture : éclairs d'impact un peu retenus (lisibilité des silhouettes, ralentis compris).
+    this.bursts.intensityScale = settings.reducedMotion ? 0.45 : settings.capture ? 0.7 : 1;
     this.shake.amplitude = settings.reducedMotion ? 0.5 : 1;
     this.scene.add(
       this.sparks.mesh,
@@ -240,6 +246,8 @@ export class GameView implements ActorFxSink {
     const spawn = world.hero.body;
     this.camTarget.set(pxToM(spawn.x), 0, pxToM(spawn.y));
     this.post = new Post(this.renderer, this.scene, this.camera, innerWidth, innerHeight, q, safe);
+    // Mode capture : bloom un peu retenu pour que les silhouettes restent lisibles dans les impacts.
+    if (settings.capture && this.post.bloom) this.post.bloom.strength = CAPTURE_BLOOM;
     this.resize(innerWidth, innerHeight);
     this.lastSimTime = world.now();
   }
@@ -300,10 +308,12 @@ export class GameView implements ActorFxSink {
     const make = this.options.room;
     if (make)
       return make(layout, this.settings, { scene: this.scene, sun: this.sun, hemi: this.hemi });
-    return new RoomView(layout, this.settings.quality, this.settings.reducedMotion, {
+    const room = new RoomView(layout, this.settings.quality, this.settings.reducedMotion, {
       biome: this.world.director.biome,
       lights: { scene: this.scene, sun: this.sun, hemi: this.hemi },
     });
+    if (this.settings.capture) room.steadyNeon(CAPTURE_NEON);
+    return room;
   }
 
   /**
@@ -353,7 +363,7 @@ export class GameView implements ActorFxSink {
     this.renderer.setSize(w, h);
     this.camera.aspect = w / h;
     // En portrait / écran étroit : on recule pour garder la lisibilité.
-    this.camera.fov = w / h < 1.2 ? FOV_PORTRAIT : FOV_LANDSCAPE;
+    this.camera.fov = this.baseFov();
     this.camera.updateProjectionMatrix();
     this.post.setSize(w, h, pr);
     outlineUniforms.uRes.value.set(w * pr, h * pr);
@@ -1086,13 +1096,26 @@ export class GameView implements ActorFxSink {
     this.camTarget.lerp(target, 1 - Math.exp(-5 * realDt));
     const off = this.shake.offset;
     this.camera.position.copy(this.camTarget).add(CAM_OFFSET).add(off);
-    this.camera.lookAt(this.camTarget.x + off.x * 0.5, 0.6, this.camTarget.z - CAM_LOOK_BACK);
-    const baseFov = this.camera.aspect < 1.2 ? FOV_PORTRAIT : FOV_LANDSCAPE;
+    const lookBack = this.settings.capture?.lookBack ?? CAM_LOOK_BACK;
+    this.camera.lookAt(this.camTarget.x + off.x * 0.5, 0.6, this.camTarget.z - lookBack);
+    const baseFov = this.baseFov();
     const fov = baseFov - ZOOM_PUNCH_DEG * Math.sin(this.zoomPunch * Math.PI);
     if (Math.abs(fov - this.camera.fov) > 1e-3) {
       this.camera.fov = fov;
       this.camera.updateProjectionMatrix();
     }
+  }
+
+  /** Champ vertical de base : paysage, portrait, ou cadrage imposé par le mode capture. */
+  private baseFov(): number {
+    return (
+      this.settings.capture?.fov ?? (this.camera.aspect < 1.2 ? FOV_PORTRAIT : FOV_LANDSCAPE)
+    );
+  }
+
+  /** Canvas WebGL (mode capture : lu image par image). */
+  public get canvas(): HTMLCanvasElement {
+    return this.renderer.domElement;
   }
 
   public render(realDt: number): void {

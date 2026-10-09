@@ -89,6 +89,13 @@ export class Game3D {
   private settings: ViewSettings;
   /** Forçage des axes et de la visée (captures automatisées, outil de démonstration en dev). */
   public override: { moveX?: number; moveY?: number; aim?: number } = {};
+  /**
+   * Mode capture du trailer (`?trailer`, dev) : seuls les bandeaux « de cinéma » (phases de boss)
+   * s'affichent ; le reste du HUD est masqué par la feuille de style (`body.trailer`).
+   */
+  public trailer = false;
+  /** Mode capture : étiquettes des événements de la sim depuis la dernière image (calage au montage). */
+  public captureEvents: string[] = [];
   /** Raccourcis de test (`?cheat`, dev uniquement). */
   private readonly cheats: boolean;
   private cheatQueue: string[] = [];
@@ -311,7 +318,7 @@ export class Game3D {
     this.menus.showPauseButton(this.input.touch);
     this.menus.fade(1, 0);
     this.menus.fade(0, 400);
-    this.hud.announce('QUAI 3 · PRISE DE SERVICE', 2.2, 'gold');
+    this.banner('QUAI 3 · PRISE DE SERVICE', 2.2, 'gold');
   }
 
   private openPause(): void {
@@ -368,7 +375,7 @@ export class Game3D {
     if (!changed) return;
     if (next.reducedMotion !== this.settings.reducedMotion)
       this.onReducedMotion(next.reducedMotion);
-    this.settings = { quality, reducedMotion: next.reducedMotion };
+    this.settings = { ...this.settings, quality, reducedMotion: next.reducedMotion };
     this.world.reducedMotion = next.reducedMotion;
     this.menus.reducedMotion = next.reducedMotion;
     this.hubUi.reducedMotion = next.reducedMotion;
@@ -538,6 +545,7 @@ export class Game3D {
   /** Après les pas : événements (vue, bandeaux, fondus), fenêtres de choix, fin du Shift. */
   private afterStep(realMs: number): void {
     const events = this.world.drainEvents();
+    if (this.trailer) for (const e of events) this.captureEvents.push(eventTag(e));
     this.view.applyEvents(events);
     this.hearEvents(events);
     this.announce(events);
@@ -600,6 +608,17 @@ export class Game3D {
     }
   }
 
+  /**
+   * Mode capture : une image du trailer, entièrement sur l'horloge de la simulation (un pas fixe,
+   * puis rendu, HUD et bandeaux avec le même pas). Aucune dépendance au temps réel.
+   */
+  public captureFrame(draw = true): void {
+    const dt = SIM_DT_MS / 1000;
+    this.fastForward(SIM_DT_MS);
+    if (draw) this.view.render(dt);
+    if (this.phase === 'run') this.updateOverlay(dt);
+  }
+
   /** Angle de visée : stick droit, puis aide tactile, puis souris (rayon sur le sol), sinon l'actuel. */
   private aimFor(raw: RawInput): number {
     const hero = this.world.hero;
@@ -628,18 +647,18 @@ export class Game3D {
     for (const e of events) {
       switch (e.type) {
         case 'wave':
-          if (e.index === 1) this.hud.announce(`VAGUE 1 / ${String(e.count)}`, 1.4, 'danger');
-          else this.hud.announce(`VAGUE ${String(e.index)} / ${String(e.count)}`, 1.4, 'danger');
+          if (e.index === 1) this.banner(`VAGUE 1 / ${String(e.count)}`, 1.4, 'danger');
+          else this.banner(`VAGUE ${String(e.index)} / ${String(e.count)}`, 1.4, 'danger');
           break;
         case 'roomCleared':
-          this.hud.announce('SALLE NETTOYÉE · PORTES OUVERTES', 2, 'gold');
+          this.banner('SALLE NETTOYÉE · PORTES OUVERTES', 2, 'gold');
           break;
         case 'notice':
           if (this.phase === 'run')
-            this.hud.announce(e.text, 2.4, e.tone === 'hero' ? 'info' : e.tone);
+            this.banner(e.text, 2.4, e.tone === 'hero' ? 'info' : e.tone);
           break;
         case 'bossPhase':
-          this.hud.announce(e.title, 2.4, 'danger');
+          this.banner(e.title, 2.4, 'danger', true);
           break;
         case 'bossIntro':
           if (this.phase === 'run')
@@ -656,7 +675,7 @@ export class Game3D {
           break;
         case 'biomeEntered':
           if (this.phase === 'run' && e.biome > 0)
-            this.hud.announce(`${e.name.toUpperCase()} · ${e.tagline}`, 3, 'gold');
+            this.banner(`${e.name.toUpperCase()} · ${e.tagline}`, 3, 'gold');
           break;
         case 'doorTaken':
           this.menus.fade(1, FADE_OUT_MS);
@@ -665,7 +684,7 @@ export class Game3D {
           if (this.playing) this.menus.fade(0, FADE_IN_MS);
           break;
         case 'heroDied':
-          this.hud.announce('FIN DE SERVICE', 2.4, 'danger');
+          this.banner('FIN DE SERVICE', 2.4, 'danger');
           break;
         case 'shiftEnded':
           this.menus.clearCaptions();
@@ -682,6 +701,17 @@ export class Game3D {
     }
   }
 
+  /** Bandeau central ; en mode capture, seuls les bandeaux `cinematic` passent. */
+  private banner(
+    text: string,
+    seconds: number,
+    tone: 'info' | 'danger' | 'gold',
+    cinematic = false,
+  ): void {
+    if (this.trailer && !cinematic) return;
+    this.hud.announce(text, seconds, tone);
+  }
+
   /**
    * Mise en scène d'un drop (narrative_level.md § 3.1) : un Patrimoine tombé dans une salle vide
    * déclenche un ralenti (jamais en Réduction des mouvements) et l'annonce de Rudy ; le Hors-série a
@@ -695,8 +725,8 @@ export class Game3D {
         const s = LOOT_PICKUP.PATRIMOINE_SLOWMO;
         this.world.time.slowmo(s.scale, s.ms, s.easeMs);
       }
-      this.hud.announce(`RUDY : « OBJET DU PATRIMOINE SUR LA VOIE » · ${name}`, 3, 'gold');
-    } else if (rank === top - 1) this.hud.announce(`HORS-SÉRIE · ${name}`, 2, 'info');
+      this.banner(`RUDY : « OBJET DU PATRIMOINE SUR LA VOIE » · ${name}`, 3, 'gold');
+    } else if (rank === top - 1) this.banner(`HORS-SÉRIE · ${name}`, 2, 'info');
   }
 
   /** Carte de comparaison de l'objet au sol le plus proche (ou `null`). */
@@ -860,6 +890,23 @@ export class Game3D {
     this.menus.dispose();
     this.view.dispose();
     this.audio.dispose();
+  }
+}
+
+/** Étiquette courte d'un événement de la sim (`type` ou `type:nom`), pour le journal du tournage. */
+function eventTag(e: SimEvent): string {
+  switch (e.type) {
+    case 'swing':
+      return `swing:${String(e.combo)}`;
+    case 'special':
+      return `special:${e.kind}`;
+    case 'enemyKilled':
+      return `enemyKilled:${e.kind ?? ''}`;
+    case 'bossLine':
+    case 'text':
+      return `${e.type}:${e.text.slice(0, 24)}`;
+    default:
+      return 'name' in e && typeof e.name === 'string' ? `${e.type}:${e.name}` : e.type;
   }
 }
 

@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privatix · cartons du trailer</title>
+    <!--
+      Cartons et carte de fin du trailer, au design system « Néon & Ballast »
+      (docs/DESIGN_SYSTEM.md). Servie par Vite (dev), capturée image par image à 60 i/s sur fond
+      transparent par tools/trailer/cards.mjs :
+        /tools/trailer/cards.html?format=16x9&card=C1
+      `window.cards.seek(i)` positionne la timeline GSAP sur l'image i ; `window.cards.frames` = durée.
+      Polices : Inter Black / SemiBold auto-hébergées (sous-ensemble latin, licence OFL), en repli
+      d'Arial Black et de Segoe UI, pour un rendu identique sur toute machine de tournage.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Trailer Display';
+        src: url('./fonts/Inter-Black.woff2') format('woff2');
+        font-weight: 900;
+      }
+      @font-face {
+        font-family: 'Trailer Text';
+        src: url('./fonts/Inter-SemiBold.woff2') format('woff2');
+        font-weight: 600;
+      }
+      :root {
+        --px-ink: #14101a;
+        --px-hero: #ff7a1a;
+        --px-hero-hi: #ffb04a;
+        --px-danger: #ff3ea5;
+        --px-rim: #6ff3ff;
+        --px-night: #0a0818;
+        --px-panel: rgba(16, 11, 30, 0.82);
+        --px-text: #ffffff;
+        --px-text-soft: #dcd8ef;
+        --px-copper: #ff8c2b;
+        --font-display: 'Trailer Display', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+        --font-text: 'Trailer Text', 'Segoe UI', system-ui, Roboto, Arial, sans-serif;
+        --tracking-wide: 0.22em;
+        --tracking-title: 0.18em;
+        --glow-magenta: 0 0 14px #ff3ea5, 0 0 2px #ff3ea5, 0 2px 0 #000;
+        --glow-orange: 0 0 10px #ff8a1a, 0 3px 0 #14101a;
+        --sh-text: 0 2px 0 #14101a, 0 0 18px rgba(10, 8, 24, 0.9);
+        /* Unité : 1 % de la hauteur du format (réglée par format plus bas). */
+        --u: 10.8px;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        overflow: hidden;
+      }
+      body.opaque {
+        background: var(--px-night);
+      }
+      .stage {
+        position: absolute;
+        inset: 0;
+      }
+      /* Bande des cartons : entre 18 % et 40 % de la hauteur, centrée (zone sûre des 4 formats). */
+      .band {
+        position: absolute;
+        left: 10%;
+        right: 10%;
+        top: 18%;
+        height: 22%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .plate {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: calc(var(--u) * 0.9);
+        padding: calc(var(--u) * 1.6) calc(var(--u) * 3);
+        background: var(--px-panel);
+        border: 2px solid var(--px-ink);
+        outline: 2px solid var(--px-rim);
+        outline-offset: -8px;
+        box-shadow: 0 4px 0 var(--px-ink);
+        border-radius: 6px;
+      }
+      .line {
+        font: 900 var(--fs, calc(var(--u) * 6)) / 1.05 var(--font-display);
+        letter-spacing: var(--tracking-wide);
+        margin-right: calc(-1 * var(--tracking-wide));
+        color: var(--px-text);
+        text-transform: uppercase;
+        white-space: nowrap;
+        text-shadow: 0 3px 0 var(--px-ink);
+      }
+      .hero-word {
+        color: var(--px-hero);
+        text-shadow: var(--glow-orange);
+      }
+      .copper-word {
+        color: var(--px-copper);
+        text-shadow:
+          0 0 12px rgba(255, 140, 43, 0.85),
+          0 3px 0 var(--px-ink);
+      }
+      .words {
+        display: flex;
+        gap: 0.6em;
+      }
+      .words span {
+        display: inline-block;
+      }
+
+      /* ─── Carte de fin ─── */
+      .end {
+        position: absolute;
+        inset: 0;
+      }
+      .end > * {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+      }
+      .logo {
+        font: 900 calc(var(--u) * 15) / 1 var(--font-display);
+        letter-spacing: var(--tracking-title);
+        margin-right: calc(-1 * var(--tracking-title));
+        color: #fff6fb;
+        text-shadow:
+          0 0 calc(var(--u) * 1.4) var(--px-danger),
+          0 0 calc(var(--u) * 4) var(--px-danger),
+          0 0 2px var(--px-danger),
+          0 calc(var(--u) * 0.4) 0 #000;
+        -webkit-text-stroke: calc(var(--u) * 0.18) var(--px-danger);
+        white-space: nowrap;
+      }
+      .tagline {
+        font: 600 calc(var(--u) * 2.9) / 1.4 var(--font-text);
+        /* « 3x8 » mot pour mot : pas de substitution contextuelle x → × d’Inter. */
+        font-feature-settings: "calt" 0;
+        color: var(--px-text-soft);
+        text-shadow: var(--sh-text);
+        width: 78%;
+        text-wrap: balance;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: calc(var(--u) * 1.4);
+        padding: calc(var(--u) * 1.6) calc(var(--u) * 3.2);
+        border: 2px solid var(--px-ink);
+        border-radius: 10px;
+        background: radial-gradient(
+          120% 160% at 30% 20%,
+          var(--px-hero-hi) 0%,
+          var(--px-hero) 45%,
+          #b4400f 100%
+        );
+        color: var(--px-ink);
+        box-shadow:
+          0 0 0 2px var(--px-ink),
+          0 0 0 4px var(--px-hero),
+          0 6px 0 4px var(--px-ink);
+        white-space: nowrap;
+      }
+      .btn svg {
+        width: calc(var(--u) * 3.4);
+        height: calc(var(--u) * 3.4);
+        flex: none;
+      }
+      .btn b {
+        display: block;
+        font: 900 calc(var(--u) * 3.1) / 1.1 var(--font-display);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: left;
+      }
+      .btn small {
+        display: block;
+        font: 600 calc(var(--u) * 2.2) / 1.3 var(--font-text);
+        text-align: left;
+      }
+      .studio {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: calc(var(--u) * 0.6);
+      }
+      .studio img {
+        height: calc(var(--u) * 9);
+        width: auto;
+        image-rendering: auto;
+        filter: drop-shadow(0 0 calc(var(--u) * 1) rgba(255, 122, 26, 0.45));
+      }
+      .studio span {
+        font: 900 calc(var(--u) * 1.7) / 1 var(--font-display);
+        letter-spacing: var(--tracking-wide);
+        margin-right: calc(-1 * var(--tracking-wide));
+        color: var(--px-text-soft);
+        text-transform: uppercase;
+        text-shadow: var(--sh-text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage"></div>
+    <script type="module">
+      import { gsap } from 'gsap';
+
+      const params = new URLSearchParams(location.search);
+      const format = params.get('format') ?? '16x9';
+      const card = params.get('card') ?? 'C1';
+      const FPS = 60;
+      const EASE = { ballast: 'expo.out', coup: 'back.out(1.7)', rail: 'power2.inOut', neon: 'steps(1)' };
+      const H = innerHeight;
+      const W = innerWidth;
+      document.documentElement.style.setProperty('--u', `${H / 100}px`);
+      const stage = document.getElementById('stage');
+
+      /**
+       * Cartons (SCRIPT.md § 4.1) : lignes, mot accentué (`*mot*` orange héros, `_mot_` cuivre),
+       * durée (s). Jamais de magenta dans un carton.
+       */
+      const CARDS = {
+        C1: { lines: ['6 h du matin.', 'Le rail est à vendre.'], dur: 2.0 },
+        C2: { lines: ['Ils ont un plan.', 'On a *un café*.'], dur: 1.6 },
+        C3: { words: ['Combo.', 'Dash.', 'Café.'], beats: [0, 0.5, 1.1], dur: 1.7 },
+        C4: { lines: ['Chaque Shift,', 'un _Patrimoine_.'], dur: 1.2 },
+        C5: { lines: ['Quatre cent douze slides.', '*Une seule question.*'], dur: 1.6 },
+        C6: { lines: ['Un train,', 'ça se fait à plusieurs.'], dur: 2.4 },
+      };
+
+      const html = (s) =>
+        s
+          .replace(/\*(.+?)\*/g, '<span class="hero-word">$1</span>')
+          .replace(/_(.+?)_/g, '<span class="copper-word">$1</span>');
+
+      /** Taille du texte : ≈ 6 % de la hauteur (4 % en 9:16), réduite si la ligne dépasse 80 % de la largeur. */
+      function fit(plate, lines) {
+        const base = format === '9x16' ? H * 0.04 : format === '1x1' ? H * 0.052 : H * 0.06;
+        plate.style.setProperty('--fs', `${base}px`);
+        const max = W * 0.8;
+        const widest = Math.max(...lines.map((l) => l.getBoundingClientRect().width));
+        const padding = plate.getBoundingClientRect().width - widest;
+        if (widest + padding > max) plate.style.setProperty('--fs', `${(base * (max - padding)) / widest}px`);
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      let duration = 2;
+
+      if (card === 'END') {
+        duration = 5;
+        buildEnd();
+      } else {
+        const c = CARDS[card];
+        duration = c.dur;
+        const band = document.createElement('div');
+        band.className = 'band';
+        const plate = document.createElement('div');
+        plate.className = 'plate';
+        band.appendChild(plate);
+        stage.appendChild(band);
+        if (c.words) {
+          const row = document.createElement('div');
+          row.className = 'line words';
+          const spans = c.words.map((w) => {
+            const s = document.createElement('span');
+            s.textContent = w;
+            row.appendChild(s);
+            return s;
+          });
+          plate.appendChild(row);
+          await document.fonts.ready;
+          fit(plate, [row]);
+          // Trois mots sur trois temps ; le dernier passe à l'orange héros (le café).
+          tl.from(plate, { opacity: 0, scale: 0.92, duration: 0.2, ease: EASE.coup }, 0);
+          spans.forEach((s, i) => {
+            tl.from(s, { opacity: 0, y: H * 0.03, scale: 1.25, duration: 0.25, ease: EASE.coup }, c.beats[i]);
+          });
+          tl.set(spans[2], { color: '#ff7a1a', textShadow: '0 0 10px #ff8a1a, 0 3px 0 #14101a' }, c.beats[2]);
+        } else {
+          const lines = c.lines.map((l) => {
+            const d = document.createElement('div');
+            d.className = 'line';
+            d.innerHTML = html(l);
+            plate.appendChild(d);
+            return d;
+          });
+          await document.fonts.ready;
+          fit(plate, lines);
+          tl.from(plate, { opacity: 0, scaleX: 0.9, duration: 0.18, ease: EASE.coup }, 0);
+          lines.forEach((d, i) => {
+            tl.from(d, { opacity: 0, y: H * 0.025, duration: 0.25, ease: EASE.coup }, 0.05 + i * 0.16);
+          });
+        }
+        // Sortie : fondu de 150 ms.
+        tl.to(plate, { opacity: 0, duration: 0.15, ease: 'none' }, duration - 0.15);
+      }
+
+      /** Carte de fin (SCRIPT.md § 4.2), disposition par format. */
+      function buildEnd() {
+        const end = document.createElement('div');
+        end.className = 'end';
+        stage.appendChild(end);
+        const L = {
+          '16x9': { logo: 24, tag: 40, btn: 60, studio: 79, logoSize: 15 },
+          '3x2': { logo: 24, tag: 40, btn: 60, studio: 79, logoSize: 14 },
+          '1x1': { logo: 23, tag: 38, btn: 61, studio: 80, logoSize: 12 },
+          '9x16': { logo: 22, tag: 33, btn: 62, studio: 82, logoSize: 8 },
+        }[format];
+        const logo = document.createElement('div');
+        logo.className = 'logo';
+        logo.textContent = 'PRIVATIX';
+        logo.style.fontSize = `${(L.logoSize * H) / 100}px`;
+        logo.style.top = `${L.logo}%`;
+        logo.style.transform = 'translate(-50%, -50%)';
+        const tag = document.createElement('p');
+        tag.className = 'tagline';
+        tag.style.top = `${L.tag}%`;
+        tag.style.margin = '0';
+        // Accroche officielle (GDD § 1), mot pour mot.
+        tag.textContent =
+          'Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio contre une armée de consultants qui veulent libéraliser et privatiser le rail !';
+        if (format === '1x1') tag.style.fontSize = `${H * 0.029 * 0.92}px`;
+        if (format === '9x16') {
+          tag.style.fontSize = `${H * 0.024}px`;
+          tag.style.width = '84%';
+        }
+        const btn = document.createElement('div');
+        btn.className = 'btn';
+        btn.style.top = `${L.btn}%`;
+        btn.style.transform = 'translate(-50%, -50%)';
+        btn.innerHTML =
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg><span><b>Jouer dans le navigateur</b><small>privatix.fs0ciety.org</small></span>';
+        if (format === '9x16') btn.style.fontSize = '0.8em';
+        const studio = document.createElement('div');
+        studio.className = 'studio';
+        studio.style.top = `${L.studio}%`;
+        studio.style.transform = 'translate(-50%, -50%)';
+        studio.innerHTML =
+          '<img src="/site/src/assets/img/occ-mons-studios.webp" alt="" /><span>OCC MONS Studios</span>';
+        end.append(logo, tag, btn, studio);
+        if (format === '9x16') {
+          // En 9:16 la carte est plus étroite : bouton et logotype réduits pour tenir dans 84 % de la largeur.
+          btn.querySelector('b').style.fontSize = `${H * 0.019}px`;
+          btn.querySelector('small').style.fontSize = `${H * 0.014}px`;
+        }
+        // Logotype : le néon s'allume (neonIgnite, une seule fois : 3 coupures en 0,4 s).
+        const ignite = [0.15, 1, 0.3, 1, 0.55, 1];
+        tl.set(logo, { opacity: 0 }, 0);
+        ignite.forEach((o, i) => tl.to(logo, { opacity: o, duration: 0.4 / ignite.length, ease: EASE.neon }, (i * 0.4) / ignite.length));
+        tl.from(tag, { opacity: 0, y: H * 0.024, duration: 0.6, ease: EASE.ballast }, 0.6);
+        tl.from(btn, { opacity: 0, scale: 0.94, duration: 0.3, ease: EASE.coup }, 2.0);
+        tl.from(studio, { opacity: 0, duration: 0.3, ease: 'none' }, 3.0);
+        tl.to({}, { duration: 0.01 }, 4.99);
+      }
+
+      await document.fonts.ready;
+      await Promise.all([...document.images].map((i) => (i.complete ? null : i.decode().catch(() => null))));
+      window.cards = {
+        frames: Math.round(duration * FPS),
+        seek: (i) => {
+          tl.seek(i / FPS, false);
+          return true;
+        },
+      };
+    </script>
+  </body>
+</html>

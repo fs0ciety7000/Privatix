@@ -86,4 +86,30 @@ export interface ViewSettings {
    * punch ni tremblement de télégraphe, secousses de caméra réduites de moitié.
    */
   readonly reducedMotion: boolean;
+  /** Mode capture (`?trailer`) : tampon de dessin conservé et cadrage de la caméra par format. */
+  readonly capture?: CaptureFraming;
+}
+
+/**
+ * Cadrage de la caméra pour le mode capture du trailer (`?trailer&aspect=16x9|3x2|1x1|9x16`) :
+ * champ vertical (degrés) et décalage du point visé derrière le héros (m, 2,5 en jeu).
+ */
+export interface CaptureFraming {
+  readonly fov: number;
+  readonly lookBack: number;
+}
+
+/** Cadrages par format : en 1:1 et 9:16 on resserre et on recentre le héros. */
+export const CAPTURE_FRAMING = {
+  '16x9': { fov: 25, lookBack: 2.2 },
+  '3x2': { fov: 32, lookBack: 2.3 },
+  '1x1': { fov: 36, lookBack: 1.8 },
+  '9x16': { fov: 50, lookBack: 1.2 },
+} as const satisfies Record<string, CaptureFraming>;
+
+/** Cadrage du mode capture pour `?aspect=` (16:9 par défaut). */
+export function captureFraming(aspect: string | null): CaptureFraming {
+  return aspect !== null && aspect in CAPTURE_FRAMING
+    ? CAPTURE_FRAMING[aspect as keyof typeof CAPTURE_FRAMING]
+    : CAPTURE_FRAMING['16x9'];
 }
