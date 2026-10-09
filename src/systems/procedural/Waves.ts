@@ -13,6 +13,10 @@ export interface WaveContext {
   readonly budgetMult: number;
   /** Drones ajoutés à chaque vague à partir de r = 2 (Matin : brouillard, +1). */
   readonly extraDronesPerWave: number;
+  /** Élite de la salle Élite (défaut : Manager KPI ; biome 1 : parfois le Furet putride). */
+  readonly eliteKind?: EnemyKind;
+  /** Parts des archétypes (défaut : biome 1). */
+  readonly shares?: { readonly drone: number; readonly borne: number };
 }
 
 /** Budget de menace (GDD § 3.6). */
@@ -31,12 +35,10 @@ function fillWave(budget: number, ctx: WaveContext, rng: Rng): EnemyKind[] {
   for (let guard = 0; left >= ENEMY_STATS.consultant.cost && guard < 64; guard += 1) {
     const roll = rng();
     let kind: EnemyKind = 'consultant';
-    if (roll < SCALING.SHARE_DRONE) kind = 'drone';
-    else if (
-      roll < SCALING.SHARE_DRONE + SCALING.SHARE_BORNE &&
-      ctx.r >= BORNE.MIN_ROOM &&
-      bornes < BORNE.MAX_PER_WAVE
-    )
+    const drone = ctx.shares?.drone ?? SCALING.SHARE_DRONE;
+    const borne = ctx.shares?.borne ?? SCALING.SHARE_BORNE;
+    if (roll < drone) kind = 'drone';
+    else if (roll < drone + borne && ctx.r >= BORNE.MIN_ROOM && bornes < BORNE.MAX_PER_WAVE)
       kind = 'borne';
     if (ENEMY_STATS[kind].cost > left) kind = 'consultant';
     if (kind === 'borne') bornes += 1;
@@ -53,11 +55,12 @@ function fillWave(budget: number, ctx: WaveContext, rng: Rng): EnemyKind[] {
 export function wavesFor(ctx: WaveContext, rng: Rng): Wave[] {
   let budget = budgetFor(ctx);
   const split = ctx.r <= SCALING.TWO_WAVES_UNTIL_ROOM ? SCALING.WAVE_SPLIT_2 : SCALING.WAVE_SPLIT_3;
-  if (ctx.elite) budget -= ENEMY_STATS.manager.cost;
+  const eliteKind = ctx.eliteKind ?? 'manager';
+  if (ctx.elite) budget -= ENEMY_STATS[eliteKind].cost;
   const waves = split.map((share) => fillWave(Math.max(1, Math.round(budget * share)), ctx, rng));
   if (ctx.elite) {
     const second = waves[1] ?? [];
-    second.unshift('manager');
+    second.unshift(eliteKind);
     waves[1] = second;
   }
   return waves;

@@ -2116,6 +2116,11 @@ export const KILL_DROP_CHANCE: Readonly<Record<LootEnemyKind, number>> = {
   /** Élites et boss : butin par `dropsForSource('elite' | 'boss')`, pas par cette table. */
   manager: 0,
   auditeur: 0,
+  furet: 0,
+  fluidifieur: 0,
+  discosaure: 0,
+  dirupo: 0,
+  vanderslide: 0,
 };
 
 /** Nombre d'objets par source (§ 5.2 et GDD § 9 bis.5). */

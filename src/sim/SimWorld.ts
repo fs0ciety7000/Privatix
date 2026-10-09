@@ -49,6 +49,8 @@ export interface SimWorld {
   readonly tokens: AttackTokens;
   readonly arena: Arena;
   readonly time: TimeControl;
+  /** Réduction des mouvements (accessibilité) : coupe les patterns stroboscopiques (lasers du Discosaure). */
+  readonly reducedMotion: boolean;
   now(): number;
   livingEnemies(): readonly EnemySim[];
   damageHero(amount: number, source: HitSource): boolean;

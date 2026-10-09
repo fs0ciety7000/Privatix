@@ -1,5 +1,5 @@
 import type { EnemyKind, EnemyStats } from '@/config/balance';
-import { ENEMY_NAMES, ENEMY_RULES, ENEMY_STATS, HERO } from '@/config/balance';
+import { ENEMY_NAMES, ENEMY_RULES, ENEMY_STATS, HEAVY_KINDS, HERO } from '@/config/balance';
 import type { TokenKind } from '@/systems/combat/AttackTokens';
 import type { EnemyScale } from '@/systems/combat/damage';
 import { incoming } from '@/systems/combat/damage';
@@ -69,6 +69,22 @@ export type Telegraph =
       readonly radius: number;
     };
 
+/** Coup du héros vu par un ennemi (ruban à couper, bulles à crever). */
+export interface HeroSwingInfo {
+  readonly x: number;
+  readonly y: number;
+  readonly angle: number;
+  readonly reach: number;
+  readonly arcDeg: number;
+  readonly finisher: boolean;
+  readonly dashAttack: boolean;
+}
+
+/** Boss ou ennemi majeur à phases (barre de boss, musique). */
+export interface PhasedEnemy {
+  readonly phase: number;
+}
+
 let nextId = 1;
 
 /**
@@ -134,7 +150,12 @@ export abstract class EnemySim {
 
   /** Élite ou boss : étourdissements réduits. */
   public get isHeavy(): boolean {
-    return this.kind === 'manager' || this.kind === 'auditeur';
+    return HEAVY_KINDS.includes(this.kind);
+  }
+
+  /** Projeté par un coup (le vide de la Passerelle élimine les non-élites projetés). */
+  public get knockedBack(): boolean {
+    return this.kbLeft > 0;
   }
 
   public get hurtCircle(): Circle {
@@ -316,6 +337,12 @@ export abstract class EnemySim {
     return { dealt: amount, killed: false };
   }
 
+  /** Outil de test : lance tout de suite une attaque précise (télégraphe compris). */
+  public debugAttack(attack: string): void {
+    if (this.isDead) return;
+    this.fsm.request({ to: 'windup', payload: { attack } });
+  }
+
   /** Outil de test : élimine l'ennemi sans passer par le combat. */
   public debugKill(): void {
     if (this.isHittable()) this.applyDamage(this.hp, false, true);
@@ -352,6 +379,41 @@ export abstract class EnemySim {
       name: this.displayName,
       knockbackPx,
     });
+  }
+
+  /** Vulnérable : +`bonus` de dégâts subis pendant `ms` (fenêtres de punition). */
+  protected makeVulnerable(bonus: number, ms: number): void {
+    this.vulnBonus = Math.max(this.vulnLeft > 0 ? this.vulnBonus : 0, bonus);
+    this.vulnLeft = Math.max(this.vulnLeft, ms);
+  }
+
+  /** Étourdit l'ennemi (fenêtre de punition), même s'il est en super-armure. */
+  protected stun(ms: number): void {
+    if (this.isDead) return;
+    this.telegraph = null;
+    this.fsm.request({ to: 'stagger', payload: { ms } });
+  }
+
+  /** Étourdi (état `stagger`) : la vue joue sa pose d'étourdissement. */
+  public get stunned(): boolean {
+    return this.fsm.is('stagger');
+  }
+
+  // ─── Réactions aux actions du héros (sifflet, préavis, coups, dash parfait) ─
+
+  /** Sifflet ou Préavis lâché (toute la salle l'entend), après les dégâts de la zone. */
+  public onHeroSpecial(_kind: 'whistle' | 'preavis', _x: number, _y: number, _r: number): void {
+    // Optionnel.
+  }
+
+  /** Début des frames actives d'un coup du héros. */
+  public onHeroSwing(_swing: HeroSwingInfo): void {
+    // Optionnel.
+  }
+
+  /** Dash parfait du héros. */
+  public onPerfectDash(_x: number, _y: number): void {
+    // Optionnel.
   }
 
   // ─── Hooks des sous-classes ────────────────────────────────────────────────

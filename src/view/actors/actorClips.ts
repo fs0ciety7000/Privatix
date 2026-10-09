@@ -49,6 +49,10 @@ export interface EnemyClipMap {
   readonly rushes?: Readonly<Record<string, Rush>>;
   /** Largeur de la barre de vie (m). */
   readonly barW: number;
+  /** Échelle du modèle (placeholder : un modèle existant grandi pour un boss sans GLB propre). */
+  readonly scale?: number;
+  /** Sortie digne au lieu de la dissolution (Elio Di Rupo : vaincu, jamais tué). */
+  readonly exit?: 'walk';
 }
 
 export const ENEMY_CLIPS: Readonly<Record<EnemyKind, EnemyClipMap>> = {
@@ -118,5 +122,88 @@ export const ENEMY_CLIPS: Readonly<Record<EnemyKind, EnemyClipMap>> = {
     },
     rushes: { kpi: { windup: 'attack-stamp', reach: 0.4, clip: 'walk', timeScale: 2.4 } },
     barW: 2.2,
+  },
+  furet: {
+    model: 'furet',
+    idle: 'idle',
+    move: 'run',
+    moveRef: 3.2,
+    spawn: 'spawn',
+    hurt: 'hurt',
+    stagger: 'war-dance',
+    death: 'death',
+    attacks: { bite: 'attack-bite', stink: 'attack-spray' },
+    rushes: { pounce: { windup: 'attack-bite', reach: 0.6, clip: 'run', timeScale: 2.6 } },
+    barW: 1.2,
+  },
+  fluidifieur: {
+    model: 'fluidifieur',
+    idle: 'idle',
+    move: 'glide',
+    moveRef: 2.2,
+    spawn: 'spawn',
+    hurt: 'hurt',
+    stagger: 'hurt',
+    death: 'defeat',
+    attacks: {
+      binder: 'attack-binder',
+      slabs: 'attack-binder',
+      swap: 'attack-spin',
+      org: 'attack-spin',
+    },
+    rushes: { glide: { windup: 'attack-spin', reach: 0.5, clip: 'glide', timeScale: 2.4 } },
+    barW: 1.4,
+  },
+  discosaure: {
+    model: 'discosaure',
+    idle: 'idle',
+    move: 'walk',
+    moveRef: 2.0,
+    spawn: 'spawn',
+    hurt: 'hurt',
+    stagger: 'stagger',
+    death: 'death',
+    attacks: { stomp: 'attack-stomp' },
+    rushes: { charge: { windup: 'charge-windup', reach: 1, clip: 'charge', timeScale: 1 } },
+    barW: 2.6,
+  },
+  dirupo: {
+    model: 'dirupo',
+    idle: 'idle',
+    move: 'walk',
+    moveRef: 1.7,
+    spawn: 'intro',
+    hurt: 'hurt',
+    stagger: 'stagger',
+    death: 'defeat',
+    attacks: {
+      bowtie: 'attack-bowtie',
+      speech: 'smile-flash',
+      promises: 'smile-flash',
+      ballots: 'hair-swipe',
+      motions: 'hair-swipe',
+      scissors: 'attack-inauguration',
+    },
+    barW: 1.8,
+    exit: 'walk',
+  },
+  vanderslide: {
+    // Version de travail : pas encore de GLB propre, le costume du Manager KPI grandi.
+    model: 'manager',
+    idle: 'idle',
+    move: 'walk',
+    moveRef: 1.5,
+    spawn: 'spawn',
+    hurt: 'hurt',
+    stagger: 'hurt',
+    death: 'death',
+    attacks: {
+      bullets: 'attack-report',
+      report: 'attack-report',
+      charts: 'attack-chrono',
+      copy: 'attack-chrono',
+    },
+    barW: 1.8,
+    scale: 1.4,
   },
 };

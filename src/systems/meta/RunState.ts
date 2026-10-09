@@ -38,6 +38,10 @@ export interface RunState {
   shopSeen: boolean;
   tresorSeen: boolean;
   elites: number;
+  /** Salle gardée traversée dans le biome en cours (3D, biomes 2 et 3). */
+  gardeeSeen: boolean;
+  /** Boss vaincus pendant ce Shift (3D : un par biome). */
+  bossesDefeated: number;
   previousType: RoomType | null;
   /** Ennemi qui a porté le dernier coup (écran des départs : « cause : Consultant Junior »). */
   lastHitBy: string | null;
@@ -72,6 +76,8 @@ export function createRun(meta: MetaState, shiftId: ShiftId, seed: number): RunS
     shopSeen: false,
     tresorSeen: false,
     elites: 0,
+    gardeeSeen: false,
+    bossesDefeated: 0,
     previousType: null,
     lastHitBy: null,
     burnout,
@@ -127,7 +133,20 @@ export function enterRoom(run: RunState, room: number, type: RoomType): void {
   if (type === 'boutique') run.shopSeen = true;
   if (type === 'tresor') run.tresorSeen = true;
   if (type === 'elite') run.elites += 1;
+  if (type === 'gardee') run.gardeeSeen = true;
   run.burnout.setFloor(hoursElapsed(run), run.shift.floorMult);
+}
+
+/**
+ * Changement de biome (3D) : les garanties de génération (Friterie, Élite, café, Salle gardée) valent
+ * par biome (GDD § 3.4) ; le reste du Shift (Avantages, Gobelets, Tickets, Burnout) continue.
+ */
+export function enterBiome(run: RunState): void {
+  run.shopSeen = false;
+  run.tresorSeen = false;
+  run.elites = 0;
+  run.gardeeSeen = false;
+  run.previousType = null;
 }
 
 export type ShiftEnd = 'victoire' | 'mort';
@@ -142,6 +161,8 @@ export interface ShiftResult {
   readonly kills: number;
   readonly avantages: number;
   readonly cause: string | null;
+  /** Boss vaincus pendant le Shift (absent : version Phaser, déduit de l'issue). */
+  readonly bosses?: number;
 }
 
 /** Bilan de fin de Shift : prime d'ancienneté à la mort, prime de fin de service en cas de victoire. */
@@ -162,6 +183,7 @@ export function finishRun(run: RunState, end: ShiftEnd): ShiftResult {
     kills: run.kills,
     avantages: run.avantages.length,
     cause: end === 'mort' ? run.lastHitBy : null,
+    ...(run.bossesDefeated > 0 ? { bosses: run.bossesDefeated } : {}),
   };
 }
 
@@ -175,7 +197,9 @@ export function applyResult(meta: MetaState, result: ShiftResult): MetaState {
     stats: {
       shifts: s.shifts + 1,
       deaths: s.deaths + (result.end === 'mort' ? 1 : 0),
-      bossKills: s.bossKills + (result.end === 'victoire' && result.room >= BOSS_ROOM ? 1 : 0),
+      bossKills:
+        s.bossKills +
+        (result.bosses ?? (result.end === 'victoire' && result.room >= BOSS_ROOM ? 1 : 0)),
       bestRoom: Math.max(s.bestRoom, result.room),
       totalKills: s.totalKills + result.kills,
     },

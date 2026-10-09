@@ -3,7 +3,37 @@
  * la vue : elle remplit une file que la vue vide à chaque frame. Coordonnées en unités logiques.
  */
 
+import type { EnemyKind } from '@/config/balance';
+
 export type TextTone = 'info' | 'danger' | 'gold' | 'hero';
+
+/**
+ * Effets visuels et sonores ponctuels des nouveaux ennemis et des biomes (la vue et l'audio les
+ * traduisent ; la sim n'en dépend pas).
+ */
+export type FxName =
+  | 'promiseKept'
+  | 'promiseBroken'
+  | 'ribbonCut'
+  | 'ribbonUp'
+  | 'bowtieThrow'
+  | 'burrow'
+  | 'emerge'
+  | 'stink'
+  | 'facets'
+  | 'discoBlackout'
+  | 'discoFreeze'
+  | 'sequins'
+  | 'confetti'
+  | 'gust'
+  | 'gustWarn'
+  | 'heroFell'
+  | 'enemyFell'
+  | 'pageTaken'
+  | 'reglement'
+  | 'swap'
+  | 'concertation'
+  | 'finalBlow';
 
 export type SimEvent =
   /** Début des frames actives d'un coup du héros (traînée, poussière). */
@@ -32,6 +62,8 @@ export type SimEvent =
   | {
       readonly type: 'enemyKilled';
       readonly id: number;
+      /** Type de l'ennemi (absent dans les tests anciens) : effets de mort propres (confettis, paillettes). */
+      readonly kind?: EnemyKind;
       readonly x: number;
       readonly y: number;
       readonly angle: number;
@@ -88,7 +120,7 @@ export type SimEvent =
   /** Impact d'une zone de danger (fin du télégraphe), passage d'une rame. */
   | {
       readonly type: 'hazardImpact';
-      readonly kind: 'circle' | 'ring' | 'band' | 'line';
+      readonly kind: 'circle' | 'square' | 'ring' | 'band' | 'line' | 'beams' | 'cloud';
       readonly x: number;
       readonly y: number;
       readonly radius: number;
@@ -112,6 +144,41 @@ export type SimEvent =
   | { readonly type: 'roomEntered'; readonly room: number; readonly roomType: string }
   /** Le héros franchit une porte ouverte (la scène lance le fondu). */
   | { readonly type: 'doorTaken'; readonly room: number }
+  /** Effet ponctuel (nouveaux ennemis, biomes). */
+  | {
+      readonly type: 'fx';
+      readonly name: FxName;
+      readonly x: number;
+      readonly y: number;
+      /** Direction (rafale) ou intensité, selon l'effet. */
+      readonly value?: number;
+    }
+  /**
+   * Entrée en scène d'un boss ou d'un ennemi majeur : nom, titre, réplique. `fictive` : réplique
+   * inventée pour le jeu (personne réelle : l'UI l'indique, LORE § 1.4).
+   */
+  | {
+      readonly type: 'bossIntro';
+      readonly kind: EnemyKind;
+      readonly name: string;
+      readonly title: string;
+      readonly line: string;
+      readonly fictive: boolean;
+    }
+  /** Réplique d'un personnage (bandeau de sous-titre ; `fictive` comme ci-dessus). */
+  | {
+      readonly type: 'bossLine';
+      readonly speaker: string;
+      readonly text: string;
+      readonly fictive: boolean;
+    }
+  /** Nouveau biome (bandeau de titre, ambiance). */
+  | {
+      readonly type: 'biomeEntered';
+      readonly biome: number;
+      readonly name: string;
+      readonly tagline: string;
+    }
   /** Fin du Shift (mort ou victoire) : la scène affiche l'écran des départs. */
   | { readonly type: 'shiftEnded'; readonly end: 'victoire' | 'mort' };
 

@@ -54,7 +54,9 @@ function pickReducedMotion(params: URLSearchParams): boolean {
 }
 
 /** Personnages préchargés avant le titre (un Shift complet) ; les autres se chargent à la demande. */
-const PRELOAD_CHARACTERS = ['hero', 'consultant', 'borne', 'drone', 'manager', 'auditeur'];
+const PRELOAD_CHARACTERS = ['hero', 'consultant', 'borne', 'drone', 'manager', 'auditeur', 'furet'];
+/** Ennemis majeurs et boss des biomes 2 et 3 : chargés en arrière-plan après le titre. */
+const LATER_CHARACTERS = ['fluidifieur', 'dirupo', 'discosaure'];
 
 /**
  * Précharge les GLB (public/models) avec une barre de progression dans l'écran de chargement. Un
@@ -80,6 +82,7 @@ async function preloadModels(loading: HTMLElement, lowDetail: boolean): Promise<
   }
   installModelLibrary(lib);
   bar.remove();
+  if (lib) for (const name of LATER_CHARACTERS) void lib.loadCharacter(name);
 }
 
 async function boot(): Promise<void> {

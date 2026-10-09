@@ -419,7 +419,7 @@ describe('boucle du Shift (RunDirector)', () => {
     expect(w.director.result?.psEarned).toBeGreaterThan(0);
   });
 
-  it('salle du boss : il apparaît, sa mort donne la victoire', () => {
+  it('salle du boss : il apparaît, sa mort ouvre la porte du biome suivant', () => {
     const w = new World({ seed: 6 });
     w.director.godMode = true;
     w.director.cheatBoss();
@@ -428,8 +428,11 @@ describe('boucle du Shift (RunDirector)', () => {
     expect(w.director.boss).not.toBeNull();
     w.director.cheatKillAll();
     const events = play(w, 3000);
-    expect(events.some((e) => e.type === 'shiftEnded' && e.end === 'victoire')).toBe(true);
-    expect(w.director.result?.end).toBe('victoire');
+    expect(events.some((e) => e.type === 'shiftEnded')).toBe(false);
+    expect(w.director.cleared).toBe(true);
+    expect(w.run.bossesDefeated).toBe(1);
+    const next = w.director.doors.filter((d) => d.choice).map((d) => d.choice);
+    expect(next).toEqual([{ room: BOSS_ROOM + 1, type: 'combat', reward: 'avantage' }]);
     expect(w.run.energy).toBe(maxEnergy(w.run));
   });
 

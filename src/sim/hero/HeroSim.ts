@@ -309,6 +309,11 @@ export class HeroSim {
     this.fsm.update(dtMs);
   }
 
+  /** Burnout venu de l'environnement (nuage de puanteur…) ; un gain bloque la récupération passive. */
+  public addBurnout(points: number): void {
+    this.handleBurnout(this.world.run.burnout.add(points, points > 0));
+  }
+
   private handleBurnout(events: readonly BurnoutEvent[]): void {
     const run = this.world.run;
     for (const e of events) {
