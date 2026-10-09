@@ -1,0 +1,25 @@
+# Dépendances et builds locaux (réinstallés/reconstruits dans l'image)
+node_modules
+dist
+coverage
+.vite
+
+# VCS et outillage
+.git
+.gitignore
+.github
+.vscode
+.idea
+*.log
+npm-debug.log*
+
+# Secrets et environnements locaux
+.env
+.env.*
+
+# Fichiers sans utilité pour le build
+Dockerfile
+.dockerignore
+docs
+*.md
+assets-src
