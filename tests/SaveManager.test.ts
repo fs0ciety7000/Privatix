@@ -67,6 +67,31 @@ describe('SaveManager', () => {
     expect(saves.load('slot-1')).toEqual({ ok: false, reason: 'corrupted' });
   });
 
+  it('migre une sauvegarde v1 (jalon M1) vers v2 avec les valeurs par défaut', () => {
+    const storage = memoryStorage();
+    const v2 = createInitialGameState('Léa');
+    const {
+      allies: _a,
+      inventory: _i,
+      gobelets: _g,
+      gobeletsShiftIndex: _gs,
+      coffeeBeans: _c,
+      defeatedEncounters: _d,
+      ...rest
+    } = v2;
+    const { xp: _xp, ...playerV1 } = v2.player;
+    const v1 = { ...rest, version: 1, player: playerV1, moral: 33 };
+    storage.setItem('p.slot-1', JSON.stringify({ savedAt: 'x', state: v1 }));
+    const loaded = new SaveManager(storage, 'p').load('slot-1');
+    expect(loaded.ok).toBe(true);
+    if (!loaded.ok) return;
+    expect(loaded.data.state.version).toBe(2);
+    expect(loaded.data.state.moral).toBe(33);
+    expect(loaded.data.state.player.xp).toBe(0);
+    expect(loaded.data.state.inventory).toEqual(v2.inventory);
+    expect(loaded.data.state.defeatedEncounters).toEqual({});
+  });
+
   it('ne lève jamais quand le stockage est absent ou bloqué', () => {
     expect(new SaveManager(null).save('auto', createInitialGameState())).toBe(false);
     expect(new SaveManager(null).load('auto')).toEqual({

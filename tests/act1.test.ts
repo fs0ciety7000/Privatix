@@ -133,8 +133,13 @@ describe('Acte I de bout en bout', () => {
     expect(tokens.filter((t) => !known.has(t))).toEqual([]);
   });
 
-  it('affiche des victoires simulées pour les 4 rencontres', () => {
-    expect(log.notices.filter((n) => n.startsWith('Victoire'))).toHaveLength(4);
+  it('joue les 4 combats scénarisés, dans l’ordre du récit', () => {
+    expect(log.battles).toEqual([
+      'borne-rebelle',
+      'consultant-junior',
+      'post-it-vivant',
+      'audit-manager-kpi',
+    ]);
   });
 });
 

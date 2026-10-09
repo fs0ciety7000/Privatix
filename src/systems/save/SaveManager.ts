@@ -1,3 +1,4 @@
+import { STARTING_INVENTORY } from '@/data/combat';
 import type { GameState } from '@/systems/GameState';
 import { isGameState } from '@/systems/GameState';
 
@@ -23,7 +24,7 @@ export type LoadResult =
     };
 
 /** Version courante du GameState sauvegardé. */
-export const CURRENT_SAVE_VERSION = 1;
+export const CURRENT_SAVE_VERSION = 2;
 
 type Raw = Record<string, unknown>;
 
@@ -31,7 +32,20 @@ type Raw = Record<string, unknown>;
  * Migrations `vN → vN+1` appliquées au chargement, dans l'ordre. Vide tant que le format n'a pas changé :
  * toute modification incompatible du GameState incrémente `version` et ajoute une entrée ici (+ test).
  */
-export const MIGRATIONS: Readonly<Record<number, (state: Raw) => Raw>> = {};
+export const MIGRATIONS: Readonly<Record<number, (state: Raw) => Raw>> = {
+  /** v1 → v2 (jalon M2) : XP, collègues, inventaire de départ, Gobelets, Grains, ennemis vaincus. */
+  1: (state) => ({
+    ...state,
+    version: 2,
+    player: { ...(isRecord(state.player) ? state.player : {}), xp: 0 },
+    allies: {},
+    inventory: { ...STARTING_INVENTORY },
+    gobelets: 0,
+    gobeletsShiftIndex: null,
+    coffeeBeans: 0,
+    defeatedEncounters: {},
+  }),
+};
 
 function isRecord(value: unknown): value is Raw {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

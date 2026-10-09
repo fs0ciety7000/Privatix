@@ -8,6 +8,8 @@ import { evaluateCondition } from '@/systems/story/Conditions';
  * Le reste du jeu ne dépend que de cette interface : remplacer la source par Tiled ne touche pas les scènes.
  */
 export interface PlacedMarker {
+  /** Clé stable « carte:caractère » (ennemis vaincus, sauvegardes). */
+  readonly key: string;
   readonly char: string;
   readonly tileX: number;
   readonly tileY: number;
@@ -51,7 +53,7 @@ export function buildWorldMap(def: MapDefinition): WorldMap {
           `Carte ${def.id} : caractère inconnu « ${char} » en (${String(x)}, ${String(y)})`,
         );
       line.push(def.floor);
-      markers.push({ char, tileX: x, tileY: y, def: marker });
+      markers.push({ key: `${def.id}:${char}`, char, tileX: x, tileY: y, def: marker });
     }
     terrain.push(line);
   });
@@ -75,10 +77,19 @@ export function findSpawn(
   return null;
 }
 
-/** Un marqueur PNJ ou objet est-il présent dans l'état actuel de l'histoire ? */
+/** Délai de réapparition par défaut d'un groupe d'ennemis vaincu (minutes in-game). */
+export const DEFAULT_RESPAWN_MINUTES = 120;
+
+/** Un marqueur PNJ, objet ou groupe d'ennemis est-il présent dans l'état actuel du jeu ? */
 export function isMarkerVisible(marker: PlacedMarker, ctx: ConditionContext): boolean {
   const def = marker.def;
   if (def.kind === 'npc' || def.kind === 'prop') return evaluateCondition(def.visibleWhen, ctx);
+  if (def.kind === 'encounter') {
+    if (!evaluateCondition(def.visibleWhen, ctx)) return false;
+    const defeatedAt = ctx.defeated?.[marker.key];
+    if (defeatedAt === undefined || ctx.now === undefined) return true;
+    return ctx.now - defeatedAt >= (def.respawnMinutes ?? DEFAULT_RESPAWN_MINUTES);
+  }
   return true;
 }
 
@@ -96,11 +107,15 @@ export function isBlocked(
   if (BLOCKING_TERRAINS.has(terrainAt(map, tileX, tileY))) return true;
   return markersAt(map, tileX, tileY).some((m) => {
     if (!isMarkerVisible(m, ctx)) return false;
-    return m.def.kind === 'npc' || (m.def.kind === 'prop' && m.def.blocking);
+    return (
+      m.def.kind === 'npc' ||
+      m.def.kind === 'encounter' ||
+      (m.def.kind === 'prop' && m.def.blocking)
+    );
   });
 }
 
-/** PNJ ou objet visible avec lequel on peut interagir sur cette case. */
+/** PNJ, objet ou groupe d'ennemis visible avec lequel on peut interagir sur cette case. */
 export function interactableAt(
   map: WorldMap,
   tileX: number,
@@ -109,7 +124,9 @@ export function interactableAt(
 ): PlacedMarker | null {
   return (
     markersAt(map, tileX, tileY).find(
-      (m) => (m.def.kind === 'npc' || m.def.kind === 'prop') && isMarkerVisible(m, ctx),
+      (m) =>
+        (m.def.kind === 'npc' || m.def.kind === 'prop' || m.def.kind === 'encounter') &&
+        isMarkerVisible(m, ctx),
     ) ?? null
   );
 }

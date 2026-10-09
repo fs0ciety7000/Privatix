@@ -1,8 +1,10 @@
 import { BALANCE } from '@/config/balance';
 import type { MachineLevel } from '@/config/balance';
+import { STARTING_INVENTORY } from '@/data/combat';
+import type { ItemId } from '@/data/combat';
 import { MAPS } from '@/data/maps';
 import { NEW_GAME_START } from '@/data/story';
-import type { DrinkId, Facing, MapId, StoryFlag } from '@/data/types';
+import type { AllyId, DrinkId, Facing, MapId, StoryFlag } from '@/data/types';
 import type { FatigueClockState, TimeModifiers } from '@/systems/time/FatigueClock';
 import { createFatigueClock, shiftIndexAt } from '@/systems/time/FatigueClock';
 import { buildWorldMap, findSpawn } from '@/systems/world/WorldMap';
@@ -14,7 +16,10 @@ import { buildWorldMap, findSpawn } from '@/systems/world/WorldMap';
  */
 export interface PlayerState {
   readonly name: string;
+  /** Niveau du héros, partagé par les collègues (GDD § 7.1). */
   readonly level: number;
+  /** XP accumulée vers le niveau suivant. */
+  readonly xp: number;
   readonly hp: number;
   readonly maxHp: number;
   readonly energy: number;
@@ -34,9 +39,15 @@ export interface DrinkState {
   readonly shiftIndex: number;
 }
 
+/** PV et PE conservés d'un combat à l'autre pour un collègue (absent = au maximum). */
+export interface AllyVitals {
+  readonly hp: number;
+  readonly pe: number;
+}
+
 export interface GameState {
   /** Version du schéma de sauvegarde, à incrémenter à chaque changement incompatible (voir SaveManager). */
-  readonly version: 1;
+  readonly version: 2;
   /** Horloge 3x8 et Fatigue d'équipe (partagée par tous les personnages). */
   readonly time: FatigueClockState;
   readonly player: PlayerState;
@@ -48,6 +59,17 @@ export interface GameState {
   readonly tickets: number;
   readonly drink: DrinkState | null;
   readonly occMachineLevel: MachineLevel;
+  readonly allies: Readonly<Partial<Record<AllyId, AllyVitals>>>;
+  /** Inventaire commun (consommables), max 9 par objet. */
+  readonly inventory: Readonly<Partial<Record<ItemId, number>>>;
+  /** Gobelets de l'OCC (action « Café » en combat), remplis à la Vieille Dame une fois par pause. */
+  readonly gobelets: number;
+  /** Pause du dernier remplissage des Gobelets (index de `shiftIndexAt`), ou null. */
+  readonly gobeletsShiftIndex: number | null;
+  /** Grains de café (amélioration de la machine de l'OCC). */
+  readonly coffeeBeans: number;
+  /** Groupes d'ennemis visibles vaincus : clé de marqueur → minute in-game de la victoire. */
+  readonly defeatedEncounters: Readonly<Record<string, number>>;
 }
 
 /** Position d'un point d'arrivée nommé ; lève une erreur si la carte ne le contient pas. */
@@ -59,11 +81,12 @@ export function spawnPosition(mapId: MapId, spawn: string): PositionState {
 
 export function createInitialGameState(heroName = 'Léon'): GameState {
   return {
-    version: 1,
+    version: 2,
     time: createFatigueClock(1),
     player: {
       name: heroName,
       level: 1,
+      xp: 0,
       hp: BALANCE.progression.HERO.hp[0],
       maxHp: BALANCE.progression.HERO.hp[0],
       energy: BALANCE.progression.HERO.pe[0],
@@ -75,6 +98,12 @@ export function createInitialGameState(heroName = 'Léon'): GameState {
     tickets: 0,
     drink: null,
     occMachineLevel: 1,
+    allies: {},
+    inventory: { ...STARTING_INVENTORY },
+    gobelets: 0,
+    gobeletsShiftIndex: null,
+    coffeeBeans: 0,
+    defeatedEncounters: {},
   };
 }
 
@@ -120,7 +149,7 @@ function isPlayer(v: unknown): boolean {
   return (
     isRecord(v) &&
     typeof v.name === 'string' &&
-    ['level', 'hp', 'maxHp', 'energy', 'maxEnergy'].every((k) => isNumber(v[k]))
+    ['level', 'xp', 'hp', 'maxHp', 'energy', 'maxEnergy'].every((k) => isNumber(v[k]))
   );
 }
 
@@ -142,8 +171,12 @@ export function isGameState(value: unknown): value is GameState {
   const drinkOk =
     drink === null ||
     (isRecord(drink) && typeof drink.id === 'string' && isNumber(drink.shiftIndex));
+  const numberRecord = (v: unknown): boolean => isRecord(v) && Object.values(v).every(isNumber);
+  const alliesOk =
+    isRecord(value.allies) &&
+    Object.values(value.allies).every((a) => isRecord(a) && isNumber(a.hp) && isNumber(a.pe));
   return (
-    value.version === 1 &&
+    value.version === 2 &&
     isTime(value.time) &&
     isPlayer(value.player) &&
     isPosition(value.position) &&
@@ -152,6 +185,12 @@ export function isGameState(value: unknown): value is GameState {
     isNumber(value.moral) &&
     isNumber(value.tickets) &&
     drinkOk &&
-    [1, 2, 3].includes(value.occMachineLevel as number)
+    [1, 2, 3].includes(value.occMachineLevel as number) &&
+    alliesOk &&
+    numberRecord(value.inventory) &&
+    isNumber(value.gobelets) &&
+    (value.gobeletsShiftIndex === null || isNumber(value.gobeletsShiftIndex)) &&
+    isNumber(value.coffeeBeans) &&
+    numberRecord(value.defeatedEncounters)
   );
 }

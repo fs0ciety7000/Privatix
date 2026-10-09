@@ -1,6 +1,5 @@
 import { BALANCE } from '@/config/balance';
-import { ENCOUNTERS } from '@/data/encounters';
-import type { DialogueEffect, MapId } from '@/data/types';
+import type { DialogueEffect, EncounterId, MapId } from '@/data/types';
 import type { GameState } from '@/systems/GameState';
 import { activeTimeModifiers, spawnPosition } from '@/systems/GameState';
 import type { ClockResult, RestResult } from '@/systems/time/FatigueClock';
@@ -8,7 +7,6 @@ import {
   addFatigue,
   advanceTime,
   drinkOccCoffee,
-  finishCombat,
   shiftIndexAt,
   sleepUntilCap,
   startNextAct,
@@ -20,7 +18,11 @@ import { clamp } from '@/utils/math';
  * Effets des dialogues appliqués au GameState (pur, immuable).
  * Ce qui demande la scène (sauvegarde sur disque, clavier du distributeur) est renvoyé en `actions`.
  */
-export type SceneAction = { readonly kind: 'save' } | { readonly kind: 'keypad' };
+export type SceneAction =
+  | { readonly kind: 'save' }
+  | { readonly kind: 'keypad' }
+  /** Combat : la scène le joue (BattleScene) puis applique le résultat (src/systems/party/Party.ts). */
+  | { readonly kind: 'battle'; readonly encounter: EncounterId };
 
 export interface EffectResult {
   readonly state: GameState;
@@ -126,21 +128,24 @@ export function applyEffect(state: GameState, effect: DialogueEffect): EffectRes
         {
           ...state,
           player: { ...state.player, hp: state.player.maxHp, energy: state.player.maxEnergy },
+          allies: {},
         },
         'PV et PE restaurés',
       );
+    case 'gobelets': {
+      const shiftIndex = shiftIndexAt(state.time.totalMinutes);
+      if (state.gobeletsShiftIndex === shiftIndex)
+        return none(state, 'Gobelets déjà remplis pendant cette pause.');
+      const count = BALANCE.economy.GOBELETS_PER_PAUSE[state.occMachineLevel - 1] ?? 1;
+      return none(
+        { ...state, gobelets: Math.max(state.gobelets, count), gobeletsShiftIndex: shiftIndex },
+        `Gobelets de l'OCC : ${String(Math.max(state.gobelets, count))}`,
+      );
+    }
     case 'save':
       return { state, notices: [], actions: [{ kind: 'save' }] };
-    case 'battle': {
-      // Jalon M1 : combat simulé, victoire automatique. Le jalon M2 remplacera ceci par BattleScene.
-      const encounter = ENCOUNTERS[effect.encounter];
-      const result = finishCombat(
-        state.time,
-        { rounds: encounter.referenceRounds, fled: false },
-        activeTimeModifiers(state),
-      );
-      return none(withTime(state, result), `Victoire contre : ${encounter.name} (combat simulé)`);
-    }
+    case 'battle':
+      return { state, notices: [], actions: [{ kind: 'battle', encounter: effect.encounter }] };
     case 'teleport':
       return none(teleport(state, effect.map, effect.spawn));
     case 'nextAct':

@@ -5,6 +5,10 @@ import type { Condition, Interaction, StoryFlag } from '@/data/types';
 export interface ConditionContext {
   readonly flags: Readonly<Partial<Record<StoryFlag, boolean>>>;
   readonly act: ActNumber;
+  /** Minute in-game courante (réapparition des groupes d'ennemis). Absente = groupes toujours présents. */
+  readonly now?: number;
+  /** Groupes d'ennemis vaincus : clé de marqueur → minute de la victoire. */
+  readonly defeated?: Readonly<Record<string, number>>;
 }
 
 export function hasFlag(flags: ConditionContext['flags'], flag: StoryFlag): boolean {

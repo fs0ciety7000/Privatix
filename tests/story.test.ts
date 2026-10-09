@@ -44,7 +44,8 @@ describe('GameState', () => {
   it('rejette les états incomplets ou invalides', () => {
     const s = createInitialGameState();
     expect(isGameState(null)).toBe(false);
-    expect(isGameState({ ...s, version: 2 })).toBe(false);
+    expect(isGameState({ ...s, version: 3 })).toBe(false);
+    expect(isGameState({ ...s, inventory: { gaufre: 'deux' } })).toBe(false);
     expect(isGameState({ ...s, moral: Number.NaN })).toBe(false);
     expect(isGameState({ ...s, position: { ...s.position, mapId: 'bruxelles-midi' } })).toBe(false);
     expect(isGameState({ ...s, flags: { 'intro-vue': 'oui' } })).toBe(false);
@@ -121,12 +122,11 @@ describe('effets de dialogue', () => {
     expect(hour.time.fatigue).toBeCloseTo(20 + 2 * 0.75);
   });
 
-  it('combat simulé : +10 min, Fatigue de combat, bandeau de victoire', () => {
+  it('délègue le combat à la scène (BattleScene) sans toucher l’état', () => {
     const s = gameAt(at(9, 0));
     const r = applyEffect(s, { kind: 'battle', encounter: 'consultant-junior' });
-    expect(r.state.time.totalMinutes).toBe(at(9, 10));
-    expect(r.state.time.fatigue).toBeCloseTo(20 + 3 + (10 * 2) / 60);
-    expect(r.notices[0]).toMatch(/Victoire/);
+    expect(r.state).toBe(s);
+    expect(r.actions).toEqual([{ kind: 'battle', encounter: 'consultant-junior' }]);
   });
 
   it('téléporte, soigne, passe à l’acte suivant et délègue sauvegarde et clavier à la scène', () => {

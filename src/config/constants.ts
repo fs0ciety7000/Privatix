@@ -28,6 +28,7 @@ export const SceneKeys = {
   Game: 'Game',
   UI: 'UI',
   Dialogue: 'Dialogue',
+  Battle: 'Battle',
 } as const;
 export type SceneKey = (typeof SceneKeys)[keyof typeof SceneKeys];
 

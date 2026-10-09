@@ -7,7 +7,9 @@ import { DIALOGUES } from '@/data/dialogues';
 import { MAPS } from '@/data/maps';
 import { OCC_CODE, OCC_ENTRANCE } from '@/data/story';
 import type { VendingButton } from '@/data/story';
-import type { CharacterId, DialogueDef, MapDefinition, MapId } from '@/data/types';
+import type { CharacterId, DialogueDef, EncounterId, MapDefinition, MapId } from '@/data/types';
+import type { BattleReport } from '@/systems/party/Party';
+import { applyBattleReport, buildBattleSetup } from '@/systems/party/Party';
 import type { GameState } from '@/systems/GameState';
 import { activeTimeModifiers, spawnPosition } from '@/systems/GameState';
 import { neighbor } from '@/systems/movement/GridMovement';
@@ -39,17 +41,49 @@ export const firstChoice: ChoicePolicy = () => 0;
 
 export interface SimLog {
   readonly dialogues: string[];
+  /** Rencontres jouées, dans l'ordre. */
+  readonly battles: EncounterId[];
   readonly notices: string[];
   readonly texts: string[];
 }
 
 export function newLog(): SimLog {
-  return { dialogues: [], notices: [], texts: [] };
+  return { dialogues: [], battles: [], notices: [], texts: [] };
 }
 
 const OCC_KEYPAD_PRESSES: readonly VendingButton[] = (
   Object.keys(OCC_CODE) as VendingButton[]
 ).flatMap((b) => Array<VendingButton>(OCC_CODE[b]).fill(b));
+
+/** Résout un combat lancé par un dialogue : renvoie le compte rendu à appliquer au GameState. */
+export type BattleResolver = (state: GameState, encounter: EncounterId) => BattleReport;
+
+/** Par défaut : victoire sans dégâts ni récompense (les tests de contenu ne dépendent pas de l'équilibrage). */
+export const freeVictory: BattleResolver = (state, encounter) => {
+  const setup = buildBattleSetup(state, encounter);
+  return {
+    outcome: 'victory',
+    rounds: 3,
+    fatigue: state.time.fatigue,
+    members: setup.party.map((m) => ({
+      id: m.id,
+      hp: m.hp,
+      pe: m.pe,
+      ko: false,
+      demotivated: false,
+    })),
+    inventory: state.inventory,
+    gobelets: state.gobelets,
+    rewards: { xp: 0, tickets: 0, coffeeBeans: 0 },
+  };
+};
+
+let resolveBattle: BattleResolver = freeVictory;
+
+/** Change le résolveur de combat (rétabli par `useBattleResolver(freeVictory)`). */
+export function useBattleResolver(resolver: BattleResolver): void {
+  resolveBattle = resolver;
+}
 
 /** Joue un dialogue jusqu'au bout (puis clavier, téléportation, dialogues d'arrivée, Mise à pied). */
 export function playDialogue(
@@ -71,20 +105,24 @@ export function playDialogue(
     keypad ||= step.actions.some((a) => a.kind === 'keypad');
     const nodeId = step.nodeId;
     log.texts.push(currentNode(def, nodeId).text);
-    const choices = visibleChoices(def, nodeId, step.state);
+
+    // Comme DialogueScene : le combat se joue quand le joueur valide le nœud qui l'annonce.
+    let current = step.state;
+    for (const action of step.actions) {
+      if (action.kind !== 'battle') continue;
+      log.battles.push(action.encounter);
+      const applied = applyBattleReport(current, resolveBattle(current, action.encounter));
+      log.notices.push(...applied.notices);
+      current = applied.state;
+      if (applied.defeat) return playDialogue(current, LAYOFF_DIALOGUE, log, policy);
+    }
+
+    const choices = visibleChoices(def, nodeId, current);
+    const labels = choices.map((c) => c.label);
     step =
       choices.length > 0
-        ? choose(
-            def,
-            nodeId,
-            step.state,
-            policy(
-              choices.map((c) => c.label),
-              dialogueId,
-              nodeId,
-            ),
-          )
-        : advance(def, nodeId, step.state);
+        ? choose(def, nodeId, current, policy(labels, dialogueId, nodeId))
+        : advance(def, nodeId, current);
   }
   log.notices.push(...step.notices);
   keypad ||= step.actions.some((a) => a.kind === 'keypad');

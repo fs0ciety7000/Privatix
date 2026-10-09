@@ -101,7 +101,7 @@ src/
 | `Game` | existe | Exploration case par case de la carte du GameState : portails, déclencheurs, interactions, dialogues d'arrivée, horloge, Mise à pied, sauvegarde auto à l'entrée de l'OCC. Lance `UI`. Échap → menu (cible : ouvre `Pause`). |
 | `UI` | existe | Overlay HUD : statut PV/PE/Fatigue/Moral, horloge 3×8, invite d'interaction, bandeaux, pad tactile. Aucune logique de jeu. |
 | `Dialogue` | existe | Overlay lancé par Game (qui se met en pause) : texte lettre par lettre, choix, effets via `DialogueRunner`, sauvegarde, clavier du distributeur de l'OCC. |
-| `Battle` | cible (M2) | Combat au tour par tour ; affichage + input, toute la règle dans `CombatEngine`. En M1, l'effet de dialogue `battle` simule une victoire. |
+| `Battle` | existe (M2) | Combat au tour par tour, vue de côté : rejoue les événements de `CombatEngine`, menu d'actions 2×3, sous-menus, choix de cible (clavier, souris, tactile), écran de victoire/défaite. Applique le résultat au GameState (`Party.applyBattleReport`) puis reprend la scène appelante avec `{ battleOutcome }`. |
 | `Occ` | abandonnée | **Décision M1** : l'OCC est une carte (`occ`) explorée par `Game`, pas une scène. Ses services (Vieille Dame, canapé, lit de camp…) sont des objets dont les dialogues appliquent les effets `save`, `heal`, `rest`. |
 | `Pause` | cible | « Classeur de service » : inventaire, équipe, compétences, options, quitter. |
 
@@ -110,8 +110,8 @@ Les clés sont des objets `as const` (pas des `enum` TS) dans `src/config/consta
 ```ts
 export const SceneKeys = {
   Boot: 'Boot', Preloader: 'Preloader', MainMenu: 'MainMenu', Game: 'Game', UI: 'UI',
-  Dialogue: 'Dialogue',                    // existe
-  Battle: 'Battle', Pause: 'Pause',        // cibles
+  Dialogue: 'Dialogue', Battle: 'Battle', // existent
+  Pause: 'Pause',                          // cible
 } as const;
 export type SceneKey = (typeof SceneKeys)[keyof typeof SceneKeys];
 ```
@@ -127,8 +127,21 @@ Boot ─start─▶ Preloader ─start─▶ MainMenu ─start─▶ Game ═lau
                                    │   registry)     ├──▶ Dialogue ─ resume(Game) + stop ─▶ Game.onResume :
                                    │                 │      téléportation, visibilité des PNJ, Mise à pied
                                    └── start (Échap) ┘
-Cible : Battle (sleep Game + UI, wake avec le résultat), Pause (pause Game).
+                                   │                 │ pause(Game) + launch(Battle, { encounterId, caller: Game, markerKey })
+                                   │                 ├──▶ Battle (groupe visible sur la carte)
+Dialogue ─ pause(Dialogue) + launch(Battle, { encounterId, caller: Dialogue }) ─▶ Battle
+Battle ─ applyBattleReport ─ stop + resume(caller, { battleOutcome }) :
+   victoire / fuite → la scène appelante continue ; défaite → Mise à pied (Dialogue se ferme, Game joue « mise-a-pied »)
+Cible : Pause (pause Game).
 ```
+
+### 2.2.2 Combat (jalon M2)
+
+- **Déclenchement.** Sur la carte, foncer sur un groupe d'ennemis visible (marqueur `encounter`) ou interagir avec lui lance le combat. Dans un dialogue, l'effet `battle` est une *action de scène* : le combat part quand le joueur valide le nœud qui l'annonce, et le dialogue reprend au nœud suivant après une victoire.
+- **Préparation.** `Party.buildBattleSetup` compose l'équipe (héros + les deux premiers collègues recrutés, dans l'ordre Josiane, Rudy, Béné), calcule leurs stats au niveau du héros (`Leveling.statsAt`), reprend PV/PE conservés, Fatigue, Moral, pause, inventaire et Gobelets.
+- **Règles.** Entièrement dans `src/systems/combat/` (pur, aléatoire injecté). La scène ne fait que rejouer les `BattleEvent` et demander une action au membre dont c'est le tour.
+- **Résultat.** `Party.reportFromBattle` + `applyBattleReport` : XP et niveaux (PV max relevés), Tickets, Grains, PV conservés (K.O. → 1 PV), Fatigue du combat puis coûts (+2, +1 par 3 manches, +10 min), Moral −1 si le héros finit Démotivé, groupe visible marqué vaincu (il réapparaît 2 h in-game plus tard). Défaite : Mise à pied, équipe soignée.
+- **Gobelets de l'OCC.** Remplis à la Vieille Dame (effet `gobelets`, 1 fois par pause, 1/2/3 selon la machine) ; bus en combat avec l'action Café.
 
 ### 2.2.1 Boucle d'exploration (jalon M1)
 
@@ -596,7 +609,7 @@ Fichiers en kebab-case ASCII sans accents (`gare-mons.json`, `consultant-junior.
 - Chaque sauvegarde porte `version` ; au chargement, chaîne de migrations `vN → vN+1` jusqu'à la version courante, puis type guard. Une sauvegarde corrompue n'écrase rien.
 - `localStorage` peut lever (navigation privée, quota, stockage bloqué) : tout est en `try/catch` et le stockage est **injecté** (testable en Node).
 
-**Format en place (v1).** Aucune sauvegarde n'ayant existé avant M1, la v1 est directement le GameState complet : `{ savedAt, state }`, où `state` contient l'horloge et la Fatigue, le joueur, la position, les drapeaux, le Moral, les Tickets, la boisson de relève et le niveau de la machine. Emplacements : `privatix.save.slot-1` (Vieille Dame) et `privatix.save.auto` (entrée de l'OCC) ; « Continuer » charge le plus récent. `SaveManager` (`src/systems/save/`) ne lève jamais, valide avec `isGameState`, refuse une version future, et applique `MIGRATIONS` (vide aujourd'hui) pour les versions antérieures. `src/platform/storage.ts` est le seul accès à `localStorage`. Le schéma v2 « aplati » envisagé avant M1 est abandonné : on incrémente `GameState.version` et on ajoute une migration à la première modification incompatible.
+**Format en place (v2, jalon M2).** La v2 ajoute au GameState l'XP du héros, les PV/PE conservés des collègues, l'inventaire commun, les Gobelets, les Grains et les groupes d'ennemis vaincus ; `MIGRATIONS[1]` convertit une sauvegarde v1 (valeurs par défaut, inventaire de départ). Historique : aucune sauvegarde n'ayant existé avant M1, la v1 était directement le GameState complet : `{ savedAt, state }`, où `state` contient l'horloge et la Fatigue, le joueur, la position, les drapeaux, le Moral, les Tickets, la boisson de relève et le niveau de la machine. Emplacements : `privatix.save.slot-1` (Vieille Dame) et `privatix.save.auto` (entrée de l'OCC) ; « Continuer » charge le plus récent. `SaveManager` (`src/systems/save/`) ne lève jamais, valide avec `isGameState`, refuse une version future, et applique `MIGRATIONS` (vide aujourd'hui) pour les versions antérieures. `src/platform/storage.ts` est le seul accès à `localStorage`. Le schéma v2 « aplati » envisagé avant M1 est abandonné : on incrémente `GameState.version` et on ajoute une migration à la première modification incompatible.
 
 Tests : aller-retour save/load avec un `Map` en mémoire, migration v1 → v2 à partir de `createInitialGameState()`, JSON invalide, version future, stockage qui lève, `storage === null`.
 
@@ -742,13 +755,13 @@ jobs:
 | 3 | **Pack d'assets vide** | `asset-pack.json` sans fichier ; `AssetKeys.Logo` déclaré mais non chargé ; dossiers `images/ audio/ tilemaps/ fonts/` vides. | Remplir au fil des livraisons (§6), ajouter le test de cohérence pack ↔ `AssetKeys`, créer les animations dans le Preloader. |
 | 4 | **Polices** | `fontFamily: 'monospace'` partout. | BitmapFont (Press Start 2P pour titres/chiffres, Pixelify Sans ou m6x11 pour le texte) via `bitmapText` ; en prototype WebFont, attendre `document.fonts.ready` avant la première scène. Corps de texte ≥ 16 px logiques. |
 | 5 | **État** | Fait (M1) : GameState complet (position, drapeaux, Moral, Tickets, boisson, machine), Nouvelle partie repart d'un état neuf. | — |
-| 5b | **Effondrement** | Fait hors combat : Fatigue 100 → Mise à pied (GDD § 5.8). | En combat (M2) : micro-sieste d'équipe, Fatigue = 90. Acte III : retour à la dernière sauvegarde du BAG. |
+| 5b | **Effondrement** | Fait hors combat : Fatigue 100 → Mise à pied (GDD § 5.8). Défaite en combat → Mise à pied. | Acte III : retour à la dernière sauvegarde du BAG. |
 | 6 | **Systèmes** | `GameState`, `FatigueClock`, `WorldMap`, `GridMovement`, `Conditions`, `DialogueRunner`/`Effects`, `Objectives`, `Layoff`, `VendingCode`, `SaveManager`. | `CombatEngine` (M2, consommera `fatigueTier` et `finishCombat`), `Inventory` (Thermos, Gobelets), `rng` ; décider du sort de l'EventBus. |
-| 7 | **Scènes** | `Dialogue` existe ; l'OCC est une carte (pas de scène `Occ`). Battle et Pause absentes ; Échap renvoie au menu. | Battle (M2) ; Pause « Classeur de service » ; Échap ouvre `Pause`. |
+| 7 | **Scènes** | `Dialogue` et `Battle` existent ; l'OCC est une carte (pas de scène `Occ`). Pause absente ; Échap renvoie au menu. | Pause « Classeur de service » (inventaire, équipe, compétences) ; Échap ouvre `Pause`. |
 | 8 | **UI** | HUD complet (statut, horloge, invite, bandeaux), `VirtualPad`. Boîte de dialogue et bandeaux codés dans les scènes ; pas de portrait. | Extraire `DialogueBox`, `ActionMenu`, `Toast` ; portraits ; `NineSlicePanel` quand les assets UI arrivent. |
 | 9 | **Outillage** | Pas de CI, pas de `.nvmrc`, lint sans `--max-warnings=0`, pas de couverture. | Workflow §9.3, `.nvmrc` = `22`, `@vitest/coverage-v8` sur `src/systems`, `src/data`, `src/utils`. |
 | 10 | **nginx** | Fait : `Referrer-Policy` répété dans chaque `location`. | Envisager une CSP stricte (aucun script externe). |
 | 12 | **Cartes** | Cartes ASCII placeholder (§6.2). | Cartes Tiled + adaptateur Tiled → `WorldMap`. |
-| 13 | **Combats** | Effet `battle` = victoire simulée (temps et Fatigue appliqués, bandeau). | `BattleScene` + `CombatEngine` (M2), défaite = Mise à pied. |
+| 13 | **Combats** | Fait (M2) : moteur pur, BattleScene, 4 combats scénarisés et 4 groupes visibles de l'Acte I. | Choix de l'équipe à l'OCC (aujourd'hui : les deux premiers recrutés), boutique, équipement, Décalage et boss final (Actes II-III). |
 | 14 | **Contenu Acte I hors M1** | Fil principal et « Trois tasses, trois collègues » jouables. | Notes de service, pigeon Matricule 4412, quête du Wagon-Bar, boutique de Béné, Gobelets de l'OCC, pointeuse. |
 | 11 | **Installation** | `npm install` exige `--legacy-peer-deps` (bug npm 10 avec les peers de vitest 4). | Retirer le flag de la documentation quand npm ou vitest le corrigent ; `npm ci` reste la référence. |

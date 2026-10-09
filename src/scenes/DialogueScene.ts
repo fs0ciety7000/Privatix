@@ -6,7 +6,7 @@ import { DIALOGUES } from '@/data/dialogues';
 import { OBJECTIVES, OBJECTIVES_DONE_TEXT } from '@/data/objectives';
 import { OCC_CODE, OCC_ENTRANCE } from '@/data/story';
 import type { VendingButton } from '@/data/story';
-import type { DialogueChoice, DialogueDef } from '@/data/types';
+import type { DialogueChoice, DialogueDef, EncounterId } from '@/data/types';
 import { browserStorage } from '@/platform/storage';
 import type { GameState } from '@/systems/GameState';
 import { spawnPosition } from '@/systems/GameState';
@@ -24,6 +24,8 @@ import { currentObjective } from '@/systems/story/Objectives';
 import { interpolate, textTokens } from '@/systems/story/TextTokens';
 import { MAX_PRESSES, matchesCode, summarizePresses } from '@/systems/vending/VendingCode';
 import type { DialogueSceneData } from '@/scenes/GameScene';
+import type { BattleResumeData, BattleSceneData } from '@/scenes/BattleScene';
+import { isBattleResume } from '@/scenes/battleResume';
 import { getGameState, pushNotice, updateGameState } from '@/utils/registry';
 
 const BOX = { x: 16, y: 372, w: 928, h: 152 } as const;
@@ -43,6 +45,8 @@ export class DialogueScene extends Phaser.Scene {
   private nodeId: string | null = null;
   private mode: Mode = 'text';
   private pendingKeypad = false;
+  /** Combat annoncé par le nœud affiché : il se joue quand le joueur valide ce nœud. */
+  private pendingBattle: EncounterId | null = null;
   private acceptInputAt = 0;
 
   private box!: Phaser.GameObjects.Rectangle;
@@ -71,6 +75,7 @@ export class DialogueScene extends Phaser.Scene {
     this.def = def;
     this.mode = 'text';
     this.pendingKeypad = false;
+    this.pendingBattle = null;
     this.choiceObjects = [];
     this.keypadObjects = [];
     this.keypadScreen = null;
@@ -98,6 +103,10 @@ export class DialogueScene extends Phaser.Scene {
     this.tweens.add({ targets: this.indicator, alpha: 0.2, duration: 250, yoyo: true, repeat: -1 });
 
     this.setupInput();
+    this.events.on(Phaser.Scenes.Events.RESUME, this.onBattleEnd, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off(Phaser.Scenes.Events.RESUME, this.onBattleEnd, this);
+    });
     this.applyStep(startDialogue(this.def, getGameState(this.registry)));
   }
 
@@ -111,6 +120,7 @@ export class DialogueScene extends Phaser.Scene {
     for (const action of step.actions) {
       if (action.kind === 'save') this.save(step.state);
       if (action.kind === 'keypad') this.pendingKeypad = true;
+      if (action.kind === 'battle') this.pendingBattle = action.encounter;
     }
     this.nodeId = step.nodeId;
     if (this.nodeId === null) {
@@ -185,6 +195,10 @@ export class DialogueScene extends Phaser.Scene {
       this.pick(this.selected);
       return;
     }
+    if (this.pendingBattle) {
+      this.startBattle(this.pendingBattle);
+      return;
+    }
     this.applyStep(advance(this.def, this.nodeId, getGameState(this.registry)));
   }
 
@@ -204,9 +218,28 @@ export class DialogueScene extends Phaser.Scene {
     this.close();
   }
 
-  private close(): void {
-    this.scene.resume(SceneKeys.Game);
+  private close(resumeData?: BattleResumeData): void {
+    this.events.off(Phaser.Scenes.Events.RESUME, this.onBattleEnd, this);
+    this.scene.resume(SceneKeys.Game, resumeData);
     this.scene.stop();
+  }
+
+  private startBattle(encounterId: EncounterId): void {
+    this.pendingBattle = null;
+    const data: BattleSceneData = { encounterId, caller: SceneKeys.Dialogue };
+    this.scene.pause();
+    this.scene.launch(SceneKeys.Battle, data);
+  }
+
+  /** Retour du combat : victoire ou fuite → le dialogue continue ; défaite → il s'interrompt (Mise à pied). */
+  private onBattleEnd(_sys: Phaser.Scenes.Systems, data?: unknown): void {
+    this.acceptInputAt = this.time.now + INPUT_GRACE_MS;
+    if (isBattleResume(data) && data.battleOutcome === 'defeat') {
+      this.close(data);
+      return;
+    }
+    if (this.nodeId !== null)
+      this.applyStep(advance(this.def, this.nodeId, getGameState(this.registry)));
   }
 
   // -------------------------------------------------------------------------

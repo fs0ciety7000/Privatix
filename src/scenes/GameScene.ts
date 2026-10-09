@@ -17,7 +17,9 @@ import { browserStorage } from '@/platform/storage';
 import type { GameState } from '@/systems/GameState';
 import { activeTimeModifiers, spawnPosition } from '@/systems/GameState';
 import type { GridPos } from '@/systems/movement/GridMovement';
-import { facingTile } from '@/systems/movement/GridMovement';
+import { facingTile, neighbor } from '@/systems/movement/GridMovement';
+import type { BattleSceneData } from '@/scenes/BattleScene';
+import { isBattleResume } from '@/scenes/battleResume';
 import { SaveManager } from '@/systems/save/SaveManager';
 import { firstMatching } from '@/systems/story/Conditions';
 import { contextOf } from '@/systems/story/DialogueRunner';
@@ -97,6 +99,13 @@ export class GameScene extends Phaser.Scene {
     const dir = this.readDirection();
     if (dir) {
       const ctx = contextOf(getGameState(this.registry));
+      // Foncer sur un groupe d'ennemis visible lance le combat.
+      const ahead = neighbor(this.player.gridPos.tileX, this.player.gridPos.tileY, dir);
+      const foe = interactableAt(this.world, ahead.tileX, ahead.tileY, ctx);
+      if (foe?.def.kind === 'encounter') {
+        this.startMapBattle(foe);
+        return;
+      }
       const run = this.keys?.run.isDown ?? false;
       this.player.tryStep(
         dir,
@@ -221,6 +230,10 @@ export class GameScene extends Phaser.Scene {
     )
       return;
     const marker = this.facingInteractable();
+    if (marker?.def.kind === 'encounter') {
+      this.startMapBattle(marker);
+      return;
+    }
     if (!marker || (marker.def.kind !== 'npc' && marker.def.kind !== 'prop')) return;
     const interaction = firstMatching(
       marker.def.interactions,
@@ -239,10 +252,31 @@ export class GameScene extends Phaser.Scene {
     this.scene.launch(SceneKeys.Dialogue, data);
   }
 
-  /** Retour de dialogue : applique téléportation, visibilité des PNJ, effondrement éventuel. */
-  private onResume(): void {
+  /** Lance un combat contre un groupe visible ; la scène est mise en pause pendant le combat. */
+  private startMapBattle(marker: PlacedMarker): void {
+    if (marker.def.kind !== 'encounter' || !this.scene.isActive()) return;
+    this.setHint(null);
+    const data: BattleSceneData = {
+      encounterId: marker.def.encounter,
+      caller: SceneKeys.Game,
+      markerKey: marker.key,
+    };
+    this.scene.pause();
+    this.scene.launch(SceneKeys.Battle, data);
+  }
+
+  /** Retour de dialogue ou de combat : téléportation, visibilité des PNJ, défaite, effondrement. */
+  private onResume(_sys: Phaser.Scenes.Systems, data?: unknown): void {
     this.interactBlockedUntil = this.time.now + INPUT_GRACE_MS;
     const state = getGameState(this.registry);
+    if (isBattleResume(data) && data.battleOutcome === 'defeat') {
+      // Combat perdu (sur la carte ou dans un dialogue) : la Mise à pied est déjà appliquée au GameState.
+      this.loadCurrentMap(false);
+      this.time.delayedCall(1, () => {
+        this.openDialogue(LAYOFF_DIALOGUE);
+      });
+      return;
+    }
     if (this.checkCollapse()) return;
     if (state.position.mapId !== this.world.def.id) {
       this.loadCurrentMap(true);
@@ -277,6 +311,7 @@ export class GameScene extends Phaser.Scene {
     let hint: string | null = null;
     if (marker?.def.kind === 'npc') hint = `Parler à ${CHARACTERS[marker.def.character].name}`;
     if (marker?.def.kind === 'prop') hint = `Examiner : ${marker.def.label}`;
+    if (marker?.def.kind === 'encounter') hint = `Combattre : ${marker.def.label}`;
     this.setHint(hint);
   }
 

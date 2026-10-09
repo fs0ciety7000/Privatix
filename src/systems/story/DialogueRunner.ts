@@ -19,7 +19,12 @@ export interface DialogueStep {
 }
 
 export function contextOf(state: GameState): ConditionContext {
-  return { flags: state.flags, act: state.time.act };
+  return {
+    flags: state.flags,
+    act: state.time.act,
+    now: state.time.totalMinutes,
+    defeated: state.defeatedEncounters,
+  };
 }
 
 function nodeOf(def: DialogueDef, nodeId: string): DialogueNode {

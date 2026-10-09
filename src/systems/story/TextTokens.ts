@@ -11,6 +11,7 @@ export function textTokens(state: GameState, objective: string): Readonly<Record
     fatigue: String(Math.floor(state.time.fatigue)),
     moral: String(Math.floor(state.moral)),
     tickets: String(state.tickets),
+    gobelets: String(state.gobelets),
   };
 }
 

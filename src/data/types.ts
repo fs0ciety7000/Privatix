@@ -24,13 +24,34 @@ export type CharacterId =
   | 'voyageur'
   | 'consultant'
   | 'manager-kpi'
+  | 'borne'
+  | 'post-it'
+  | 'stagiaire'
   | 'annonce'
   | 'distributeur'
   | 'systeme';
 
-/** Rencontres de l'Acte I. Jalon M1 : victoire automatique ; jalon M2 : BattleScene. */
+/**
+ * Rencontres de l'Acte I : 4 scénarisées (déclenchées par un dialogue) et 4 groupes visibles sur les cartes,
+ * qui réapparaissent (voir le marqueur `encounter`). Composition et stats : `src/data/combat.ts`.
+ */
 export type EncounterId =
-  'borne-rebelle' | 'consultant-junior' | 'post-it-vivant' | 'audit-manager-kpi';
+  | 'borne-rebelle'
+  | 'consultant-junior'
+  | 'post-it-vivant'
+  | 'audit-manager-kpi'
+  | 'patrouille-bornes'
+  | 'consultants-hall'
+  | 'post-its-couloir'
+  | 'manager-kpi-quai';
+
+/** Collègues combattants de l'Acte I (GDD § 7.2), dans l'ordre de priorité pour l'équipe. */
+export type AllyId = 'josiane' | 'rudy' | 'bene';
+export const ALLY_ORDER: readonly AllyId[] = ['josiane', 'rudy', 'bene'];
+
+/** Statuts de combat (GDD § 5.6). */
+export type StatusId =
+  'cafeine' | 'syndique' | 'demotive' | 'bloque' | 'burnout' | 'confusion' | 'sommeil';
 
 /** Boissons de la Tasse de Relève (GDD § 4.5). */
 export type DrinkId = 'ristretto' | 'lungo' | 'cappuccino' | 'chocolat';
@@ -146,7 +167,20 @@ export type MarkerDef =
       readonly interactions: readonly Interaction[];
     }
   /** Déclencheur invisible quand le héros marche dessus (ne bloque pas). */
-  | { readonly kind: 'trigger'; readonly interactions: readonly Interaction[] };
+  | { readonly kind: 'trigger'; readonly interactions: readonly Interaction[] }
+  /**
+   * Groupe d'ennemis visible (case bloquante) : le combat se lance quand le héros lui fonce dessus ou
+   * interagit avec lui. Vaincu, il disparaît puis réapparaît `respawnMinutes` minutes in-game plus tard.
+   */
+  | {
+      readonly kind: 'encounter';
+      readonly encounter: EncounterId;
+      /** Sprite affiché sur la carte (le premier ennemi du groupe). */
+      readonly character: CharacterId;
+      readonly label: string;
+      readonly respawnMinutes?: number;
+      readonly visibleWhen?: Condition;
+    };
 
 export interface MapDefinition {
   readonly id: MapId;
@@ -178,8 +212,10 @@ export type DialogueEffect =
   | { readonly kind: 'rest'; readonly rest: 'coffee' | 'nap' | 'sleep' }
   /** Choix de la Tasse de Relève pour la pause en cours. */
   | { readonly kind: 'drink'; readonly drink: DrinkId }
-  /** PV et PE au maximum. */
+  /** PV et PE au maximum (héros et collègues). */
   | { readonly kind: 'heal' }
+  /** Remplit les Gobelets de l'OCC (1, 2 ou 3 selon la machine), une fois par pause. */
+  | { readonly kind: 'gobelets' }
   /** Sauvegarde manuelle (Vieille Dame). */
   | { readonly kind: 'save' }
   /** Combat. Jalon M1 : victoire automatique (coûts de temps et de Fatigue appliqués). */
@@ -200,7 +236,7 @@ export interface DialogueChoice {
 }
 
 /**
- * Nœud de dialogue. `text` accepte les jetons {prenom}, {objectif}, {heure}, {pause}, {fatigue}, {moral}, {tickets}.
+ * Nœud de dialogue. `text` accepte les jetons {prenom}, {objectif}, {heure}, {pause}, {fatigue}, {moral}, {tickets}, {gobelets}.
  * Les `effects` du nœud s'appliquent à son affichage.
  */
 export interface DialogueNode {

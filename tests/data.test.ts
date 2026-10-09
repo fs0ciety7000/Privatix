@@ -137,8 +137,12 @@ describe('cartes', () => {
               `portail ${where} inaccessible`,
             ).toBe(true);
           }
-          if (target.def.kind === 'npc' || target.def.kind === 'prop') {
-            const blocking = target.def.kind === 'npc' || target.def.blocking;
+          if (
+            target.def.kind === 'npc' ||
+            target.def.kind === 'prop' ||
+            target.def.kind === 'encounter'
+          ) {
+            const blocking = target.def.kind !== 'prop' || target.def.blocking;
             const adjacent = (['up', 'down', 'left', 'right'] as const).some((dir) => {
               const n = neighbor(target.tileX, target.tileY, dir);
               return reach.has(`${String(n.tileX)},${String(n.tileY)}`);

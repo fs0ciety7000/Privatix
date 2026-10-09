@@ -7,6 +7,7 @@ import { MainMenuScene } from '@/scenes/MainMenuScene';
 import { GameScene } from '@/scenes/GameScene';
 import { UIScene } from '@/scenes/UIScene';
 import { DialogueScene } from '@/scenes/DialogueScene';
+import { BattleScene } from '@/scenes/BattleScene';
 
 /**
  * Point d'entrée de Privatix.
@@ -28,8 +29,8 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  // Ordre = ordre d'affichage des scènes lancées en parallèle : Dialogue au-dessus de l'UI, au-dessus du jeu.
-  scene: [BootScene, PreloaderScene, MainMenuScene, GameScene, UIScene, DialogueScene],
+  // Ordre = ordre d'affichage des scènes lancées en parallèle : Combat au-dessus du dialogue, au-dessus de l'UI, au-dessus du jeu.
+  scene: [BootScene, PreloaderScene, MainMenuScene, GameScene, UIScene, DialogueScene, BattleScene],
 };
 
 // Une seule instance de Game ; elle n'est jamais exposée globalement.

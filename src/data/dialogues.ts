@@ -554,6 +554,10 @@ export const DIALOGUES = {
             effects: [{ kind: 'save' }, { kind: 'heal' }],
           },
           { label: 'Café gratuit (1 fois par pause)', effects: [{ kind: 'rest', rest: 'coffee' }] },
+          {
+            label: 'Remplir les Gobelets pour le terrain ({gobelets} en poche)',
+            effects: [{ kind: 'gobelets' }],
+          },
           { label: 'Rien, merci' },
         ],
       },

@@ -126,6 +126,15 @@ export class MapView {
         .setDepth(def.blocking ? y : y - TILE_SIZE);
       return [image, this.label(x, y - 16, def.label)];
     }
+    if (def.kind === 'encounter') {
+      // Groupe d'ennemis : sprite du premier ennemi, tourné vers le bas, avec un nom en rouge.
+      const sprite = this.scene.add
+        .image(x, y, characterTextureKey(def.character, 'down'))
+        .setOrigin(0.5, 1)
+        .setDepth(y);
+      const label = this.label(x, y - 24, def.label).setColor('#ff8080');
+      return [sprite, label];
+    }
     if (def.kind === 'portal') {
       return [
         this.scene.add.image(x, y, AssetKeys.PlaceholderPortal).setOrigin(0.5, 1).setDepth(0),
