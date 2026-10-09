@@ -145,6 +145,48 @@ export class GameFeel {
     });
   }
 
+  /**
+   * Squash & stretch (Celeste) : déformation brève puis retour élastique. Le pivot étant aux pieds,
+   * le personnage reste posé au sol. Seule exception à la règle « pas d'échelle non entière ».
+   */
+  public squash(target: Phaser.GameObjects.Sprite, sx: number, sy: number, ms = 140): void {
+    const base = target.getData('baseScale') as number | undefined;
+    const scale = base ?? target.scaleY;
+    if (base === undefined) target.setData('baseScale', scale);
+    // On n'arrête que le squash précédent (pas les autres tweens, ex. le fondu de mort).
+    (target.getData('squashTween') as Phaser.Tweens.Tween | undefined)?.stop();
+    target.setScale(scale * sx, scale * sy);
+    const tween = this.scene.tweens.add({
+      targets: target,
+      scaleX: scale,
+      scaleY: scale,
+      duration: ms,
+      ease: 'Back.easeOut',
+    });
+    target.setData('squashTween', tween);
+  }
+
+  /** Image rémanente (traînée du dash, Dead Cells / Celeste) : copie de la frame, teintée, qui s'efface. */
+  public afterimage(source: Phaser.GameObjects.Sprite, color: number, ms = 220): void {
+    const ghost = this.scene.add
+      .image(source.x, source.y, source.texture.key, source.frame.name)
+      .setOrigin(source.originX, source.originY)
+      .setFlip(source.flipX, source.flipY)
+      .setScale(source.scaleX, source.scaleY)
+      .setDepth(source.depth - 1)
+      .setTint(color)
+      .setTintMode(Phaser.TintModes.FILL)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setAlpha(0.55);
+    this.scene.tweens.add({
+      targets: ghost,
+      alpha: 0,
+      duration: ms,
+      ease: 'Quad.easeOut',
+      onComplete: () => { ghost.destroy(); },
+    });
+  }
+
   public sparksAt(x: number, y: number, count: number): void {
     this.sparks.explode(count, x, y);
   }

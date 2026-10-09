@@ -21,6 +21,8 @@ export interface SheetDef {
   readonly frames: number;
   /** Couleur dominante du placeholder. */
   readonly tint: number;
+  /** Normal map de mêmes dimensions (`<nom>_n.png`) pour l'éclairage dynamique. */
+  readonly normalMap?: string;
 }
 
 export interface AnimDef {
@@ -39,6 +41,7 @@ export interface ImageDef {
   readonly height: number;
   readonly tint: number;
   readonly atlas?: string;
+  readonly normalMap?: string;
 }
 
 export interface TilesetDef {
@@ -50,6 +53,7 @@ export interface TilesetDef {
   readonly rows: number;
   /** Nom → index de tuile. */
   readonly names: Readonly<Record<string, number>>;
+  readonly normalMap?: string;
 }
 
 interface ManifestAnimation {
@@ -61,6 +65,7 @@ interface ManifestAnimation {
   readonly frames: number;
   readonly durations: readonly number[];
   readonly loop: boolean;
+  readonly normalMap?: string;
 }
 
 interface ManifestImage {
@@ -70,6 +75,7 @@ interface ManifestImage {
   readonly width: number;
   readonly height: number;
   readonly atlas?: string;
+  readonly normalMap?: string;
 }
 
 interface ManifestTileset {
@@ -80,6 +86,7 @@ interface ManifestTileset {
   readonly columns: number;
   readonly rows: number;
   readonly tiles: Readonly<Record<string, number>>;
+  readonly normalMap?: string;
 }
 
 const M = manifest as unknown as {
@@ -105,6 +112,7 @@ export const SPRITE_SHEETS: readonly SheetDef[] = M.animations.map((a) => ({
   frameHeight: a.frameHeight,
   frames: a.frames,
   tint: tintFor(a.file),
+  ...(a.normalMap ? { normalMap: a.normalMap } : {}),
 }));
 
 export const ANIMATIONS: readonly AnimDef[] = M.animations.map((a) => ({
@@ -123,6 +131,7 @@ export const IMAGES: readonly ImageDef[] = M.images
     height: i.height,
     tint: i.texture.startsWith('shadow_') ? 0x14101a : 0x9fb0c6,
     ...(i.atlas ? { atlas: i.atlas } : {}),
+    ...(i.normalMap ? { normalMap: i.normalMap } : {}),
   }));
 
 export const TILESETS: readonly TilesetDef[] = M.tilesets.map((t) => ({
@@ -133,6 +142,7 @@ export const TILESETS: readonly TilesetDef[] = M.tilesets.map((t) => ({
   columns: t.columns,
   rows: t.rows,
   names: t.tiles,
+  ...(t.normalMap ? { normalMap: t.normalMap } : {}),
 }));
 
 export type TilesetKey = 'tiles_quais' | 'tiles_occ';

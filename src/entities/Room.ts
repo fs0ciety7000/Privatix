@@ -206,6 +206,11 @@ export class Room {
     }
   }
 
+  /** Rend les props sensibles à l'éclairage dynamique. */
+  public setPropsLighting(on: boolean): void {
+    for (const p of this.props) if (p instanceof Phaser.GameObjects.Image) p.setLighting(on);
+  }
+
   /** Piliers et bancs : props posés par-dessus le sol, triés par leurs pieds. */
   private placeProps(): void {
     const add = (key: string, x: number, y: number): void => {

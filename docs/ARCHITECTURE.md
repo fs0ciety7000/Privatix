@@ -1023,7 +1023,22 @@ public hitSparks(x: number, y: number, strong: boolean): void { this.sparks.expl
 ```
 Nombres de dégâts : anneau de 64 `BitmapText` (police pixel 8 px à contour, `public/assets/fonts/`) ; le plus ancien est recyclé ; `tweens.killTweensOf(t)` avant réutilisation ; positions arrondies ; décalage horizontal ±6 px (aléatoire cosmétique) ; couleurs : blanc normal, jaune critique (« ! »), rouge dégâts subis, vert soin, gris « RÉSISTÉ ». Les coups sur une même cible dans une fenêtre de **150 ms** fusionnent : on réutilise le texte en cours et on additionne. `BitmapText` plutôt que `Text` : un `Text` possède son propre canvas, coûteux à mettre à jour en rafale.
 
-### 8.4 Accessibilité (Réglages, sauvegardés dans `MetaState.settings`)
+### 8.4 Lumière et post-traitement : `Atmosphere` (DA pixel art moderne)
+La direction artistique est du **pixel art moderne** à la Dead Cells / Celeste (GDD § 1.3). Côté moteur, tout passe par `src/fx/Atmosphere.ts`, une instance par scène de jeu (`RunScene`, `HubScene`) :
+
+| Brique | API Phaser 4 | Rôle |
+|---|---|---|
+| Éclairage dynamique | `scene.lights.enable()`, `setAmbientColor`, `lights.addLight(x, y, r, color, i, z)`, `obj.setLighting(true)` | Lampes de salle (`lightRoom`), néons le long des voies, lampe frontale du héros (`attachHero`), éclairs d'impact (`flash`). `render.maxLights = 32`. |
+| Normal maps | `_n.png` déclarées dans le manifeste (`normalMap`), chargées avec la feuille | Volume des sprites et du décor sous les lampes. Sans normal map, l'éclairage reste plat mais fonctionne. |
+| Halos visibles | `scene.add.pointlight(...)` (additif) | La lumière se voit dans l'air (`addGlow`). |
+| Bloom | `cam.filters.internal.addParallelFilters()` : `top.addThreshold` + `top.addBlur`, blend ADD | Les émissifs (VFX, télégraphes, écrans) débordent de lumière. |
+| Étalonnage | `cam.filters.internal.addColorMatrix()` (`saturate`, `contrast`) | Ambiance par zone (`LOOKS` : `quais`, `boss`, `occ`). |
+| Vignette | `cam.filters.external.addVignette(...)` | Cadre et concentration sur l'action. |
+| Poussières | émetteur de particules additif sur toute la salle | Vie de l'air dans les faisceaux. |
+
+Règles : acteurs et décor **éclairés** (`atmo.lit`), émissifs **non éclairés**. L'UI (`UIScene`) a sa propre caméra, sans filtre. Les filtres de caméra coûtent un rendu plein écran : pas d'autre filtre de caméra hors `Atmosphere`. `GameFeel` ajoute le **squash & stretch** (`squash`) et les **traînées rémanentes** du dash (`afterimage`).
+
+### 8.5 Accessibilité (Réglages, sauvegardés dans `MetaState.settings`)
 **Secousses** 0 / 50 / 100 % (`shakeScale` ; 0 coupe aussi le zoom punch) ; **hitstop** on/off ; **flashs** on/off (flash blanc remplacé par un contour, flash plein écran du Préavis supprimé) ; **nombres de dégâts** on/off ; **attaque auto** en tactile (maintien = combo en boucle) ; **pixel parfait** (§ 1.3) ; **remappage** par `KeyboardEvent.code`, libellés via `navigator.keyboard.getLayoutMap()` quand l'API existe.
 
 Les télégraphes ne reposent jamais sur la couleur seule (forme + durée), et tout ce qui blesse le joueur reste magenta `#FF3EA5`.

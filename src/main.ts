@@ -23,6 +23,8 @@ const config: Phaser.Types.Core.GameConfig = {
   // Pixel art net : filtrage au plus proche. roundPixels vaut false par défaut en Phaser 4.
   pixelArt: true,
   roundPixels: true,
+  // Éclairage dynamique : lampes de la salle, lampe frontale du héros et éclairs des impacts.
+  maxLights: 32,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

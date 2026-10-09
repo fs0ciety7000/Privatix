@@ -60,9 +60,23 @@ import { NO_INTENT, Player } from '@/entities/Player';
 import type { ProjectileSpec } from '@/entities/Projectile';
 import { Projectile } from '@/entities/Projectile';
 import { Room } from '@/entities/Room';
+import { Atmosphere } from '@/fx/Atmosphere';
 import { GameFeel } from '@/fx/GameFeel';
 import { Controls } from '@/ui/Controls';
 import type { UIScene } from '@/scenes/UIScene';
+
+/** Éclairs lumineux associés aux VFX. */
+const VFX_LIGHT: Readonly<
+  Record<string, { color: number; radius: number; intensity: number; ms: number }>
+> = {
+  'vfx-hit': { color: 0xffd9a0, radius: 60, intensity: 1.4, ms: 120 },
+  'vfx-slam': { color: 0xffb347, radius: 110, intensity: 2, ms: 220 },
+  'vfx-explosion': { color: 0xff8a3a, radius: 140, intensity: 2.4, ms: 380 },
+  'vfx-shockwave': { color: 0xffe08a, radius: 120, intensity: 2, ms: 320 },
+  'vfx-spawn-privatix': { color: 0x19c3b1, radius: 70, intensity: 1.6, ms: 400 },
+  'vfx-poof': { color: 0x19c3b1, radius: 50, intensity: 1, ms: 250 },
+  'vfx-slash-e': { color: 0xffe2a8, radius: 50, intensity: 0.8, ms: 90 },
+};
 
 export interface RunSceneData {
   readonly shift: ShiftId;
@@ -92,6 +106,7 @@ const ROOM_TYPE_LABEL: Readonly<Record<string, string>> = {
  */
 export class RunScene extends Phaser.Scene implements CombatWorld {
   public feel!: GameFeel;
+  private atmo!: Atmosphere;
   public rng!: Rng;
   public run!: RunState;
   public player!: Player;
@@ -165,6 +180,10 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
     // Physique : héros et ennemis contre le décor ; jamais de collision héros ↔ ennemis (overlap logique).
     this.buildRoom({ room: 1, type: 'combat', reward: 'avantage' });
     this.player = new Player(this, this.room.playerSpawn.x, this.room.playerSpawn.y);
+    this.atmo = new Atmosphere(this, 'quais');
+    this.atmo.lightRoom(this.room);
+    this.atmo.lit(this.player);
+    this.atmo.attachHero(this.player);
     this.player.onDeath = () => {
       this.endShift('mort');
     };
@@ -176,6 +195,7 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
     this.scene.bringToTop(SceneKeys.UI);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.feel.destroy();
+      this.atmo.destroy();
       this.registry.set(RegistryKeys.Hud, null);
     });
     this.cameras.main.fadeIn(400, 0, 0, 0);
@@ -251,6 +271,7 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
         enemy = new ConsultantJunior(this, x, y, scale);
     }
     enemy.start(immediate);
+    this.atmo.lit(enemy);
     this.enemies.push(enemy);
     return enemy;
   }
@@ -295,6 +316,10 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
     s.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       s.destroy();
     });
+    // Les effets lumineux éclairent le décor autour d'eux (Dead Cells).
+    const glow = VFX_LIGHT[animKey];
+    if (glow)
+      this.atmo.flash(x, y, glow.color, glow.radius * (opts.scale ?? 1), glow.intensity, glow.ms);
   }
 
   // ─── Salles ────────────────────────────────────────────────────────────────
@@ -729,6 +754,8 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
       this.clearRoomObjects();
       this.room.destroy();
       this.buildRoom(door);
+      this.atmo.setLook(door.type === 'boss' ? 'boss' : 'quais');
+      this.atmo.lightRoom(this.room);
       this.attachRoomColliders();
       const spawn = this.room.playerSpawn;
       this.player.setPosition(spawn.x, spawn.y);
@@ -810,6 +837,7 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
       this.scene.pause();
       return;
     }
+    this.atmo.update(real);
     const dt = this.feel.step(real);
     if (dt <= 0) {
       this.publishHud();

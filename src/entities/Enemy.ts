@@ -303,6 +303,8 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.kbLeft = hit.knockbackMs;
     }
     this.applyDamage(amount, hit.crit);
+    // Impact « gélatine » (Dead Cells) : écrasé puis rebond.
+    if (this.kind !== 'auditeur') this.world.feel.squash(this, 1.2, 0.82, 160);
     if (this.isDead) return { dealt: amount, killed: true };
     this.onHurt(amount, hit);
     const stun = Math.max(hit.stunMs, hit.meltdownStun ? 150 : 0);

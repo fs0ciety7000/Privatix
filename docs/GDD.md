@@ -23,6 +23,7 @@
 | Durée | Shift complet **25 à 30 min** ; Shift raté **8 à 15 min** ; MVP (biome 1 + boss 1) **9 à 12 min**. |
 | Public | 16 ans et plus. Joueurs de *roguelites* d'action (cœur), joueurs occasionnels belges et francophones attirés par la satire (périphérie, servis par le mode « Congé maladie »). Sessions courtes, souvent le soir ou dans le train. |
 | Langue | Français (Belgique) d'abord. Textes externalisés pour la traduction (NL, EN en v2). |
+| Direction artistique | **Pixel art moderne**, références **Dead Cells** et **Celeste** : sprites en pixel art, mais lumière dynamique, bloom, étalonnage, particules et animation fluide (voir § 1.3 et `docs/PIXEL_ART_GUIDE.md`). Pas de rétro « plat ». |
 
 ### 1.1 Les 4 piliers
 | # | Pilier | Ce que ça veut dire en jeu | Test de conception |
@@ -36,11 +37,25 @@
 | Référence | Ce qu'on prend | Ce qu'on ne prend pas |
 |---|---|---|
 | **Hades** | Portes annonçant la récompense, bénédictions par familles (ici les collègues), hub vivant aux dialogues réactifs, Pacte (ici le Plan d'Économies), mode Dieu (ici « Congé maladie »). | La 3D isométrique, le nombre d'armes (une seule clé, 4 Montages). |
-| **Hyper Light Drifter** | Lisibilité, couleurs franches, dash nerveux, vides mortels, silences (biome 2). | La difficulté opaque, l'absence de texte. |
-| **Dead Cells** | Cancel de recovery, hitstop généreux, élites à affixes, ressources de run convertibles en méta. | La plateforme. |
+| **Hyper Light Drifter** | Lisibilité, dash nerveux, vides mortels, silences (biome 2). | La difficulté opaque, l'absence de texte, son rendu rétro plat. |
+| **Dead Cells** | **Direction artistique** (pixel art moderne : éclairage dynamique, bloom, impacts lumineux, animation très fluide avec *smears*), cancel de recovery, hitstop généreux, élites à affixes, ressources de run convertibles en méta. | La plateforme. |
+| **Celeste** | **Direction artistique** : palette vive à décalage de teinte (ombres froides, lumières chaudes), squash & stretch, traînées au dash, particules d'ambiance, élément secondaire animé (ici l'**écharpe syndicale rouge** du héros), lisibilité parfaite. | La plateforme de précision. |
 | Enter the Gungeon | Densité de projectiles saturés lisible à 32 px. | Le *bullet hell* : on reste un jeu de mêlée. |
 
-### 1.3 Vocabulaire du jeu (canon)
+### 1.3 Direction artistique : pixel art moderne (Dead Cells, Celeste)
+Le porteur du projet a tranché : **du pixel art, mais moderne**. Concrètement :
+
+| Couche | Ce qu'on fait | Où c'est fait |
+|---|---|---|
+| Sprites | Rampes de couleurs à **décalage de teinte**, 4 à 6 tons par matériau, **rim light** néon, anti-aliasing sélectif à l'intérieur des formes, contour `#14101A` | `tools/pixelart/` |
+| Animation | Beaucoup de frames (run 10, attaques 7 à 9 avec frame de **smear**), anticipation et follow-through, **écharpe syndicale rouge** qui traîne derrière le héros | `tools/pixelart/` |
+| Lumière | **Éclairage dynamique** Phaser 4 (lampes de quai, néons turquoise et magenta, lanternes de l'OCC, lampe frontale du héros), **normal maps** `_n.png` générées pour les personnages et le décor, éclairs lumineux sur les impacts et les explosions | `src/fx/Atmosphere.ts` |
+| Post-traitement | **Bloom** (seuil + flou + ajout), **étalonnage** par zone (saturation, contraste), **vignette** | `src/fx/Atmosphere.ts` |
+| Juice | **Squash & stretch** (dash, coups, impacts), **traînées rémanentes** au dash (cyan, or sur dash parfait), particules d'ambiance (poussières dans la lumière) | `src/fx/GameFeel.ts` |
+
+Règle de lecture : les acteurs et le décor sont **éclairés**, les **émissifs** (VFX, télégraphes magenta, projectiles, écrans, néons) ne le sont pas et brillent grâce au bloom. Ambiances : **Quais** bleu nuit et néons froids, **arène du boss** alarme rouge, **OCC** brique chaude et lanternes.
+
+### 1.4 Vocabulaire du jeu (canon)
 **Shift** = un run · **Roulement** = Matin / Après-midi / Nuit · **Énergie** = la vie (100) · **Burnout** = jauge 0–100 puissance/fragilité, à 100 **Pétage de plombs** · **Mobilisation** = jauge 0–100 du Coup de sifflet · **Gobelet** = charge de soin (« boire un café ») · **Tickets** = monnaie du run · **Avantage acquis** = amélioration envoyée par radio par un collègue (7 familles) · **Motion commune** = Avantage en duo · **Réglage de clé** = amélioration d'arme du run · **PS** (Points de Syndicalisme), **Grains** (de café), **Pièces** (détachées), **Tasses** = monnaies méta · **Preuve** = fragment du plan PHR-2030 (« en main » pendant le run, « archivée » à l'OCC).
 
 ## 2. Boucle roguelite

@@ -115,6 +115,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private dashStartedAt = -Infinity;
   private lastDashEnd = -Infinity;
   private perfectUsed = false;
+  private ghostAt = 0;
   private readonly trails: Trail[] = [];
   // Défense
   private iframesUntil = 0;
@@ -471,6 +472,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.activeStarted) {
       this.activeStarted = true;
       this.weapon.begin();
+      this.world.feel.squash(
+        this,
+        finisher ? 1.2 : 1.1,
+        finisher ? 0.85 : 0.93,
+        finisher ? 180 : 110,
+      );
       const lunge = (this.step.lungePx * 1000) / Math.max(1, this.timing.activeMs);
       this.body.setVelocity(Math.cos(a) * lunge, Math.sin(a) * lunge);
       const ox = this.x + Math.cos(a) * 18;
@@ -524,6 +531,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const speed = (distance * 1000) / DASH.DURATION_MS;
     this.body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
     this.playAnim('dash', angle, DASH.DURATION_MS + 40, true);
+    // Étirement dans le sens du dash, puis traînée rémanente (voir l'état « dash »).
+    const horizontal = Math.abs(Math.cos(angle)) > 0.5;
+    this.world.feel.squash(this, horizontal ? 1.25 : 0.8, horizontal ? 0.82 : 1.2, 160);
+    this.ghostAt = 0;
     this.world.vfx('vfx-dash', this.x - Math.cos(angle) * 8, this.y - 10 - Math.sin(angle) * 8, {
       rotation: angle,
     });
@@ -732,6 +743,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             const distance = DASH.DISTANCE_PX + p.world.run.mods.dashDistanceBonus;
             const speed = (distance * 1000) / DASH.DURATION_MS;
             p.body.setVelocity(Math.cos(p.dashAngle) * speed, Math.sin(p.dashAngle) * speed);
+            if (t >= p.ghostAt) {
+              p.ghostAt = t + 28;
+              p.world.feel.afterimage(p, p.perfectUsed ? 0xffd200 : 0x7cf2ff);
+            }
             return null;
           }
           p.endDash();
@@ -821,6 +836,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
           p.hurtAngle = angle;
           p.hurtPx = px;
           p.playAnim('hurt', p.facingAngle, undefined, true);
+          p.world.feel.squash(p, 0.82, 1.15, 180);
         },
         update: (p, _dt, t) => {
           if (t < HERO.KNOCKBACK_TAKEN_MS) {

@@ -21,6 +21,7 @@ import { Hazard } from '@/entities/Hazard';
 import { Player } from '@/entities/Player';
 import type { Projectile, ProjectileSpec } from '@/entities/Projectile';
 import { Room } from '@/entities/Room';
+import { Atmosphere } from '@/fx/Atmosphere';
 import { GameFeel } from '@/fx/GameFeel';
 import { Controls } from '@/ui/Controls';
 import type { UIScene } from '@/scenes/UIScene';
@@ -105,6 +106,7 @@ const LINES: Readonly<
  */
 export class HubScene extends Phaser.Scene implements CombatWorld {
   public feel!: GameFeel;
+  private atmo!: Atmosphere;
   public rng!: Rng;
   public run!: RunState;
   public player!: Player;
@@ -153,6 +155,10 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
     const spawn = this.room.playerSpawn;
     this.player = new Player(this, spawn.x, spawn.y);
     this.player.peaceful = true;
+    this.atmo = new Atmosphere(this, 'occ');
+    this.atmo.lightRoom(this.room);
+    this.atmo.lit(this.player);
+    this.atmo.attachHero(this.player);
     this.physics.add.collider(this.player, this.room.layer);
     this.room.fitCamera(this.cameras.main, this.player);
 
@@ -185,6 +191,7 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
     for (const d of this.room.markPositions('dummy')) {
       const dummy = new TrainingDummy(this, d.x, d.y + 8);
       dummy.start(true);
+      this.atmo.lit(dummy);
       this.dummies.push(dummy);
     }
     const coffee = this.room.markPositions('coffee')[0];
@@ -193,6 +200,8 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
         .sprite(coffee.x, coffee.y + 8, 'vieille-dame_idle_strip4')
         .setOrigin(0.5, 1)
         .setDepth(coffee.y + 8);
+      machine.setLighting(true);
+      this.atmo.addGlow(coffee.x, coffee.y, 0xffb35c, 60, 0.12);
       if (this.anims.exists('vieille-dame-idle')) machine.play('vieille-dame-idle');
       else if (this.textures.exists('prop_vieille-dame')) machine.setTexture('prop_vieille-dame');
     }
@@ -435,6 +444,7 @@ export class HubScene extends Phaser.Scene implements CombatWorld {
       this.scene.start(SceneKeys.MainMenu);
       return;
     }
+    this.atmo.update(real);
     const dt = this.feel.step(real);
     if (dt <= 0) return;
     this.gameTime += dt;

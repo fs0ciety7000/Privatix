@@ -13,6 +13,7 @@ Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépô
 
 - **Privatix** : Hack 'n' Slash / Roguelite 2D en vue de dessus. Un cheminot en 3x8, armé d'une **clé à tire-fond**, affronte les consultants et automates de la mégacorporation Privatix dans la gare de Mons. Chaque run est un **Shift** ; après un échec, on revient à l'**OCC** (Operation Coffee Center) dépenser ses **Points de Syndicalisme** au Tableau des revendications.
 - **Stack** : Phaser **4.2.1** (Arcade Physics), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3, Node 22. Sprites générés par `tools/pixelart/` (Python + Pillow).
+- **Direction artistique** : **pixel art moderne**, références **Dead Cells** et **Celeste** (lumière dynamique, bloom, étalonnage, particules, animation fluide, squash & stretch). Jamais de rendu rétro « plat ». Voir GDD § 1.3.
 - **Rendu** : 640×360 logiques, mise à l'échelle entière, tuiles 16 px, `pixelArt: true`, `roundPixels: true`, WebGL.
 - **Déploiement** : Docker (build Node → nginx) sur Coolify, `privatix.fs0ciety.org`.
 - **Langue** : identifiants en anglais ; commentaires, docs, textes du jeu et messages de commit en français.
@@ -47,7 +48,14 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 - **Particules** (étincelles, feuilles de papier, poussière) et **VFX animés** (`world.vfx('vfx-hit', x, y)`).
 - **Ralenti** sur le dernier ennemi d'une salle (0,25 pendant 450 ms) et sur le dash parfait (0,6 pendant 200 ms). Arcade : `world.timeScale` est **inversé** (2 = plus lent), `GameFeel` s'en charge.
 - Nombres de dégâts, vignette magenta quand le héros est touché, zoom punch sur le coup 3.
+- **Squash & stretch** (`GameFeel.squash`) au dash, sur les coups et les impacts ; **traînée rémanente** au dash (`GameFeel.afterimage`).
 - Un nouveau type d'impact ? Ajouter sa ligne dans le tableau « Game feel » du GDD, puis l'appeler via `GameFeel`.
+
+**Lumière et post-traitement** (`src/fx/Atmosphere.ts`, une instance par scène de jeu) :
+- Tout acteur et tout décor est éclairé : `atmo.lit(sprite)` à la création, `room.layer.setLighting(true)`. Les **émissifs** (VFX, télégraphes, projectiles, écrans, UI) ne le sont pas : ils restent saturés et le bloom les fait briller.
+- Lampes et néons de salle via `atmo.lightRoom(room)` ; halo visible via `atmo.addGlow` ; éclair bref sur un impact via `atmo.flash` (déjà branché sur les VFX lumineux de `RunScene.vfx`).
+- Bloom, étalonnage et vignette sont des **filtres de caméra Phaser 4** posés par `Atmosphere` : ne pas en empiler d'autres ailleurs. Une nouvelle zone = une entrée dans `LOOKS`.
+- `render.maxLights` vaut 32 (`main.ts`) : rester sous cette limite de lumières visibles à l'écran.
 
 ## 4. Règle 2 — Architecture modulaire
 
@@ -81,7 +89,8 @@ Le combat est le produit. Chaque coup doit **se sentir**.
 - **Un seul point d'appel de `play()` par entité** (`playAnim`), qui gère direction, miroir et vitesse de lecture. Les états de la StateMachine demandent une animation ; ils ne manipulent jamais les frames à la main.
 - `AnimationFrame.index` **commence à 1** en Phaser 4 (pas de poussière, événements de frame : `frame.index - 1`).
 - Pivot aux pieds : `setOrigin` d'après le manifeste (héros 48×48 : `(0.5, 44/48)`), ombre au sol séparée (`shadow_*`, opacité 0,5 par le moteur). Profondeur = `y` des pieds.
-- Jamais de mise à l'échelle non entière d'un sprite de jeu ; `pixelArt` et `roundPixels` restent activés.
+- Jamais de mise à l'échelle non entière **durable** d'un sprite de jeu ; seule exception : le squash & stretch bref de `GameFeel.squash`. `pixelArt` et `roundPixels` restent activés.
+- **Normal maps** : chaque feuille de personnage, tileset ou prop peut avoir une `<nom>_n.png` de mêmes dimensions (champ `normalMap` du manifeste), chargée avec la feuille pour l'éclairage dynamique.
 
 ## 6. Workflow d'une feature : 1) logique → 2) placeholders → 3) vrais sprites
 
@@ -114,7 +123,8 @@ src/config/                 # constants.ts (scènes, registry, couleurs), balanc
 src/scenes/                 # Boot, Preloader, MainMenu, Hub (OCC), Run (Shift), UI (HUD, tactile, choix), Pause, Results
 src/entities/               # Player, Enemy (+ enemies/ : ConsultantJunior, BorneAutomatique, DroneOptimetre, ManagerKpi, Auditeur, TrainingDummy), Weapon, Room, Projectile, Hazard, Pickup, CombatWorld
 src/systems/                # PUR : StateMachine, InputBuffer, combat/, procedural/, meta/, save/
-src/fx/GameFeel.ts          # hitstop, ralenti, secousses, flash, particules, nombres
+src/fx/GameFeel.ts          # hitstop, ralenti, secousses, flash, squash & stretch, traînées, particules, nombres
+src/fx/Atmosphere.ts        # éclairage dynamique, halos, bloom, étalonnage, vignette, poussières (DA moderne)
 src/ui/                     # Controls (clavier, souris, manette, tactile), placeholders
 src/platform/               # seul accès au navigateur hors Phaser (localStorage)
 src/utils/                  # rng (graines), math
