@@ -118,6 +118,8 @@ export const BALANCE = {
       GOBELET: 20,
       PREMIUM_COFFEE: 20,
       PREMIUM_COFFEE_MAX: 3,
+      /** Tasse de Relève « Ristretto » : Fatigue −10 au moment du choix (GDD § 4.5). */
+      RISTRETTO: 10,
     },
     timeMult: { thermos: 0.8, lungo: 0.75 },
   },

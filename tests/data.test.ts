@@ -122,10 +122,7 @@ describe('cartes', () => {
   // aussi bien en début d'histoire (aucun drapeau) qu'en fin d'acte (tous les drapeaux).
   const contexts: [string, ConditionContext][] = [
     ['début d’acte', { flags: {}, act: 1 }],
-    [
-      'fin d’acte',
-      { flags: new Proxy({}, { get: () => true }), act: 1 },
-    ],
+    ['fin d’acte', { flags: new Proxy({}, { get: () => true }), act: 1 }],
   ];
   for (const [label, ctx] of contexts) {
     it.each(maps.map((m) => [m.id, m] as const))(`%s est praticable (${label})`, (_id, def) => {
