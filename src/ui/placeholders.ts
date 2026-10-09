@@ -442,6 +442,18 @@ export function createUiTextures(scene: Phaser.Scene): void {
   make('disc64', 64, 64, (c) => {
     disc(c, 32, 32, 31, '#ffffff', false);
   });
+  // Rai de lumière : dégradé vertical doux, plus dense en haut, bords fondus.
+  make('shaft', 32, 128, (c) => {
+    for (let y = 0; y < 128; y += 1) {
+      const a = Math.pow(1 - y / 128, 1.4);
+      const g = c.createLinearGradient(0, 0, 32, 0);
+      g.addColorStop(0, 'rgba(255,255,255,0)');
+      g.addColorStop(0.5, `rgba(255,255,255,${String(a)})`);
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = g;
+      c.fillRect(0, y, 32, 1);
+    }
+  });
   make('vignette', 160, 90, (c) => {
     const g = c.createRadialGradient(80, 45, 20, 80, 45, 92);
     g.addColorStop(0, 'rgba(0,0,0,0)');

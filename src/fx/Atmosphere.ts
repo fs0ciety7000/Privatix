@@ -42,19 +42,19 @@ export interface LookDef {
 export const LOOKS = {
   /** Quais de nuit : bleu profond, néons froids, accents turquoise et magenta. */
   quais: {
-    ambient: 0x6f7ca4,
-    lamp: { color: 0xcfe8ff, radius: 170, intensity: 0.5, every: 7 },
+    ambient: 0x52608c,
+    lamp: { color: 0xcfe8ff, radius: 150, intensity: 0.75, every: 7 },
     accents: [0x19c3b1, 0xff3ea5, 0xffd200],
     hero: { color: 0xffc58a, radius: 110, intensity: 0.25 },
-    grade: { saturate: 0.15, contrast: 0.22, brightness: 0 },
-    bloom: { threshold: 0.9, amount: 0.55, radius: 2 },
-    vignette: 0.42,
+    grade: { saturate: 0.22, contrast: 0.3, brightness: 0 },
+    bloom: { threshold: 0.9, amount: 0.6, radius: 2 },
+    vignette: 0.55,
     motes: { color: 0xbfe0ff, count: 40 },
-    decor: 0x8a90a8,
+    decor: 0x7c82a0,
   },
   /** Arène du boss : alarme rouge en plus. */
   boss: {
-    ambient: 0x80748c,
+    ambient: 0x64587a,
     lamp: { color: 0xffd8c8, radius: 170, intensity: 0.55, every: 8 },
     accents: [0xff3ea5, 0xe8505b, 0x19c3b1],
     hero: { color: 0xffc58a, radius: 96, intensity: 0.9 },
@@ -66,8 +66,8 @@ export const LOOKS = {
   },
   /** L'OCC : brique chaude, lanternes de signalisation, café. */
   occ: {
-    ambient: 0xa08470,
-    lamp: { color: 0xffb35c, radius: 170, intensity: 0.5, every: 8 },
+    ambient: 0x86664e,
+    lamp: { color: 0xffb35c, radius: 150, intensity: 0.8, every: 8 },
     accents: [0xe8505b, 0x5bd17a, 0xfff2d0],
     hero: { color: 0xffd9a8, radius: 100, intensity: 0.8 },
     grade: { saturate: 0.2, contrast: 0.1, brightness: 0.02 },
@@ -179,7 +179,30 @@ export class Atmosphere {
         this.addGlow(x, band.y + band.height / 2, color, 36, 0.05);
       }
     }
+    this.addShafts(room);
     this.spawnMotes(room);
+  }
+
+  /**
+   * Rais de lumière (Hades) : faisceaux additifs obliques qui tombent des portes et des verrières.
+   * Purement décoratifs, ils donnent la profondeur et la dramaturgie des décors.
+   */
+  private addShafts(room: Room): void {
+    const color = this.look.lamp.color;
+    const tops = room.layout.doors.map((d) => ({ x: (d.tx + d.width / 2) * TILE, y: (d.ty + 1) * TILE }));
+    for (const top of tops) {
+      const shaft = this.scene.add
+        .image(top.x, top.y, 'shaft')
+        .setOrigin(0.5, 0)
+        .setDisplaySize(TILE * 3, TILE * 9)
+        .setAngle(-14)
+        .setTint(color)
+        .setAlpha(0.11)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(Depth.Above - 30);
+      this.glows.push(shaft);
+      this.scene.tweens.add({ targets: shaft, alpha: 0.06, yoyo: true, repeat: -1, duration: 2600 + Math.random() * 1500, ease: 'Sine.easeInOut' });
+    }
   }
 
   /** Halo visible (additif) : la lumière se voit dans l'air, pas seulement sur les surfaces. */

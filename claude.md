@@ -13,7 +13,7 @@ Ce fichier est lu par Claude Code au début de chaque intervention sur ce dépô
 
 - **Privatix** : Hack 'n' Slash / Roguelite 2D en vue de dessus. Un cheminot en 3x8, armé d'une **clé à tire-fond**, affronte les consultants et automates de la mégacorporation Privatix dans la gare de Mons. Chaque run est un **Shift** ; après un échec, on revient à l'**OCC** (Operation Coffee Center) dépenser ses **Points de Syndicalisme** au Tableau des revendications.
 - **Stack** : Phaser **4.2.1** (Arcade Physics), TypeScript 5.9 strict, Vite 7, Vitest 4, ESLint 10, Prettier 3, Node 22. Sprites générés par `tools/pixelart/` (Python + Pillow).
-- **Direction artistique** : **pixel art moderne**, références **Dead Cells** et **Celeste** (lumière dynamique, bloom, étalonnage, particules, animation fluide, squash & stretch). Jamais de rendu rétro « plat ». Voir GDD § 1.3.
+- **Direction artistique** : **pixel art moderne**, références **Dead Cells**, **Celeste** et **Hades** (lumière dynamique, bloom, étalonnage, particules, animation fluide, squash & stretch ; de Hades : contrastes dramatiques, encrage des formes, liserés colorés forts, décors sombres en flaques et rais de lumière). Jamais de rendu rétro « plat ». Voir GDD § 1.3.
 - **Rendu** : 640×360 logiques, mise à l'échelle entière, tuiles 16 px, `pixelArt: true`, `roundPixels: true`, WebGL.
 - **Déploiement** : Docker (build Node → nginx) sur Coolify, `privatix.fs0ciety.org`.
 - **Langue** : identifiants en anglais ; commentaires, docs, textes du jeu et messages de commit en français.
