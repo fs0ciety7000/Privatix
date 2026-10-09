@@ -241,7 +241,7 @@ export class Auditeur extends Enemy {
           this.facing,
           AUDITEUR.SWEEP_RADIUS,
           AUDITEUR.SWEEP_ARC_DEG,
-          { x: p.x, y: p.y - 10, r: 8 },
+          p.hurtCircle,
         )
       ) {
         this.hitPlayer(AUDITEUR.SWEEP_DAMAGE, AUDITEUR.SWEEP_KNOCKBACK);

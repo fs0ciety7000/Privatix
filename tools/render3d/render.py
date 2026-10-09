@@ -29,7 +29,7 @@ def reset_scene() -> bpy.types.Scene:
     sc.view_settings.look = "None"
     sc.render.image_settings.file_format = "OPEN_EXR"
     sc.render.image_settings.color_depth = "32"
-    sc.render.use_persistent_data = True
+    sc.render.use_persistent_data = False
     sc.world = bpy.data.worlds.new("world")
     sc.world.use_nodes = True
     return sc
@@ -169,7 +169,7 @@ class PassRenderer:
             mat = self.id_mats[mid] if which == "id" else self.light_mat if which == "light" else self.normal_mat
             obj.data.materials.clear()
             obj.data.materials.append(mat)
-            obj.visible_shadow = which == "light"
+            obj.visible_shadow = which == "light" and not obj.get("no_shadow", False)
 
     def render(self) -> dict[str, np.ndarray]:
         sc = self.sc

@@ -34,6 +34,24 @@ def _rel(path):
     return os.path.relpath(path, os.path.join(ROOT, "public")).replace(os.sep, "/")
 
 
+_R3D: set[str] | None = None
+
+
+def _render3d_keys() -> set[str]:
+    """Clés d'animation produites par tools/render3d (manifest.json), à ne pas régénérer en 2D."""
+    global _R3D
+    if _R3D is None:
+        import json
+
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "render3d", "manifest.json")
+        try:
+            with open(path) as f:
+                _R3D = {a["anim"] for a in json.load(f)["animations"]}
+        except FileNotFoundError:
+            _R3D = set()
+    return _R3D
+
+
 def emit_strip(folder, name, frames, durations=None, loop=False, pivot=None, active=None,
                events=None, group=None, notes=None, fps=None):
     """Écrit `public/assets/<folder>/<name>.png` (bande horizontale) et l'enregistre.
@@ -45,6 +63,9 @@ def emit_strip(folder, name, frames, durations=None, loop=False, pivot=None, act
     """
     n = len(frames)
     assert name.endswith(f"_strip{n}"), (name, n)
+    # Les personnages rendus par le pipeline 3D (tools/render3d) priment : on n'écrase pas leurs PNG.
+    if name[: name.rindex("_strip")].replace("_", "-") in _render3d_keys():
+        return None
     h, w = frames[0].shape
     assert h == w, f"{name}: frame non carrée {w}x{h}"
     a = lib.strip(frames)

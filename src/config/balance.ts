@@ -16,9 +16,12 @@ export const HERO = {
   FEET_RADIUS: 6,
   /** Rayon de la hurtbox (torse), centrée 10 px au-dessus des pieds. */
   HURT_RADIUS: 8,
-  /** Hurtbox centrée 12 px au-dessus des pieds. */
-  HURT_OFFSET_Y: 12,
-  /** Origine des attaques : 10 px au-dessus des pieds. */
+  /**
+   * Hurtbox : cercle dans le plan du sol, 10 px « au-dessus » des pieds. Les tests de touche se font
+   * dans le plan du sol (vue de dessus) : ce décalage ne dépend PAS de la taille du sprite.
+   */
+  HURT_OFFSET_Y: 10,
+  /** Origine des attaques, dans le plan du sol (même convention que la hurtbox). */
   ATTACK_ORIGIN_Y: 10,
   BALLAST_SLOW: 0.15,
   WALL_SLAM_SPEED: 150,

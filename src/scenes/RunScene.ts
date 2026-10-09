@@ -852,7 +852,8 @@ export class RunScene extends Phaser.Scene implements CombatWorld {
       if (!p.active) continue;
       p.tick(dt);
       const c = p.hitCircle;
-      if (Math.hypot(c.x - this.player.x, c.y - (this.player.y - 10)) <= c.r + 7) {
+      const hb = this.player.hurtCircle;
+      if (Math.hypot(c.x - hb.x, c.y - hb.y) <= c.r + hb.r) {
         if (this.player.isInvulnerable()) {
           if (this.player.inPerfectWindow())
             this.player.receiveHit(p.damage, { x: p.x, y: p.y, name: p.owner });

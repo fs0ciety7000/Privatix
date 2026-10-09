@@ -9,6 +9,7 @@
  * placeholder généré (PreloaderScene) : le jeu tourne avec ou sans les vrais sprites.
  */
 import manifest from '../../tools/pixelart/manifest.json';
+import manifest3d from '../../tools/render3d/manifest.json';
 
 export type Direction = 'down' | 'up' | 'side';
 export const DIRECTIONS: readonly Direction[] = ['down', 'up', 'side'];
@@ -91,10 +92,23 @@ interface ManifestTileset {
   readonly normalMap?: string;
 }
 
-const M = manifest as unknown as {
+const M2D = manifest as unknown as {
   readonly animations: readonly ManifestAnimation[];
   readonly images: readonly ManifestImage[];
   readonly tilesets: readonly ManifestTileset[];
+};
+
+/**
+ * Personnages rendus par le pipeline 3D → pixel (tools/render3d, méthode Dead Cells) :
+ * ils remplacent les feuilles 2D de même clé d'animation.
+ */
+const M3D = manifest3d as unknown as { readonly animations: readonly ManifestAnimation[] };
+const KEYS_3D = new Set(M3D.animations.map((a) => a.anim));
+
+const M = {
+  animations: [...M2D.animations.filter((a) => !KEYS_3D.has(a.anim)), ...M3D.animations],
+  images: M2D.images,
+  tilesets: M2D.tilesets,
 };
 
 /** Couleur de placeholder d'après la catégorie (dossier). */

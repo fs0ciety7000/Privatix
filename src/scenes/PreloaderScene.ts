@@ -48,7 +48,11 @@ export class PreloaderScene extends Phaser.Scene {
       } else this.load.image({ key: img.key, url: img.path, ...normal });
     }
     for (const t of TILESETS) {
-      this.load.image({ key: t.key, url: t.path, ...(t.normalMap ? { normalMap: t.normalMap } : {}) });
+      this.load.image({
+        key: t.key,
+        url: t.path,
+        ...(t.normalMap ? { normalMap: t.normalMap } : {}),
+      });
     }
   }
 

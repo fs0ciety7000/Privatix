@@ -1,0 +1,802 @@
+{
+ "animations": [
+  {
+   "file": "assets/sprites/player/player_attack1_down_strip7.png",
+   "texture": "player_attack1_down_strip7",
+   "anim": "player-attack1-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 7,
+   "durations": [
+    60,
+    50,
+    40,
+    60,
+    70,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    2
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack1_down_strip7_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack1_side_strip7.png",
+   "texture": "player_attack1_side_strip7",
+   "anim": "player-attack1-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 7,
+   "durations": [
+    60,
+    50,
+    40,
+    60,
+    70,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    2
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack1_side_strip7_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack1_up_strip7.png",
+   "texture": "player_attack1_up_strip7",
+   "anim": "player-attack1-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 7,
+   "durations": [
+    60,
+    50,
+    40,
+    60,
+    70,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    2
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack1_up_strip7_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_down_strip7.png",
+   "texture": "player_attack2_down_strip7",
+   "anim": "player-attack2-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 7,
+   "durations": [
+    60,
+    50,
+    40,
+    60,
+    70,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    2
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack2_down_strip7_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_side_strip7.png",
+   "texture": "player_attack2_side_strip7",
+   "anim": "player-attack2-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 7,
+   "durations": [
+    60,
+    50,
+    40,
+    60,
+    70,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    2
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack2_side_strip7_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack2_up_strip7.png",
+   "texture": "player_attack2_up_strip7",
+   "anim": "player-attack2-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 7,
+   "durations": [
+    60,
+    50,
+    40,
+    60,
+    70,
+    80,
+    90
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    2
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack2_up_strip7_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_down_strip9.png",
+   "texture": "player_attack3_down_strip9",
+   "anim": "player-attack3-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 9,
+   "durations": [
+    90,
+    90,
+    80,
+    60,
+    40,
+    90,
+    100,
+    100,
+    110
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    4
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack3_down_strip9_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_side_strip9.png",
+   "texture": "player_attack3_side_strip9",
+   "anim": "player-attack3-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 9,
+   "durations": [
+    90,
+    90,
+    80,
+    60,
+    40,
+    90,
+    100,
+    100,
+    110
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    4
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack3_side_strip9_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_attack3_up_strip9.png",
+   "texture": "player_attack3_up_strip9",
+   "anim": "player-attack3-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 9,
+   "durations": [
+    90,
+    90,
+    80,
+    60,
+    40,
+    90,
+    100,
+    100,
+    110
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    4
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_attack3_up_strip9_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_dash_down_strip6.png",
+   "texture": "player_dash_down_strip6",
+   "anim": "player-dash-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 6,
+   "durations": [
+    25,
+    25,
+    25,
+    30,
+    35,
+    40
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_dash_down_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_dash_side_strip6.png",
+   "texture": "player_dash_side_strip6",
+   "anim": "player-dash-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 6,
+   "durations": [
+    25,
+    25,
+    25,
+    30,
+    35,
+    40
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_dash_side_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_dash_up_strip6.png",
+   "texture": "player_dash_up_strip6",
+   "anim": "player-dash-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 6,
+   "durations": [
+    25,
+    25,
+    25,
+    30,
+    35,
+    40
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_dash_up_strip6_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_death_strip12.png",
+   "texture": "player_death_strip12",
+   "anim": "player-death",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 12,
+   "durations": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    90,
+    600
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_death_strip12_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_down_strip4.png",
+   "texture": "player_hurt_down_strip4",
+   "anim": "player-hurt-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 4,
+   "durations": [
+    60,
+    70,
+    80,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_hurt_down_strip4_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_side_strip4.png",
+   "texture": "player_hurt_side_strip4",
+   "anim": "player-hurt-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 4,
+   "durations": [
+    60,
+    70,
+    80,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_hurt_side_strip4_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_hurt_up_strip4.png",
+   "texture": "player_hurt_up_strip4",
+   "anim": "player-hurt-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 4,
+   "durations": [
+    60,
+    70,
+    80,
+    100
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_hurt_up_strip4_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_idle_down_strip8.png",
+   "texture": "player_idle_down_strip8",
+   "anim": "player-idle-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 8,
+   "durations": [
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_idle_down_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_idle_side_strip8.png",
+   "texture": "player_idle_side_strip8",
+   "anim": "player-idle-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 8,
+   "durations": [
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_idle_side_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_idle_up_strip8.png",
+   "texture": "player_idle_up_strip8",
+   "anim": "player-idle-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 8,
+   "durations": [
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140,
+    140
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_idle_up_strip8_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_run_down_strip10.png",
+   "texture": "player_run_down_strip10",
+   "anim": "player-run-down",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 10,
+   "durations": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_run_down_strip10_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_run_side_strip10.png",
+   "texture": "player_run_side_strip10",
+   "anim": "player-run-side",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 10,
+   "durations": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_run_side_strip10_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_run_up_strip10.png",
+   "texture": "player_run_up_strip10",
+   "anim": "player-run-up",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 10,
+   "durations": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+   ],
+   "loop": true,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": {
+    "footstep": [
+     0,
+     5
+    ]
+   },
+   "normalMap": "assets/sprites/player/player_run_up_strip10_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_spawn_strip10.png",
+   "texture": "player_spawn_strip10",
+   "anim": "player-spawn",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 10,
+   "durations": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    120
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_spawn_strip10_n.png",
+   "source": "render3d"
+  },
+  {
+   "file": "assets/sprites/player/player_special_strip12.png",
+   "texture": "player_special_strip12",
+   "anim": "player-special",
+   "type": "spritesheet",
+   "frameWidth": 72,
+   "frameHeight": 72,
+   "frames": 12,
+   "durations": [
+    100,
+    100,
+    100,
+    100,
+    40,
+    60,
+    80,
+    80,
+    100,
+    100,
+    100,
+    120
+   ],
+   "loop": false,
+   "pivot": {
+    "x": 36,
+    "y": 64
+   },
+   "origin": {
+    "x": 0.5,
+    "y": 0.8889
+   },
+   "active": [
+    4
+   ],
+   "events": null,
+   "normalMap": "assets/sprites/player/player_special_strip12_n.png",
+   "source": "render3d"
+  }
+ ]
+}

@@ -86,7 +86,7 @@ export class ManagerKpi extends Enemy {
           this.facing,
           MANAGER.TABLET_REACH,
           MANAGER.TABLET_ARC_DEG,
-          { x: p.x, y: p.y - 10, r: 8 },
+          p.hurtCircle,
         )
       ) {
         this.hitPlayer(MANAGER.TABLET_DAMAGE, MANAGER.TABLET_KNOCKBACK);

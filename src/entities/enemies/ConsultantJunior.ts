@@ -116,11 +116,13 @@ export class ConsultantJunior extends Enemy {
       const origin = { x: this.x, y: this.y - 8 };
       const p = this.world.player;
       if (
-        circleInArc(origin, this.facing, CONSULTANT.MELEE_REACH, CONSULTANT.MELEE_ARC_DEG, {
-          x: p.x,
-          y: p.y - 10,
-          r: 8,
-        })
+        circleInArc(
+          origin,
+          this.facing,
+          CONSULTANT.MELEE_REACH,
+          CONSULTANT.MELEE_ARC_DEG,
+          p.hurtCircle,
+        )
       ) {
         this.hitPlayer(CONSULTANT.MELEE_DAMAGE, CONSULTANT.MELEE_KNOCKBACK);
       }

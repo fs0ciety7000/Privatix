@@ -148,7 +148,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setCircle(HERO.FEET_RADIUS, pivot.x - HERO.FEET_RADIUS, pivot.y - HERO.FEET_RADIUS);
     this.body.setMaxSpeed(1200);
     this.weapon = new Weapon(world);
-    this.shadow = world.stage.add.image(x, y, 'shadow_m').setAlpha(0.5).setDepth(Depth.Shadow);
+    this.shadow = world.stage.add
+      .image(x, y, 'shadow_l')
+      .setScale(0.8)
+      .setAlpha(0.5)
+      .setDepth(Depth.Shadow);
     this.trailGfx = world.stage.add.graphics().setDepth(Depth.Decal);
     this.on(Phaser.Animations.Events.ANIMATION_UPDATE, this.onAnimFrame, this);
     this.fsm = new StateMachine<Player, PlayerStates>(this, this.buildStates());
@@ -169,6 +173,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   public get hasShield(): boolean {
     const every = this.world.run.mods.shieldEveryMs;
     return every > 0 && this.world.now() >= this.shieldReadyAt;
+  }
+
+  /** Hurtbox du torse (cercle), pour les attaques et projectiles ennemis. */
+  public get hurtCircle(): { x: number; y: number; r: number } {
+    return { x: this.x, y: this.y - HERO.HURT_OFFSET_Y, r: HERO.HURT_RADIUS };
   }
 
   public get isMarked(): boolean {
