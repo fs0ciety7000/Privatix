@@ -1,6 +1,6 @@
 import { COFFEE, ENEMY_NAMES } from '@/config/balance';
-import type { EnemyKind } from '@/config/balance';
-import { loadMeta } from '@/platform/save';
+import type { EnemyKind, ShiftId } from '@/config/balance';
+import { hasSave, loadMeta, metaSave } from '@/platform/save';
 import { browserStorage } from '@/platform/storage';
 import { autoAimTarget } from '@/sim/aim';
 import { FixedClock, SIM_DT_MS } from '@/sim/clock/FixedClock';
@@ -8,7 +8,15 @@ import type { SimEvent } from '@/sim/events';
 import { NO_INTENT } from '@/sim/intent';
 import { World } from '@/sim/World';
 import { AVANTAGES_BY_ID, RARITIES } from '@/systems/meta/Avantages';
+import type { MetaState } from '@/systems/meta/MetaState';
+import { newMeta } from '@/systems/meta/MetaState';
+import type { ShiftEnd } from '@/systems/meta/RunState';
 import { maxEnergy } from '@/systems/meta/RunState';
+import { settleShift } from '@/systems/meta/settle';
+import type { PlayerIntent } from '@/sim/intent';
+import { HubController } from '@/scenes3d/hub/HubController';
+import { HubUi } from '@/ui/hub/HubUi';
+import { HUB_SERVICES } from '@/ui/hub/services';
 import type { RawInput, TouchElements } from '@/engine/Input';
 import { Input } from '@/engine/Input';
 import type { HudSnapshot } from '@/ui/hud/Hud';
@@ -34,11 +42,12 @@ export interface SceneDom {
   readonly touch: TouchElements | null;
 }
 
-type Phase = 'title' | 'run' | 'results';
+type Phase = 'title' | 'hub' | 'run' | 'results';
 
 /**
- * Jeu 3D (jalon J4) : écran titre → Shift complet (salles, portes, vagues, récompenses, boss) → écran
- * des départs → retour au titre. Mince par construction : relie la simulation (`sim/`, dont
+ * Jeu 3D (jalons J4 et J6) : écran titre → hub (OCC, `scenes3d/hub`) → Shift complet (salles, portes,
+ * vagues, récompenses, boss) → écran des départs → retour au hub. La progression (`MetaState`) est
+ * chargée au démarrage et sauvegardée à chaque fin de Shift et à chaque achat. Mince par construction : relie la simulation (`sim/`, dont
  * `RunDirector` porte le flux de `RunScene`), la vue (`view/`), les entrées (`engine/`), le HUD et les
  * menus DOM (`ui/`), qui ne se connaissent pas entre eux.
  */
@@ -49,6 +58,14 @@ export class Game3D {
   private readonly input: Input;
   private readonly hud: Hud;
   private readonly menus: Menus;
+  private readonly hubUi: HubUi;
+  /** Hub en cours (phase `hub`), sinon `null`. */
+  private hub: HubController | null = null;
+  /** Progression permanente (chargée au démarrage, sauvegardée par `saveMeta`). */
+  private meta: MetaState;
+  /** Issue et cause du dernier Shift (répliques des PNJ, mur synoptique). */
+  private lastEnd: ShiftEnd | null = null;
+  private lastCause: string | null = null;
   private phase: Phase = 'title';
   private seed: number;
   private statsT = 0;
@@ -74,6 +91,7 @@ export class Game3D {
   ) {
     this.settings = settings;
     this.seed = seed;
+    this.meta = loadMeta();
     this.cheats = cheats;
     this.world = this.backdropWorld();
     this.clock = new FixedClock(this.world.time);
@@ -90,6 +108,8 @@ export class Game3D {
       },
     );
     this.menus.reducedMotion = settings.reducedMotion;
+    this.hubUi = new HubUi(dom.ui, this.menus, HUB_SERVICES);
+    this.hubUi.reducedMotion = settings.reducedMotion;
     this.cheatHandler = (e) => {
       if (!e.repeat && ['KeyK', 'KeyG', 'KeyN', 'KeyB'].includes(e.code))
         this.cheatQueue.push(e.code.slice(3));
@@ -118,6 +138,16 @@ export class Game3D {
     return this.menus.current;
   }
 
+  /** Hub en cours (outil de démonstration), sinon `null`. */
+  public get hubController(): HubController | null {
+    return this.hub;
+  }
+
+  /** Progression courante (outil de démonstration). */
+  public get progress(): MetaState {
+    return this.hub?.sim.meta ?? this.meta;
+  }
+
   public resize(w: number, h: number): void {
     this.view.resize(w, h);
   }
@@ -136,26 +166,103 @@ export class Game3D {
   private showTitle(): void {
     this.phase = 'title';
     this.hud.setVisible(false);
+    this.hubUi.setVisible(false);
     this.menus.showPauseButton(false);
     this.menus.setBoss(null);
     this.menus.setPrompt(null, 0, 0, false);
-    this.menus.showTitle(
-      () => {
-        this.startRun();
+    const m = this.meta;
+    this.menus.showTitle({
+      hasSave: hasSave(),
+      saveSummary: `${String(m.ps)} PS · ${String(m.grains)} Grains · ${String(m.stats.shifts)} Shift${m.stats.shifts > 1 ? 's' : ''}`,
+      onNew: () => {
+        this.meta = newMeta();
+        this.saveMeta(this.meta);
+        this.enterHub();
       },
-      () => {
+      onResume: () => {
+        this.meta = loadMeta();
+        this.enterHub();
+      },
+      onErase: () => {
+        this.menus.showConfirm(
+          'Effacer la progression ?',
+          'PS, Grains, Pièces, revendications, statistiques et Vestiaire seront perdus. « Rien à signaler, sauf tout. »',
+          'Oui, tout effacer',
+          () => {
+            metaSave.clear();
+            this.meta = newMeta();
+            this.lastEnd = null;
+            this.lastCause = null;
+            this.showTitle();
+          },
+          () => {
+            this.showTitle();
+          },
+        );
+      },
+      onOptions: () => {
         this.openOptions(() => {
           this.showTitle();
         });
       },
+    });
+  }
+
+  private saveMeta(meta: MetaState): boolean {
+    this.meta = meta;
+    return metaSave.save(meta);
+  }
+
+  /** Le hub (OCC) : nouveau monde paisible, décor du hub, PNJ et services. */
+  public enterHub(): void {
+    this.menus.close();
+    this.leaveHub();
+    this.hub = new HubController(
+      {
+        menus: this.menus,
+        toScreen: (x, y, h) => this.view.toScreen(x, y, h),
+        save: (meta) => this.saveMeta(meta),
+        depart: (shift, meta) => {
+          this.meta = meta;
+          this.startRun(shift);
+        },
+        openOptions: (back) => {
+          this.openOptions(back);
+        },
+        quitToTitle: () => {
+          this.leaveHub();
+          this.world = this.backdropWorld();
+          this.clock = new FixedClock(this.world.time);
+          this.rebuildView();
+          this.showTitle();
+        },
+      },
+      this.hubUi,
+      { meta: this.meta, seed: this.seed, fromResult: this.lastEnd, lastCause: this.lastCause },
     );
+    this.world = this.hub.sim.world;
+    this.clock = new FixedClock(this.world.time);
+    this.phase = 'hub';
+    this.rebuildView();
+    this.afterModal = true;
+    this.hud.setVisible(false);
+    this.menus.showPauseButton(this.input.touch);
+    this.menus.setBoss(null);
+    this.menus.fade(1, 0);
+    this.menus.fade(0, 500);
+  }
+
+  private leaveHub(): void {
+    this.hub?.dispose();
+    this.hub = null;
   }
 
   /** Nouveau Shift : nouveau monde (graine suivante), nouvelle vue. */
-  public startRun(): void {
+  public startRun(shift: ShiftId = 'matin'): void {
     this.menus.close();
+    this.leaveHub();
     this.seed += 1;
-    this.world = new World({ seed: this.seed, meta: loadMeta() });
+    this.world = new World({ seed: this.seed, meta: this.meta, shift });
     this.clock = new FixedClock(this.world.time);
     this.rebuildView();
     this.phase = 'run';
@@ -218,25 +325,36 @@ export class Game3D {
       this.onReducedMotion(next.reducedMotion);
     this.settings = { quality, reducedMotion: next.reducedMotion };
     this.menus.reducedMotion = next.reducedMotion;
+    this.hubUi.reducedMotion = next.reducedMotion;
     browserStorage()?.setItem(QUALITY_KEY, quality.id);
     this.rebuildView();
   }
 
+  /**
+   * Écran des départs : le bilan est réglé dans la méta (PS, Grains, statistiques ; crochet loot de
+   * `settleShift`, que le lot Loot alimentera avec le `RunEnd` du Shift) puis sauvegardé.
+   */
   private showResults(): void {
     const result = this.world.director.result;
     if (!result) return;
     this.phase = 'results';
+    const settled = settleShift(this.meta, result, null);
+    const saved = this.saveMeta(settled.meta);
+    this.lastEnd = result.end;
+    this.lastCause = result.cause;
     this.hud.setVisible(false);
     this.menus.showPauseButton(false);
     this.menus.setBoss(null);
     this.menus.setPrompt(null, 0, 0, false);
     this.menus.fade(0, 300);
-    this.menus.showResults(result, this.world.director.clock, () => {
-      this.world = this.backdropWorld();
-      this.clock = new FixedClock(this.world.time);
-      this.rebuildView();
-      this.showTitle();
-    });
+    this.menus.showResults(
+      result,
+      this.world.director.clock,
+      { ps: settled.meta.ps, grains: settled.meta.grains, saved },
+      () => {
+        this.enterHub();
+      },
+    );
   }
 
   // ─── Boucle ────────────────────────────────────────────────────────────────
@@ -251,14 +369,16 @@ export class Game3D {
         reducedMotion: !this.settings.reducedMotion,
       });
     if (this.phase === 'run') this.runInput(raw);
-    this.world.time.paused = this.hidden || this.menus.open || this.phase !== 'run';
-    this.clock.frame(realMs, this.world);
+    else if (this.phase === 'hub') this.hub?.input(this.intentFrom(raw), raw.pause);
+    this.world.time.paused = this.hidden || this.menus.open || !this.playing;
+    this.clock.frame(realMs, this.hub?.sim ?? this.world);
     this.afterStep(realMs);
 
     const realDt = realMs / 1000;
     this.view.sync(this.clock.alpha, realDt);
     this.view.render(realDt);
     if (this.phase === 'run') this.updateOverlay(realDt);
+    else if (this.phase === 'hub') this.hub?.overlay(realDt);
     this.statsT += realDt;
     if (this.hud.statsVisible && this.statsT > 0.25) {
       this.statsT = 0;
@@ -268,6 +388,27 @@ export class Game3D {
         enemies: this.world.livingEnemies().length,
       });
     }
+  }
+
+  /** Le monde avance (Shift ou hub). */
+  private get playing(): boolean {
+    return this.phase === 'run' || this.phase === 'hub';
+  }
+
+  /** Intention de la frame d'après les entrées brutes (et le forçage des captures). */
+  private intentFrom(raw: RawInput): PlayerIntent {
+    const o = this.override;
+    return {
+      moveX: o.moveX ?? raw.moveX,
+      moveY: o.moveY ?? raw.moveY,
+      aim: o.aim ?? this.aimFor(raw),
+      attack: raw.attack,
+      dash: raw.dash,
+      special: raw.special,
+      coffee: raw.coffee,
+      specialHeld: raw.specialHeld,
+      interact: raw.interact,
+    };
   }
 
   private runInput(raw: RawInput): void {
@@ -286,18 +427,7 @@ export class Game3D {
       return;
     }
     if (this.cheats) this.runCheats();
-    const o = this.override;
-    this.world.queueIntent({
-      moveX: o.moveX ?? raw.moveX,
-      moveY: o.moveY ?? raw.moveY,
-      aim: o.aim ?? this.aimFor(raw),
-      attack: raw.attack,
-      dash: raw.dash,
-      special: raw.special,
-      coffee: raw.coffee,
-      specialHeld: raw.specialHeld,
-      interact: raw.interact,
-    });
+    this.world.queueIntent(this.intentFrom(raw));
   }
 
   private runCheats(): void {
@@ -316,6 +446,7 @@ export class Game3D {
     const events = this.world.drainEvents();
     this.view.applyEvents(events);
     this.announce(events);
+    this.hub?.afterStep();
     const director = this.world.director;
     if (this.phase === 'run' && director.choice && !this.menus.open) {
       this.menus.showChoice(director.choice, (i) => {
@@ -337,7 +468,12 @@ export class Game3D {
     const steps = Math.max(1, Math.round(ms / SIM_DT_MS));
     for (let i = 0; i < steps; i += 1) {
       const raw = this.input.read();
-      if (this.phase === 'run' && !this.menus.open && !this.world.director.choice) {
+      if (this.phase === 'hub' && this.hub && !this.menus.open) {
+        this.hub.input(
+          { ...this.intentFrom(raw), aim: this.override.aim ?? this.world.hero.facingAngle },
+          false,
+        );
+      } else if (this.phase === 'run' && !this.menus.open && !this.world.director.choice) {
         if (this.cheats) this.runCheats();
         const o = this.override;
         this.world.queueIntent({
@@ -353,10 +489,11 @@ export class Game3D {
           interact: raw.interact,
         });
       }
-      this.world.time.paused = this.menus.open || this.phase !== 'run';
-      this.clock.frame(SIM_DT_MS, this.world);
+      this.world.time.paused = this.menus.open || !this.playing;
+      this.clock.frame(SIM_DT_MS, this.hub?.sim ?? this.world);
       this.afterStep(SIM_DT_MS);
       this.view.sync(this.clock.alpha, SIM_DT_MS / 1000);
+      if (this.phase === 'hub') this.hub?.overlay(SIM_DT_MS / 1000);
     }
   }
 
@@ -405,7 +542,7 @@ export class Game3D {
           this.menus.fade(1, FADE_OUT_MS);
           break;
         case 'roomEntered':
-          if (this.phase === 'run') this.menus.fade(0, FADE_IN_MS);
+          if (this.playing) this.menus.fade(0, FADE_IN_MS);
           break;
         case 'heroDied':
           this.hud.announce('FIN DE SERVICE', 2.4, 'danger');
@@ -466,7 +603,14 @@ export class Game3D {
   /** Reconstruit la vue (réglages changés, nouveau monde). Les entrées écoutent le conteneur : rien à rebrancher. */
   private rebuildView(): void {
     this.view.dispose();
-    this.view = new GameView(this.dom.app, this.dom.floats, this.world, this.settings, this.safe);
+    this.view = new GameView(
+      this.dom.app,
+      this.dom.floats,
+      this.world,
+      this.settings,
+      this.safe,
+      this.hub?.viewOptions() ?? {},
+    );
     this.view.applyEvents(this.world.drainEvents());
   }
 
@@ -493,6 +637,8 @@ export class Game3D {
   public dispose(): void {
     if (this.cheats) document.removeEventListener('keydown', this.cheatHandler);
     this.input.dispose();
+    this.leaveHub();
+    this.hubUi.dispose();
     this.hud.dispose();
     this.menus.dispose();
     this.view.dispose();

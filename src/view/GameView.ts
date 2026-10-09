@@ -6,6 +6,7 @@ import type { EnemySim } from '@/sim/enemies/EnemySim';
 import type { SimEvent } from '@/sim/events';
 import type { World } from '@/sim/World';
 import type { RoomLayout } from '@/systems/procedural/RoomLayout';
+import type { DoorState } from '@/sim/RunDirector';
 import { PX_PER_M, pxToM, yawFromAngle } from '@/sim/units';
 import type { Vec2 } from '@/utils/math';
 import type { ActorFrame, EnemyView } from '@/view/actors/ActorView';
@@ -27,6 +28,37 @@ const CAM_LOOK_BACK = 2.5;
 const FOV_LANDSCAPE = 30;
 const FOV_PORTRAIT = 42;
 const ZOOM_PUNCH_DEG = 2;
+
+/** Lumières globales de la scène, prêtées au décor d'une salle (ambiance du hub selon le roulement). */
+export interface SceneLights {
+  readonly scene: THREE.Scene;
+  readonly sun: THREE.DirectionalLight;
+  readonly hemi: THREE.HemisphereLight;
+}
+
+/** Décor d'une salle : `RoomView` pour le Shift, un autre décor pour le hub (`view/hub`). */
+export interface RoomDecor {
+  readonly group: THREE.Group;
+  /** Limites du sol marchable (m), pour le cadrage caméra. */
+  readonly bounds: { minX: number; maxX: number; minZ: number; maxZ: number };
+  update(time: number, hero: THREE.Vector3, dt: number): void;
+  setDoors(doors: readonly DoorState[]): void;
+  setDoorsOpen(open: boolean): void;
+  dispose(): void;
+}
+
+/**
+ * Points d'extension de la vue (le hub s'en sert ; le Shift garde les valeurs par défaut) :
+ * décor construit depuis le gabarit et vue dédiée d'un ennemi (mannequin de formation).
+ */
+export interface GameViewOptions {
+  readonly room?: (layout: RoomLayout, settings: ViewSettings, lights: SceneLights) => RoomDecor;
+  readonly enemyView?: (
+    e: EnemySim,
+    scene: THREE.Scene,
+    reducedMotion: boolean,
+  ) => EnemyView | null;
+}
 
 export interface ViewStats {
   readonly fps: number;
@@ -51,7 +83,7 @@ export class GameView {
   public readonly scene = new THREE.Scene();
   public readonly camera: THREE.PerspectiveCamera;
   private readonly post: Post;
-  private room: RoomView;
+  private room: RoomDecor;
   private shownLayout: RoomLayout;
   private readonly hero: HeroView;
   private readonly enemies = new Map<number, EnemyView>();
@@ -74,6 +106,7 @@ export class GameView {
   ];
   private readonly dmg: DamageNumbers;
   private readonly sun: THREE.DirectionalLight;
+  private readonly hemi: THREE.HemisphereLight;
   private dust: THREE.Points | null;
   private readonly raycaster = new THREE.Raycaster();
   private readonly ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -100,6 +133,7 @@ export class GameView {
     private readonly world: World,
     private readonly settings: ViewSettings,
     safe: boolean,
+    private readonly options: GameViewOptions = {},
   ) {
     const q = settings.quality;
     setOutlinesEnabled(q.outlines);
@@ -121,15 +155,9 @@ export class GameView {
     this.scene.fog = new THREE.FogExp2(0x120c2a, 0.017);
     this.camera = new THREE.PerspectiveCamera(FOV_LANDSCAPE, 16 / 9, 0.5, 120);
 
-    // Salle réelle, construite depuis le gabarit de la sim.
-    this.shownLayout = world.arena.layout;
-    this.room = new RoomView(world.arena.layout, q, settings.reducedMotion);
-    this.scene.add(this.room.group);
-    const W = world.arena.widthPx / PX_PER_M;
-    const H = world.arena.heightPx / PX_PER_M;
-
     // Lumières : ciel nocturne, lune froide (seule lumière à ombres), lampes chaudes de la salle.
-    this.scene.add(new THREE.HemisphereLight(0x5a5ad0, 0x2a1438, 0.7));
+    this.hemi = new THREE.HemisphereLight(0x5a5ad0, 0x2a1438, 0.7);
+    this.scene.add(this.hemi);
     this.sun = new THREE.DirectionalLight(0xa8b8ff, 1.9);
     this.sun.castShadow = q.shadowMapSize > 0;
     if (this.sun.castShadow) {
@@ -137,8 +165,15 @@ export class GameView {
       this.sun.shadow.bias = -0.0006;
       this.sun.shadow.normalBias = 0.03;
     }
-    this.fitSun(W, H);
     this.scene.add(this.sun, this.sun.target);
+
+    // Salle réelle, construite depuis le gabarit de la sim.
+    this.shownLayout = world.arena.layout;
+    this.room = this.makeRoom(world.arena.layout);
+    this.scene.add(this.room.group);
+    const W = world.arena.widthPx / PX_PER_M;
+    const H = world.arena.heightPx / PX_PER_M;
+    this.fitSun(W, H);
 
     const pk = q.particles;
     this.sparks = new Sparks(Math.round(900 * pk));
@@ -202,11 +237,7 @@ export class GameView {
     if (this.shownLayout === world.arena.layout) return;
     this.shownLayout = world.arena.layout;
     this.room.dispose();
-    this.room = new RoomView(
-      world.arena.layout,
-      this.settings.quality,
-      this.settings.reducedMotion,
-    );
+    this.room = this.makeRoom(world.arena.layout);
     this.scene.add(this.room.group);
     this.room.setDoors(world.director.doors);
     this.room.setDoorsOpen(world.director.cleared);
@@ -228,6 +259,13 @@ export class GameView {
     const h = world.hero.body;
     this.camTarget.set(pxToM(h.x), 0, pxToM(h.y));
     this.hero.sync(world.hero, 1, 0, 0);
+  }
+
+  private makeRoom(layout: RoomLayout): RoomDecor {
+    const make = this.options.room;
+    if (make)
+      return make(layout, this.settings, { scene: this.scene, sun: this.sun, hemi: this.hemi });
+    return new RoomView(layout, this.settings.quality, this.settings.reducedMotion);
   }
 
   // ─── Entrées ───────────────────────────────────────────────────────────────
@@ -637,7 +675,9 @@ export class GameView {
   private enemyView(e: EnemySim): EnemyView {
     let v = this.enemies.get(e.id);
     if (!v) {
-      v = createEnemyView(e.kind, this.scene, this.settings.reducedMotion);
+      v =
+        this.options.enemyView?.(e, this.scene, this.settings.reducedMotion) ??
+        createEnemyView(e.kind, this.scene, this.settings.reducedMotion);
       this.enemies.set(e.id, v);
     }
     return v;

@@ -29,7 +29,25 @@ export interface PauseInfo {
   readonly avantages: readonly string[];
 }
 
-type Screen = 'none' | 'title' | 'pause' | 'options' | 'choice' | 'results';
+/** Écran titre : « Reprendre son poste » et « Effacer la progression » si une sauvegarde existe. */
+export interface TitleOptions {
+  readonly hasSave: boolean;
+  /** Résumé de la sauvegarde (« 120 PS · 7 Shifts »), affiché sous le bouton de reprise. */
+  readonly saveSummary?: string;
+  readonly onNew: () => void;
+  readonly onResume: () => void;
+  readonly onErase: () => void;
+  readonly onOptions: () => void;
+}
+
+/** Totaux sauvegardés, affichés sur l'écran des départs. */
+export interface SavedTotals {
+  readonly ps: number;
+  readonly grains: number;
+  readonly saved: boolean;
+}
+
+type Screen = 'none' | 'title' | 'pause' | 'options' | 'choice' | 'results' | 'panel';
 
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -166,7 +184,7 @@ export class Menus {
     this.onDigit = null;
   }
 
-  public showTitle(onStart: () => void, onOptions: () => void): void {
+  public showTitle(o: TitleOptions): void {
     this.mount('title', (layer) => {
       const box = el('div', 'px-stack', layer);
       box.style.width = 'min(520px, 100%)';
@@ -177,14 +195,61 @@ export class Menus {
         box,
         'Gare de Mons, 6 h du matin. Le rail est à vendre. Le 7h12 n’arrivera pas.',
       );
-      button(box, 'Prendre son service', 'px-btn--primary', onStart);
-      button(box, 'Options', '', onOptions);
+      if (o.hasSave) {
+        button(box, 'Reprendre son poste', 'px-btn--primary', o.onResume);
+        if (o.saveSummary) el('p', 'px-sub px-save', box, o.saveSummary);
+      } else button(box, 'Prendre son service', 'px-btn--primary', o.onNew);
+      button(box, 'Options', '', o.onOptions);
+      if (o.hasSave) button(box, 'Effacer la progression', 'px-btn--ghost', o.onErase);
       const help = el('div', 'px-help', box);
       help.innerHTML =
         '<kbd>ZQSD</kbd> bouger · <kbd>Clic</kbd>/<kbd>J</kbd> frapper · <kbd>Espace</kbd> dash · ' +
         '<kbd>F</kbd> sifflet (maintenir : préavis) · <kbd>R</kbd> café · <kbd>E</kbd> interagir · <kbd>Échap</kbd> pause';
       return box;
     });
+  }
+
+  /** Confirmation (Oui / Non) ; Échap répond non. */
+  public showConfirm(
+    title: string,
+    text: string,
+    yes: string,
+    onYes: () => void,
+    onNo: () => void,
+  ): void {
+    this.mount('panel', (layer) => {
+      const panel = el('div', 'px-panel px-panel--danger', layer);
+      el('h2', 'px-title', panel, title);
+      el('p', 'px-sub', panel, text);
+      const stack = el('div', 'px-stack', panel);
+      button(stack, 'Non, garder', 'px-btn--primary', onNo);
+      button(stack, yes, 'px-btn--ghost', onYes);
+      this.onEscape = onNo;
+      return panel;
+    });
+  }
+
+  /**
+   * Panneau libre (services du hub : Tableau des revendications, roulement, DPD, PACO) avec la même
+   * navigation (flèches, Entrée, Échap) et la même entrée animée que les autres écrans. `animate`
+   * à faux pour un rafraîchissement sur place (après un achat).
+   */
+  public showPanel(
+    build: (layer: HTMLDivElement) => HTMLElement,
+    onEscape: (() => void) | null,
+    animate = true,
+    keepSelection = false,
+  ): void {
+    const sel = this.sel;
+    const was = this.reduced;
+    if (!animate) this.reduced = true;
+    this.mount('panel', build);
+    this.reduced = was;
+    this.onEscape = onEscape;
+    if (keepSelection && this.focusables.length > 0) {
+      this.sel = Math.min(sel, this.focusables.length - 1);
+      this.highlight();
+    }
   }
 
   public showPause(
@@ -281,7 +346,12 @@ export class Menus {
   }
 
   /** Écran des départs (port de `ResultsScene`). */
-  public showResults(result: ShiftResult, clock: string, onContinue: () => void): void {
+  public showResults(
+    result: ShiftResult,
+    clock: string,
+    totals: SavedTotals,
+    onContinue: () => void,
+  ): void {
     this.mount('results', (layer) => {
       const won = result.end === 'victoire';
       const panel = el('div', `px-panel ${won ? '' : 'px-panel--danger'}`, layer);
@@ -311,9 +381,11 @@ export class Menus {
         'p',
         'px-sub',
         panel,
-        'L’OCC (Hub) arrive au jalon J6 : les PS et Grains de la version 3D ne sont pas encore sauvegardés.',
+        totals.saved
+          ? `Acquis, sauvegardé : ${String(totals.ps)} PS et ${String(totals.grains)} Grains au total. Les collègues t’attendent à l’OCC.`
+          : `Acquis : ${String(totals.ps)} PS et ${String(totals.grains)} Grains au total (stockage du navigateur indisponible : progression non sauvegardée).`,
       );
-      button(panel, 'Nouveau Shift (Entrée)', 'px-btn--primary', onContinue);
+      button(panel, 'Retour à l’OCC (Entrée)', 'px-btn--primary', onContinue);
       if (!this.reduced)
         gsap.fromTo(
           table.querySelectorAll('tr'),
