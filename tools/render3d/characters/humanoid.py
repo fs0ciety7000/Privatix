@@ -41,6 +41,8 @@ class Body:
     shin_r: float = 0.088
     shoe: tuple = (0.17, 0.26, 0.13)
     shoulder_pad: float = 0.0  # 0 = pas d'épaulette
+    pant_gap: float = 0.0  # pantalon trop court : laisse voir les chaussettes
+    socks: int | None = None
     # Matières
     skin: int = SKIN
     top: int = 5
@@ -74,7 +76,9 @@ def build_body(b: Builder, body: Body) -> None:
     belly = bd.belly if bd.belly is not None else bd.top
     for side in ("L", "R"):
         b.capsule(f"thigh_{side}", f"hip_{side}", bd.pants, (0, 0, 0), (0, 0, -bd.thigh), bd.thigh_r, bd.thigh_r * 0.86)
-        b.capsule(f"shin_{side}", f"knee_{side}", bd.pants, (0, 0, 0), (0, 0, -bd.shin + 0.04), bd.shin_r, bd.shin_r * 0.9)
+        b.capsule(f"shin_{side}", f"knee_{side}", bd.pants, (0, 0, 0), (0, 0, -bd.shin + 0.04 + bd.pant_gap), bd.shin_r, bd.shin_r * 0.9)
+        if bd.socks is not None and bd.pant_gap > 0:
+            b.capsule(f"sock_{side}", f"knee_{side}", bd.socks, (0, 0, -bd.shin + 0.04 + bd.pant_gap), (0, 0, -bd.shin + 0.06), bd.shin_r * 0.7)
         b.box(f"shoe_{side}", f"foot_{side}", bd.shoes, (0, -0.05, 0.04), bd.shoe, 0.05)
     b.box("hips", "pelvis", bd.pants, (0, 0, 0.0), bd.hips_box, 0.07)
     b.box("belly", "spine", belly, (0, 0, 0.03), bd.belly_box, 0.08)
