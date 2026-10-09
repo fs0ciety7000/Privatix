@@ -10,3 +10,8 @@ export function loadMeta(): MetaState {
   const result = metaSave.load();
   return result.ok ? result.data.state : newMeta();
 }
+
+/** Une sauvegarde valide existe (l’écran titre propose alors « Reprendre son poste »). */
+export function hasSave(): boolean {
+  return metaSave.load().ok;
+}
