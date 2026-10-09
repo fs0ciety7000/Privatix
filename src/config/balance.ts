@@ -722,12 +722,34 @@ export const REWARD_WEIGHTS: Readonly<Record<RewardKind, number>> = {
   grains: 8,
 };
 
+/** Récompenses de porte une fois le loot branché (GDD § 3.8, lot Loot 1). */
+export type LootRewardKind = RewardKind | 'dotation' | 'reglage';
+
+/**
+ * Poids des portes avec le loot (GDD § 3.8) : le loot se paie en moins de portes d'Avantage,
+ * pas en Avantages plus faibles. Total 100. `REWARD_WEIGHTS` reste en vigueur tant que la porte
+ * « Dotation » n'est pas branchée (version Phaser).
+ */
+export const REWARD_WEIGHTS_LOOT: Readonly<Record<LootRewardKind, number>> = {
+  avantage: 34,
+  dotation: 12,
+  tickets: 14,
+  reglage: 12,
+  gobelet: 12,
+  ps: 9,
+  grains: 7,
+};
+
 /** Friterie de Raymonde (prix en Tickets). */
 export const SHOP = {
   GOBELET: 60,
   CORNET: 80,
   CORNET_HEAL: 0.4,
   AVANTAGE: 120,
+  /** Loot : 1 objet Homologué (stock 1). */
+  EQUIPEMENT: 140,
+  /** Wagon-Bar du Fantôme : 1 Patrimoine. */
+  WAGON_BAR_PATRIMOINE: 300,
 } as const;
 
 /** Salle des pauses : « Pause réglementaire » ou « Formation continue ». */

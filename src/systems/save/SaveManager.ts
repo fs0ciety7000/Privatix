@@ -24,6 +24,11 @@ export interface SaveSchema<T> {
   readonly version: number;
   /** Migrations `vN → vN+1`, appliquées dans l'ordre au chargement. */
   readonly migrations: Readonly<Record<number, (state: Raw) => Raw>>;
+  /**
+   * Nettoyage tolérant, après les migrations et avant `validate` (ex. : objets de loot inconnus
+   * convertis en Ferraille plutôt que de rejeter toute la sauvegarde).
+   */
+  readonly sanitize?: (state: Raw) => Raw;
   readonly validate: (value: unknown) => value is T;
 }
 
@@ -83,6 +88,7 @@ export class SaveManager<T> {
       if (!migrate) return { ok: false, reason: 'corrupted' };
       state = migrate(state);
     }
+    if (this.schema.sanitize) state = this.schema.sanitize(state);
     return this.schema.validate(state)
       ? { ok: true, data: { savedAt: parsed.savedAt, state } }
       : { ok: false, reason: 'corrupted' };

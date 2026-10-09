@@ -7,7 +7,14 @@ import {
   FAMILIES,
   offerAvantages,
 } from '@/systems/meta/Avantages';
-import { buyUpgrade, isMetaState, loadoutOf, newMeta, nextCost } from '@/systems/meta/MetaState';
+import {
+  buyUpgrade,
+  isMetaState,
+  loadoutOf,
+  META_SAVE_SCHEMA,
+  newMeta,
+  nextCost,
+} from '@/systems/meta/MetaState';
 import type { MetaState } from '@/systems/meta/MetaState';
 import {
   applyResult,
@@ -56,7 +63,8 @@ describe('Tableau des revendications', () => {
   it('valide une sauvegarde et rejette une revendication inconnue', () => {
     expect(isMetaState(newMeta())).toBe(true);
     expect(isMetaState({ ...newMeta(), upgrades: { inconnue: 1 } })).toBe(false);
-    expect(isMetaState({ ...newMeta(), version: 2 })).toBe(false);
+    expect(isMetaState({ ...newMeta(), version: 1 })).toBe(false);
+    expect(isMetaState({ ...newMeta(), version: 3 })).toBe(false);
   });
 });
 
@@ -153,7 +161,7 @@ class MemoryStorage implements KeyValueStorage {
 }
 
 describe('SaveManager générique', () => {
-  const schema = { version: 1, migrations: {}, validate: isMetaState };
+  const schema = META_SAVE_SCHEMA;
 
   it('fait l’aller-retour d’une méta', () => {
     const storage = new MemoryStorage();
