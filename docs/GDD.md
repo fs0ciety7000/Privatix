@@ -169,7 +169,7 @@ La Salle des pauses porte l'indice de la salle précédente et ne l'incrémente 
 | **Boutique** | Cornet de frites | **Friterie de Raymonde** (§9.6). 5 % (Nuit 15 %) : **Wagon-Bar fantôme** (objets d'Acquis historique) | Achat en Tickets | **1 garantie** (position 3 à 6) |
 | **Événement** | « ! » sur un panneau de travaux | Rencontre à choix (§3.9) | Variable | 1 garantie, 2 maximum |
 | **Repos** | Banc + thermos | Salle des pauses (§2.2) | Au choix | **Fixe**, avant chaque boss |
-| **Boss** | Écran rouge « SIGNATURE » (biome 2 : « INAUGURATION ») | Arène unique | PS, Pièces, Tasse, butin de boss ; Preuve au 1er kill (boss 1 et final) | 1 |
+| **Boss** | Écran rouge « SIGNATURE » (biome 2 : « INAUGURATION ») | Arène unique | PS, Pièces, Tasse, butin de boss ; Preuve n° 1 au 1er kill du Boss 1 | 1 |
 
 ### 3.4 Règles de génération
 1. **Graphe en couches** (déterministe par graine, flux séparés `graph:`, `reward:`, `template:`) : couche 0 = salle 1, puis une couche par profondeur de largeur **1 à 3** (variation de ±1 au plus d'une couche à l'autre), puis Repos, puis Boss. Arêtes **sans croisement** : chaque salle a **2 ou 3 portes** (1 seule pour la dernière salle avant le Repos). Pas de retour en arrière.

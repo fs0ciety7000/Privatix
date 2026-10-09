@@ -355,7 +355,7 @@ Le hub s'étend sur le rez-de-chaussée arrière du BAG. Le joueur arrive par le
 
 ### 3.6 La dotation : l'équipement et les pupitres
 
-**D'où vient l'équipement.** Le PHR-2032 a « rationalisé » la dotation vestimentaire (Note de service n° 16, proposée) : plus de casques neufs, plus de gilets, des chaussures « mutualisées ». Le matériel des cheminots dort donc partout dans la gare : **caisses à outils de l'Infra** oubliées le long des voies, **casiers** de vestiaire abandonnés, **sacoches** et **colis** de Privatix jamais distribués, matériel « réformé » promis à la benne. Le héros le récupère en Shift. Le butin tombe d'une sacoche qui s'ouvre, d'une caisse qu'on force, d'une fente de Borne, d'un colis : **jamais d'un corps**, et **jamais d'un voyageur**. Les consultants vaincus « oublient » leur sacoche en partant en réunion.
+**D'où vient l'équipement.** Le PHR-2032 a « rationalisé » la dotation vestimentaire, remplacée par un « forfait tenue responsable » de 0 € : plus de casques neufs, plus de gilets, des chaussures « mutualisées ». Le matériel des cheminots dort donc partout dans la gare : **caisses à outils de l'Infra** oubliées le long des voies, **casiers** de vestiaire abandonnés, **sacoches** et **colis** de Privatix jamais distribués, matériel « réformé » promis à la benne. Le héros le récupère en Shift. Le butin tombe d'une sacoche qui s'ouvre, d'une caisse qu'on force, d'une fente de Borne, d'un colis : **jamais d'un corps**, et **jamais d'un voyageur**. Les consultants vaincus « oublient » leur sacoche en partant en réunion.
 
 **Les cinq raretés, en mots de cheminot** (couleurs et chiffres : GDD §9 bis) :
 
@@ -420,13 +420,13 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 - **Poste** : technicien caténaires « de l'Infra », l'autre maison qui partage les mêmes rails, détaché au pupitre **RTS, côté matériel roulant** (automotrices, locomotives, voitures, échanges de matériel). Arrive après le 1er kill du boss 1 (avant, il est « en intervention »).
 - **Rôle narratif** : le bricoleur au grand cœur, la rivalité comique entre « les deux boîtes » qui se dissout dans la solidarité.
-- **Service gameplay** : **pupitre RTS (matériel roulant)** — **Montages de clé** (Clé d'origine, Clé recalibrée, Clé de Relève, Clé du Wagon-Bar), montés avec les **Pièces détachées** qu'il récupère sur le matériel roulant réformé ; **échanges de matériel** (Grains ↔ PS ↔ Pièces, taux 3:1). Logique de poste : le RTS compose les rames et gère les échanges de matériel ; Kevin « compose » la clé du Shift comme une rame.
+- **Service gameplay** : **pupitre RTS (matériel roulant)** — **échanges de matériel** (Grains ↔ PS ↔ Pièces, taux 3:1) et source des **Pièces détachées**, qu'il récupère sur le matériel roulant réformé. Logique de poste : le RTS compose les rames et gère le matériel roulant, **et seulement lui** ; l'équipement du héros (outils compris) relève de la DPD de Josiane (§3.6). Kevin le regrette à voix haute et donne son avis technique sur chaque outil, sans y toucher.
 - **Personnalité** : gentil comme un pain, parle à ses outils, a écrit un rapport de trois pages sur un sous-traitant qui avait posé des câbles de guirlande sur une caténaire. Personne ne l'avait lu, jusqu'à ce que l'OCC le punaise.
 - **Tic** : « C'est pas nous, c'est l'autre boîte. »
 - **Famille** : **Caténaire** — électricité en chaîne (« Coupure de caténaire » : la dernière Frappe déclenche un arc sur 3 cibles).
 - **Souvenir** : **Pince à caténaire** (+15 % de dégâts électriques).
 - **Répliques** :
-  - *Générique* : « J'ai recalibré ta clé. Elle tape plus fort, mais elle grince. Comme moi. »
+  - *Générique* : « Ta clé, je la touche pas : c'est la DPD. Mais elle grince. Comme moi. »
   - *Après une mort* : « Tombé de la passerelle ? C'est pas nous, c'est l'autre boîte. Enfin… là, c'est un peu toi. »
   - *Après une victoire* : « Tu lui as coupé le courant, au Directeur ? Proprement ? Je suis fier. Je note ça dans un rapport. »
 - **Arc** : N1, la pince. N2, *le rapport* : il découvre que son rapport punaisé est devenu une Preuve annexe du Dossier ; il pleure un peu, prétend que c'est la soudure. N3, serment : « Ce soir, il y a plus d'autre boîte. » → Motion commune **« Signal électrifié »** (avec Rudy : le Coup de sifflet électrocute).
@@ -435,7 +435,7 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 - **Poste** : guichetière, dernier guichet ouvert de la gare, fermé par le PHR-2032. Arrive au 4e retour (J4) avec son guichet en pièces détachées et reprend le pupitre **PACO** (bus de remplacement, correspondances), resté vacant : « Un voyageur sans train, c'est un client de guichet. Je connais. »
 - **Rôle narratif** : la mémoire administrative de la résistance ; détient **Le Règlement**, le vieux classeur du statut, clé de la Preuve 3 et de la faiblesse du Fluidifieur.
-- **Service gameplay** : **pupitre PACO** — **Recours** (relance des portes ou d'un choix : le « bus de remplacement » du Shift) ; **correspondances** (raccourci vers la Passerelle après J7) ; **archives** (Preuves archivées, Notes de service) ; **Le Règlement** (codex des ennemis, fiches remplies avec les kills).
+- **Service gameplay** : **pupitre PACO** — **Recours** (relance des portes ou d'un choix : le « bus de remplacement » du Shift) et **relances d'équipement** (réaffûter un affixe d'un objet) ; **correspondances** (raccourci vers la Passerelle après J7 bis) ; **archives** (Preuves archivées, Notes de service, **Plans de Patrimoine**) ; **Le Règlement** (codex des ennemis, fiches remplies avec les kills).
 - **Personnalité** : pince-sans-rire, a survécu à quatre réformes tarifaires et à une borne qui lui a craché un ticket dans l'œil. Ne s'énerve jamais : elle tamponne.
 - **Tic** : « Numéro suivant ! »
 - **Famille** : **Guichet** — malus aux ennemis, Ralenti, Vulnérable (« File d'attente » : gèle l'ennemi frappé 1,5 s).
@@ -465,7 +465,8 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 - **Poste** : accompagnatrice de train, 28 ans de maison, affectée au pupitre **DPD** (gestion des accompagnateurs de train), menacée par la « suppression des accompagnateurs » (Preuve 2) : le PHR-2032 supprime à la fois son métier et son pupitre.
 - **Rôle narratif** : la figure maternelle et inflexible ; celle qui envoie le héros chercher la vérité au prologue.
-- **Service gameplay** : dans la **Cour intérieure** — **mannequin de formation** (zone d'entraînement, test des Montages, dégâts affichés) ; **casiers** (équiper un Souvenir obtenu et, si l'équipement personnel est validé, la dotation du héros). Logique de poste : la DPD affecte les agents de bord, gère leurs casiers et leur dotation.
+- **Service gameplay** : dans la **Cour intérieure** — **mannequin de formation** (zone d'entraînement, essai des Outils, dégâts affichés) ; **casiers** : Souvenirs et **Vestiaire** de l'équipement personnel (§3.6 : Paquetage, consigne, réforme en Ferraille, polissage, remise à niveau, **Dotations d'outil**). Logique de poste : la DPD affecte les agents de bord, gère leurs casiers et leur dotation.
+- **Réplique de service** : « Ta dotation, je la range. Ce qui est réformé, je le réforme. Proprement. »
 - **Personnalité** : a déjà expulsé un sanglier d'un train « avec politesse ». Connaît le prénom de tous les habitués du 7h12. Tricote pendant les pauses ; la bannière de l'OCC, c'est elle.
 - **Tic** : « Ça, c'est pas dans le règlement, mais c'est dans le cœur. »
 - **Famille** : **Contrôle des titres** — défense, renvoi, provocation (« Titre non valable » : la Frappe repousse et renvoie les projectiles).
@@ -510,7 +511,7 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
 
 - **Poste** : ancien serveur du wagon-bar de la ligne, statut « poste supprimé » depuis 1996.
 - **Rôle narratif** : la mémoire de « ce qui marchait » ; il connaissait le grand-père du héros. Il ne dit jamais s'il est vraiment un fantôme ou simplement quelqu'un que l'administration a oublié de radier.
-- **Service gameplay** : en run, **boutique légendaire du Wagon-Bar** sur la voie 4 (rare, plus fréquente la Nuit). À l'OCC, une fois sa quête terminée : **rénovations** en Grains, depuis son comptoir de wagon-bar reconstruit sur les palettes de la Cour intérieure.
+- **Service gameplay** : en run, **boutique légendaire du Wagon-Bar** sur la voie 4 (rare, plus fréquente la Nuit) : Acquis historiques et, à chaque visite, un objet **Patrimoine** « qui a déjà servi ». À l'OCC, une fois sa quête terminée : **rénovations** en Grains, depuis son comptoir de wagon-bar reconstruit sur les palettes de la Cour intérieure.
 - **Personnalité** : mélancolique, élégant, sent le croque-monsieur, vouvoie tout le monde, y compris le pigeon.
 - **Tic** : « Et pour monsieur-dame, ce sera ? »
 - **Famille** : **aucune** ; il vend des Avantages d'**Acquis historique** (légendaires) toutes familles confondues.
@@ -519,13 +520,13 @@ Les PNJ apparaissent selon les jalons du §2.4. Chaque fiche donne 3 répliques 
   - *Générique* : « Votre grand-père prenait un café noir et un croque sans fromage. Il disait que le fromage, c'était pour les jours de grève. »
   - *Après une mort* : « Et pour monsieur-dame, ce sera ? Un remontant ? La maison n'existe plus, donc c'est gratuit. »
   - *Après une victoire* : « Ce soir, la maison offre. Et la maison, ce soir, c'est vous. »
-- **Arc** : N1, la carte des vins. N2, *la dernière tournée* : il raconte le dernier service du wagon-bar en 1996 ; le grand-père du héros était au comptoir et a payé la tournée de tout le train « pour que ça finisse bien ». N3, serment : « Tant qu'il y a un comptoir, il y a un service. » → déverrouille le Montage secret **Clé du Wagon-Bar** chez Kevin (elle tient comme un plateau de service).
+- **Arc** : N1, la carte des vins. N2, *la dernière tournée* : il raconte le dernier service du wagon-bar en 1996 ; le grand-père du héros était au comptoir et a payé la tournée de tout le train « pour que ça finisse bien ». N3, serment : « Tant qu'il y a un comptoir, il y a un service. » → remet au héros le **Plan** de la **Clé du Wagon-Bar**, objet **Patrimoine** (elle tient comme un plateau de service) ; Béné l'archive, Josiane l'ajoute à la dotation.
 
 ### 4.10 Raymonde (la Friterie)
 
 - **Poste** : friteuse ambulante. Soixante ans, tablier impeccable, mémoire d'éléphant. Sert les cheminots depuis l'ancienne gare. Ne vient **jamais** à l'OCC (« J'ai un commerce, moi ») : on la rencontre **en run**.
 - **Rôle narratif** : l'oreille de la ville ; les consultants commandent chez elle « sans sauce, sans frites, juste la facture » et parlent trop. Ses rumeurs annoncent les élites et les événements du biome suivant.
-- **Service gameplay** : **Friterie ambulante** (salle Boutique, garantie 1 fois par biome) : Gobelets, Avantages payants, Réglages de clé, en Tickets. Refuse le sans-contact « parce qu'on ne sait pas où ils vont, vos sous ».
+- **Service gameplay** : **Friterie ambulante** (salle Boutique, garantie 1 fois par biome) : Gobelets, Avantages payants, Réglages d'outil et un équipement « d'occasion » emballé dans un cornet (« Une paire de gants d'occasion, chéri. Avec ou sans sauce ? »), en Tickets. Refuse le sans-contact « parce qu'on ne sait pas où ils vont, vos sous ».
 - **Personnalité** : chaleureuse, cash, ardoise de prix « qui n'a pas changé depuis longtemps, par principe ».
 - **Tic** : « Avec ou sans vérité, la sauce, chéri ? »
 - **Famille** : **aucune** ; elle vend des Avantages de **toutes les familles** (« Je prends les commandes de tout le monde »).
@@ -567,7 +568,7 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
 
 - **Ambiance** : la passerelle enjambe les voies « comme la colonne vertébrale d'un animal préhistorique ». C'est l'aube : grands arcs blancs, verrière, ciel rose-gris. Le vent hurle, le vide est partout sous les pieds. Le biome le plus silencieux, le plus beau, le plus froid.
 - **Histoire du lieu** : les navetteurs l'appellent « la Cathédrale » ou « le Calatrava », selon qu'ils sont émus ou énervés par le budget. On ne nomme jamais son architecte : on montre l'architecture. Les escalators y marchent un jour sur trois ; ce sont presque des personnages. Rudy y était posté avant sa mutation « en temps réel ».
-- **Ce que Privatix y a fait** : collé ses panneaux « **Mons 2032 : une gare, zéro guichet** » sur les arcs, installé un « parcours de mobilité fluide » (des escalators qui ne vont qu'à la montée, vers le BAG), et confié la réorganisation des roulements au **Fluidifieur**, qui règne sous le grand arc.
+- **Ce que Privatix y a fait** : collé ses panneaux « **Mons 2032 : une gare, zéro guichet** » sur les arcs, installé un « parcours de mobilité fluide » (des escalators qui ne vont qu'à la montée, vers le BAG), et confié la réorganisation des roulements au **Fluidifieur**, qui règne sous le grand arc. Surtout, Privatix y **inaugure « Mons 2032 : la Gare Expérience »** : la passerelle est « fermée pour cérémonie », des rubans rouges barrent les escalators, des chaises pliantes attendent la claque et des banderoles « Inauguration — accès invités » pendent des arcs. Le Fluidifieur, promu **régisseur de l'inauguration**, tient le plan de table ; au **belvédère**, l'**Invité d'honneur** attend de couper le ruban (§7.5). Pour descendre vers le hall, il faut passer par la cérémonie.
 - **Roulements** : *Matin* brume sous la verrière, vides à peine visibles ; *Après-midi* ombres longues des arcs (les drones y perdent leur cible) ; *Nuit* verrière noire, les voies en contrebas éclairées par les rames qui passent.
 - **Détails à placer dans le décor** :
   - Panneaux d'escalator : « En service (aujourd'hui) » / « Hors service (demain, après-demain) ».
@@ -577,6 +578,8 @@ Chaque biome est une **étape de la remontée** : du terrain (les quais) vers la
   - Graffiti sous un arc : « On voulait des trains. Ils nous ont donné une vue. »
   - Une borne « Votre avis compte » à quatre smileys, tous arrachés sauf le neutre.
   - Panneau Privatix envolé, coincé dans les câbles : « Moins de personnel, plus de sourires ».
+  - Carton d'invitation trempé, collé à une rambarde : « Inauguration de Mons 2032. Tenue de ville exigée. Gilets orange non admis. »
+  - Plan de table du Fluidifieur, version v9, où la case « personnel de la gare » a été rayée.
 
 ### 5.3 Biome 3 — Hall & BAG (« Terminus BAG »)
 
@@ -678,9 +681,10 @@ Les ennemis sont les **ressources** de Privatix : des gens payés pour ne pas sa
 - **Qui** : un furet énorme, pelage gris-jaune ébouriffé, collier violet Privatix avec un petit haut-parleur et un badge « Solution de tri autonome ». Il vit dans le **coin poubelles de la Cour intérieure** du BAG (§3.2), sous le pignon au toit bâché, entre les six conteneurs qui débordent et le tas de sacs bleus.
 - **Origine** : quand Privatix a pris les étages du BAG, elle a **externalisé le ramassage des déchets** ; le prestataire passe « selon un roulement communiqué la veille », c'est-à-dire jamais. Pour « optimiser le tri à coût zéro », un consultant a eu une idée : un furet. Il s'est nourri des **sacs bleus**, des rapports déchiquetés qui tombent des étages par la gaine de ventilation et des petits fours décongelés du traiteur du Sondage (Note n° 13). Il a grandi. Beaucoup.
 - **Place dans la hiérarchie** : **aucune, officiellement**. Il n'est sur aucun organigramme ; Privatix nie son existence (« Nous n'avons pas de furet. Nous avons une solution de tri. »). Dans les faits, l'Auditeur des Quais l'utilise comme fouineur : il **renifle les locaux non répertoriés** (Note n° 6) et suit l'odeur du marc de café jusqu'à l'OCC.
-- **Biome** : sort de son antre par les plaques d'égout et les gaines techniques. **Élite majeur du biome 1** (passage sous voies, couloir technique), plus fréquent la Nuit ; **rencontre optionnelle depuis le hub** : quand le couvercle d'un conteneur se soulève tout seul dans la Cour, le héros peut aller voir (combat dans le coin poubelles, sans risque de Mise à pied : à zéro Énergie, Fatou vient le chercher en grommelant).
+- **Biome** : sort de son antre, le **coin poubelles de la Cour intérieure du BAG**, par les plaques d'égout et les gaines techniques. **Élite majeur du biome 1** (passage sous voies, couloir technique), plus fréquent la Nuit ; **rencontre optionnelle depuis le hub** : quand le couvercle d'un conteneur se soulève tout seul dans la Cour, le héros peut aller voir (combat dans le coin poubelles, sans risque de Mise à pied : à zéro Énergie, Fatou vient le chercher en grommelant).
 - **Ton** : le seul ennemi qui sent mauvais, et qui le sait. Pas méchant : mal nourri par un système qui ne vide plus ses poubelles. La satire vise l'externalisation, pas l'animal.
 - **En jeu** : nuages d'odeur (zones qui font monter le Burnout, télégraphiées par des volutes magenta), roulades à travers le tas de sacs bleus (projectiles mous qui rebondissent), plongée sous une plaque d'égout et resurgissement (les pavés se soulèvent avant), vol d'un Gobelet (frappé, il le recrache).
+- **Butin** : il recrache ce qu'il a avalé dans les poubelles du BAG : surtout de l'équipement **Réforme**, parfois un objet de collègue « retrouvé dans les poubelles du BAG » (Josiane le désinfecte sans commentaire).
 - **Barks** (voix synthétique de son collier) :
   - « Tri en cours. Veuillez patienter. »
   - « Odeur de café détectée. Local non répertorié. »
@@ -691,7 +695,9 @@ Les ennemis sont les **ressources** de Privatix : des gens payés pour ne pas sa
 - **Qui** : un dinosaure massif en costume trois-pièces à larges revers, dont le dos porte, encastrée entre les écailles, une **boule à facettes disco** qui tourne en permanence et jette des éclats de lumière sur les murs. Il avance en rythme. On ne l'a jamais vu s'asseoir.
 - **Origine** : **Senior Partner fondateur** de Synergia Partners. Il vend le même plan de restructuration depuis la soirée de lancement du cabinet, à l'époque des pistes de danse, et n'a fait que changer le logo de la couverture. La boule à facettes date de cette soirée ; il ne l'a jamais retirée, « parce que ça a toujours marché ».
 - **Place dans la hiérarchie** : au-dessus des Coachs Agiles et des Managers KPI, en dessous de Vanderslide sur le papier ; en pratique, Vanderslide l'admire et lui demande son avis avant chaque Comité. Privatix le loue pour ses « soirées de lancement de transformation ».
-- **Biome** : **élite majeur ou mini-boss du biome 3**, à l'« Afterwork de transformation » du 2e étage du BAG (open-space aux néons éteints, seule la boule éclaire). Peut apparaître en élite rare dans le hall.
+- **Biome** : **mini-boss du biome 3** (Salle gardée garantie), à l'« Afterwork de transformation » du 2e étage du BAG (open-space aux néons éteints, seule la boule éclaire). Peut apparaître en élite rare dans le hall.
+- **Butin** : au premier kill, le Plan de la **Boule à facettes de poche** (Patrimoine) ; il la laisse sur la piste, « pour la prochaine soirée de lancement ».
+- **Accessibilité** : en « Réduction des mouvements » (GDD §12), sa boule ne clignote plus et ses lasers ne stroboscopent plus ; le combat reste lisible par les contours et les remplissages des télégraphes.
 - **Ton** : le Discosaure n'est pas vieux, il est **fossile** : c'est sa méthode qui l'est, pas son âge. Aucune blague sur l'âge (règle §1.4) ; l'humour porte sur le recyclage infini des mêmes recettes de conseil.
 - **En jeu** : les éclats de la boule balaient la salle comme des projecteurs et **marquent** le héros (comme le Drone Optimètre) ; piétinements **en rythme** qui envoient des ondes de choc sur les temps forts de la musique (le rythme est le télégraphe) ; « Restructuration » : il fait tourner la salle en ronde forcée (attire et repousse). Casser la boule (dos exposé après un piétinement) éteint la salle et le désoriente.
 - **Barks** :
@@ -704,6 +710,14 @@ Les ennemis sont les **ressources** de Privatix : des gens payés pour ne pas sa
 ---
 
 ## 7. Les boss
+
+**Placement des boss et des ennemis majeurs** :
+
+| Biome | Ennemi majeur | Boss |
+|---|---|---|
+| 1 — Quais & Voies | Le Furet putride (§6.8), élite majeur ; son antre est le coin poubelles du BAG | L'Auditeur des Quais (§7.1) |
+| 2 — La Passerelle « Calatrava » | Le Fluidifieur (§7.2), élite majeur et régisseur de l'inauguration | **Elio Di Rupo, « l'Invité d'honneur »** (§7.5), obligatoire |
+| 3 — Hall & BAG | Le Discosaure (§6.9), mini-boss | Gontran Vanderslide (§7.3) |
 
 ### 7.1 Boss 1 — L'Auditeur des Quais (Manager KPI suprême)
 
@@ -725,9 +739,11 @@ AUDITEUR : Soupir non conforme. Audit bienveillant : début.
 - **Victoire sur le joueur** : « Shift interrompu à {heure}. Taux de réussite : zéro. C'est un chiffre très propre. »
 - **Récompense narrative** (1er kill) : **Preuve n° 1 « Fermeture des guichets »**.
 
-### 7.2 Boss 2 — Le Réorganisateur RH, « le Fluidifieur »
+### 7.2 Élite majeur du biome 2 — Le Réorganisateur RH, « le Fluidifieur »
 
-- **Biographie satirique** : il ne déteste personne, il **fluidifie**. Il change les plannings la veille « pour responsabiliser les ressources » et appelle « mobilité » le fait d'envoyer quelqu'un travailler à l'autre bout de la province à 4h du matin. Gilet sans manches, lanyard couvert de badges, il glisse sur une chaise de bureau à roulettes portée par le vent et brandit le classeur « Roulements 2027 — PROVISOIRE v14 ». Il n'a jamais lu le Règlement : il a lu le résumé du résumé.
+> **Ancien Boss 2.** Depuis qu'Elio Di Rupo est le boss obligatoire du biome 2 (§7.5), le Fluidifieur garde son personnage, sa faiblesse « Le Règlement » et la **Preuve n° 2**, mais il devient l'**élite majeur** du biome : il garde la **dernière salle avant la Salle des pauses** (Salle gardée, sous le grand arc). C'est une rencontre en deux temps : on bat le régisseur, puis l'Invité d'honneur au belvédère.
+
+- **Biographie satirique** : il ne déteste personne, il **fluidifie**. Il change les plannings la veille « pour responsabiliser les ressources » et appelle « mobilité » le fait d'envoyer quelqu'un travailler à l'autre bout de la province à 4h du matin. Gilet sans manches, lanyard couvert de badges, il glisse sur une chaise de bureau à roulettes portée par le vent et brandit le classeur « Roulements 2027 — PROVISOIRE v14 ». Il n'a jamais lu le Règlement : il a lu le résumé du résumé. Pour l'inauguration de « Mons 2032 », Privatix l'a nommé **régisseur** : il « fluidifie » le plan de table, déplace les invités la veille et a rayé le personnel de la gare de la liste.
 - **Arène** : le nœud central sous le grand arc de la passerelle ; vide tout autour, dalles de verrière, vent constant.
 - **Intro** :
 ```text
@@ -740,7 +756,7 @@ RUDY (radio) : Attention, attention… il a le classeur. Méfie-toi du classeur.
   - *Phase 1 « Mobilité interne »* : « Votre samedi est "en cours de validation". » / « Je vous mets sur une dalle plus… aérée. »
   - *Phase 2 « Plan de transformation »* : « Mutation d'office ! C'est pour votre carrière ! » / « L'organigramme, c'est moi. Et vous, vous êtes une case. »
   - *Si le joueur attrape les 3 pages du Règlement* : HÉROS : « Article 47, alinéa 3 : préavis de sept jours. » — FLUIDIFIEUR : « Il y a un alinéa 3 ?! »
-- **Défaite** : « … Sept jours ? Personne ne lit jamais l'alinéa 3. » Sa chaise roule seule vers le bord et s'arrête, juste à temps. Il descend à pied.
+- **Défaite** : « … Sept jours ? Personne ne lit jamais l'alinéa 3. » Sa chaise roule seule vers le bord et s'arrête, juste à temps. Il descend à pied, son plan de table sous le bras : « Bon. Je préviens l'Invité d'honneur qu'il y a un… imprévu. »
 - **Victoire sur le joueur** : « Voilà. Vous êtes en repos. Un repos non prévu, mais le planning s'adaptera. »
 - **Récompense narrative** (1er kill) : **Preuve n° 2 « Suppression des accompagnateurs »**.
 
@@ -796,13 +812,14 @@ VANDERSLIDE : … Concrètement ? Concrètement… *(long silence)* … je n'ai 
   6. « La prochaine date est définitive. » *(déclenche la vraie fin si les autres conditions sont remplies)*
 - **Vraie fin** : « Bon. Signez sans lui. » puis, après la diffusion : « … On en reparlera au prochain plan stratégique. » *(Déconnexion.)*
 
-### 7.5 Boss optionnel — Elio Di Rupo, « l'Invité d'honneur »
+### 7.5 Boss 2 (obligatoire) — Elio Di Rupo, « l'Invité d'honneur »
 
 > Caricature satirique d'une personnalité politique réelle, autorisée par le porteur du projet (§1.4, exception 3). Toutes les répliques ci-dessous sont **inventées pour le jeu** ; aucune n'est une citation réelle. Aucun parti, logo ni slogan.
 
 - **Silhouette** : nœud papillon **bordeaux**, lunettes **sans monture**, mèche **brune** impeccable, costume **bleu marine**. Il tient une paire de **ciseaux d'inauguration** géants et un discours de quarante pages.
 - **Ce qu'il fait dans l'histoire** : il ne travaille pas pour Privatix. Il est le seul participant du **Sondage** qui répond toujours « disponible », à condition qu'il y ait **un ruban à couper**. Pour donner une caution à la cession, Privatix organise sur la Passerelle l'**inauguration de « Mons 2032 : la Gare Expérience »** et l'invite à couper le ruban. Il n'a pas lu le dossier : il a lu le discours. Il défend la cérémonie, pas le contrat, avec l'énergie de quelqu'un qui a inauguré beaucoup de choses à Mons et compte bien continuer.
-- **Place dans la hiérarchie des boss** : hors hiérarchie. **Boss optionnel du biome 2**, déclenché par l'événement **« L'Inauguration »** (porte surmontée d'un ruban rouge), disponible après le premier kill du Fluidifieur. Il ne remplace aucun boss canon et ne bloque aucune fin.
+- **Place dans la hiérarchie des boss** : hors de la hiérarchie de Privatix, mais **boss obligatoire du biome 2**. La passerelle est « fermée pour cérémonie » : pour descendre vers le hall, le héros doit traverser l'inauguration. Il vient **après** le Fluidifieur (élite majeur, §7.2) et la Salle des pauses. Il n'y a plus de porte « RUBAN » ni d'événement optionnel : chaque Shift qui passe le biome 1 le rencontre.
+- **Pourquoi il se bat** : il ne défend pas la cession, qu'il ignore ; il défend **son temps de parole**. Le héros ne le « tue » pas : il **obtient la parole**. À zéro, son « temps de parole est épuisé ».
 - **Arène** : le belvédère de la Passerelle, transformé en tribune : estrade, pupitre à micro, plaque d'inauguration voilée d'un drap, rangée de chaises pliantes occupées par des consultants qui applaudissent sur commande.
 - **Intro** :
 ```text
@@ -826,7 +843,9 @@ INVITÉ D'HONNEUR : Il doit bien y avoir, quelque part dans cette ville, quelque
 MARCEL (radio) : De mon temps, on inaugurait les gares. Pas leur vente.
 ```
 - **Victoire sur le joueur** : « Je déclare ce Shift… clos. Applaudissez, applaudissez. Et rendez-vous à la prochaine inauguration. »
-- **Récompense narrative** (1er kill) : les **Ciseaux d'inauguration** (objet de collection, archivé par Béné). La cérémonie annulée fait reculer le **Sondage** : au retour, l'écran de Rudy affiche « Participant d'honneur : indisponible ».
+- **Défaites suivantes** (une réplique par kill, toutes inventées) : « Encore vous ? Je n'avais prévu qu'un seul ruban. » / « J'ai raccourci le discours. Trente-neuf pages. » / « Vous savez, à Mons, on inaugure même les reports. »
+- **Récompense narrative** (1er kill, jalon J7 bis) : les **Ciseaux d'inauguration**, qu'il tend lui-même au héros (objet de collection, archivé par Béné), et le Plan du Patrimoine **« Ruban inaugural »** (Insigne : chaque salle commence avec une « promesse » qui protège d'un coup ; tenue jusqu'au bout, elle rapporte de la Mobilisation). La cérémonie annulée fait reculer le **Sondage** : au retour, l'écran de Rudy affiche « Participant d'honneur : indisponible ».
+- **Garde-fous** (rappel du §1.4) : aucune réplique n'est une citation réelle ; aucun parti, logo ni slogan ; pas d'humiliation ; aucun objet de loot ne reprend ses attributs personnels (nœud papillon, lunettes) : on ne collectionne pas un trophée sur une personne réelle. Un nom et un modèle de repli fictifs (« Le Bourgmestre au nœud papillon ») restent prévus si l'autorisation tombe.
 
 ---
 
