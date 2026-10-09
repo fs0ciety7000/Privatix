@@ -15,6 +15,13 @@ import {
   makeGlbUniforms,
 } from '@/view/materials/glbToon';
 import type { ClipMeta, CharacterMeta } from '@/view/models/manifest';
+import {
+  ORDER_ENEMY,
+  ORDER_FADED,
+  ORDER_FADED_DEPTH,
+  ORDER_HERO,
+  ORDER_HERO_SILHOUETTE,
+} from '@/view/renderOrder';
 import type { CharacterTemplate } from '@/view/models/ModelLibrary';
 
 export interface GlbRigOpts {
@@ -56,6 +63,11 @@ export class GlbRig {
   private readonly extraMeshes: THREE.Object3D[] = [];
   private readonly extraOwned: THREE.Material[] = [];
   private readonly runtimeBones: THREE.Object3D[] = [];
+  /** Ordre de rendu des maillages (ennemi par défaut, héros dès qu'il a sa silhouette). */
+  private baseOrder = ORDER_ENEMY;
+  /** Pré-passe de profondeur de l'atténuation (créée à la première occlusion). */
+  private depthPrepass: THREE.Mesh[] | null = null;
+  private faded = false;
   private readonly sockets = new Map<string, THREE.Object3D>();
   private current: THREE.AnimationAction | null = null;
   private currentName = '';
@@ -117,7 +129,7 @@ export class GlbRig {
       mesh.receiveShadow = kind === 'toon';
       // Les squelettes animés sortent de la boîte de repos : pas de culling par sphère englobante.
       mesh.frustumCulled = false;
-      mesh.renderOrder = 2;
+      mesh.renderOrder = this.baseOrder;
       if (!outlinesOn() || kind !== 'toon' || !mesh.geometry.hasAttribute('_outline')) continue;
       const mat = this.materials.outlineMaterial();
       let o: THREE.Mesh;
@@ -131,7 +143,7 @@ export class GlbRig {
       o.frustumCulled = false;
       o.castShadow = false;
       o.receiveShadow = false;
-      o.renderOrder = 2;
+      o.renderOrder = this.baseOrder;
       o.raycast = () => undefined;
       o.position.copy(mesh.position);
       o.quaternion.copy(mesh.quaternion);
@@ -144,11 +156,16 @@ export class GlbRig {
 
   /** Silhouette tramée visible à travers les obstacles (héros). */
   public addSilhouette(): void {
+    // Le héros passe après les ennemis : sa silhouette « voit » leur profondeur (Discosaure, boss).
+    this.baseOrder = ORDER_HERO;
+    this.object.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.renderOrder = ORDER_HERO;
+    });
     const mat = glbSilhouetteMaterial();
     for (const b of [...this.bodies]) {
       const s = new THREE.SkinnedMesh(b.geometry, mat);
       s.bind(b.skeleton, b.bindMatrix);
-      s.renderOrder = 1;
+      s.renderOrder = ORDER_HERO_SILHOUETTE;
       s.castShadow = false;
       s.frustumCulled = false;
       s.userData.outline = true;
@@ -161,6 +178,70 @@ export class GlbRig {
       this.extraMeshes.push(s);
     }
     this.extraOwned.push(mat);
+  }
+
+  /**
+   * Atténuation (occlusion du héros) : `fade` = opacité tramée (1 : opaque). Sous 1, une pré-passe
+   * de profondeur du volume entier est dessinée après le héros, puis le corps tramé et le contour :
+   * on voit le héros à travers, sans les membres cachés du modèle, et le liseré extérieur reste plein.
+   * Coût : un appel de dessin par maillage, seulement pendant l'occlusion.
+   */
+  public setFade(fade: number): void {
+    const f = THREE.MathUtils.clamp(fade, 0, 1);
+    this.uniforms.uFade.value = f;
+    const on = f < 0.999;
+    if (on === this.faded) return;
+    this.faded = on;
+    const prepass = on ? this.ensureDepthPrepass() : this.depthPrepass;
+    for (const m of prepass ?? []) m.visible = on;
+    const order = on ? ORDER_FADED : this.baseOrder;
+    this.object.traverse((o) => {
+      if (o instanceof THREE.Mesh && o.userData.depthPrepass !== true) o.renderOrder = order;
+    });
+  }
+
+  private ensureDepthPrepass(): THREE.Mesh[] {
+    if (this.depthPrepass) return this.depthPrepass;
+    const mat = new THREE.MeshBasicMaterial({
+      colorWrite: false,
+      // Un rien en retrait : le corps tramé (même profondeur) passe toujours le test.
+      polygonOffset: true,
+      polygonOffsetFactor: 1,
+      polygonOffsetUnits: 1,
+    });
+    this.extraOwned.push(mat);
+    const targets: THREE.Mesh[] = [];
+    this.object.traverse((o) => {
+      if (
+        o instanceof THREE.Mesh &&
+        o.userData.outline !== true &&
+        !(o.material as THREE.Material).transparent
+      )
+        targets.push(o as THREE.Mesh);
+    });
+    const out: THREE.Mesh[] = [];
+    for (const m of targets) {
+      let d: THREE.Mesh;
+      if (m instanceof THREE.SkinnedMesh) {
+        const k = new THREE.SkinnedMesh(m.geometry, mat);
+        k.bind(m.skeleton, m.bindMatrix);
+        d = k;
+      } else d = new THREE.Mesh(m.geometry, mat);
+      d.userData.outline = true;
+      d.userData.depthPrepass = true;
+      d.renderOrder = ORDER_FADED_DEPTH;
+      d.castShadow = false;
+      d.receiveShadow = false;
+      d.frustumCulled = false;
+      d.raycast = () => undefined;
+      d.position.copy(m.position);
+      d.quaternion.copy(m.quaternion);
+      d.scale.copy(m.scale);
+      m.parent?.add(d);
+      out.push(d);
+    }
+    this.depthPrepass = out;
+    return out;
   }
 
   /** Maillage skinné principal (corps), parent des vêtements skinnés. */

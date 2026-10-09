@@ -10,6 +10,7 @@ import type { Flash } from '@/view/materials/toon';
 import { glow, makeFlash, PAL, sncbLogoTexture, toon } from '@/view/materials/toon';
 import type { Pose, V3 } from '@/view/rig';
 import { easeIn, easeOut, editable, keyed, merge, Rig } from '@/view/rig';
+import { ORDER_HERO, ORDER_HERO_SILHOUETTE } from '@/view/renderOrder';
 
 const C = {
   skin: 0xeb9a72,
@@ -169,7 +170,8 @@ export class HeroView implements HeroActorView {
 
   /**
    * Silhouette tramée visible quand le héros est caché (pilier, mur) : chaque pièce reçoit un double
-   * dessiné AVANT le héros avec un test de profondeur inversé (seulement là où autre chose est devant).
+   * dessiné AVANT le héros avec un test de profondeur inversé (seulement là où autre chose est devant),
+   * mais après les ennemis (`renderOrder.ts`).
    */
   private addSilhouette(): void {
     const mat = new THREE.ShaderMaterial({
@@ -194,12 +196,12 @@ export class HeroView implements HeroActorView {
         targets.push(o as THREE.Mesh);
     });
     this.rig.root.traverse((o) => {
-      if (o instanceof THREE.Mesh && o.userData.outline === true) o.renderOrder = 2;
+      if (o instanceof THREE.Mesh && o.userData.outline === true) o.renderOrder = ORDER_HERO;
     });
     for (const m of targets) {
-      m.renderOrder = 2;
+      m.renderOrder = ORDER_HERO;
       const s = new THREE.Mesh(m.geometry, mat);
-      s.renderOrder = 1;
+      s.renderOrder = ORDER_HERO_SILHOUETTE;
       s.castShadow = false;
       s.userData.outline = true;
       s.raycast = () => undefined;
