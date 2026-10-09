@@ -112,15 +112,22 @@ Ordre imposé : **1) interface, 2) logique, 3) intégration.** Ne pas commencer 
 
 ```
 src/main.ts              # config Phaser, liste des scènes (unique new Phaser.Game)
-src/config/              # constants.ts (SceneKeys, AssetKeys, dimensions), colors.ts (palette SNCB/OCC), balance.ts (équilibrage, fait foi)
-src/scenes/              # Boot, Preloader, MainMenu, Game, UI (+ Battle, Dialogue, OCC, Pause à venir)
-src/entities/            # objets de jeu Phaser (Player, NPC, Enemy)
-src/systems/             # logique pure sans Phaser : GameState, time/FatigueClock (+ à venir CombatEngine, Inventory, SaveManager, GridMovement)
-src/ui/                  # composants Phaser réutilisables : Gauge, Clock3x8 (+ à venir NineSlicePanel, UIButton, DialogueBox, ActionMenu)
-src/data/                # données typées (ennemis, objets, compétences, dialogues)
-src/utils/               # helpers purs : math (clamp), registry (getGameState / updateGameState)
-tests/                   # tests Vitest de la logique pure
+src/config/              # constants.ts (SceneKeys, RegistryKeys, AssetKeys, dimensions), colors.ts (palette SNCB/OCC), balance.ts (équilibrage, fait foi)
+src/scenes/              # Boot, Preloader, MainMenu, Game (exploration), UI (HUD), Dialogue (+ à venir Battle, Pause)
+src/entities/            # objets Phaser : Player (grille), MapView (carte + PNJ + objets)
+src/systems/             # logique pure sans Phaser : GameState, time/, world/, movement/, story/, vending/, save/
+src/platform/            # storage.ts : seul accès au navigateur hors Phaser
+src/ui/                  # composants Phaser réutilisables : Gauge, Clock3x8, VirtualPad, PlaceholderTextures
+src/data/                # contenu typé : types.ts (contrats), maps (ASCII), dialogues, objectives, characters, encounters, story
+src/utils/               # helpers purs : math (clamp), registry (getGameState / updateGameState / pushNotice)
+tests/                   # tests Vitest de la logique pure + data.test.ts (cohérence du contenu)
 public/assets/           # asset-pack.json, images/, audio/, tilemaps/, fonts/
 docs/                    # GDD, STORY_AND_LORE, ARCHITECTURE, ASSETS_GUIDE
 Dockerfile, nginx.conf   # déploiement Coolify
 ```
+
+### Ajouter du contenu (cartes, dialogues, quêtes)
+
+- Le contenu vit dans `src/data/` et respecte `src/data/types.ts`. Un PNJ ou un objet se pose comme marqueur dans la grille ASCII de `maps.ts`, avec des `interactions` conditionnelles vers des dialogues de `dialogues.ts`. La progression passe par les drapeaux `StoryFlag` (à déclarer dans `types.ts`) posés par les effets de dialogue.
+- `tests/data.test.ts` doit rester vert : références de dialogues et de cartes, marqueurs, nœuds orphelins, drapeaux jamais posés, et accessibilité de chaque PNJ, objet et portail. Ne jamais l'affaiblir pour faire passer du contenu : corriger le contenu.
+- `tests/act1.test.ts` rejoue le fil principal de l'Acte I sans Phaser : l'étendre quand on ajoute une étape.

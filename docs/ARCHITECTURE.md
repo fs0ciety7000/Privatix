@@ -50,14 +50,22 @@ Privatix/
 ├─ src/
 │  ├─ main.ts                 # seule instanciation de Phaser.Game
 │  ├─ vite-env.d.ts
-│  ├─ config/                 # constants.ts (SceneKeys, RegistryKeys, AssetKeys, Shift), colors.ts, balance.ts
-│  ├─ scenes/                 # BootScene, PreloaderScene, MainMenuScene, GameScene, UIScene
-│  ├─ entities/               # Player.ts (placeholder Arcade, voir §10)
-│  ├─ systems/                # LOGIQUE PURE, sans Phaser : GameState.ts, time/FatigueClock.ts
-│  ├─ ui/                     # Gauge.ts, Clock3x8.ts (composants Container réutilisables)
-│  ├─ data/                   # (vide) données de jeu typées
-│  └─ utils/                  # math.ts (clamp), registry.ts (accès typé au GameState)
-├─ tests/                     # balance, FatigueClock, registry (src/**/*.test.ts est aussi accepté)
+│  ├─ config/                 # constants.ts (SceneKeys, RegistryKeys, AssetKeys, Shift, zoom, pas), colors.ts, balance.ts
+│  ├─ scenes/                 # BootScene, PreloaderScene, MainMenuScene, GameScene, UIScene, DialogueScene
+│  ├─ entities/               # Player.ts (héros sur grille), MapView.ts (affichage d'une WorldMap)
+│  ├─ systems/                # LOGIQUE PURE, sans Phaser :
+│  │  ├─ GameState.ts         #   état global + validation
+│  │  ├─ time/                #   FatigueClock (horloge 3x8, Fatigue, repos)
+│  │  ├─ world/               #   WorldMap (cartes ASCII → grille, blocage, interactions)
+│  │  ├─ movement/            #   GridMovement
+│  │  ├─ story/               #   Conditions, DialogueRunner, Effects, Objectives, TextTokens, Layoff
+│  │  ├─ vending/             #   VendingCode (distributeur de l'OCC)
+│  │  └─ save/                #   SaveManager (versions, migrations)
+│  ├─ platform/               # storage.ts : seul accès à localStorage
+│  ├─ ui/                     # Gauge, Clock3x8, VirtualPad, PlaceholderTextures
+│  ├─ data/                   # types.ts (contrats), maps, dialogues, objectives, characters, encounters, story
+│  └─ utils/                  # math.ts (clamp), registry.ts (GameState typé, bandeaux)
+├─ tests/                     # un fichier par système + data.test.ts (cohérence du contenu)
 ├─ docs/                      # documentation (exclue de l'image Docker)
 ├─ vite.config.ts  tsconfig.json  eslint.config.js  .prettierrc  .editorconfig
 └─ Dockerfile  nginx.conf  .dockerignore  package.json  package-lock.json
@@ -89,12 +97,12 @@ src/
 |---|---|---|
 | `Boot` | existe | Crée le `GameState` initial dans le registry, puis `start(Preloader)`. Aucun asset. |
 | `Preloader` | existe | **Seule** scène qui charge : `this.load.pack(AssetKeys.AssetPack, 'assets/asset-pack.json')` + barre de progression en rectangles. Cible : créer aussi les animations globales. |
-| `MainMenu` | existe | Titre « PRIVATIX », « Le rail ne se vend pas. », Entrée/toucher → `start(Game)`. Cible : Nouvelle partie / Continuer / Options, style tableau des départs. |
-| `Game` | existe | Exploration (placeholder). Lance `UI` en parallèle, la stoppe au `SHUTDOWN`. Échap → menu (cible : ouvre `Pause`). |
-| `UI` | existe | Overlay HUD : écoute `registry.events` `CHANGE_DATA` et affiche horloge, pause 3×8, PV, Fatigue. Aucune logique de jeu. |
-| `Battle` | cible | Combat au tour par tour ; affichage + input, toute la règle dans `CombatEngine`. |
-| `Dialogue` | cible | Overlay `DialogueBox` réutilisable depuis Game, Occ et Battle. |
-| `Occ` | cible | Hub clandestin (ancienne lampisterie) : machine à café = sauvegarde + soin + café gratuit 1×/pause, comptoir, équipe. |
+| `MainMenu` | existe | Nouvelle partie (choix Léon / Léa, GameState neuf) ou Continuer (sauvegarde la plus récente). Cible : Options, style tableau des départs. |
+| `Game` | existe | Exploration case par case de la carte du GameState : portails, déclencheurs, interactions, dialogues d'arrivée, horloge, Mise à pied, sauvegarde auto à l'entrée de l'OCC. Lance `UI`. Échap → menu (cible : ouvre `Pause`). |
+| `UI` | existe | Overlay HUD : statut PV/PE/Fatigue/Moral, horloge 3×8, invite d'interaction, bandeaux, pad tactile. Aucune logique de jeu. |
+| `Dialogue` | existe | Overlay lancé par Game (qui se met en pause) : texte lettre par lettre, choix, effets via `DialogueRunner`, sauvegarde, clavier du distributeur de l'OCC. |
+| `Battle` | cible (M2) | Combat au tour par tour ; affichage + input, toute la règle dans `CombatEngine`. En M1, l'effet de dialogue `battle` simule une victoire. |
+| `Occ` | abandonnée | **Décision M1** : l'OCC est une carte (`occ`) explorée par `Game`, pas une scène. Ses services (Vieille Dame, canapé, lit de camp…) sont des objets dont les dialogues appliquent les effets `save`, `heal`, `rest`. |
 | `Pause` | cible | « Classeur de service » : inventaire, équipe, compétences, options, quitter. |
 
 Les clés sont des objets `as const` (pas des `enum` TS) dans `src/config/constants.ts` ; on étend le même objet :
@@ -102,7 +110,8 @@ Les clés sont des objets `as const` (pas des `enum` TS) dans `src/config/consta
 ```ts
 export const SceneKeys = {
   Boot: 'Boot', Preloader: 'Preloader', MainMenu: 'MainMenu', Game: 'Game', UI: 'UI',
-  Battle: 'Battle', Dialogue: 'Dialogue', Occ: 'Occ', Pause: 'Pause', // cibles
+  Dialogue: 'Dialogue',                    // existe
+  Battle: 'Battle', Pause: 'Pause',        // cibles
 } as const;
 export type SceneKey = (typeof SceneKeys)[keyof typeof SceneKeys];
 ```
@@ -112,16 +121,22 @@ L'ordre du tableau `scene` de `main.ts` est l'ordre de rendu : les overlays (`UI
 ### 2.2 Flux
 
 ```
-Boot ─start─▶ Preloader ─start─▶ MainMenu ─start({mode})─▶ Game ═launch═▶ UI (HUD, parallèle)
-                                     ▲                       │
-                                     └──── start (Quitter) ──┤
-   ┌─────────────────────────────────────────────────────────┤
-   │ sleep(UI)+sleep(Game)+launch(Battle,{encounterId})      ├──▶ Battle ─stop + wake(UI) + wake(Game, outcome)
-   │ pause(Game)+launch(Dialogue,{dialogueId, caller})       ├──▶ Dialogue ─stop + resume(caller)
-   │ switch(Occ)  (UI mise en sleep)                         ├──▶ Occ ─switch(Game)
-   │ pause(Game)+launch(Pause)                               └──▶ Pause ─stop + resume(Game)
-   └ Défaite (« Mise à pied ») : Battle ─stop─▶ wake(Game, {result:'defeat'}) ─▶ switch(Occ)
+Boot ─start─▶ Preloader ─start─▶ MainMenu ─start─▶ Game ═launch═▶ UI (HUD, parallèle)
+              (textures            ▲  (GameState     │
+               placeholder)        │   dans le       │ pause(Game) + launch(Dialogue, { dialogueId })
+                                   │   registry)     ├──▶ Dialogue ─ resume(Game) + stop ─▶ Game.onResume :
+                                   │                 │      téléportation, visibilité des PNJ, Mise à pied
+                                   └── start (Échap) ┘
+Cible : Battle (sleep Game + UI, wake avec le résultat), Pause (pause Game).
 ```
+
+### 2.2.1 Boucle d'exploration (jalon M1)
+
+1. `Game.loadCurrentMap` lit `state.position`, construit la `WorldMap` (`src/systems/world/WorldMap.ts`) et la `MapView`, place le héros, annonce le nom de la zone (au premier chargement, c'est `UI` qui l'annonce à sa création, car elle n'écoute pas encore), joue l'`onEnter` de la carte s'il y en a un.
+2. `update` : l'horloge avance (1 min / 8 s, boisson de relève comprise) ; si une direction est tenue (clavier ou D-pad), `Player.tryStep` fait un pas via `GridMovement.step` et `isBlocked` (terrain, PNJ et objets visibles).
+3. À l'arrivée sur une case : position écrite dans le GameState, puis portail (`travel` : +5 min, nouvelle carte) ou déclencheur (dialogue).
+4. E / Espace / Entrée ou bouton A : interaction avec le PNJ ou l'objet **en face** (première `Interaction` dont la condition est vraie).
+5. `Dialogue` applique chaque étape du `DialogueRunner` au GameState (drapeaux, Moral, repos, combat simulé, téléportation…) et exécute les actions de scène (sauvegarde, clavier). Au retour, `Game.onResume` recharge la carte si la position a changé de carte, replace le héros, met à jour les PNJ visibles et déclenche la Mise à pied si la Fatigue vaut 100.
 
 ### 2.3 Quelle transition pour quel cas
 
@@ -338,6 +353,8 @@ export const applyMoral = (moral: number, delta: number): number => clamp(moral 
 
 Les tests vivent dans `tests/` (convention actuelle) ; `src/**/*.test.ts` est aussi accepté par `vite.config.ts`. RNG seedé ou stub pour les cas aléatoires.
 
+En place (M1) : un fichier par système (`FatigueClock`, `balance`, `world`, `story`, `SaveManager`, `registry`) ; `data.test.ts` pour la cohérence du contenu ; `act1.test.ts` qui rejoue tout l'Acte I sans Phaser. Ce dernier s'appuie sur `tests/support/simulate.ts`, un simulateur fidèle à `GameScene`/`DialogueScene` : `talkTo` (se placer devant un PNJ ou un objet **accessible à pied dans l'état courant**, puis jouer son dialogue), `walkTo` (portail accessible, +5 min, dialogue d'arrivée), `playDialogue` (choix par politique, clavier du distributeur, téléportation, Mise à pied). Il sert aussi à fabriquer des sauvegardes de test pour vérifier une scène précise dans le navigateur.
+
 ```ts
 // tests/GridMovement.test.ts
 import { describe, expect, it } from 'vitest';
@@ -477,16 +494,16 @@ Règles : `registry.events.on(...)` → `addDisposer(() => registry.events.off(.
 
 ### 5.4 Entrées
 
-Le placeholder actuel utilise `KeyCodes.Z/Q/S/D` + flèches. Cible : un `InputManager` (`src/ui/InputManager.ts`) qui lit **`KeyboardEvent.code`** (position physique) : `KeyW KeyA KeyS KeyD` = **ZQSD en AZERTY et WASD en QWERTY**, sans réglage. Il traduit en actions abstraites (`up`, `down`, `left`, `right`, `confirm`, `cancel`, `menu`, `inventory`, `run`, `tabPrev`, `tabNext`, `log`) consommées par les scènes ; remappage et manette s'y branchent.
+En place (M1) : `GameScene` enregistre les deux dispositions par `KeyCodes` : **Z ou W** (haut), **S** (bas), **Q ou A** (gauche), **D** (droite), plus les flèches ; Maj pour courir ; E / Espace / Entrée pour interagir ; Échap pour le menu. Les dialogues acceptent les mêmes touches de validation, haut/bas et 1 à 4 pour les choix ; le clavier du distributeur prend 1/2/3, Retour arrière, Entrée et Échap. Sur tactile, `VirtualPad` (D-pad + A) écrit dans le registry (`VirtualDir`, `VirtualAction`) et `GameScene` le lit comme le clavier. Chaque scène ignore la validation pendant `INPUT_GRACE_MS` après son ouverture ou sa reprise, pour qu'une même touche ne ferme pas un dialogue et n'en rouvre pas un autre.
+
+Cible : un `InputManager` (`src/ui/InputManager.ts`) qui lit **`KeyboardEvent.code`** (position physique) et traduit en actions abstraites (`up`, `down`, `left`, `right`, `confirm`, `cancel`, `menu`, `inventory`, `run`…), avec remappage et manette.
 
 ```ts
 const DEFAULT_BINDINGS: Record<InputAction, readonly string[]> = {
   up: ['KeyW', 'ArrowUp'], down: ['KeyS', 'ArrowDown'], left: ['KeyA', 'ArrowLeft'], right: ['KeyD', 'ArrowRight'],
   confirm: ['Enter', 'Space', 'KeyE'], cancel: ['Escape', 'Backspace', 'KeyX'],
   menu: ['Escape', 'Tab'], inventory: ['KeyI'], run: ['ShiftLeft', 'ShiftRight'],
-  tabPrev: ['KeyQ', 'PageUp'], tabNext: ['KeyR', 'PageDown'], log: ['KeyL'],
 };
-// scene.input.keyboard?.on('keydown', (e: KeyboardEvent) => this.dispatch(e.code)) — retiré au shutdown
 ```
 
 ### 5.5 UI (`src/ui`)
@@ -503,6 +520,8 @@ Tous les composants héritent de `Phaser.GameObjects.Container`, reçoivent un `
 | `Clock3x8` | Vue de l'horloge et du cycle 3×8 ; lit un `TimeService`, n'en modifie jamais l'état. |
 
 Soutien : `FocusManager`, `InputManager`, `VirtualPad`, `FloatingText`, `Toast`, `theme.ts` (palette et typographie).
+
+État M1 : `Gauge`, `Clock3x8`, `VirtualPad` et `PlaceholderTextures` existent. La boîte de dialogue, les choix et les bandeaux sont encore codés dans `DialogueScene` et `UIScene` : à extraire en `DialogueBox`, `ActionMenu` et `Toast` quand une deuxième scène en aura besoin (Battle).
 
 ### 5.6 Résolution et rendu
 
@@ -546,6 +565,8 @@ Toute clé du pack a son entrée dans `AssetKeys` (`src/config/constants.ts`, d�
 
 ### 6.2 Tilemaps Tiled
 
+> **État M1 : cartes ASCII placeholder.** En attendant les cartes Tiled, `src/data/maps.ts` décrit chaque carte en ASCII : un caractère de `TERRAIN_CHARS` par terrain, une lettre par marqueur (point d'arrivée, portail, PNJ, objet, déclencheur, voir `src/data/types.ts`). `buildWorldMap` en fait une `WorldMap` et `MapView` l'affiche avec un tileset généré (`tiles-placeholder`). `tests/data.test.ts` vérifie chaque carte : marqueurs, portails, et accessibilité de chaque PNJ, objet et portail depuis chaque point d'arrivée. Pour passer à Tiled : écrire un adaptateur pur Tiled JSON → `WorldMap` (même interface), et faire dessiner les calques Tiled par `MapView`. `GameScene` et les tests de praticabilité ne changent pas.
+
 - Tiled ≥ 1.10, export **JSON**, orthogonal, tuiles 16×16.
 - **Tilesets embarqués** dans la carte (Phaser ne lit pas les `.tsx` externes) ; nom du tileset dans Tiled = clé d'image Phaser.
 - Tilesets **extrudés** (`tile-extruder`, marge 1, espacement 2) pour éviter les coutures au zoom ×2.
@@ -575,87 +596,7 @@ Fichiers en kebab-case ASCII sans accents (`gare-mons.json`, `consultant-junior.
 - Chaque sauvegarde porte `version` ; au chargement, chaîne de migrations `vN → vN+1` jusqu'à la version courante, puis type guard. Une sauvegarde corrompue n'écrase rien.
 - `localStorage` peut lever (navigation privée, quota, stockage bloqué) : tout est en `try/catch` et le stockage est **injecté** (testable en Node).
 
-La v1 est le `GameState` actuel (`version: 1`, `clockMinutes`, `player` avec `energy`). La v2 suit le canon (PE, Moral, Tickets, Grains, position, drapeaux) :
-
-```ts
-// src/systems/save/schema.ts
-export interface SaveDataV2 {
-  version: 2;
-  savedAt: string;                                    // ISO 8601
-  clock: { day: number; minuteOfDay: number };
-  party: { id: CharacterId; name: string; level: number; xp: number; hp: number; maxHp: number;
-           pe: number; maxPe: number }[];
-  fatigue: number; moral: number; tickets: number; coffeeBeans: number;
-  position: { mapId: string; tileX: number; tileY: number; facing: Facing };
-  inventory: Record<string, number>;
-  flags: Record<string, boolean>;                     // progression (fragments PHR-2030, trahison…)
-}
-export const CURRENT_SAVE_VERSION = 2; export type SaveData = SaveDataV2; // alias = version courante
-```
-
-```ts
-// src/systems/save/migrations.ts
-type Raw = Record<string, unknown>;
-export const MIGRATIONS: Readonly<Record<number, (s: Raw) => Raw>> = {
-  1: (s) => {
-    const p = isRecord(s['player']) ? s['player'] : {};
-    return {
-      version: 2, savedAt: new Date(0).toISOString(),
-      clock: { day: 1, minuteOfDay: s['clockMinutes'] ?? 360 },
-      party: [{ id: 'heros', name: p['name'] ?? 'Léon', level: p['level'] ?? 1, xp: 0,
-                hp: p['hp'] ?? 30, maxHp: p['maxHp'] ?? 30, pe: p['energy'] ?? 10, maxPe: p['maxEnergy'] ?? 10 }],
-      fatigue: p['fatigue'] ?? 0, moral: 50, tickets: 0, coffeeBeans: 0,
-      position: { mapId: 'gare-mons', tileX: 0, tileY: 0, facing: 'down' },  // spawn par défaut
-      inventory: {}, flags: {},
-    };
-  },
-};
-```
-
-```ts
-// src/systems/save/SaveManager.ts
-export interface KeyValueStorage {
-  getItem(key: string): string | null; setItem(key: string, value: string): void; removeItem(key: string): void;
-}
-export type SaveSlot = 'slot-1' | 'slot-2' | 'slot-3' | 'auto';
-export type LoadResult =
-  | { ok: true; data: SaveData }
-  | { ok: false; reason: 'empty' | 'corrupted' | 'too-new' | 'storage-unavailable' };
-
-export class SaveManager {
-  public constructor(private readonly storage: KeyValueStorage | null, private readonly prefix = 'privatix.save') {}
-
-  public save(slot: SaveSlot, data: Omit<SaveData, 'version' | 'savedAt'>): boolean {
-    if (!this.storage) return false;
-    const payload: SaveData = { ...data, version: CURRENT_SAVE_VERSION, savedAt: new Date().toISOString() };
-    try { this.storage.setItem(`${this.prefix}.${slot}`, JSON.stringify(payload)); return true; }
-    catch { return false; }                            // quota / stockage bloqué : l'UI affiche un Toast
-  }
-
-  public load(slot: SaveSlot): LoadResult {
-    if (!this.storage) return { ok: false, reason: 'storage-unavailable' };
-    let raw: string | null;
-    try { raw = this.storage.getItem(`${this.prefix}.${slot}`); }
-    catch { return { ok: false, reason: 'storage-unavailable' }; }
-    if (raw === null) return { ok: false, reason: 'empty' };
-    let current: unknown;
-    try { current = JSON.parse(raw); } catch { return { ok: false, reason: 'corrupted' }; }
-    if (!isRecord(current) || typeof current['version'] !== 'number') return { ok: false, reason: 'corrupted' };
-    if (current['version'] > CURRENT_SAVE_VERSION) return { ok: false, reason: 'too-new' };
-    while (isRecord(current) && typeof current['version'] === 'number' && current['version'] < CURRENT_SAVE_VERSION) {
-      const migrate = MIGRATIONS[current['version']];
-      if (!migrate) return { ok: false, reason: 'corrupted' };
-      current = migrate(current);
-    }
-    return isSaveData(current) ? { ok: true, data: current } : { ok: false, reason: 'corrupted' };
-  }
-}
-
-// src/platform/storage.ts — seul point de contact avec le navigateur, appelé par BootScene
-export function browserStorage(): KeyValueStorage | null {
-  try { return localStorage; } catch { return null; }  // l'accès lui-même peut lever (SecurityError)
-}
-```
+**Format en place (v1).** Aucune sauvegarde n'ayant existé avant M1, la v1 est directement le GameState complet : `{ savedAt, state }`, où `state` contient l'horloge et la Fatigue, le joueur, la position, les drapeaux, le Moral, les Tickets, la boisson de relève et le niveau de la machine. Emplacements : `privatix.save.slot-1` (Vieille Dame) et `privatix.save.auto` (entrée de l'OCC) ; « Continuer » charge le plus récent. `SaveManager` (`src/systems/save/`) ne lève jamais, valide avec `isGameState`, refuse une version future, et applique `MIGRATIONS` (vide aujourd'hui) pour les versions antérieures. `src/platform/storage.ts` est le seul accès à `localStorage`. Le schéma v2 « aplati » envisagé avant M1 est abandonné : on incrémente `GameState.version` et on ajoute une migration à la première modification incompatible.
 
 Tests : aller-retour save/load avec un `Map` en mémoire, migration v1 → v2 à partir de `createInitialGameState()`, JSON invalide, version future, stockage qui lève, `storage === null`.
 
@@ -796,15 +737,18 @@ jobs:
 
 | # | Sujet | État actuel | Cible / action |
 |---|---|---|---|
-| 1 | **Déplacement** | `Player` = `Rectangle` avec Arcade Physics, déplacement libre à `PLAYER_SPEED` (96 px/s), touches `KeyCodes.Z/Q/S/D` + flèches. `main.ts` active `arcade` avec `debug` en dev. | Migration en 4 étapes : (1) écrire `GridMovement` pur + tests ; (2) réécrire `Player` en `Sprite` qui appelle `step()` et interpole par tween (`STEP_DURATION_MS`), collisions via le calque Tiled `collision` ; (3) brancher l'`InputManager` (`KeyboardEvent.code`) ; (4) retirer `physics` de `main.ts` et `PLAYER_SPEED` des constantes. Chaque pas appelle le `TimeService` (rencontres, déclencheurs). |
+| 1 | **Déplacement** | Fait (M1) : `GridMovement` pur + `Player` sprite sur grille (tween, course), physique Arcade retirée. | `InputManager` (`KeyboardEvent.code`, remappage, manette). |
 | 2 | **Palette** | Fait : `src/config/colors.ts` suit la palette UX par thème (`sncb`, `occ`, `gauge`, `shift`), `index.html` aligné. | — |
 | 3 | **Pack d'assets vide** | `asset-pack.json` sans fichier ; `AssetKeys.Logo` déclaré mais non chargé ; dossiers `images/ audio/ tilemaps/ fonts/` vides. | Remplir au fil des livraisons (§6), ajouter le test de cohérence pack ↔ `AssetKeys`, créer les animations dans le Preloader. |
 | 4 | **Polices** | `fontFamily: 'monospace'` partout. | BitmapFont (Press Start 2P pour titres/chiffres, Pixelify Sans ou m6x11 pour le texte) via `bitmapText` ; en prototype WebFont, attendre `document.fonts.ready` avant la première scène. Corps de texte ≥ 16 px logiques. |
-| 5 | **État** | `GameState` v1 : `time` (FatigueClock) + `player` ; accès typé `getGameState`/`updateGameState` et garde `isGameState` en place. « Nouvelle partie » ne réinitialise pas encore l'état (retour menu puis Entrée reprend la même partie). | Étendre selon §7 (v2 + migration) ; réinitialiser le GameState sur « Nouvelle partie ». |
-| 5b | **Effondrement** | `FatigueClock` émet `collapsed` à 100 de Fatigue ; `GameScene` ne le consomme pas encore, le HUD affiche le palier « Effondré ». | Implémenter la Mise à pied (GDD § 5.8) hors combat et la micro-sieste d'équipe en combat (Fatigue = 90). |
-| 6 | **Systèmes** | `GameState`, `FatigueClock`, `balance.ts`, `clamp`, `registry`. | `CombatEngine` (consommera `fatigueTier` et `finishCombat`), `Inventory` (multiplicateurs de temps Thermos/Lungo), `MoralMeter`, `SaveManager`, `rng` ; décider du sort de l'EventBus. |
-| 7 | **Scènes** | Battle, Dialogue, Occ, Pause absentes ; Échap renvoie au menu. | Créer les scènes et `BaseScene` ; Échap ouvre `Pause`. |
-| 8 | **UI** | HUD avec `Gauge` (PV, PE, Fatigue colorée par palier) et `Clock3x8` (barre 24 h, heures sup'). Pas de portrait ni d'indicateur de pause café. | Autres composants `src/ui` (§5.5), `FocusManager`, `VirtualPad` pour le tactile. |
+| 5 | **État** | Fait (M1) : GameState complet (position, drapeaux, Moral, Tickets, boisson, machine), Nouvelle partie repart d'un état neuf. | — |
+| 5b | **Effondrement** | Fait hors combat : Fatigue 100 → Mise à pied (GDD § 5.8). | En combat (M2) : micro-sieste d'équipe, Fatigue = 90. Acte III : retour à la dernière sauvegarde du BAG. |
+| 6 | **Systèmes** | `GameState`, `FatigueClock`, `WorldMap`, `GridMovement`, `Conditions`, `DialogueRunner`/`Effects`, `Objectives`, `Layoff`, `VendingCode`, `SaveManager`. | `CombatEngine` (M2, consommera `fatigueTier` et `finishCombat`), `Inventory` (Thermos, Gobelets), `rng` ; décider du sort de l'EventBus. |
+| 7 | **Scènes** | `Dialogue` existe ; l'OCC est une carte (pas de scène `Occ`). Battle et Pause absentes ; Échap renvoie au menu. | Battle (M2) ; Pause « Classeur de service » ; Échap ouvre `Pause`. |
+| 8 | **UI** | HUD complet (statut, horloge, invite, bandeaux), `VirtualPad`. Boîte de dialogue et bandeaux codés dans les scènes ; pas de portrait. | Extraire `DialogueBox`, `ActionMenu`, `Toast` ; portraits ; `NineSlicePanel` quand les assets UI arrivent. |
 | 9 | **Outillage** | Pas de CI, pas de `.nvmrc`, lint sans `--max-warnings=0`, pas de couverture. | Workflow §9.3, `.nvmrc` = `22`, `@vitest/coverage-v8` sur `src/systems`, `src/data`, `src/utils`. |
 | 10 | **nginx** | Fait : `Referrer-Policy` répété dans chaque `location`. | Envisager une CSP stricte (aucun script externe). |
+| 12 | **Cartes** | Cartes ASCII placeholder (§6.2). | Cartes Tiled + adaptateur Tiled → `WorldMap`. |
+| 13 | **Combats** | Effet `battle` = victoire simulée (temps et Fatigue appliqués, bandeau). | `BattleScene` + `CombatEngine` (M2), défaite = Mise à pied. |
+| 14 | **Contenu Acte I hors M1** | Fil principal et « Trois tasses, trois collègues » jouables. | Notes de service, pigeon Matricule 4412, quête du Wagon-Bar, boutique de Béné, Gobelets de l'OCC, pointeuse. |
 | 11 | **Installation** | `npm install` exige `--legacy-peer-deps` (bug npm 10 avec les peers de vitest 4). | Retirer le flag de la documentation quand npm ou vitest le corrigent ; `npm ci` reste la référence. |
