@@ -1,9 +1,35 @@
+# Dépendances et builds locaux (réinstallés/reconstruits dans l'image)
 node_modules
 **/node_modules
 dist
 **/dist
+coverage
+.vite
+
+# VCS et outillage
 .git
+.gitignore
+.github
+.vscode
+.idea
+*.log
+npm-debug.log*
+
+# Secrets et environnements locaux
+.env
+.env.*
+
+# Fichiers sans utilité pour le build
+Dockerfile
+.dockerignore
+docs
+*.md
+assets-src
+
+# Planches de contrôle des sprites (inutiles au build)
+tools/pixelart/preview
+
+# Outillage Python des sprites (venv local, rendus intermédiaires)
 tools/render3d/.venv
 tools/render3d/preview
-tools/pixelart/.venv
 *.pkl
