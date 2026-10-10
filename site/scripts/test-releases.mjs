@@ -56,6 +56,14 @@ t('release ancienne : nom stable seul conservé, annexes ignorées, brouillon ex
   assert.equal(old.notes, 'Première version de test avec notes. Corrections.');
 });
 
+t('releases d\'assets (trailer, press kit) ignorées : seules les versions vX du jeu comptent', () => {
+  const withAssets = [
+    { tag_name: 'trailer-v1', name: 'Trailer', published_at: '2099-01-01T00:00:00Z', assets: [{ name: 'privatix-trailer-16x9.mp4', size: 1, browser_download_url: 'https://x/y' }] },
+    ...sample,
+  ];
+  assert.deepEqual(normalizeReleases(withAssets).map((r) => r.tag), ['v0.1.0', 'v0.0.9']);
+});
+
 t('entrées invalides', () => {
   assert.deepEqual(normalizeReleases(null), []);
   assert.deepEqual(normalizeReleases({ message: 'API rate limit exceeded' }), []);

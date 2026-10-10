@@ -149,6 +149,8 @@ export function normalizeReleases(raw: unknown): Release[] {
   const out: Release[] = [];
   for (const r of raw as ApiRelease[]) {
     if (typeof r !== 'object' || typeof r.tag_name !== 'string' || r.draft === true) continue;
+    // Seules les versions du jeu (v1.2.3) : les releases d'assets (trailer-…, presskit-…) sont ignorées.
+    if (!/^v\d/i.test(r.tag_name)) continue;
     const date = r.published_at ? new Date(r.published_at) : null;
     out.push({
       tag: r.tag_name,
