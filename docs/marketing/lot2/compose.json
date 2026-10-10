@@ -1,0 +1,43 @@
+{
+  "outDir": "docs/marketing/lot2",
+  "renders": [
+    {
+      "id": "affiche-composee-marquise",
+      "template": "affiche-marquee.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/lot2/keyart-affiche-a.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+      }
+    },
+    {
+      "id": "affiche-composee-manif",
+      "template": "affiche-manif.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/lot2/keyart-affiche-a.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+      }
+    },
+    {
+      "id": "banniere-composee",
+      "template": "banniere.html",
+      "width": 1280,
+      "height": 720,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/lot2/keyart-banniere.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "artScale": "1.075",
+        "artOrigin": "46% 38%"
+      }
+    }
+  ]
+}

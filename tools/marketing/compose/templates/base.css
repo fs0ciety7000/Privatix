@@ -127,7 +127,7 @@ body {
 }
 .studio img {
   display: block;
-  height: 3.4em;
+  height: 4.2em;
   width: auto;
   filter: drop-shadow(0 0 0.5em rgba(255, 122, 26, 0.35));
 }
@@ -142,6 +142,7 @@ body {
 }
 .studio__name {
   display: block;
+  white-space: nowrap;
   font-family: var(--font-cond);
   font-weight: 700;
   font-size: 1.5em;

@@ -8,6 +8,8 @@
 <style>
   body { font-size: {{width}}px; }
   .canvas { font-size: 0.01em; }
+  /* recadrage : rogne le cadre translucide parasite sur les bords du key art */
+  .art { transform: scale({{artScale}}); transform-origin: {{artOrigin}}; }
   .shade-right {
     position: absolute; inset: 0 0 0 auto; width: 52%;
     background: linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 55%, rgba(10,8,24,0) 100%);

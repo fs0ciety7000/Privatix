@@ -10,7 +10,9 @@
 //
 // Fichier de jobs :
 //   { "outDir": "docs/marketing/lot1", "defaults": { "model", "aspect_ratio", "image_size" },
-//     "jobs": [ { "id", "model"?, "aspect_ratio"?, "image_size"?, "prompt", "refs": ["chemin", …] } ] }
+//     "jobs": [ { "id", "model"?, "aspect_ratio"?, "image_size"?, "prompt", "refs": ["chemin", …],
+//                 "tools"?: [{ "type": "google_search" }] } ] }
+// « tools » est transmis tel quel à l'API (ancrage Google Search pour un lieu réel, par ex.).
 // Les chemins (outDir, refs) sont relatifs à la racine du dépôt (dossier courant).
 // Chaque job réussi produit <id>.jpg (l'original livré par l'API, qui ne sort que du
 // JPEG), <id>-1600.webp et une entrée dans log.json (modèle, références, usage).
@@ -123,7 +125,7 @@ for (const job of spec.jobs) {
 
   const input = [{ type: 'text', text: job.prompt }, ...(await Promise.all(refs.map(encodeRef)))];
   try {
-    const body = await callApi({ model, input, response_format }, key);
+    const body = await callApi({ model, input, response_format, ...(job.tools ? { tools: job.tools } : {}) }, key);
     const img = extractImage(body);
     if (!img) {
       const reason = extractText(body) || JSON.stringify(body).slice(0, 600);
@@ -141,6 +143,7 @@ for (const job of spec.jobs) {
       model,
       ...response_format,
       refs,
+      tools: job.tools,
       usage: body.usage ?? null,
       note: extractText(body) || undefined,
       date: new Date().toISOString(),

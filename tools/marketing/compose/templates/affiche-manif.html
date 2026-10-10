@@ -16,20 +16,20 @@
   .head { position: absolute; top: 4.6%; left: 6.5%; right: 6.5%; }
   .head .neon { font-size: 14.6em; letter-spacing: 0.06em; margin-right: -0.06em; }
   .placard {
-    display: inline-block; margin-top: 2.6em; padding: 0.42em 0.8em 0.46em;
-    transform: rotate(-2.5deg); transform-origin: left center;
+    display: table; margin: 1em 0 0 auto; padding: 0.42em 0.8em 0.46em;
+    transform: rotate(-2.5deg); transform-origin: right center;
     background: var(--px-gold); color: var(--px-ink);
     border: 0.14em solid var(--px-ink); box-shadow: 0 0.2em 0 var(--px-ink);
-    font-family: var(--font-title); font-size: 3.5em; letter-spacing: 0.02em;
+    font-family: var(--font-title); font-size: 2.45em; letter-spacing: 0.02em;
   }
   .credits {
-    font-size: 2.1em; height: 17%; padding: 2.4em 6% 0;
-    grid-template-columns: 1fr; justify-items: center; row-gap: 0.9em;
+    font-size: 2.1em; height: 16%; padding: 3.4em 6% 0;
+    grid-template-columns: 1fr; grid-auto-rows: min-content; align-content: center;
+    justify-items: center; row-gap: 1.1em;
   }
-  .credits::before { top: 58%; }
-  .studio { flex-direction: row; }
+  .credits::before { top: 66%; left: 30%; right: 30%; }
   .platforms { font-size: 1.05em; }
-  .sncb { position: absolute; right: 6%; bottom: 13%; }
+  .sncb { position: absolute; right: 6%; bottom: 1.1em; }
   .sncb img { height: 1.7em; }
 </style>
 </head>

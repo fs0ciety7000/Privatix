@@ -834,5 +834,438 @@
       ]
     },
     "date": "2026-10-10T01:22:41.527Z"
+  },
+  "keyart-affiche-a": {
+    "model": "gemini-3-pro-image",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "site/public/bestiaire/hero.webp",
+      "site/public/bestiaire/dirupo.webp",
+      "site/public/bestiaire/lurcke.webp",
+      "site/public/bestiaire/discosaure.webp",
+      "site/public/bestiaire/consultant.webp",
+      "site/public/bestiaire/manager.webp",
+      "site/public/bestiaire/auditeur.webp",
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "site/public/artbook/planches/da-palette-1200.webp",
+      "docs/references/sncb_logo.png"
+    ],
+    "usage": {
+      "total_tokens": 8806,
+      "total_input_tokens": 6528,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 928
+        },
+        {
+          "modality": "image",
+          "tokens": 5600
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 1933,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1120
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 345,
+      "raw_prompt_token": 7084,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1484
+            },
+            {
+              "modality": "image",
+              "tokens": 5600
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 802
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 345
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2656
+            },
+            {
+              "modality": "image",
+              "tokens": 5857
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 23
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 132
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1484
+            },
+            {
+              "modality": "image",
+              "tokens": 5600
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 802
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 345
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2656
+            },
+            {
+              "modality": "image",
+              "tokens": 5857
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 23
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 132
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T01:24:48.829Z"
+  },
+  "keyart-affiche-b": {
+    "model": "gemini-3-pro-image",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "site/public/bestiaire/hero.webp",
+      "site/public/bestiaire/dirupo.webp",
+      "site/public/bestiaire/lurcke.webp",
+      "site/public/bestiaire/discosaure.webp",
+      "site/public/bestiaire/consultant.webp",
+      "site/public/bestiaire/manager.webp",
+      "site/public/bestiaire/auditeur.webp",
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "site/public/artbook/planches/da-palette-1200.webp",
+      "docs/references/sncb_logo.png"
+    ],
+    "usage": {
+      "total_tokens": 8935,
+      "total_input_tokens": 6524,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 5600
+        },
+        {
+          "modality": "text",
+          "tokens": 924
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 1990,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1120
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 421,
+      "raw_prompt_token": 7080,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1480
+            },
+            {
+              "modality": "image",
+              "tokens": 5600
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 859
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 421
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2785
+            },
+            {
+              "modality": "image",
+              "tokens": 5857
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 23
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 128
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1480
+            },
+            {
+              "modality": "image",
+              "tokens": 5600
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 859
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 421
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2785
+            },
+            {
+              "modality": "image",
+              "tokens": 5857
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 23
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 128
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T01:25:17.029Z"
+  },
+  "keyart-banniere": {
+    "model": "gemini-3-pro-image",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "16:9",
+    "image_size": "2K",
+    "refs": [
+      "site/public/bestiaire/hero.webp",
+      "site/public/bestiaire/discosaure.webp",
+      "site/public/bestiaire/consultant.webp",
+      "site/public/bestiaire/manager.webp",
+      "site/public/bestiaire/auditeur.webp",
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "site/public/artbook/planches/da-palette-1200.webp",
+      "docs/references/sncb_logo.png"
+    ],
+    "usage": {
+      "total_tokens": 7405,
+      "total_input_tokens": 5322,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 4480
+        },
+        {
+          "modality": "text",
+          "tokens": 842
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 1736,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1120
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 347,
+      "raw_prompt_token": 5856,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1376
+            },
+            {
+              "modality": "image",
+              "tokens": 4480
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 606
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 347
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2353
+            },
+            {
+              "modality": "image",
+              "tokens": 4794
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 22
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 113
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1376
+            },
+            {
+              "modality": "image",
+              "tokens": 4480
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 606
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 347
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2353
+            },
+            {
+              "modality": "image",
+              "tokens": 4794
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 22
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 113
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T01:25:45.102Z"
   }
 }
