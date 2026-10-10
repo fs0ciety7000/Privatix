@@ -50,7 +50,22 @@ Générée le 2026-10-10 avec **Lyria** (Google, API Gemini, endpoint `interacti
 
 ## Choix des prises
 
-<!-- À remplir par le porteur du projet après écoute : asset → prise retenue (t1/t2/t3), remarques. -->
+Validé par le porteur du projet le 2026-10-10 : prise 1 pour chaque morceau (les prises 2 et 3 restent ici comme alternatives).
 
 | Asset | Prise retenue | Remarques |
 |---|---|---|
+| `ost.01-prise-de-poste` | t1 | Prise de poste (thème titre) |
+| `ost.02-occ-jour` | t1 | OCC — Service de jour |
+| `ost.03-occ-nuit` | t1 | OCC — Service de nuit |
+| `ost.04-quais-exploration` | t1 | Quais & Voies — Exploration |
+| `ost.05-quais-combat` | t1 | Quais & Voies — Combat |
+| `ost.06-passerelle` | t1 | La Passerelle |
+| `ost.07-hall-bag` | t1 | Hall & BAG |
+| `ost.08-boss-auditeur` | t1 | Boss — L’Auditeur |
+| `ost.09-boss-invite` | t1 | Boss — L’Invité d’honneur |
+| `ost.10-boss-discosaure` | t1 | Boss — Discosaure |
+| `ost.11-boss-lurcke` | t1 | Boss final — Lurcke |
+| `ost.12-departs-victoire` | t1 | Départs — Shift tenu |
+| `ost.13-departs-supprime` | t1 | Départs — Supprimé |
+| `ost.14-le-7h12` | t1 | Le 7h12 (générique) |
+| `trailer.musique-60s` | t1 | Trailer « Le Shift » |

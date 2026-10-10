@@ -13,15 +13,14 @@ Répliques générées à partir du script validé par le porteur du projet
 | Léon (héros) | `leon/` | `Ql8Hq7echfwTF90Fec6K` | 23 / 23 |
 | Yasmina | `yasmina/` | `ROy6nWoXjRMqzkdFdAkB` | 15 / 15 |
 | Invité d'honneur | `invite/` | `BHaCuTcypMPA9jhksYPX` | 20 / 20 |
-| Jean-Cul Lurcke (boss final) | — | `MAZdzkb78f8SA7DNBT41` | 0 / 24 |
+| Jean-Cul Lurcke (boss final) | `lurcke/` | `MAZdzkb78f8SA7DNBT41` | 19 / 25 |
 
 Les répliques de l'Invité d'honneur sont fictives.
 
-## Lurcke : non produit
+## Lurcke : produit via le connecteur ElevenLabs
 
-Les 24 appels pour Lurcke ont échoué avec l'erreur `402 paid_plan_required` : « Free users cannot use
-library voices via the API ». La voix retenue (« Nico ») vient de la bibliothèque ElevenLabs, et un
-compte gratuit ne peut pas l'utiliser via l'API. Ce n'est pas un problème de crédits. Pour débloquer :
-passer à un abonnement payant ou choisir une voix du workspace. Il suffit ensuite de relancer
-`--only 'vo.lurcke.*'` : le script ne regénère pas ce qui existe déjà.
-(`vo.lurcke.boss.05`, déjà validé, est exclu de la sélection.)
+Les répliques de Lurcke (voix « Nico », bibliothèque) ont été produites via le connecteur ElevenLabs, car
+l'API directe refuse les voix de bibliothèque sur l'offre gratuite (402 `paid_plan_required`), pas le connecteur.
+19 répliques sur 25 (boss.05 validée incluse), ≈ 1 442 crédits consommés (somme des `price.credits` relevés).
+Manquantes : boss.10, 15, 16, 17, 18 et 20 (génération en échec : « Free Tier access has been disabled »,
+activité inhabituelle détectée sur le compte). À relancer une fois le compte rétabli.
