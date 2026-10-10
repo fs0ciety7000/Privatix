@@ -428,6 +428,48 @@
    ]
   },
   {
+   "id": "lurcke",
+   "model": "lurcke",
+   "name": "Jean-Cul Lurcke",
+   "kind": "Boss final · biome 3",
+   "role": "boss",
+   "title": "Directeur de la Transformation et de l'Excellence Opérationnelle",
+   "desc": "Crâne chauve et brillant, épaules massives, lunettes octogonales dorées, grand sourire. Cravate bleu clair à pois, baskets blanches « pour faire startup » : c'est lui qui tient le stylo du Contrat-cadre.",
+   "stage": {
+    "rimA": "#ff3ea5",
+    "rimB": "#ffd84a"
+   },
+   "poses": [
+    [
+     "Idle",
+     "idle",
+     0.4
+    ],
+    [
+     "Marche",
+     "walk",
+     0.2
+    ],
+    [
+     "Bullet points",
+     "attack-slide"
+    ],
+    [
+     "Signature",
+     "attack-sign"
+    ],
+    [
+     "Coup de cravate",
+     "attack-tie"
+    ],
+    [
+     "Sans voix",
+     "stagger",
+     0.6
+    ]
+   ]
+  },
+  {
    "id": "josiane",
    "model": "josiane",
    "name": "Josiane Delhaye",

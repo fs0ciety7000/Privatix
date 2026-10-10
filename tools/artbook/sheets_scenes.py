@@ -11,8 +11,8 @@ import json
 from pathlib import Path
 
 from draw import (
-    DANGER, ENEMY, GOLD, HERO, MUTE, RIM, SODIUM, SOFT, TEXT, TUNGSTEN, VIOLET_HI, Image, background, caption,
-    font, footer, framed, header, hexrgb, label, panel, paragraph, save, text,
+    DANGER, ENEMY, GOLD, HERO, RIM, SODIUM, SOFT, TUNGSTEN, VIOLET_HI, Image, background, caption,
+    font, footer, framed, header, hexrgb, label, paragraph, save,
 )
 
 HERE = Path(__file__).parent
@@ -87,35 +87,8 @@ def layout_grid(img, spec, top: int, accent) -> int:
     return y
 
 
-def lurcke_sheet(spec, accent) -> Image.Image:
-    """Fiche de travail du boss final : pas encore de GLB dédié (captures en jeu + notes de modèle)."""
-    img = background(W, 3000, accent)
-    y = header(img, spec["title"], spec["eyebrow"], spec.get("subtitle"), accent)
-    y = paragraph(img, (64, y + 4), spec["intro"], font("text", 26), 2200, SOFT) + 30
-    items = [spec["main"], *spec["side"]]
-    y = grid(img, items, (64, y, W - 64, 0), 3, aspect=0.75, rim=accent) + 30
-    cols = spec["notes"]
-    cw = (W - 128 - 80) / len(cols)
-    body_h = max(len(__import__("draw").wrap(b_, font("text", 22), round(cw - 20))) for _, b_ in cols) * 32
-    ny = y
-    nh = 150 + body_h + 40
-    panel(img, (64, ny, W - 64, ny + nh), rim=accent)
-    label(img, (92, ny + 28), "Notes pour le modèle dédié (LORE § 7.3)", accent, 20)
-    for i, (t, body) in enumerate(cols):
-        x = round(92 + i * (cw + 20))
-        text(img, (x, ny + 80), t, font("bold", 28), TEXT)
-        paragraph(img, (x, ny + 124), body, font("text", 22), round(cw - 20), MUTE, 1.45)
-    hgt = ny + nh + 130
-    out = background(W, hgt, accent)
-    out.alpha_composite(img.crop((0, 0, W, hgt - 100)))
-    footer(out, spec["footer"])
-    return out
-
-
 def build(spec) -> Image.Image:
     accent = hexrgb(spec.get("accent", "#6FF3FF"))
-    if spec["layout"] == "lurcke":
-        return lurcke_sheet(spec, accent)
     # hauteur : on compose sur une grande toile puis on recadre
     img = background(W, 4200, accent)
     y = header(img, spec["title"], spec["eyebrow"], spec.get("subtitle"), accent)

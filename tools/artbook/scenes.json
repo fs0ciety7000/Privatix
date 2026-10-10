@@ -152,22 +152,6 @@
           { "src": "vfx-lurcke-graphiques", "title": "Lurcke · graphiques", "sub": "Piliers-graphiques : trois cercles annoncés au sol." }
         ] }
       ]
-    },
-    {
-      "id": "perso-lurcke", "layout": "lurcke", "accent": "#FF3EA5",
-      "eyebrow": "Personnages · Boss final · Biome 3", "title": "Jean-Cul Lurcke", "subtitle": "Directeur de la Transformation et de l'Excellence Opérationnelle",
-      "intro": "Fiche de travail : le boss final n'a pas encore de modèle GLB dédié. En jeu, il porte le costume du Manager KPI grandi ×1,4 (actorClips.ts), avec ses propres patterns (bullet points, graphiques, copie, rapport) et sa barre de boss.",
-      "main": { "src": "lurcke-gros-plan", "title": "En jeu, version de travail", "sub": "Silhouette du Manager KPI à l'échelle 1,4." },
-      "side": [
-        { "src": "vfx-lurcke-bullet-points", "title": "« Slide 1 sur 412 »", "sub": "Bullet points : trois lignes qui balaient le bureau, un trou par ligne." },
-        { "src": "vfx-lurcke-graphiques", "title": "Benchmark international", "sub": "Piliers-graphiques annoncés par trois cercles." }
-      ],
-      "notes": [
-        ["Silhouette", "Costume trop ajusté, baskets blanches « pour faire startup », oreillette permanente. Plus grand que le Manager KPI, épaules étroites, tête haute : il regarde au-dessus du terrain."],
-        ["Accessoires", "Tasse « World's Best Disruptor », télécommande de présentation, trottinette électrique de fonction (compteur « 0 km parcourus en train »)."],
-        ["Phases", "1 : Méga-Deck 2032 (écran géant). 2 : Conseil en visio, fusion avec le Contrat. 3 : l'Optimiseur Absolu, fusion avec la photocopieuse."]
-      ],
-      "footer": "pas de GLB dédié · public/models/manager.glb ×1,4 en attendant"
     }
   ]
 }
