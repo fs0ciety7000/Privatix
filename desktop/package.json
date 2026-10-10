@@ -62,7 +62,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "build/icon.png",
+      "icon": "build/icon.ico",
       "signAndEditExecutable": true
     },
     "nsis": {
@@ -79,7 +79,7 @@
         "dmg"
       ],
       "category": "public.app-category.games",
-      "icon": "build/icon.png",
+      "icon": "build/icon.icns",
       "identity": null,
       "hardenedRuntime": false
     },

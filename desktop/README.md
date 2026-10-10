@@ -43,7 +43,7 @@ npm run smoke          # test sans interface (sous Linux sans écran : xvfb-run 
 ```
 
 Chaque commande `start`, `pack` ou `dist:*` exécute d'abord `assemble` : `prepare-app`, qui copie les
-builds dans `desktop/app/`, puis `icon`, qui génère `build/icon.png`. Les dossiers `app/`,
+builds dans `desktop/app/`, puis `icon`, qui recopie les icônes officielles de `icons/` (PNG 1024 et 512, ICO, ICNS) dans `build/`. Les dossiers `app/`,
 `build/`, `dist/` et `node_modules/` sont ignorés par git.
 
 On peut construire pour Windows depuis Linux, mais cela demande Wine. Pour macOS, il faut
