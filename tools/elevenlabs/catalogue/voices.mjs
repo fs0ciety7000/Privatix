@@ -10,6 +10,7 @@
 // Yasmina et l'Invité d'honneur (voix conçues, sauvegardées) et Lurcke (voix de bibliothèque « Nico »).
 // Les autres voix ne sont pas encore conçues (workspace à 3/3 voix : leur création attend une montée
 // d'offre ou un choix de voix de bibliothèque).
+// Marcel, Josiane et Béné : voix Gemini TTS arrêtées le 2026-10-10 (`geminiVoiceId`, backend gemini).
 // Diction validée : eleven_v3, graphie normale (« Mons »), aucune substitution phonétique ni IPA.
 //
 // Règle d'or : aucune voix n'imite une personne réelle. Aucun clonage, aucune référence audio.
@@ -63,6 +64,8 @@ export const VOICES = [
   // ─── PNJ du Centre Opérationnel (OCC) ─────────────────────────────────────
   {
     id: 'marcel',
+    // Voix Gemini TTS arrêtée le 2026-10-10 (variante 2 de l'essai docs/audio/samples/gemini/).
+    geminiVoiceId: 'voice_jwjfxi0g20l6',
     name: 'Marcel « Pépé Rail » Lhoir',
     key: true,
     fiche: {
@@ -117,6 +120,8 @@ export const VOICES = [
   },
   {
     id: 'bene',
+    // Voix Gemini TTS arrêtée le 2026-10-10 (variante 1 de l'essai docs/audio/samples/gemini/).
+    geminiVoiceId: 'voice_k4b4wmmwy1d8',
     name: 'Bénédicte « Béné » Wautier',
     key: false,
     fiche: {
@@ -155,6 +160,8 @@ export const VOICES = [
   },
   {
     id: 'josiane',
+    // Voix Gemini TTS arrêtée le 2026-10-10 (variante 2 de l'essai docs/audio/samples/gemini/).
+    geminiVoiceId: 'voice_fekejacozsb7',
     name: 'Josiane Delhaye',
     key: false,
     fiche: {
