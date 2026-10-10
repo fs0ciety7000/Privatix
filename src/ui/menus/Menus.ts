@@ -19,6 +19,7 @@ export interface AudioOptionValues {
   readonly master: number;
   readonly music: number;
   readonly sfx: number;
+  readonly voice: number;
   readonly muted: boolean;
   readonly reduceRepetitive: boolean;
 }
@@ -383,13 +384,14 @@ export class Menus {
     });
   }
 
-  /** Section « Son » des options : volumes (maître, musique, effets), coupure, sons répétitifs. */
+  /** Section « Son » des options : volumes (maître, musique, effets, voix), coupure, sons répétitifs. */
   private audioOptions(stack: HTMLElement, audio: AudioOptionsHook): void {
     el('div', 'px-label', stack, 'Son');
     const sliders: [keyof AudioOptionValues, string][] = [
       ['master', 'Volume général'],
       ['music', 'Musique'],
       ['sfx', 'Effets'],
+      ['voice', 'Voix'],
     ];
     for (const [key, label] of sliders) {
       const row = el('label', 'px-range', stack);

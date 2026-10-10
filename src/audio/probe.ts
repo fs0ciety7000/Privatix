@@ -3,6 +3,7 @@
  * modifier ; la sim, elle, ne connaît pas l'audio).
  */
 import { BURNOUT_TIERS } from '@/config/balance';
+import { maxEnergy } from '@/systems/meta/RunState';
 import type { World } from '@/sim/World';
 import type { AudioPhase, AudioProbe } from './router';
 
@@ -11,6 +12,7 @@ export function probeWorld(
   phase: AudioPhase,
   menu: string,
   paused: boolean,
+  shift?: string,
 ): AudioProbe {
   const run = world.run;
   const hero = world.hero;
@@ -31,6 +33,11 @@ export function probeWorld(
     meltdown: burnout.inMeltdown,
     roomType: director.door.type,
     bossPhase: director.boss?.phase ?? 1,
+    biome: director.biome,
+    shift: shift ?? run.shift.id,
+    energy: Math.max(0, Math.min(1, run.energy / Math.max(1, maxEnergy(run)))),
+    mobilisation: run.mobilisation.value,
+    result: director.result?.end ?? null,
     enemies: world.livingEnemies().map((e) => ({
       id: e.id,
       kind: e.kind,

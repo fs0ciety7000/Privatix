@@ -5,14 +5,15 @@
  *                              ├─ bus sfx ─┐
  *                              ├─ bus ui ──┤
  *   musique (music.ts) ────────┼─ bus music┼─ maître ─ compresseur ─ limiteur ─ coupure ─ sortie
- *   ambiance (music.ts) ───────┴─ bus amb ─┘
+ *   ambiance (music.ts) ───────┼─ bus amb ─┤
+ *   dialogues (voice.ts) ──────┴─ bus voix┘
  *
  * - Le contexte n'est créé qu'au premier geste (clic, touche, toucher) : aucun avertissement d'autoplay.
  * - Pool de voix : au plus `MAX_VOICES` sons en même temps, et par son `max` voix et `gapMs` d'écart
  *   (la plus ancienne voix du même son est coupée en fondu, un déclenchement trop rapproché est ignoré).
  * - Spatialisation simple : panoramique selon l'écart horizontal au héros (≈ x écran, la caméra le suit)
  *   et atténuation douce avec la distance.
- * - Réglages (maître, musique, effets, coupure, sons répétitifs réduits) persistés dans le navigateur ;
+ * - Réglages (maître, musique, effets, voix, coupure, sons répétitifs réduits) persistés dans le navigateur ;
  *   chaque accès au stockage est protégé (navigation privée, quota).
  */
 import type { KeyValueStorage } from '@/systems/save/SaveManager';
@@ -24,6 +25,8 @@ export interface AudioSettings {
   readonly master: number;
   readonly music: number;
   readonly sfx: number;
+  /** Dialogues enregistrés. */
+  readonly voice: number;
   readonly muted: boolean;
   /** Accessibilité : divise les voix des sons répétitifs et espace leurs déclenchements. */
   readonly reduceRepetitive: boolean;
@@ -34,6 +37,7 @@ export const DEFAULT_AUDIO_SETTINGS: AudioSettings = {
   master: 0.8,
   music: 0.5,
   sfx: 0.8,
+  voice: 0.9,
   muted: false,
   reduceRepetitive: false,
 };
@@ -42,9 +46,9 @@ export const AUDIO_SETTINGS_KEY = 'privatix.audio';
 /** Voix simultanées au total (tous sons confondus). */
 export const MAX_VOICES = 24;
 /** Gain propre de chaque bus, sous le curseur correspondant. */
-const TRIM = { music: 0.55, ambience: 0.5, sfx: 1, ui: 0.8 } as const;
+const TRIM = { music: 0.55, ambience: 0.5, sfx: 1, ui: 0.8, voice: 1 } as const;
 /** Multiplicateurs pendant la pause : on étouffe les effets, la musique baisse, l'UI reste. */
-const PAUSED = { music: 0.45, ambience: 0.6, sfx: 0, ui: 1 } as const;
+const PAUSED = { music: 0.45, ambience: 0.6, sfx: 0, ui: 1, voice: 0.5 } as const;
 const RAMP = 0.06;
 
 export type MixBus = keyof typeof TRIM;
@@ -91,6 +95,7 @@ export function loadAudioSettings(storage: KeyValueStorage | null): AudioSetting
       master: clamp01(p.master, d.master),
       music: clamp01(p.music, d.music),
       sfx: clamp01(p.sfx, d.sfx),
+      voice: clamp01(p.voice, d.voice),
       muted: typeof p.muted === 'boolean' ? p.muted : d.muted,
       reduceRepetitive:
         typeof p.reduceRepetitive === 'boolean' ? p.reduceRepetitive : d.reduceRepetitive,
@@ -115,7 +120,7 @@ export function sliderGain(v: number): number {
 
 /** Gain d'un bus : curseur (musique ou effets) × trim du bus × atténuation de pause. */
 export function busGainFor(s: AudioSettings, id: MixBus, paused: boolean): number {
-  const slider = id === 'music' || id === 'ambience' ? s.music : s.sfx;
+  const slider = id === 'music' || id === 'ambience' ? s.music : id === 'voice' ? s.voice : s.sfx;
   return sliderGain(slider) * TRIM[id] * (paused ? PAUSED[id] : 1);
 }
 
@@ -155,7 +160,11 @@ export function createMixChain(ctx: BaseAudioContext, dest: AudioNode): MixChain
     g.connect(master);
     return g;
   };
-  return { buses: { music: mk(), ambience: mk(), sfx: mk(), ui: mk() }, master, out };
+  return {
+    buses: { music: mk(), ambience: mk(), sfx: mk(), ui: mk(), voice: mk() },
+    master,
+    out,
+  };
 }
 
 function defaultContext(): AudioContext | null {
@@ -289,6 +298,7 @@ export class AudioEngine {
       master: clamp01(s.master, DEFAULT_AUDIO_SETTINGS.master),
       music: clamp01(s.music, DEFAULT_AUDIO_SETTINGS.music),
       sfx: clamp01(s.sfx, DEFAULT_AUDIO_SETTINGS.sfx),
+      voice: clamp01(s.voice, DEFAULT_AUDIO_SETTINGS.voice),
       muted: s.muted,
       reduceRepetitive: s.reduceRepetitive,
     };

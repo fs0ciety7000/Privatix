@@ -108,6 +108,16 @@ export function installDemoApi(game: Game3D): void {
     waves: (on: boolean) => {
       game.simWorld.director.enabled = on;
     },
+    /** État de l'audio : contexte musical, morceau enregistré, dernières voix, fichiers décodés. */
+    audio: () => ({
+      running: game.audio.engine.running,
+      context: game.audio.musicContext,
+      track: game.audio.trackPlaying,
+      synthMuted: game.audio.music.musicMuted,
+      synthMode: game.audio.music.mode,
+      voices: [...game.audio.voices.log],
+      decoded: game.audio.samples.decodedCount,
+    }),
     cheat: (key: 'K' | 'G' | 'N' | 'B') => {
       game.cheat(key);
     },
