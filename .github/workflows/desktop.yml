@@ -161,6 +161,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - name: Récupération des fichiers
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
@@ -168,6 +170,20 @@ jobs:
           pattern: release-*
           path: release
           merge-multiple: true
+
+      - name: Empreintes SHA-256
+        run: |
+          cd release
+          sha256sum -- * | sort -k2 > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Attestation de provenance (Sigstore, vérifiable avec « gh attestation verify »)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
 
       - name: Publication de la release
         env:
@@ -177,9 +193,23 @@ jobs:
           # Lancement manuel : le tag v<version> est créé par GitHub sur le commit construit.
           if [ -n "$INPUT_VERSION" ]; then TAG="v${INPUT_VERSION#v}"; else TAG="$GITHUB_REF_NAME"; fi
           ls -la release
+          {
+            echo "Applications de bureau Privatix $TAG (Windows, macOS, Linux)."
+            echo
+            echo "**Vérifier un téléchargement** : comparez son empreinte SHA-256 avec \`SHA256SUMS.txt\` (ou la colonne « SHA-256 » du site)."
+            echo "- Windows (PowerShell) : \`Get-FileHash .\\Privatix-Setup.exe -Algorithm SHA256\`"
+            echo "- macOS : \`shasum -a 256 Privatix-mac-arm64.dmg\` · Linux : \`sha256sum Privatix.AppImage\`"
+            echo "- Provenance signée (Sigstore, construite par GitHub Actions depuis ce dépôt) : \`gh attestation verify <fichier> -R ${{ github.repository }}\`"
+            echo
+            echo "Les exécutables ne sont pas signés par un certificat d'éditeur : avertissement SmartScreen ou Gatekeeper au premier lancement."
+            echo
+            echo '```'
+            cat release/SHA256SUMS.txt
+            echo '```'
+          } > notes.md
           gh release create "$TAG" release/* \
             --target "$GITHUB_SHA" \
             --repo "${{ github.repository }}" \
             --title "Privatix $TAG" \
-            --notes "Applications de bureau Privatix $TAG (Windows, macOS, Linux). Non signées : avertissement SmartScreen ou Gatekeeper au premier lancement." \
+            --notes-file notes.md \
             --latest
