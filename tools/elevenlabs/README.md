@@ -100,9 +100,15 @@ node tools/elevenlabs/generate.mjs --tts-backend gemini --pick marcel=2 --only '
   un `voice_id` ; `GEMINI_BASE_URL` remplace la base (serveur factice de test).
 - **Coût** : Gemini 3.8 Flash TTS est facturé à la durée d'audio produite, 0,00225 $ par 10 s (tarif
   2026 ; ≈ 0,0045 $ dès 2027, appliqué automatiquement par `--dry-run` selon l'année). Estimation :
-  14 caractères par seconde, 10 s par voix conçue (hypothèse). Toutes les répliques des 15 personnages
-  secondaires, une prise, voix comprises : ≈ 676 s d'audio, ≈ 0,15 $ (`--dry-run --type voice-design,tts
+  14 caractères par seconde, 30 s par voix conçue (l'échantillon renvoyé par `/voices` a duré 14 à 71 s
+  à l'essai ; hypothèse : facturé comme une sortie). Toutes les répliques des 15 personnages secondaires,
+  une prise, une voix chacun : ≈ 976 s d'audio, ≈ 0,22 $ (`--dry-run --type voice-design,tts
   --tts-backend gemini --takes 1`).
+- **Erreurs constatées** (10 octobre 2026) : `400` « Generated voice prompt was flagged by safety
+  policies. » sur une voix de Josiane (le filtre porte sur la voix générée ; le nouvel essai est passé :
+  `generate.mjs` réessaie désormais deux fois) ; `500` « Voice synthesis service failed to process the
+  request. » cinq fois de suite sur « Marcel + lighter, brighter timbre » (variante contradictoire avec
+  « deep, gravelly » : reformulée « clearer, slightly higher and less gravelly » et acceptée).
 - Essai du 10 octobre 2026 (Marcel, Josiane, Béné × 3 variantes) : `docs/audio/samples/gemini/`.
 
 ## Options de `generate.mjs`

@@ -73,10 +73,11 @@ const GEMINI_BASE = process.env.GEMINI_BASE_URL ?? LYRIA_BASE;
 const GEMINI_TTS_MODEL = 'gemini-3.8-flash-tts';
 // Gemini 3.8 Flash TTS : facturé à la durée d'audio produite (tarif 2026 : 0,00225 $ par 10 s ;
 // ≈ 0,0045 $ dès 2027). Durée estimée à 14 caractères de français par seconde ; un aperçu de
-// Voice Design compte pour 10 s (hypothèse : la doc ne chiffre pas l'échantillon renvoyé).
+// Voice Design compte pour 30 s : l'échantillon renvoyé a duré 14 à 71 s (32 s en moyenne) lors de
+// l'essai du 2026-10-10 ; hypothèse : il est facturé comme une sortie audio.
 const GEMINI_USD_PER_10S = new Date().getFullYear() >= 2027 ? 0.0045 : 0.00225;
 const GEMINI_CHARS_PER_SECOND = 14;
-const GEMINI_DESIGN_SECONDS = 10;
+const GEMINI_DESIGN_SECONDS = 30;
 const VARIANTS = opt('variants', '')
   .split('|')
   .map((v) => v.trim())
@@ -212,14 +213,26 @@ const MANIFEST_VOICES = Object.fromEntries(
     .filter((a) => a.type === 'voice-design' && a.voiceId)
     .map((a) => [a.voice, a.voiceId]),
 );
+/** Voix Gemini arrêtées par le porteur du projet (manifeste : `geminiVoiceId` des assets voice-design). */
+const MANIFEST_GEMINI_VOICES = Object.fromEntries(
+  MANIFEST.assets
+    .filter((a) => a.type === 'voice-design' && a.geminiVoiceId)
+    .map((a) => [a.voice, a.geminiVoiceId]),
+);
 /** Fournisseur d'une voix : les voix arrêtées sur ElevenLabs y restent, quel que soit --tts-backend. */
 const backendOf = (v) => (MANIFEST_VOICES[v] ? 'elevenlabs' : TTS_BACKEND);
-/** voice_id Gemini (`voice_…`) : variante n (1 par défaut, ou --pick), ou GEMINI_VOICE_<VOIX>. */
-function geminiVoiceId(v, n = PICKS[v] ?? 1) {
+/**
+ * voice_id Gemini (`voice_…`) : GEMINI_VOICE_<VOIX>, sinon la variante n demandée (--variants / --pick),
+ * sinon la voix arrêtée du manifeste, sinon la variante 1 de l'état local.
+ */
+function geminiVoiceId(v, n) {
   const g = voices[v]?.gemini;
+  const want = n ?? PICKS[v];
   return (
     process.env[`GEMINI_VOICE_${v.toUpperCase()}`] ??
-    g?.variants?.[n - 1]?.voice_id ??
+    (want ? g?.variants?.[want - 1]?.voice_id : null) ??
+    MANIFEST_GEMINI_VOICES[v] ??
+    g?.variants?.[0]?.voice_id ??
     g?.voice_id ??
     null
   );
@@ -569,14 +582,21 @@ async function geminiVoiceDesign(a) {
       },
     });
     let data;
-    try {
-      data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
-    } catch (err) {
-      // fr-BE refusé : repli fr-FR (l'accent reste porté par la description).
-      if (err.status !== 400 || geminiLanguage !== 'fr-BE') throw err;
-      console.warn(`  ${a.id} : fr-BE refusé (${err.message.slice(0, 160)}), repli fr-FR`);
-      geminiLanguage = 'fr-FR';
-      data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
+    for (let attempt = 1; !data; attempt += 1) {
+      try {
+        data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
+      } catch (err) {
+        if (err.status !== 400 || attempt >= 3) throw err;
+        // fr-BE refusé : repli fr-FR (l'accent reste porté par la description).
+        if (/language/i.test(err.message) && geminiLanguage === 'fr-BE') {
+          console.warn(`  ${a.id} : fr-BE refusé, repli fr-FR`);
+          geminiLanguage = 'fr-FR';
+        } else if (/flagged by safety/i.test(err.message))
+          // « Generated voice prompt was flagged by safety policies. » : le filtre porte sur la voix
+          // générée, pas sur la description ; un nouvel essai passe en général (constaté le 2026-10-10).
+          console.warn(`  ${a.id} : voix générée refusée par le filtre de sécurité, nouvel essai`);
+        else throw err;
+      }
     }
     const id = data.id ?? data.name?.split('/').pop();
     if (!id)

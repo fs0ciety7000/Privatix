@@ -357,7 +357,7 @@ Traitement commun : HPF 120 Hz, LPF 8 kHz, bus UI, centre, très bas.
 | `lea.boss.preuve` | Lurcke phase 2 | Ceci a été présenté au comité. Ceci n’a jamais été montré au terrain. | Preuve activée, fermeté (Lurcke phase 2) | lore |
 | `lea.boss.question` **écoute** | boss.question | [quietly] Mais concrètement… sur le terrain, ça donne quoi ? | LA question finale : calme, presque doux, silence autour | jeu |
 #### Marcel « Pépé Rail » Lhoir — voix clé
-- **État** : à concevoir (Voice Design), en attente d’un emplacement de voix libre.
+- **État** : **arrêtée sur Gemini TTS** (`voice_id` `voice_jwjfxi0g20l6`, backend `--tts-backend gemini`) ; répliques produites, essai d’écoute dans `docs/audio/samples/gemini/`.
 - **Âge** : 72 ans · **Timbre** : grave, rocailleux, chaud · **Accent** : wallon un peu plus marqué que les autres (génération 1970) · **Débit** : posé, raconte, laisse traîner la fin des phrases · **Émotion** : bourru, tendre en secret
 - **Direction** : Mentor qui a tout vu. « De mon temps… » est dit avec un sourire, pas avec amertume. Une seule fois par scène.
 - **Prompt Voice Design** (`eleven_ttv_v3`) : « Elderly man, 72 years old, retired train driver. Native Belgian French speaker from the Mons area (Hainaut, Wallonia), light natural regional accent, never caricatural, slightly stronger regional colour than younger characters. Deep, gravelly, warm voice; gruff but tender. Unhurried storytelling pace, lets sentence endings trail off with a smile. Studio recording, clean. »
@@ -409,7 +409,7 @@ Traitement commun : HPF 120 Hz, LPF 8 kHz, bus UI, centre, très bas.
 | `kevin.hub.05` | OCC, serment (relation 3) | Ce soir, il y a plus d’autre boîte. | serment, ému | lore |
 | `kevin.radio.01` | Radio, Avantage Caténaire proposé | Quinze mille volts, livrés. C’est nous, cette fois. | bark radio | nouveau, radio |
 #### Bénédicte « Béné » Wautier
-- **État** : à concevoir (Voice Design), en attente d’un emplacement de voix libre.
+- **État** : **arrêtée sur Gemini TTS** (`voice_id` `voice_k4b4wmmwy1d8`, backend `--tts-backend gemini`) ; répliques produites, essai d’écoute dans `docs/audio/samples/gemini/`.
 - **Âge** : 56 ans · **Timbre** : médium sec, net · **Accent** : belge wallon léger · **Débit** : régulier, comme un tampon · **Émotion** : pince-sans-rire absolu, ne s’énerve jamais
 - **Direction** : La guichetière qui a survécu à quatre réformes tarifaires. Chaque blague est livrée à plat.
 - **Prompt Voice Design** (`eleven_ttv_v3`) : « Woman, 56 years old, veteran ticket-office clerk. Native Belgian French speaker from the Mons area (Hainaut, Wallonia), light natural regional accent, never caricatural. Dry, crisp mid-range voice; perfectly deadpan, even and rhythmic delivery like a rubber stamp, a hint of tired amusement she never shows. Studio recording, clean. »
@@ -445,7 +445,7 @@ Traitement commun : HPF 120 Hz, LPF 8 kHz, bus UI, centre, très bas.
 | `yasmina.radio.08` | Radio, Shift tenu | Shift tenu. Je te mets tout le réseau en vert. | radio, chaleur | lore, radio |
 | `yasmina.hub.04` | OCC, serment (relation 3) | Quand je dis départ, tout le monde part. | serment | lore |
 #### Josiane Delhaye
-- **État** : à concevoir (Voice Design), en attente d’un emplacement de voix libre.
+- **État** : **arrêtée sur Gemini TTS** (`voice_id` `voice_fekejacozsb7`, backend `--tts-backend gemini`) ; répliques produites, essai d’écoute dans `docs/audio/samples/gemini/`.
 - **Âge** : 58 ans · **Timbre** : médium chaud, voix qui porte · **Accent** : wallon léger · **Débit** : franc, sans détour · **Émotion** : maternelle et inflexible
 - **Direction** : A expulsé un sanglier d’un train « avec politesse ». Autorité douce, chaleur sous la fermeté.
 - **Prompt Voice Design** (`eleven_ttv_v3`) : « Woman, 58 years old, train conductor with 28 years of service. Native Belgian French speaker from the Mons area (Hainaut, Wallonia), light natural regional accent, never caricatural. Warm, projecting mid-range voice; motherly but firm and unflinching, straightforward, quick to tease. Studio recording, clean. »

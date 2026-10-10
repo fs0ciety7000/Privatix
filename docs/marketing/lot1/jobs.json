@@ -1,0 +1,105 @@
+{
+  "outDir": "docs/marketing/lot1",
+  "defaults": {
+    "model": "gemini-nano-banana-2.1",
+    "aspect_ratio": "1:1",
+    "image_size": "2K"
+  },
+  "jobs": [
+    {
+      "id": "logo-a-neon-cle",
+      "model": "gemini-nano-banana-2.1",
+      "aspect_ratio": "1:1",
+      "refs": [
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "site/public/artbook/planches/da-palette-1200.webp",
+        "site/public/bestiaire/hero.webp"
+      ],
+      "prompt": "Video game logo for \"PRIVATIX\", a stylized 3D toon hack-and-slash roguelite set in a Belgian train station at night. Square composition, centered, on a deep violet-night background (#0A0818, never pure black) with a faint violet halo.\n\nWORDMARK: the single word PRIVATIX in heavy geometric sans-serif capitals (Arial Black weight, wide letter-spacing), exactly matching the lettering of the first reference image: white-pink neon tube letters with a hot magenta glow (#FF3EA5) and a hard dark ink drop shadow. Spelling must be exactly P-R-I-V-A-T-I-X.\n\nEMBLEM above or behind the wordmark: an old heavy railway track wrench (a long T-handled socket wrench used to tighten rail spikes, as held by the orange hero in the third reference) laid diagonally across a short section of railway track on ballast stones, painted in the hero's high-visibility orange (#FF7A1A) with a thick dark ink outline (#14101A), cel-shaded like a painted figurine. A small yellow union lightning bolt (#FFD200) sparks where the wrench hits the rail. The orange wrench slightly cracks one magenta neon letter: the worker breaks the corporate neon.\n\nStyle: clean vector-like toon rendering, bold 2 px ink outlines, hard cel shading, readable at small size, no extra text, no other logos, no watermark, no gradients mesh, no photorealism. Use the colour palette of the second reference (orange hero, magenta neon, cyan rim light #6FF3FF accents, violet night)."
+    },
+    {
+      "id": "logo-b-plaque-ballast",
+      "model": "gemini-nano-banana-2.1",
+      "aspect_ratio": "1:1",
+      "refs": [
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "site/public/artbook/planches/da-palette-1200.webp",
+        "site/public/bestiaire/hero.webp"
+      ],
+      "prompt": "Video game logo badge for \"PRIVATIX\" (stylized 3D toon roguelite, railway workers versus consultants). Square, centered, deep violet-night background (#0A0818).\n\nDesign: a chunky enamel railway station sign / union pin badge, slightly tilted, with a thick dark ink outline (#14101A) and a hard drop shadow, sitting on a bed of grey ballast stones and two converging steel rails. On the sign, the word PRIVATIX in heavy geometric sans-serif capitals (Arial Black weight, wide letter-spacing), spelled exactly P-R-I-V-A-T-I-X, glowing as magenta neon (#FF3EA5) like the first reference image, but half of the neon tubes are flickering off. Crossed behind the sign: the orange railway track wrench (long T-handled socket wrench, hero orange #FF7A1A) and a yellow lightning bolt (#FFD200). A small red union scarf (#E0302A) is knotted around the wrench handle.\n\nStyle: cel-shaded toon figurine look, bold ink outlines, flat lighting with a cyan rim light (#6FF3FF), clean shapes readable as an icon, no additional words, no other logos, no watermark, no photorealism."
+    },
+    {
+      "id": "logo-c-pro-wordmark-rail",
+      "model": "gemini-3-pro-image",
+      "aspect_ratio": "1:1",
+      "refs": [
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "site/public/artbook/planches/da-palette-1200.webp",
+        "site/public/bestiaire/hero.webp"
+      ],
+      "prompt": "Professional video game title logo, square format, centered on a deep violet-night background (#0A0818, with a soft violet vignette, never pure black).\n\nMain element: the wordmark PRIVATIX (exactly eight letters: P R I V A T I X) in very heavy geometric sans-serif capitals, Arial Black style, generous letter-spacing, built as glowing white-pink neon tubes with a magenta glow (#FF3EA5) and a hard dark ink drop shadow (#14101A), matching the first reference image. The letter V is replaced by two railway rails converging in perspective, sitting on ballast stones; the crossbar of the A is a railway sleeper. Under the wordmark, a heavy orange railway track wrench (T-handled socket wrench, hero orange #FF7A1A, ink outline, as carried by the hero in the third reference) lies horizontally like an underline, with a small yellow lightning spark (#FFD200) at its tip.\n\nTypography must be crisp, perfectly spelled, evenly kerned. Toon cel-shaded rendering, bold outlines, clean and iconic, readable at 64 px. No tagline, no other text, no other logos, no watermark."
+    },
+    {
+      "id": "logo-d-pro-embleme",
+      "model": "gemini-3-pro-image",
+      "aspect_ratio": "1:1",
+      "refs": [
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "site/public/artbook/planches/da-palette-1200.webp",
+        "site/public/bestiaire/hero.webp"
+      ],
+      "prompt": "Video game logo lock-up, square, centered on a deep violet-night background (#0A0818).\n\nTop: a round emblem like a railway workers' union medal: a dark violet disc with a thick hero-orange ring (#FF7A1A) and dark ink outline (#14101A); inside, an orange worker's hard hat (like the hero in the third reference) above a railway track wrench crossed with a short rail section, and a yellow lightning bolt (#FFD200) between them. Cel-shaded toon, bold outlines.\n\nBelow: the wordmark PRIVATIX (exactly P R I V A T I X) in very heavy geometric sans-serif capitals, Arial Black style, wide letter-spacing, glowing white-pink neon with a magenta halo (#FF3EA5) and a hard ink drop shadow, matching the first reference image exactly in letter shapes.\n\nUnder the wordmark, a thin cyan line (#6FF3FF) and small spaced capitals: HACK 'N' SLASH FERROVIAIRE (spelled exactly). Crisp typography, balanced composition, readable at small size, no other text, no other logos, no watermark, no photorealism."
+    },
+    {
+      "id": "affiche-a-key-art",
+      "model": "gemini-nano-banana-2.1",
+      "aspect_ratio": "2:3",
+      "refs": [
+        "site/public/bestiaire/hero.webp",
+        "site/public/bestiaire/dirupo.webp",
+        "site/public/bestiaire/discosaure.webp",
+        "site/public/bestiaire/lurcke.webp",
+        "site/public/bestiaire/consultant.webp",
+        "site/public/artbook/planches/decor-passerelle-1200.webp",
+        "site/public/artbook/planches/decor-quais-1200.webp",
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "docs/references/sncb_logo.png",
+        "site/public/artbook/planches/da-palette-1200.webp"
+      ],
+      "prompt": "Official key art poster for the video game PRIVATIX, portrait 2:3, in the exact stylized 3D toon style of the reference character renders: chunky low-poly figurines, cel shading, bold dark ink outlines, colored rim lights. Not photorealistic.\n\nFOREGROUND (lower half, low camera angle, heroic): the railway worker hero from the first reference, identical design: orange hard hat, orange high-visibility vest, red scarf, navy work trousers, brown moustache, holding his long T-handled railway track wrench with both hands, ready to fight, lit by warm orange light. Determined but friendly expression.\n\nMIDGROUND: the platforms of Mons railway station at night, ballast, rails and a blue-and-white SNCB sign (use the SNCB logo from the reference, small and clean, on a platform sign) half covered by violet Privatix stickers. Behind, the great white arched footbridge nicknamed \"le Calatrava\" (sixth reference: white ribs, glass roof) glowing with magenta and cyan neon.\n\nBACKGROUND (upper part, as big dark silhouettes with magenta rim light against the neon sky, toon style matching references): three bosses: the Discosaure (purple dinosaur with a mirror disco ball on its back, discosaure reference), the friendly caricature in navy suit with big burgundy bow tie and brown quiff waving (dirupo reference, toon figurine, dignified), and the bald director in navy suit with blue tie holding up a pen (lurcke reference). Around them, a swarm of small turquoise consultants (#19C3B1) in suits holding slides and laptops, pouring towards the hero.\n\nTEXT: at the top, the title PRIVATIX (exactly P R I V A T I X) in heavy Arial Black style capitals, wide spacing, white-pink neon with magenta glow, matching the Privatix logo reference. Under it, small: \"Le rail n'est pas à vendre.\" At the very bottom, small clean white text on two lines: \"Développé par OCC MONS Studios\" and \"PC · Mac · Linux · Navigateur\". Spell every word exactly as written, with French accents.\n\nPalette: violet night (#0A0818), hero orange (#FF7A1A), magenta neon (#FF3EA5), turquoise enemies (#19C3B1), cyan rim (#6FF3FF). Strong readable silhouettes, cinematic poster composition, no other logos or brands, no watermark."
+    },
+    {
+      "id": "affiche-b-pro-key-art",
+      "model": "gemini-3-pro-image",
+      "aspect_ratio": "2:3",
+      "refs": [
+        "site/public/bestiaire/hero.webp",
+        "site/public/bestiaire/dirupo.webp",
+        "site/public/bestiaire/discosaure.webp",
+        "site/public/bestiaire/lurcke.webp",
+        "site/public/bestiaire/consultant.webp",
+        "site/public/artbook/planches/decor-passerelle-1200.webp",
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "docs/references/sncb_logo.png",
+        "site/public/artbook/planches/da-palette-1200.webp"
+      ],
+      "prompt": "Official video game poster, portrait 2:3, title PRIVATIX. Render everything in the same stylized 3D toon figurine style as the character reference images (cel shading, bold ink outlines, coloured rim lights, chunky proportions). Never photorealistic.\n\nComposition, bottom to top:\n1. Foreground, centre, three-quarter view from slightly below: the railway worker hero exactly as in the first reference (orange hard hat, orange hi-vis vest, red scarf, navy trousers, moustache), raising his long T-handled railway track wrench over his shoulder, standing on rails and ballast. Warm orange key light.\n2. Behind him, a tide of small turquoise consultants (#19C3B1) in suits with laptops and slide boards, rushing across the platform.\n3. Mid-distance: the white ribbed arches and glass roof of the Mons station footbridge \"le Calatrava\" (sixth reference), at night, outlined with magenta (#FF3EA5) and cyan (#6FF3FF) neon. A small blue-and-white SNCB sign (SNCB logo reference) on a platform pillar, the public service being defended.\n4. Upper third: three huge boss silhouettes against a violet sky, rim-lit in magenta, recognisable by shape: the purple Discosaure with a mirror disco ball on its back (left), the cheerful toon caricature with burgundy bow tie and brown quiff waving from a red-carpet podium (centre, dirupo reference, friendly and dignified), the bald smiling director in navy suit raising a pen (right, lurcke reference).\n\nTypography (must be perfectly spelled, French accents included):\n- Top: PRIVATIX in very heavy Arial Black style capitals, wide letter-spacing, white-pink neon tubes with magenta glow and hard ink shadow, matching the logo reference.\n- Under the title, smaller, white: « Le rail n'est pas à vendre. »\n- Bottom band on dark violet: \"Développé par OCC MONS Studios\" and below, smaller: \"PC · Mac · Linux · Navigateur\".\nNo other text, no other brands, no watermark. Palette: violet night #0A0818, hero orange #FF7A1A, magenta #FF3EA5, turquoise #19C3B1, cyan #6FF3FF."
+    },
+    {
+      "id": "banniere-16x9",
+      "model": "gemini-nano-banana-2.1",
+      "aspect_ratio": "16:9",
+      "refs": [
+        "site/public/bestiaire/hero.webp",
+        "site/public/bestiaire/discosaure.webp",
+        "site/public/bestiaire/consultant.webp",
+        "site/public/artbook/planches/decor-passerelle-1200.webp",
+        "site/public/artbook/planches/decor-quais-1200.webp",
+        "site/public/artbook/presskit/privatix-logo-fond.png",
+        "docs/references/sncb_logo.png",
+        "site/public/artbook/planches/da-palette-1200.webp"
+      ],
+      "prompt": "Wide 16:9 key art banner for the video game PRIVATIX, for a website header and store page. Stylized 3D toon figurine rendering exactly like the character references: chunky low-poly shapes, cel shading, bold ink outlines, coloured rim lights. Not photorealistic.\n\nScene: Mons railway station platforms at night, seen from a low wide angle along the rails. Left third: the railway worker hero from the first reference (orange hard hat, orange hi-vis vest, red scarf, navy trousers, moustache) mid-swing with his long T-handled railway track wrench, orange smear trail, sending two turquoise consultants (#19C3B1, consultant reference) flying with slides scattering like paper. Centre and right: a crowd of turquoise consultants advancing, and in the distance the white ribbed arches of the footbridge \"le Calatrava\" glowing with magenta and cyan neon, with the silhouette of the purple Discosaure and its mirror disco ball on top of the bridge. A blue-and-white SNCB sign on a pillar (SNCB logo reference, small) peeling off a violet sticker.\n\nText: only the word PRIVATIX (exactly P R I V A T I X), in heavy Arial Black style neon capitals with magenta glow as in the logo reference, placed in the right third with breathing room. No other text. Keep the left 10 % and right 10 % free of important details (safe crop margins). Palette: violet night #0A0818, hero orange #FF7A1A, magenta #FF3EA5, turquoise #19C3B1, cyan #6FF3FF. No other brands, no watermark."
+    }
+  ]
+}
