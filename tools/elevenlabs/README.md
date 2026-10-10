@@ -65,6 +65,46 @@ node tools/elevenlabs/generate.mjs --only trailer.musique-60s --takes 1 --music-
 - OST complète (14 morceaux × 2 prises + trailer × 3) ≈ 2,50 $. La séparation en stems reste une
   opération ElevenLabs (plan payant) ou se fait en local.
 
+## Voix avec Gemini TTS (API Gemini)
+
+Le workspace ElevenLabs est plein (3/3 voix) : les 15 personnages secondaires peuvent passer par **Gemini
+TTS** (Google, API Gemini) avec `--tts-backend gemini`, pour les types `voice-design` et `tts`. Les 4 voix
+arrêtées sur ElevenLabs (Léon, Yasmina, l'Invité d'honneur, Lurcke : `voiceId` du manifeste) **restent sur
+ElevenLabs** même avec ce backend.
+
+```sh
+export GEMINI_API_KEY=…                      # clé Google AI Studio, facturation activée
+node tools/elevenlabs/generate.mjs --dry-run --type voice-design,tts --tts-backend gemini
+# Audition : 3 variantes de timbre par voix, chaque réplique dite par chaque variante (_v1, _v2, _v3)
+node tools/elevenlabs/generate.mjs --tts-backend gemini --takes 1 \
+  --variants "Variation: a deeper, darker timbre.|Variation: a lighter, brighter timbre.|Variation: a raspier, older-sounding timbre." \
+  --only voice.marcel,vo.marcel.hub.01
+# Production avec la variante retenue
+node tools/elevenlabs/generate.mjs --tts-backend gemini --pick marcel=2 --only 'vo.marcel.*'
+```
+
+- **Voice Design** : `POST /voices` (`store: true`, modèle `gemini-3.8-flash-tts`, `type: prompted`,
+  `gender` déduit du début de la description, `language_code` `fr-BE` avec repli automatique `fr-FR` si
+  refusé, `prompted.input` = champ `design` du catalogue, suivi de la variante). La réponse donne l'`id`
+  (`voice_…`), mémorisé dans `out/state/voices.json` (clé `gemini.variants`), et un échantillon WAV écrit
+  dans `out/voices/<voix>/gemini_apercu_<n>.wav`. Limite : 200 voix par projet Google ; lister
+  `GET /voices?type=prompted`, supprimer `DELETE /voices/<id>`.
+- **TTS** : `POST /interactions` (`input` : texte + annotation `speech_metadata` `style`,
+  `response_format: audio`, `generation_config.speech_config[].voice`). WAV 24 kHz gardé dans `raw/`,
+  puis même post-production ffmpeg que les répliques ElevenLabs (OGG, −18 LUFS).
+- Traits permanents (âge, timbre, accent) dans la description de voix ; émotion de la réplique dans un
+  `style` court. Les balises eleven_v3 `[…]` sont retirées du texte et converties en `style`
+  (`[chuckles]` → « amused, with a soft chuckle », table `TAG_STYLES`) ; sans balise, le style est le
+  champ `emo` de la réplique.
+- Pas de seed : chaque prise diffère. `--pick voix=n` choisit la variante ; `GEMINI_VOICE_<VOIX>` impose
+  un `voice_id` ; `GEMINI_BASE_URL` remplace la base (serveur factice de test).
+- **Coût** : Gemini 3.8 Flash TTS est facturé à la durée d'audio produite, 0,00225 $ par 10 s (tarif
+  2026 ; ≈ 0,0045 $ dès 2027, appliqué automatiquement par `--dry-run` selon l'année). Estimation :
+  14 caractères par seconde, 10 s par voix conçue (hypothèse). Toutes les répliques des 15 personnages
+  secondaires, une prise, voix comprises : ≈ 676 s d'audio, ≈ 0,15 $ (`--dry-run --type voice-design,tts
+  --tts-backend gemini --takes 1`).
+- Essai du 10 octobre 2026 (Marcel, Josiane, Béné × 3 variantes) : `docs/audio/samples/gemini/`.
+
 ## Options de `generate.mjs`
 
 | Option | Effet |
@@ -77,6 +117,7 @@ node tools/elevenlabs/generate.mjs --only trailer.musique-60s --takes 1 --music-
 | `--concurrency n` · `--interval ms` | Débit : 2 requêtes simultanées et 600 ms entre deux départs par défaut ; 429, 409 et 5xx sont réessayés (en-tête `Retry-After`, sinon attente exponentielle, 5 essais). |
 | `--tts-model id` · `--music-model id` | Force un modèle (`eleven_v4`, `eleven_multilingual_v2` ; `music_v1`, `music_v2_5`). Les balises d'émotion sont retirées pour les modèles qui ne les comprennent pas. |
 | `--music-backend elevenlabs\|lyria` | Fournisseur du type `music` (Lyria : clé `GEMINI_API_KEY`). |
+| `--tts-backend elevenlabs\|gemini` · `--variants "a\|b\|c"` | Fournisseur de `voice-design` et `tts` (Gemini : clé `GEMINI_API_KEY` ; les 4 voix arrêtées restent sur ElevenLabs) ; une voix Gemini par variante de timbre, sorties `_v<n>`. |
 | `--pick voix=n` · `--create-voices` | Choix de l'aperçu de Voice Design ; création de la voix (sinon : aperçus seuls). |
 | `--include-validated` | Reprend aussi les assets `validé` (bruitages et réplique déjà retenus). |
 | `--force` · `--yes` | Régénère l'existant ; supprime la pause de 5 s avant la dépense. |
