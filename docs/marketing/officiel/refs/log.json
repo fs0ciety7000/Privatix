@@ -1,0 +1,138 @@
+{
+  "embleme-a1-2k": {
+    "model": "gemini-3-pro-image",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "1:1",
+    "image_size": "2K",
+    "refs": [
+      "docs/marketing/officiel/refs/embleme-a1-detoure-vert.png"
+    ],
+    "usage": {
+      "total_tokens": 2420,
+      "total_input_tokens": 836,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 276
+        },
+        {
+          "modality": "image",
+          "tokens": 560
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 1328,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1120
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 256,
+      "raw_prompt_token": 1293,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 733
+            },
+            {
+              "modality": "image",
+              "tokens": 560
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 198
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 256
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1211
+            },
+            {
+              "modality": "image",
+              "tokens": 1058
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 22
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 76
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 733
+            },
+            {
+              "modality": "image",
+              "tokens": 560
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 198
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 256
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1211
+            },
+            {
+              "modality": "image",
+              "tokens": 1058
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 22
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 76
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T01:35:15.980Z"
+  }
+}
