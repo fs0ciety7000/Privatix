@@ -84,7 +84,7 @@ async function shoot(name) {
     timeout: 240000,
   });
   // Modèles des biomes 2 et 3, chargés en arrière-plan après le titre.
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(preview ? 2500 : 8000);
   const api = (fn, ...a) => page.evaluate(([f, x]) => window.__privatix3d[f](...x), [fn, a]);
   let n = 0;
   /** Journal des événements de la sim par image enregistrée (calage des coupes au montage). */

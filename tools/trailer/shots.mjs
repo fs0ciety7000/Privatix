@@ -97,8 +97,8 @@ export const SHOTS = {
       await place(t, a, 0.6);
       await t.api('aim', UP);
       await t.skip(30);
-      await t.rec(150, {
-        8: async () => {
+      await t.rec(170, {
+        40: async () => {
           await t.api('spawn', 'consultant', -75, -68);
           await t.api('spawn', 'consultant', 0, -80);
           await t.api('spawn', 'consultant', 75, -68);
@@ -112,11 +112,11 @@ export const SHOTS = {
       const a = await arena(t);
       await place(t, a, 0.56);
       await t.api('aim', UP);
-      await t.api('spawn', 'consultant', -70, -58);
-      await t.api('spawn', 'consultant', 0, -52);
-      await t.api('spawn', 'consultant', 70, -58);
+      await t.api('spawn', 'consultant', -72, -80);
+      await t.api('spawn', 'consultant', 0, -76);
+      await t.api('spawn', 'consultant', 72, -80);
       await t.skip(36);
-      await t.rec(140, combo(t, 12, 14));
+      await t.rec(160, combo(t, 40, 14));
     },
   },
   // 6 — Une Borne crache une salve de tickets ; le coup 3 les détruit.
@@ -164,11 +164,11 @@ export const SHOTS = {
       await t.skip(60);
       await t.rec(150, {
         4: () => t.api('attack', id, 'dive'),
-        [Number(process.env.DASH_AT ?? 40)]: async () => {
+        [Number(process.env.DASH_AT ?? 29)]: async () => {
           await t.api('move', 0, -1);
           await t.api('press', 'dash');
         },
-        [Number(process.env.DASH_AT ?? 40) + 14]: () => t.api('release'),
+        [Number(process.env.DASH_AT ?? 29) + 14]: () => t.api('release'),
       });
     },
   },
@@ -324,7 +324,7 @@ export const SHOTS = {
       const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
       await t.api('teleport', e.x + 130, e.y + 40);
       await t.api('aim', Math.PI);
-      await t.rec(130, { 2: () => t.api('attack', b.id, 'stomp') });
+      await t.rec(180, { 2: () => t.api('attack', b.id, 'stomp') });
     },
   },
   // 19 — Lasers et spots : le héros slalome en deux dashs.
@@ -361,10 +361,10 @@ export const SHOTS = {
       await t.api('aim', Math.PI);
       // Préavis de grève (sifflet maintenu) : « coupure de courant », la boule s'éteint.
       await t.api('mobilisation', 100);
-      await t.rec(120, {
+      await t.rec(185, {
         ...combo(t, 2, 14),
-        40: () => t.page.keyboard.down('KeyF'),
-        80: () => t.page.keyboard.up('KeyF'),
+        66: () => t.page.keyboard.down('KeyF'),
+        106: () => t.page.keyboard.up('KeyF'),
       });
       t.log(b.id);
     },
@@ -391,7 +391,7 @@ export const SHOTS = {
         ...combo(t, 50, 13),
       });
       // 23 : phase 2.
-      await t.api('cheat', 'K');
+      await t.api('killKind', 'consultant');
       await t.rec(90, { 4: () => t.api('hurt', b.id, 0.49) });
       // 24a : Préavis de grève (maintien du sifflet).
       await t.api('mobilisation', 100);
@@ -410,9 +410,11 @@ export const SHOTS = {
       });
       // 24c : sous 5 % — la question, le silence, un seul coup.
       await near();
+      // Un seul coup (critique ×3 sur un boss sans voix) : les PV restants sont ajustés sans effet.
       await t.rec(200, {
         4: () => t.api('hurt', b.id, 0.04),
-        ...combo(t, 96, 14),
+        90: () => t.api('setHp', b.id, 0.01),
+        96: press(t, 'attack'),
       });
       // 24d : à genoux, « … je n'ai pas de slide pour ça. »
       await t.rec(260);
@@ -423,6 +425,9 @@ export const SHOTS = {
     run: async (t) => {
       const { boss: b } = await bossRoom(t, 2, 'lurcke');
       await t.skip(200);
+      // Phase 2 d'abord (sinon le coup suivant la déclencherait et rendrait le boss intouchable).
+      await t.api('hurt', b.id, 0.49);
+      await t.skip(150);
       await t.api('hurt', b.id, 0.04);
       await t.skip(30);
       for (let i = 0; i < 6; i += 1) {
@@ -437,7 +442,16 @@ export const SHOTS = {
         if ((await t.api('state')).phase === 'results') break;
         await t.skip(30);
       }
-      await t.skip(30);
+      // Consigne du loot (Josiane) : on valide la sélection par défaut, puis l'écran des départs.
+      for (let i = 0; i < 20; i += 1) {
+        const go = t.page.getByText('Valider la consigne');
+        if ((await go.count()) > 0) {
+          await go.first().click();
+          break;
+        }
+        await t.skip(10);
+      }
+      await t.skip(40);
       await t.rec(240);
     },
   },
@@ -451,7 +465,7 @@ export const SHOTS = {
       const h = await t.api('hero');
       await t.api('teleport', h.x, h.y + 140);
       await t.skip(60);
-      await t.rec(220, { 6: () => t.api('move', 0, -1), 160: () => t.api('release') });
+      await t.rec(220, { 6: () => t.api('move', 0, -1), 120: () => t.api('release') });
     },
   },
   // 2 — Devant la Vieille Dame : on se sert un café.

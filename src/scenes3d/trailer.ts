@@ -68,6 +68,17 @@ export function installTrailer(game: Game3D): void {
     clearRoom: () => {
       game.simWorld.director.clearRoom(true);
     },
+    /** PV d'un ennemi (fraction), sans coup ni effet : prépare un coup final unique. */
+    setHp: (id: number, ratio: number) => {
+      const e = game.simWorld.enemies.find((x) => x.id === id);
+      if (e) e.hp = Math.max(1, Math.round(e.maxHp * ratio));
+    },
+    /** Renvoie en réunion (élimine) tous les ennemis d'un type, sans toucher au boss. */
+    killKind: (kind: string): number => {
+      const list = game.simWorld.enemies.filter((e) => e.kind === kind && !e.isDead);
+      for (const e of list) e.debugKill();
+      return list.length;
+    },
     /** Dimensions de la salle courante (u) : placement du héros en bas d'arène. */
     arena: () => {
       const a = game.simWorld.arena;
