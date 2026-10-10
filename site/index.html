@@ -99,7 +99,7 @@
             </a>
             <a class="btn btn--secondary btn--lg" href="#telecharger" data-dl-hero>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-              <span><span data-dl-hero-label>Télécharger</span><small data-dl-hero-sub>Windows · macOS · Linux</small></span>
+              <span><span data-dl-hero-label>Télécharger</span><small data-dl-hero-sub>Windows · macOS · Linux · Android</small></span>
             </a>
           </div>
           <p class="hero__trailer" data-hero>
@@ -171,7 +171,7 @@
               <div><dt>Genre</dt><dd>Hack 'n' slash roguelite, vue de dessus</dd></div>
               <div><dt>Rendu</dt><dd>3D toon temps réel « Néon &amp; Ballast »</dd></div>
               <div><dt>Durée d'un Shift</dt><dd><span data-count="25">25</span> à <span data-count="30">30</span> minutes</dd></div>
-              <div><dt>Plateformes</dt><dd>Navigateur, Windows, macOS, Linux</dd></div>
+              <div><dt>Plateformes</dt><dd>Navigateur, Windows, macOS, Linux, Android (tablette)</dd></div>
               <div><dt>Langue</dt><dd>Français (Belgique)</dd></div>
               <div><dt>Prix</dt><dd>Gratuit</dd></div>
             </dl>
@@ -550,10 +550,11 @@
       <section class="section section--alt" id="telecharger" aria-labelledby="dl-title">
         <div class="wrap">
           <p class="eyebrow" data-reveal>Télécharger</p>
-          <h2 id="dl-title" class="section__title" data-reveal>Privatix sur votre ordinateur</h2>
+          <h2 id="dl-title" class="section__title" data-reveal>Privatix sur votre ordinateur ou votre tablette</h2>
           <p class="section__lead" data-reveal>
             La même version que dans le navigateur, emballée dans une application de bureau qui tire le
-            meilleur de votre carte graphique. Gratuite, pour Windows, macOS et Linux.
+            meilleur de votre carte graphique. Gratuite, pour Windows, macOS et Linux, et en APK pour tablette
+            Android (paysage, commandes tactiles).
           </p>
 
           <div class="dl" data-dl aria-live="polite">
@@ -567,6 +568,7 @@
               <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-mac-arm64.dmg"><b>macOS</b><span>Apple Silicon (M1 et suivants)</span></a></li>
               <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-mac-x64.dmg"><b>macOS</b><span>Intel</span></a></li>
               <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix.AppImage"><b>Linux</b><span>AppImage (x86_64)</span></a></li>
+              <li><a class="dl-file" href="https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-Android.apk"><b>Android</b><span>APK (tablette)</span></a></li>
             </ul>
           </div>
           <p class="dl__all" data-reveal>
@@ -581,10 +583,11 @@
           <div class="callout callout--warning dl__warn" data-reveal>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /></svg>
             <div>
-              <p><strong>Les applications ne sont pas signées</strong> : un certificat de signature coûte cher, et Privatix est gratuit. Votre système va donc se méfier au premier lancement. C'est normal, et vous pouvez vérifier que le fichier vient bien de la page GitHub du projet.</p>
+              <p><strong>Les applications de bureau ne sont pas signées</strong> : un certificat de signature coûte cher, et Privatix est gratuit. Votre système va donc se méfier au premier lancement. C'est normal, et vous pouvez vérifier que le fichier vient bien de la page GitHub du projet.</p>
               <p><strong>Windows (SmartScreen)</strong> : « Windows a protégé votre ordinateur » → <em>Informations complémentaires</em> → <em>Exécuter quand même</em>.</p>
               <p><strong>macOS (Gatekeeper)</strong> : « Privatix ne peut pas être ouvert » → clic droit (ou Ctrl-clic) sur l'application → <em>Ouvrir</em>, puis confirmer. Sur macOS 15 et suivants : <em>Réglages Système</em> → <em>Confidentialité et sécurité</em> → <em>Ouvrir quand même</em>.</p>
               <p><strong>Linux</strong> : rendez l'AppImage exécutable (<code>chmod +x Privatix-*.AppImage</code>, ou Propriétés → Autoriser l'exécution), puis lancez-la.</p>
+              <p><strong>Android (APK, hors Play Store)</strong> : ouvrez le fichier téléchargé ; Android propose d'autoriser l'installation d'applications inconnues pour votre navigateur (ou gestionnaire de fichiers) → <em>Paramètres</em> → activer <em>Autoriser cette source</em>, revenir, puis <em>Installer</em>. Play Protect peut afficher un avertissement : <em>Plus d'infos</em> → <em>Installer quand même</em>. Android 7 et WebGL 2 minimum ; les mises à jour s'installent par-dessus et gardent la sauvegarde.</p>
             </div>
           </div>
         </div>
@@ -603,6 +606,7 @@
                 <li>Chrome, Edge, Firefox ou Safari récents.</li>
                 <li>Une carte graphique de moins de dix ans, intégrée suffit.</li>
                 <li>Mobile en paysage : Android milieu de gamme, iPhone récent.</li>
+                <li>Tablette Android : application dédiée (APK), en paysage, commandes tactiles agrandies.</li>
                 <li>Clavier et souris, manette ou écran tactile.</li>
               </ul>
             </div>
@@ -641,11 +645,15 @@
             </details>
             <details data-reveal>
               <summary>Le jeu est-il gratuit ?</summary>
-              <p>Oui, dans le navigateur comme en application de bureau. Pas de publicité, pas d'achat intégré : Privatix n'a rien à vous vendre, contrairement à Privatix Rail Solutions, qui voudrait vous vendre le rail par lots.</p>
+              <p>Oui, dans le navigateur comme en application de bureau ou sur tablette Android. Pas de publicité, pas d'achat intégré : Privatix n'a rien à vous vendre, contrairement à Privatix Rail Solutions, qui voudrait vous vendre le rail par lots.</p>
             </details>
             <details data-reveal>
               <summary>Navigateur ou application de bureau ?</summary>
               <p>C'est le même jeu. L'application embarque son propre moteur de rendu et peut forcer la carte graphique dédiée : utile sur un portable ou si votre navigateur bride WebGL. Le navigateur, lui, se met à jour tout seul.</p>
+            </details>
+            <details data-reveal>
+              <summary>Peut-on jouer sur tablette ?</summary>
+              <p>Oui. Sur tablette Android, installez l'APK de la section <a class="link" href="#telecharger">Télécharger</a> : plein écran, paysage verrouillé, écran qui reste allumé et commandes tactiles agrandies (le bouton retour met en pause). Sur iPad, jouez dans Safari, en paysage. La sauvegarde de l'application est propre à elle : elle ne reprend pas celle du navigateur.</p>
             </details>
             <details data-reveal>
               <summary>Ma progression est-elle sauvegardée ?</summary>
@@ -657,7 +665,7 @@
             </details>
             <details data-reveal>
               <summary>Mon antivirus ou mon système bloque l'application.</summary>
-              <p>Les applications ne sont pas signées : voyez l'encart de la section <a class="link" href="#telecharger">Télécharger</a> pour ouvrir le fichier sur Windows, macOS et Linux. En cas de doute, jouez dans le navigateur.</p>
+              <p>Les applications de bureau ne sont pas signées, et l'APK Android est installé hors Play Store : voyez l'encart de la section <a class="link" href="#telecharger">Télécharger</a> pour ouvrir le fichier sur Windows, macOS, Linux et Android. En cas de doute, jouez dans le navigateur.</p>
             </details>
           </div>
         </div>

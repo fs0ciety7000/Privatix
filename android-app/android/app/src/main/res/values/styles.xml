@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Thème de base (non utilisé directement : Capacitor applique AppTheme.NoActionBar). -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/privatix_bg</item>
+        <item name="colorPrimaryDark">@color/privatix_bg</item>
+        <item name="colorAccent">@color/privatix_accent</item>
+    </style>
+
+    <!-- Thème du jeu : sans barre d'action, fond sombre du jeu (pas de flash blanc avant le WebGL),
+         dessin sous l'encoche (les barres système sont masquées par MainActivity). -->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:background">@null</item>
+        <item name="android:windowBackground">@color/privatix_bg</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="27">shortEdges</item>
+    </style>
+
+    <!-- Démarrage : Android 12+ affiche l'icône adaptative sur windowSplashScreenBackground ;
+         avant, l'image @drawable/splash (icône centrée sur fond sombre) sert de fond de fenêtre. -->
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">@color/privatix_bg</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+    </style>
+</resources>

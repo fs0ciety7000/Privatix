@@ -4,7 +4,7 @@ Hack 'n' Slash / Roguelite 2D en vue de dessus, satirique, sur le rail belge. Un
 
 **Stack** : Phaser 4.2 (Arcade Physics) · TypeScript 5.9 strict · Vite 7 · Vitest 4 · sprites originaux générés par `tools/pixelart/` · déploiement Docker/nginx sur Coolify (`privatix.fs0ciety.org`).
 
-**En ligne** : `/` site vitrine (`site/`, design system `docs/DESIGN_SYSTEM.md`) · `/jouer/play3d.html` jeu 3D · `/jouer/` version classique Phaser · `/3d/` prototype 3D. Téléchargements de bureau : GitHub Releases, affichées automatiquement par le site.
+**En ligne** : `/` site vitrine (`site/`, design system `docs/DESIGN_SYSTEM.md`) · `/jouer/play3d.html` jeu 3D · `/jouer/` version classique Phaser · `/3d/` prototype 3D. Téléchargements de bureau (`desktop/`, Electron) et APK Android pour tablette (`android-app/`, Capacitor) : GitHub Releases, affichées automatiquement par le site.
 
 ```bash
 npm ci
@@ -37,6 +37,6 @@ npm run assets     # régénère les sprites et tilesets (Python 3 + Pillow + Nu
 
 ## Documentation
 
-[GDD](docs/GDD.md) · [Lore](docs/LORE.md) · [Architecture](docs/ARCHITECTURE.md) · [Guide pixel art et achat d'assets](docs/PIXEL_ART_GUIDE.md) · [Règles de travail pour Claude](claude.md) · [Crédits](CREDITS.md)
+[GDD](docs/GDD.md) · [Lore](docs/LORE.md) · [Architecture](docs/ARCHITECTURE.md) · [Guide pixel art et achat d'assets](docs/PIXEL_ART_GUIDE.md) · [App de bureau](desktop/README.md) · [App Android (tablette)](android-app/README.md) · [Règles de travail pour Claude](claude.md) · [Crédits](CREDITS.md)
 
 L'ancienne version RPG au tour par tour (jalon M2) est conservée dans l'historique git, au commit `11e9f0e`.

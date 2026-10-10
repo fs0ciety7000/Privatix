@@ -34,6 +34,11 @@ t('classement par motif', () => {
   assert.equal(classifyAsset('Privatix-0.1.0-setup-x64.exe.blockmap'), null);
   assert.equal(classifyAsset('latest-mac.yml'), null);
   assert.equal(classifyAsset('Privatix-0.1.0.dmg'), null);
+  assert.equal(classifyAsset('Privatix-0.2.0-android.apk'), 'android-apk');
+  assert.equal(classifyAsset('Privatix-Android.apk'), 'android-apk');
+  assert.equal(classifyAsset('PRIVATIX-0.2.0-ANDROID.APK'), 'android-apk');
+  assert.equal(classifyAsset('Privatix-0.2.0-android-unsigned.apk'), null, 'artefact de test non signé');
+  assert.equal(classifyAsset('Privatix-0.2.0-android.apk.idsig'), null);
 });
 
 t('vraie release v0.1.0 : noms versionnés, doublons stables ignorés', () => {
@@ -75,7 +80,10 @@ t('entrées invalides', () => {
 
 t('liens stables de repli', () => {
   const s = stableFiles();
-  assert.equal(s.length, 5);
+  assert.equal(s.length, 6);
+  assert.equal(s[5].url, 'https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-Android.apk');
+  assert.equal(s[5].platform.label, 'Android');
+  assert.equal(s[5].platform.detail, 'APK (tablette)');
   assert.equal(s[0].url, 'https://github.com/fs0ciety7000/Privatix/releases/latest/download/Privatix-Setup.exe');
 });
 
@@ -84,8 +92,14 @@ t('détection de l\'OS', () => {
   assert.equal(detectOs('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'MacIntel', 0), 'mac');
   assert.equal(detectOs('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', 'MacIntel', 5), 'other');
   assert.equal(detectOs('Mozilla/5.0 (X11; Linux x86_64)'), 'linux');
-  assert.equal(detectOs('Mozilla/5.0 (Linux; Android 14; Pixel 8)'), 'other');
+  assert.equal(detectOs('Mozilla/5.0 (Linux; Android 14; Pixel 8)'), 'android');
+  assert.equal(detectOs('Mozilla/5.0 (Linux; Android 14; SM-X910) AppleWebKit/537.36', 'Linux armv8l', 5), 'android');
+  // Chrome tablette en « version pour ordinateur » : UA Linux, mais tactile multipoint.
+  assert.equal(detectOs('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36', 'Linux x86_64', 5), 'android');
+  assert.equal(detectOs('Mozilla/5.0 (X11; Linux x86_64)', 'Linux x86_64', 0), 'linux');
+  assert.equal(detectOs('Mozilla/5.0 (X11; CrOS x86_64 14541.0.0)', '', 10), 'other');
   assert.equal(detectOs('Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'), 'other');
+  assert.equal(detectOs('Mozilla/5.0 (Windows NT 10.0; Win64; x64)', 'Win32', 10), 'windows', 'PC Windows tactile');
 });
 
 t('tailles', () => {
@@ -136,6 +150,36 @@ t('fichier SHA256SUMS.txt de la release', () => {
   assert.equal(r.checksumsUrl, url);
   assert.equal(r.files.length, 1);
   assert.equal(r.files[0].sha256, null, 'digest malformé ignoré');
+});
+
+t('release avec APK Android : nom versionné, SHA-256, doublon stable et artefact non signé ignorés', () => {
+  const hex = 'ab'.repeat(32);
+  const base = 'https://github.com/fs0ciety7000/Privatix/releases/download/v0.2.0/';
+  const [r] = normalizeReleases([
+    {
+      tag_name: 'v0.2.0',
+      published_at: '2026-11-01T00:00:00Z',
+      assets: [
+        { name: 'Privatix-Android.apk', size: 29_000_000, browser_download_url: `${base}Privatix-Android.apk`, digest: `sha256:${hex}` },
+        { name: 'Privatix-0.2.0-android.apk', size: 29_000_000, browser_download_url: `${base}Privatix-0.2.0-android.apk`, digest: `sha256:${hex}` },
+        { name: 'Privatix-0.2.0-android-unsigned.apk', size: 29_000_000, browser_download_url: `${base}x.apk` },
+        { name: 'Privatix-0.2.0-setup-x64.exe', size: 90_000_000, browser_download_url: `${base}Privatix-0.2.0-setup-x64.exe` },
+        { name: 'Privatix.AppImage', size: 120_000_000, browser_download_url: `${base}Privatix.AppImage` },
+      ],
+    },
+  ]);
+  assert.deepEqual(r.files.map((f) => f.platform.id), ['win-setup', 'linux-appimage', 'android-apk'], 'Android en dernier');
+  const apk = r.files.at(-1);
+  assert.equal(apk.name, 'Privatix-0.2.0-android.apk');
+  assert.equal(apk.url, `${base}Privatix-0.2.0-android.apk`);
+  assert.equal(apk.sha256, hex);
+  assert.equal(apk.platform.os, 'android');
+  assert.equal(formatSize(apk.size), '29,0 Mo');
+});
+
+t('release sans APK (v0.1.0) : aucune entrée Android inventée', () => {
+  const [latest] = normalizeReleases(sample);
+  assert.ok(latest.files.every((f) => f.platform.os !== 'android'));
 });
 
 console.log(`${n} tests passés`);

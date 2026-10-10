@@ -4,7 +4,7 @@
 
 ## Présentation courte
 
-Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio contre une armée de consultants qui veulent libéraliser et privatiser le rail ! Privatix est un hack 'n' slash roguelite satirique en 3D, gratuit, jouable dans le navigateur et sur Windows, macOS et Linux.
+Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio contre une armée de consultants qui veulent libéraliser et privatiser le rail ! Privatix est un hack 'n' slash roguelite satirique en 3D, gratuit, jouable dans le navigateur, sur Windows, macOS et Linux, et sur tablette Android.
 
 ## Présentation longue
 
@@ -20,8 +20,8 @@ Combat nerveux et lisible (tout ce qui blesse est magenta et télégraphié), Bu
 |---|---|
 | Titre | Privatix |
 | Genre | Hack 'n' slash roguelite, vue de dessus |
-| Plateformes | Web (navigateur, desktop et mobile en paysage) ; desktop Windows, macOS, Linux |
-| Moteur | Three.js 0.186 (3D temps réel, rendu toon), TypeScript, Vite ; version de bureau Electron |
+| Plateformes | Web (navigateur, desktop et mobile en paysage) ; desktop Windows, macOS, Linux ; tablette Android (APK) |
+| Moteur | Three.js 0.186 (3D temps réel, rendu toon), TypeScript, Vite ; version de bureau Electron, version Android Capacitor |
 | Studio | OCC MONS Studios |
 | Langue | Français (Belgique) |
 | Prix | Gratuit |

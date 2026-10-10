@@ -391,8 +391,24 @@ body.touch #touch-btns {
   bottom: 112px;
   width: 64px;
   height: 64px;
-  font-size: 11px;
+  padding: 0;
+  font-size: 10px;
+  letter-spacing: -0.02em;
   background: radial-gradient(circle at 35% 30%, #ffe08a, #ffb52e 60%, #a86a10);
+}
+
+/* Tablette (grand écran tactile, en paysage) : le pouce reste au même endroit mais l'écran est
+   plus grand et tenu à deux mains ; commandes agrandies de 25 % pour un appui sans regarder. */
+@media (min-width: 1000px) and (min-height: 700px) {
+  body.touch #touch-btns {
+    transform: scale(1.25);
+    transform-origin: 100% 100%;
+    right: max(28px, env(safe-area-inset-right));
+    bottom: max(28px, env(safe-area-inset-bottom));
+  }
+  body.touch #joybase {
+    transform: scale(1.25);
+  }
 }
 
 @media (max-width: 760px) {

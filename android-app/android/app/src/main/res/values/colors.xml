@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fond du jeu (html, body : #0a0818) et accent « danger » du HUD. -->
+    <color name="privatix_bg">#0A0818</color>
+    <color name="privatix_accent">#FF3EA5</color>
+</resources>
