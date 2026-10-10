@@ -322,8 +322,10 @@ export const SHOTS = {
       // Le héros de côté (le Discosaure ne le masque pas), une fois l'intro passée.
       await t.skip(200);
       const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
-      await t.api('teleport', e.x + 130, e.y + 40);
-      await t.api('aim', Math.PI);
+      // 9:16 : champ étroit, le héros se place devant le boss (sous lui à l'image) plutôt qu'à côté.
+      if (t.portrait) await t.api('teleport', e.x, e.y + 96);
+      else await t.api('teleport', e.x + 130, e.y + 40);
+      await t.api('aim', t.portrait ? -Math.PI / 2 : Math.PI);
       await t.rec(180, { 2: () => t.api('attack', b.id, 'stomp') });
     },
   },
@@ -334,8 +336,10 @@ export const SHOTS = {
       // Le héros de côté (le Discosaure ne le masque pas), une fois l'intro passée.
       await t.skip(200);
       const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
-      await t.api('teleport', e.x - 130, e.y + 40);
-      await t.api('aim', 0);
+      // 9:16 : champ étroit, le héros se place devant le boss (sous lui à l'image) plutôt qu'à côté.
+      if (t.portrait) await t.api('teleport', e.x, e.y + 96);
+      else await t.api('teleport', e.x - 130, e.y + 40);
+      await t.api('aim', t.portrait ? -Math.PI / 2 : 0);
       await t.rec(110, {
         2: () => t.api('attack', b.id, 'lasers'),
         30: async () => {
@@ -357,8 +361,10 @@ export const SHOTS = {
       // Le héros de côté (le Discosaure ne le masque pas), une fois l'intro passée.
       await t.skip(200);
       const e = (await t.api('enemies')).find((x) => x.kind === 'discosaure');
-      await t.api('teleport', e.x + 96, e.y + 40);
-      await t.api('aim', Math.PI);
+      // 9:16 : champ étroit, le héros se place devant le boss (sous lui à l'image) plutôt qu'à côté.
+      if (t.portrait) await t.api('teleport', e.x, e.y + 96);
+      else await t.api('teleport', e.x + 96, e.y + 40);
+      await t.api('aim', t.portrait ? -Math.PI / 2 : Math.PI);
       // Préavis de grève (sifflet maintenu) : « coupure de courant », la boule s'éteint.
       await t.api('mobilisation', 100);
       await t.rec(185, {

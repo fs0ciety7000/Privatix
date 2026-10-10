@@ -227,7 +227,8 @@
         C2: { lines: ['Ils ont un plan.', 'On a *un café*.'], dur: 1.6 },
         C3: { words: ['Combo.', 'Dash.', 'Café.'], beats: [0, 0.5, 1.1], dur: 1.7 },
         C4: { lines: ['Chaque Shift,', 'un _Patrimoine_.'], dur: 1.2 },
-        C5: { lines: ['Quatre cent douze slides.', '*Une seule question.*'], dur: 1.6 },
+        // C5 tombe sous la carte d'intro du boss (en haut du cadre) : bande décalée de 3 % vers le bas.
+        C5: { lines: ['Quatre cent douze slides.', '*Une seule question.*'], dur: 1.6, top: 21 },
         C6: { lines: ['Un train,', 'ça se fait à plusieurs.'], dur: 2.4 },
       };
 
@@ -257,6 +258,7 @@
         duration = c.dur;
         const band = document.createElement('div');
         band.className = 'band';
+        if (c.top) band.style.top = `${String(c.top)}%`;
         const plate = document.createElement('div');
         plate.className = 'plate';
         band.appendChild(plate);

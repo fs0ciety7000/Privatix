@@ -28,6 +28,8 @@ export interface QualityPreset {
   readonly dust: boolean;
   /** Résolution dynamique : on baisse le pixel ratio si l'on reste sous 50 fps. */
   readonly dynamicResolution: boolean;
+  /** Anticrénelage FXAA en fin de chaîne (mode capture sans MSAA, `?fxaa`). */
+  readonly fxaa?: boolean;
 }
 
 export const QUALITY: Readonly<Record<QualityId, QualityPreset>> = {

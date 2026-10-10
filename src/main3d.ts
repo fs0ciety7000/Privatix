@@ -121,6 +121,7 @@ async function boot(): Promise<void> {
           msaa: Number(params.get('msaa') ?? QUALITY.haut.msaa),
           shadowMapSize: Number(params.get('shadow') ?? QUALITY.haut.shadowMapSize),
           bloomScale: Number(params.get('bloom') ?? QUALITY.haut.bloomScale),
+          fxaa: params.has('fxaa'),
         },
         reducedMotion,
         capture: captureFraming(params.get('aspect')),

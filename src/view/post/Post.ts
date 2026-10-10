@@ -7,6 +7,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import type { QualityPreset } from '@/view/quality';
 
 const GradeShader = {
@@ -82,6 +83,8 @@ export class Post {
   public readonly composer: EffectComposer;
   public readonly bloom: UnrealBloomPass | null;
   public readonly grade: ShaderPass;
+  /** FXAA (mode capture du trailer, à la place du MSAA trop coûteux en rendu logiciel). */
+  private readonly fxaa: ShaderPass | null;
   private checks = 0;
   private frame = 0;
   private readonly bloomScale: number;
@@ -122,6 +125,8 @@ export class Post {
     this.composer.addPass(new OutputPass());
     this.grade = new ShaderPass(GradeShader);
     this.composer.addPass(this.grade);
+    this.fxaa = quality.fxaa ? new ShaderPass(FXAAShader) : null;
+    if (this.fxaa) this.composer.addPass(this.fxaa);
   }
 
   public setSize(w: number, h: number, pr: number): void {
@@ -129,6 +134,11 @@ export class Post {
     this.composer.setSize(w, h);
     if (this.bloom) this.bloom.resolution.set(w * this.bloomScale, h * this.bloomScale);
     (this.grade.uniforms.uRes as THREE.IUniform<THREE.Vector2>).value.set(w * pr, h * pr);
+    if (this.fxaa)
+      (this.fxaa.uniforms.resolution as THREE.IUniform<THREE.Vector2>).value.set(
+        1 / (w * pr),
+        1 / (h * pr),
+      );
   }
 
   public render(time: number, hurt: number): void {

@@ -76,7 +76,8 @@ async function shoot(name) {
   });
   page.on('pageerror', (e) => problems.push(e.message));
   const extra = shot.query ?? '';
-  const quality = preview ? '&msaa=0&shadow=1024' : '&msaa=4';
+  // Rendu logiciel : MSAA ×4 coûte deux fois plus cher que tout le reste ; FXAA en fin de chaîne à la place.
+  const quality = preview ? '&msaa=0&shadow=1024' : '&msaa=0&fxaa';
   await page.goto(
     `${base}/play3d.html?demo&cheat&trailer&seed=${String(shot.seed ?? 7)}&aspect=${format}${quality}${extra}`,
   );
