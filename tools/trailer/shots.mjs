@@ -164,11 +164,12 @@ export const SHOTS = {
       await t.skip(60);
       await t.rec(150, {
         4: () => t.api('attack', id, 'dive'),
-        [Number(process.env.DASH_AT ?? 29)]: async () => {
-          await t.api('move', 0, -1);
+        [Number(process.env.DASH_AT ?? 42)]: async () => {
+          // Dash latéral à travers le piqué, 2 images avant l'impact (calé à la sim : dash parfait).
+          await t.api('move', 1, 0);
           await t.api('press', 'dash');
         },
-        [Number(process.env.DASH_AT ?? 29) + 14]: () => t.api('release'),
+        [Number(process.env.DASH_AT ?? 42) + 14]: () => t.api('release'),
       });
     },
   },
@@ -213,7 +214,8 @@ export const SHOTS = {
       await place(t, a, 0.6);
       await t.api('aim', UP);
       await t.skip(30);
-      await t.rec(130, { 10: () => t.api('lootDrop', 'wagon-bar', 0, -72) });
+      // Le faisceau à droite du héros (hors de la bande des cartons, au centre) ; plus près en 9:16.
+      await t.rec(130, { 10: () => t.api('lootDrop', 'wagon-bar', t.portrait ? 60 : 115, -40) });
     },
   },
   // 12 — Le héros équipe la pièce et frappe avec.

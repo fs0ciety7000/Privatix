@@ -3,7 +3,7 @@
 // 12 vignettes (contact.png), puis copie pour le site (site/public/trailer/).
 //   node tools/trailer/deliver.mjs --out <dossier des livrables> [--poster 33.0] [--site site/public/trailer]
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, statSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 const args = process.argv.slice(2);
@@ -18,6 +18,9 @@ const src = path.join(out, 'privatix-trailer-16x9.mp4');
 const ff = (a) => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...a], { stdio: 'inherit' });
 const mb = (f) => (statSync(f).size / 1e6).toFixed(2);
 const pass = path.join(out, 'ffpass');
+const cleanPasses = () => {
+  for (const f of readdirSync(out)) if (f.startsWith('ffpass')) rmSync(path.join(out, f), { force: true });
+};
 
 // WebM VP9 1080p, deux passes à 1,35 Mbit/s (+ Opus 96 kbit/s) : ≈ 11 Mo pour 60 s.
 const webm = path.join(out, 'privatix-trailer-16x9.webm');
@@ -45,6 +48,7 @@ ff([
   '-frames:v', '1', '-fps_mode', 'passthrough', contact,
 ]);
 console.log(`${posterJpg}, ${posterWebp}, ${contact}`);
+cleanPasses();
 
 if (site) {
   mkdirSync(site, { recursive: true });

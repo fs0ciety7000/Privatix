@@ -80,6 +80,7 @@ async function shoot(name) {
   const quality = preview ? '&msaa=0&shadow=1024' : '&msaa=0&fxaa';
   await page.goto(
     `${base}/play3d.html?demo&cheat&trailer&seed=${String(shot.seed ?? 7)}&aspect=${format}${quality}${extra}`,
+    { timeout: 240000 },
   );
   await page.waitForFunction(() => window.__privatix3d?.frame !== undefined, null, {
     timeout: 240000,

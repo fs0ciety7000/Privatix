@@ -58,7 +58,7 @@ const EDIT = [
   { id: '09', shot: 's09', t: 16.2, d: 1.8, anchor: ['special:whistle', 0, 16.4] },
   { id: '10', shot: 's10', t: 18.0, d: 2.0, anchor: ['roomCleared', 0, 18.2] },
   // ACTE III — le Shift déborde.
-  { id: '11', shot: 's11', t: 20.0, d: 1.6, anchor: ['lootDropped', 0, 20.0], zoom: [1, 1.15, 0.4, 'ballast'], fy: 0.45 },
+  { id: '11', shot: 's11', t: 20.0, d: 1.6, anchor: ['lootDropped', 0, 20.0], zoom: [1, 1.15, 0.4, 'ballast'], fx: 0.7, fy: 0.6, cx: 0.62 },
   { id: '12', shot: 's12', t: 21.6, d: 1.2, anchor: ['swing:2', 0, 22.25] },
   { id: '13', shot: 's13', t: 22.8, d: 1.6, anchor: ['fx:burrow', 0, 22.85] },
   { id: '14', shot: 's14', t: 24.4, d: 1.2, anchor: ['dash', 0, 24.5] },
@@ -106,7 +106,10 @@ const CARDS = [
 const FLASHES = [11.6, 18.2, 37.2, 41.4];
 
 /** Étalonnage commun, léger : un peu de contraste et de densité, noirs violets préservés. */
-const GRADE = 'eq=contrast=1.05:saturation=1.06:gamma=0.98';
+const GRADE = 'eq=contrast=1.08:saturation=1.06:gamma=0.95';
+/** Quais & Voies : le halo rose des rails noie les silhouettes, on resserre un peu les noirs. */
+const GRADE_QUAI = 'eq=contrast=1.15:saturation=1.1:gamma=0.9:brightness=-0.015';
+const QUAI_SHOTS = new Set(['s04', 's05', 's06', 's07', 's08', 's09', 's10', 's11', 's12', 's13', 's14']);
 
 const ff = (a) => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...a], { stdio: 'inherit' });
 
@@ -115,9 +118,29 @@ function eventsOf(shot) {
   return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : {};
 }
 
+/** Nombre d'images du plan (tournage partiel `--need` : seules les images utiles existent). */
 function frameCount(shot) {
+  const done = path.join(shotDir(shot), 'done');
+  if (existsSync(done)) return Number(readFileSync(done, 'utf8').trim());
   return readdirSync(shotDir(shot)).filter((f) => f.endsWith('.jpg')).length;
 }
+
+/** Fichier d'une image ; si elle n'a pas été tournée (hors `--need`), la plus proche qui existe. */
+function frameFile(shot, i) {
+  const f = (k) => path.join(shotDir(shot), `${String(k).padStart(5, '0')}.jpg`);
+  for (let d = 0; d < 400; d += 1) {
+    if (existsSync(f(i - d))) {
+      if (d > 0) missing += 1;
+      return f(i - d);
+    }
+    if (existsSync(f(i + d))) {
+      missing += 1;
+      return f(i + d);
+    }
+  }
+  throw new Error(`${shot} : aucune image autour de ${String(i)}`);
+}
+let missing = 0;
 
 /** Image (dans le plan) de la n-ième occurrence d'un événement dont l'étiquette commence par `tag`. */
 function findEvent(shot, tag, n) {
@@ -190,7 +213,7 @@ function videoFilter(seg, n) {
       `zoompan=z='${z}':x='(iw-iw/zoom)*${fx}':y='(ih-ih/zoom)*${fy}':d=1:s=${OW}x${OH}:fps=${FPS}`,
     );
   }
-  f.push(GRADE);
+  f.push(QUAI_SHOTS.has(seg.shot) ? GRADE_QUAI : GRADE);
   if (seg.fadeIn) f.push(`fade=t=in:s=0:n=${seg.fadeIn}`);
   if (seg.fadeOut) f.push(`fade=t=out:s=${n - seg.fadeOut}:n=${seg.fadeOut}`);
   f.push('format=yuv420p');
@@ -207,7 +230,7 @@ function renderSegment(seg, i) {
   rmSync(tmp, { recursive: true, force: true });
   mkdirSync(tmp);
   list.forEach((src, k) => {
-    symlinkSync(path.join(shotDir(seg.shot), `${String(src).padStart(5, '0')}.jpg`), path.join(tmp, `${String(k).padStart(5, '0')}.jpg`));
+    symlinkSync(frameFile(seg.shot, src), path.join(tmp, `${String(k).padStart(5, '0')}.jpg`));
   });
   const out = path.join(work, `seg-${seg.id}.mp4`);
   if (seg.endcard) {
@@ -228,6 +251,8 @@ function renderSegment(seg, i) {
     ]);
   }
   rmSync(tmp, { recursive: true, force: true });
+  if (missing > 0) console.warn(`  ${seg.id} : ${String(missing)} image(s) non tournée(s), remplacée(s) par la voisine`);
+  missing = 0;
   return { out, frames: seg.endcard ? Math.round(seg.d * FPS) : list.length, head, tail, list };
 }
 
@@ -291,7 +316,7 @@ const flash = FLASHES.map((t) => {
 });
 graph.push(`${cur}${flash.join(',')},trim=end_frame=${String(Math.round(60 * FPS))},format=yuv420p[out]`);
 
-const master = path.join(outDir, `master-${format}${preview ? '-preview' : ''}.mp4`);
+const master = path.join(work, `master-${format}.mp4`);
 ff([
   ...inputs,
   '-filter_complex', graph.join(';'),
@@ -312,7 +337,7 @@ ff([
 console.log(`  livrable : ${final}`);
 if (!flag('keep')) for (const s of segs) rmSync(s.out, { force: true });
 writeFileSync(
-  path.join(outDir, `edl-${format}.json`),
+  path.join(work, `edl-${format}.json`),
   JSON.stringify(segs.map(({ out: _o, list: _l, ...s }) => s), null, 1),
 );
 // Images utiles par plan (avec 4 images de marge) : `shoot.mjs --need` ne dessine que celles-là.
@@ -322,4 +347,4 @@ for (const s of segs) {
   const hi = Math.max(...s.list) + 4;
   (need[s.shot] ??= []).push([lo, hi]);
 }
-writeFileSync(path.join(outDir, `need-${source}.json`), JSON.stringify(need, null, 1));
+writeFileSync(path.join(work, `need-${source}.json`), JSON.stringify(need, null, 1));

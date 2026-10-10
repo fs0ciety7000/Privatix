@@ -29,6 +29,20 @@ body.trailer .px-captions {
   bottom: max(118px, 14vh);
 }
 
+/* Écran des départs agrandi : il remplit le cadre et se lit sur un téléphone. */
+body.trailer .px-panel:has(.px-board) {
+  zoom: 1.7;
+}
+/*
+ * Le Shift du tournage est raccourci par les outils de démo (salles sautées) : on ne montre que les
+ * lignes qui racontent la fin de service (heure, PS, Grains, trouvailles), pas la cause, la salle,
+ * les compteurs ni la Ferraille, faussés par le raccourci.
+ */
+body.trailer .px-board tr:nth-child(n + 2):nth-child(-n + 5),
+body.trailer .px-board tr:nth-child(11) {
+  display: none;
+}
+
 /* 9:16 : la carte d'intro des boss sous la marge haute des réseaux sociaux (10 %). */
 @media (orientation: portrait) {
   body.trailer .px-intro {
