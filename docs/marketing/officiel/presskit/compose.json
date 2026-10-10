@@ -10,8 +10,7 @@
       "vars": {
         "art": "docs/marketing/officiel/presskit/keyart-presskit.jpg",
         "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg",
-        "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+        "tagline": "Le rail n’est pas à vendre."
       }
     },
     {
@@ -24,8 +23,7 @@
       "vars": {
         "art": "docs/marketing/officiel/presskit/keyart-presskit.jpg",
         "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg",
-        "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+        "tagline": "Le rail n’est pas à vendre."
       }
     }
   ]

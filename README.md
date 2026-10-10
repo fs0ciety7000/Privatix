@@ -6,6 +6,8 @@ Hack 'n' Slash / Roguelite 2D en vue de dessus, satirique, sur le rail belge. Un
 
 **En ligne** : `/` site vitrine (`site/`, design system `docs/DESIGN_SYSTEM.md`) · `/jouer/play3d.html` jeu 3D · `/jouer/` version classique Phaser · `/3d/` prototype 3D. Téléchargements de bureau (`desktop/`, Electron) et APK Android pour tablette (`android-app/`, Capacitor) : GitHub Releases, affichées automatiquement par le site.
 
+**Studio** : développé par [OCC Interactive](https://interactive.cardormedia.com/), une division de [CARDOR Media](https://cardormedia.com/) (logos et charte : `site/src/assets/brand/README.md`).
+
 ```bash
 npm ci
 npm run dev        # http://localhost:5173  (?debug : corps Arcade · ?cheat : raccourcis de test)

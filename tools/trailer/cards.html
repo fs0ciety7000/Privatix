@@ -187,11 +187,16 @@
         align-items: center;
         gap: calc(var(--u) * 0.6);
       }
+      /* Dragon d'OCC Interactive : tel quel, sans filtre ni ombre (charte https://cardormedia.com/marque). */
       .studio img {
         height: calc(var(--u) * 9);
         width: auto;
         image-rendering: auto;
-        filter: drop-shadow(0 0 calc(var(--u) * 1) rgba(255, 122, 26, 0.45));
+      }
+      .studio small {
+        font: 600 calc(var(--u) * 1.1) / 1 var(--font-text);
+        letter-spacing: 0.08em;
+        color: var(--px-text-soft);
       }
       .studio span {
         font: 900 calc(var(--u) * 1.7) / 1 var(--font-display);
@@ -341,7 +346,7 @@
         studio.style.top = `${L.studio}%`;
         studio.style.transform = 'translate(-50%, -50%)';
         studio.innerHTML =
-          '<img src="/site/src/assets/img/occ-mons-studios.webp" alt="" /><span>OCC MONS Studios</span>';
+          '<img src="/site/src/assets/brand/interactive.svg" alt="" /><span>OCC Interactive</span><small>une division de CARDOR Media</small>';
         end.append(logo, tag, btn, studio);
         if (format === '9x16') {
           // En 9:16 la carte est plus étroite : bouton et logotype réduits pour tenir dans 84 % de la largeur.

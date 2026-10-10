@@ -60,9 +60,12 @@ Créer la clé (une seule fois, sur une machine de confiance) :
 ```bash
 keytool -genkeypair -v -keystore privatix-release.jks -storetype PKCS12 \
   -alias privatix -keyalg RSA -keysize 4096 -validity 10000 \
-  -dname "CN=Privatix, O=OCC MONS Studios, C=BE"
+  -dname "CN=Privatix, OU=OCC Interactive, O=CARDOR Media, C=BE"
 base64 -w0 privatix-release.jks > privatix-release.jks.b64   # macOS : base64 -i privatix-release.jks
 ```
+
+Le nom distinctif (`-dname`) n'est qu'une étiquette du certificat : une clé déjà créée avec
+l'ancien nom du studio reste valable et ne doit surtout pas être régénérée pour le changer.
 
 Secrets GitHub (*Settings* → *Secrets and variables* → *Actions*) :
 

@@ -76,7 +76,7 @@ const ENDCARD = {
   line1: { at: 55.6, text: 'Ils veulent privatiser le rail. Toi, t’as une clé à tire-fond.' },
   line2: { at: 56.5, text: 'Le rail n’est pas à vendre.' },
   cta: { at: 57.0, text: 'Jouer dans le navigateur · privatix.fs0ciety.org' },
-  logo: { at: 58.0, text: 'OCC MONS Studios' },
+  logo: { at: 58.0, text: 'OCC Interactive · une division de CARDOR Media' },
   end: { at: 60.0, text: '(noir)' },
 };
 

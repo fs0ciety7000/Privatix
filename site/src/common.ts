@@ -40,12 +40,21 @@ export function initLightbox(): void {
   });
 }
 
-/** Le mouvement (GSAP) est chargé à part, quand le navigateur est libre : il ne bloque pas le rendu. */
+/**
+ * Le mouvement (GSAP) est chargé à part, quand le navigateur est libre : il ne bloque pas le rendu.
+ * Les emblèmes animés de CARDOR Media (pied de page) aussi, et jamais en mouvement réduit : les
+ * logos restent alors les images statiques du HTML.
+ */
 export function initMotionLater(): void {
   const load = (): void => {
     void import('./motion').then((m) => {
       m.initMotion();
     });
+    if (!reducedMotion.matches) {
+      void import('./brand').then((m) => {
+        m.initEmblems();
+      });
+    }
   };
   const ric = (globalThis as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void })
     .requestIdleCallback;

@@ -22,7 +22,7 @@ Combat nerveux et lisible (tout ce qui blesse est magenta et télégraphié), Bu
 | Genre | Hack 'n' slash roguelite, vue de dessus |
 | Plateformes | Web (navigateur, desktop et mobile en paysage) ; desktop Windows, macOS, Linux ; tablette Android (APK) |
 | Moteur | Three.js 0.186 (3D temps réel, rendu toon), TypeScript, Vite ; version de bureau Electron, version Android Capacitor |
-| Studio | OCC MONS Studios |
+| Studio | OCC Interactive, une division de CARDOR Media (https://interactive.cardormedia.com/ · https://cardormedia.com/) |
 | Langue | Français (Belgique) |
 | Prix | Gratuit |
 | Site | https://privatix.fs0ciety.org/ |
@@ -35,7 +35,7 @@ Combat nerveux et lisible (tout ce qui blesse est magenta et télégraphié), Bu
 - `affiches/` : six affiches au logo monochrome, JPG 2048 × 3072 (`privatix-affiche-suisse-jaune.jpg`, `-suisse-jeu`, `-constructiviste`, `-film-70s`, `-riso`, `-minimal-cle`)
 - `privatix-banniere.jpg`, bannière officielle 2560 × 1440 (logo monochrome blanc)
 - `privatix-capture-1.jpg` à `privatix-capture-4.jpg`, 1920 × 1080
-- `occ-mons-studios.webp`, logo du studio
+- `studio/` : logos du studio, à reproduire selon la charte https://cardormedia.com/marque (`occ-interactive-dragon.svg`, le Dragon du Doudou d'OCC Interactive ; `occ-interactive-mot-symbole.svg` ; `cardor-media-mot-symbole.svg`)
 - `animations/` : GIF tirés du jeu (combo, Discosaure, drop de Patrimoine)
 
 Privatix est une œuvre de fiction satirique. Personnages, entreprises et répliques sont inventés, hors exceptions autorisées par le porteur du projet (SNCB, « Calatrava », caricature bon enfant d'Elio Di Rupo, sans citation réelle).
