@@ -48,7 +48,7 @@ export const MAX_VOICES = 24;
 /** Gain propre de chaque bus, sous le curseur correspondant. */
 const TRIM = { music: 0.55, ambience: 0.5, sfx: 1, ui: 0.8, voice: 1 } as const;
 /** Multiplicateurs pendant la pause : on étouffe les effets, la musique baisse, l'UI reste. */
-const PAUSED = { music: 0.45, ambience: 0.6, sfx: 0, ui: 1, voice: 0.5 } as const;
+const PAUSED = { music: 0.45, ambience: 0.6, sfx: 0, ui: 1, voice: 0.85 } as const;
 const RAMP = 0.06;
 
 export type MixBus = keyof typeof TRIM;

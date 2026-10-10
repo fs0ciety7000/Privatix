@@ -5,12 +5,15 @@
  * la pause. Il écoute aussi l'interface (survol et clic des boutons) par délégation sur la racine des
  * menus, sans toucher au code des menus.
  *
- * Musique : l'OST enregistrée (`tracks.ts`, `sampledMusic.ts`) joue dès que le morceau du contexte
- * est décodé ; avant (chargement, hors ligne, `?procedural`, format refusé), la synthèse de
- * `music.ts` prend le relais, et réciproquement en fondu enchaîné. Graphe :
+ * Musique : l'OST enregistrée (`tracks.ts`) joue dès que le morceau du contexte est prêt : en
+ * streaming (`streamedMusic.ts`, élément audio, rien de décodé d'avance) pour les morceaux, décodée
+ * (`sampledMusic.ts`) pour les stingers de moins de 10 s ou là où le streaming manque. Avant
+ * (chargement, hors ligne, `?procedural`, format ou lecture refusés), la synthèse de `music.ts`
+ * prend le relais, et réciproquement en fondu enchaîné. Graphe :
  *
  *   synthèse (music.ts) ─ porte ─┐
- *   OST (sampledMusic.ts) ───────┴─ ducking (voix, télégraphe) ─ bus musique
+ *   OST (streamedMusic.ts) ──────┤
+ *   stingers (sampledMusic.ts) ──┴─ ducking (voix, télégraphe) ─ bus musique
  *   dialogues (voicePlayer.ts) ──── bus voix
  */
 import type { EnemyKind } from '@/config/balance';
@@ -23,6 +26,8 @@ import { MusicDirector } from './music';
 import type { AudioProbe, SfxCue } from './router';
 import { combatIntensity, diffProbe, EMPTY_PROBE, routeEvent } from './router';
 import { SampledMusic } from './sampledMusic';
+import type { MediaFactory } from './streamedMusic';
+import { canStream, MusicStreams, StreamedMusic } from './streamedMusic';
 import { SampleBank } from './samples';
 import { lootSfx } from './sfx';
 import type { SfxId } from './sfx';
@@ -54,6 +59,15 @@ export interface SampleOptions {
   readonly enabled: boolean;
   readonly fetchBytes?: (url: string) => Promise<ArrayBuffer>;
   readonly warn?: (msg: string) => void;
+  /** Fabrique d'éléments audio (streaming de l'OST) ; par défaut `new Audio()` si disponible. */
+  readonly createMedia?: MediaFactory | null;
+}
+
+/** En dessous, un morceau est décodé (stinger) plutôt que lu en streaming. */
+export const STINGER_MAX = 10;
+
+function defaultMediaFactory(): MediaFactory | null {
+  return typeof Audio === 'undefined' ? null : () => new Audio();
 }
 
 export interface AudioDirectorDeps extends AudioEngineDeps {
@@ -71,6 +85,10 @@ const VOICE_GROUPS: Readonly<Record<VoiceId, (p: AudioProbe) => boolean>> = {
   yasmina: () => true,
   invite: (p) => p.phase === 'run' && (p.biome >= 1 || p.roomType === 'repos'),
   lurcke: (p) => p.phase === 'run' && (p.biome >= 2 || (p.biome === 1 && p.roomType === 'repos')),
+  // PNJ du hub (et leurs quelques lignes radio) : légers, chargés d'emblée.
+  marcel: () => true,
+  josiane: () => true,
+  bene: () => true,
 };
 
 function voiceProbe(p: AudioProbe): VoiceProbe {
@@ -82,6 +100,7 @@ function voiceProbe(p: AudioProbe): VoiceProbe {
     gobelets: p.gobelets,
     heroState: p.heroState,
     mobilisation: p.mobilisation,
+    choiceFamilies: p.choiceFamilies,
   };
 }
 
@@ -103,6 +122,11 @@ export class AudioDirector {
   private uiRoot: HTMLElement | null = null;
   private hovered: Element | null = null;
   private sampled: SampledMusic | null = null;
+  private streamed: StreamedMusic | null = null;
+  private streams: MusicStreams | null = null;
+  private readonly createMedia: MediaFactory | null;
+  private readonly baseUrl: string;
+  private readonly warn: ((msg: string) => void) | undefined;
   private synthGate: GainNode | null = null;
   private duck: GainNode | null = null;
   private duckTarget = 1;
@@ -132,6 +156,9 @@ export class AudioDirector {
   public constructor(deps: AudioDirectorDeps = {}) {
     this.engine = new AudioEngine(deps);
     const so = deps.samples;
+    this.createMedia = so?.createMedia === undefined ? defaultMediaFactory() : so.createMedia;
+    this.baseUrl = so?.baseUrl ?? '';
+    this.warn = so?.warn;
     this.samples = new SampleBank({
       baseUrl: so?.baseUrl ?? '',
       enabled: so?.enabled ?? false,
@@ -158,6 +185,16 @@ export class AudioDirector {
       this.synthGate = gate;
       this.music.attach(ctx, gate, amb);
       this.sampled = new SampledMusic(ctx, duck);
+      const create = this.createMedia;
+      if (this.samples.enabled && create && canStream(ctx)) {
+        const streams = new MusicStreams(this.baseUrl, create, this.warn);
+        const streamed = new StreamedMusic(ctx, duck, create, (f) => streams.url(f));
+        streamed.onFail = (file, why) => {
+          streams.fail(file, why);
+        };
+        this.streams = streams;
+        this.streamed = streamed;
+      }
       this.samples.attach(ctx);
       this.requestSamples(this.prev, this.contextRef);
     });
@@ -186,6 +223,7 @@ export class AudioDirector {
 
   public setHidden(hidden: boolean): void {
     this.engine.setHidden(hidden);
+    this.streamed?.setHidden(hidden);
   }
 
   /** Force un mode de musique (le hub l'utilise : `setMusic('hub')`). */
@@ -200,7 +238,20 @@ export class AudioDirector {
 
   /** Morceau enregistré en cours, `null` : synthèse (ou silence). */
   public get trackPlaying(): string | null {
-    return this.sampled?.trackId ?? null;
+    return this.streamed?.trackId ?? this.sampled?.trackId ?? null;
+  }
+
+  /** Mémoire de l'OST (outil de mesure) : PCM décodé (Mo), éléments audio en vie. */
+  public get musicMemory(): { pcmMo: number; elements: number } {
+    return {
+      pcmMo: Math.round(this.samples.decodedBytes / 1e5) / 10,
+      elements: (this.streams?.alive ?? 0) + (this.streamed?.elements ?? 0),
+    };
+  }
+
+  /** Le morceau passe-t-il en streaming (sinon : décodé) ? */
+  private isStreamed(t: TrackDef): boolean {
+    return this.streams !== null && t.duration >= STINGER_MAX;
   }
 
   /** Générique de fin (le 7h12) : à activer par l'écran qui l'affiche. */
@@ -290,38 +341,61 @@ export class AudioDirector {
     this.groupsKey = key;
     // Ordre : le morceau du contexte, les voix (légères : ≈ 30 ko par réplique), puis le reste du lot.
     const current = trackFor(context);
-    if (current) this.samples.request(current.file, 'music', true);
+    const music = (t: TrackDef, urgent: boolean): void => {
+      if (this.streams && this.isStreamed(t)) this.streams.request(t.file);
+      else this.samples.request(t.file, 'music', urgent);
+    };
+    if (current) music(current, true);
     for (const line of VOICE_LINES.values())
       if (line.file && voices.includes(line.voice)) this.samples.request(line.file, 'voice');
-    for (const t of tracksOfGroups(groups)) this.samples.request(t.file, 'music');
+    for (const t of tracksOfGroups(groups)) music(t, false);
   }
 
   private updateSampled(track: TrackDef | null, context: MusicContext, intensity: number): void {
     const sampled = this.sampled;
     if (!sampled) return;
+    const streamed = this.streamed;
+    const stop = (fade: number): void => {
+      if (sampled.playing) sampled.stop(fade);
+      if (streamed?.playing) streamed.stop(fade);
+    };
     if (context === 'silence') {
       // Coup final de Lurcke : tout se tait d'un coup.
-      if (sampled.playing) sampled.stop(0.05);
+      stop(0.05);
       this.setSynth(false, 0.05);
+      sampled.update();
+      streamed?.update();
       return;
     }
-    if (track) this.samples.keep = new Set([track.file]);
-    const buffer = track ? this.samples.get(track.file) : null;
-    if (track && buffer) {
+    const keep = new Set(track ? [track.file] : []);
+    this.samples.keep = keep;
+    if (this.streams) this.streams.keep = keep;
+    const viaStream = track !== null && this.isStreamed(track);
+    const el = track && viaStream ? (this.streams?.take(track.file) ?? null) : null;
+    const buffer = track && !viaStream ? this.samples.get(track.file) : null;
+    if (track && streamed && el) {
+      if (sampled.playing) sampled.stop(TRACK_CROSSFADE);
+      streamed.play(track, el);
+    } else if (track && buffer) {
+      if (streamed?.playing) streamed.stop(TRACK_CROSSFADE);
       sampled.play(track, buffer);
+    } else {
+      // Pas (encore) de fichier pour ce contexte : la synthèse reprend.
+      stop(TRACK_CROSSFADE);
+      this.setSynth(true, TRACK_CROSSFADE);
+    }
+    if (track && (el || buffer)) {
       this.setSynth(false, TRACK_CROSSFADE);
       const mix = reactiveMix(track, intensity);
       const key = `${String(Math.round(mix.cutoff / 50))}|${mix.gain.toFixed(2)}`;
       if (key !== this.mixKey) {
         this.mixKey = key;
         sampled.setMix(mix.cutoff, mix.gain);
+        streamed?.setMix(mix.cutoff, mix.gain);
       }
-    } else {
-      // Pas (encore) de fichier pour ce contexte : la synthèse reprend.
-      if (sampled.playing) sampled.stop(TRACK_CROSSFADE);
-      this.setSynth(true, TRACK_CROSSFADE);
     }
     sampled.update();
+    streamed?.update();
   }
 
   private setSynth(on: boolean, fade: number): void {
@@ -372,7 +446,9 @@ export class AudioDirector {
       if (e.type === 'bossLine' || e.type === 'bossIntro') {
         const text = e.type === 'bossLine' ? e.text : e.line;
         const id = lineIdFor(text);
-        if (id && request({ id, kind: 'line' })) {
+        // Une ligne radio (Marcel après l'Invité d'honneur) passe par le haut-parleur.
+        const kind = id?.includes('.radio.') ? 'radio' : 'line';
+        if (id && request({ id, kind, important: true })) {
           const sub = VOICE_LINES.get(id)?.subtitle;
           if (sub) this.subtitles.set(text, sub);
         }
@@ -490,6 +566,8 @@ export class AudioDirector {
     this.rotor = null;
     this.voices.stopAll();
     this.sampled?.dispose();
+    this.streamed?.dispose();
+    this.streams?.dispose();
     this.music.dispose();
     this.engine.dispose();
   }

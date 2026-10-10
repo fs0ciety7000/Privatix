@@ -5,10 +5,10 @@
  *   file (au plus `PARALLEL` téléchargements à la fois, la musique du contexte courant d'abord).
  * - Tout échec (hors ligne, 404, page HTML renvoyée à la place du fichier, format non décodable) laisse
  *   l'entrée en `failed` : l'appelant garde la synthèse. Pas de nouvel essai pendant la session.
- * - Mémoire : un morceau décodé pèse ≈ 46 Mo (2 min, stéréo, 48 kHz). Les octets compressés restent
- *   en cache (≈ 1,5 Mo par morceau) et les buffers décodés de musique sont limités à
- *   `MUSIC_DECODED_BUDGET` secondes : les plus anciens (hors `keep`) sont libérés, puis redécodés
- *   sans réseau si on y revient.
+ * - Mémoire : un morceau décodé pèse ≈ 46 Mo (2 min, stéréo, 48 kHz) ; l'OST passe donc en streaming
+ *   (`streamedMusic.ts`) et cette banque ne décode que les voix et les stingers courts (repli : là où
+ *   le streaming manque). Les buffers de musique sont limités à `MUSIC_DECODED_BUDGET` secondes : les
+ *   plus anciens (hors `keep`) sont libérés, puis redécodés sans réseau (octets gardés) au retour.
  */
 
 export type SampleKind = 'music' | 'voice';
@@ -35,8 +35,8 @@ interface Entry {
 }
 
 const PARALLEL = 2;
-/** Secondes de musique décodée gardées en mémoire (≈ 4 morceaux). */
-export const MUSIC_DECODED_BUDGET = 480;
+/** Secondes de musique décodée gardées en mémoire (stingers ; un morceau de repli au plus). */
+export const MUSIC_DECODED_BUDGET = 130;
 
 async function defaultFetch(url: string): Promise<ArrayBuffer> {
   const res = await fetch(url);
@@ -158,6 +158,14 @@ export class SampleBank {
       // Octets encore là : un nouveau `request` redécode sans réseau.
       e.status = 'idle';
     }
+  }
+
+  /** Octets de PCM décodé (float 32 bits), voix et musique (outil de mesure). */
+  public get decodedBytes(): number {
+    let n = 0;
+    for (const e of this.entries.values())
+      if (e.buffer) n += e.buffer.length * e.buffer.numberOfChannels * 4;
+    return n;
   }
 
   /** Nombre de fichiers décodés (outil de test et de débogage). */

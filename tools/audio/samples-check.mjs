@@ -23,7 +23,7 @@ const browser = await playwright.chromium.launch({
     '--use-gl=swiftshader',
     '--enable-webgl',
     '--ignore-gpu-blocklist',
-    '--autoplay-policy=no-user-gesture-required',
+    // Politique d'autoplay par défaut : seul le clic de l'utilisateur débloque l'audio.
   ],
 });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
@@ -120,9 +120,14 @@ await page.waitForTimeout(500);
 const music = audioRequests.filter((r) => r.includes('/audio/music/'));
 const vo = audioRequests.filter((r) => r.includes('/audio/vo/'));
 console.log(`réseau : ${String(music.length)} morceaux, ${String(vo.length)} répliques`);
-for (const r of music) console.log(`  ${r}`);
-if (audioRequests.some((r) => !r.startsWith('200') && !r.startsWith('304')))
-  fail(`requêtes en échec : ${audioRequests.filter((r) => !r.startsWith('20')).join(', ')}`);
+for (const r of [...new Set(music)]) console.log(`  ${r}`);
+// 206 : requêtes Range des éléments audio (streaming de l'OST).
+const ok = (r) => r.startsWith('200') || r.startsWith('206') || r.startsWith('304');
+if (audioRequests.some((r) => !ok(r)))
+  fail(`requêtes en échec : ${audioRequests.filter((r) => !ok(r)).join(', ')}`);
+const mem = await audio();
+console.log(`mémoire OST : PCM décodé ${String(mem.pcmMo)} Mo (voix), ${String(mem.streams)} éléments audio`);
+if (mem.pcmMo > 40) fail(`trop de PCM décodé : ${String(mem.pcmMo)} Mo`);
 if (music.length === 0 || vo.length === 0) fail('aucun fichier audio requis');
 for (const p of problems) fail(p);
 

@@ -117,6 +117,8 @@ export function installDemoApi(game: Game3D): void {
       synthMode: game.audio.music.mode,
       voices: [...game.audio.voices.log],
       decoded: game.audio.samples.decodedCount,
+      pcmMo: game.audio.musicMemory.pcmMo,
+      streams: game.audio.musicMemory.elements,
     }),
     cheat: (key: 'K' | 'G' | 'N' | 'B') => {
       game.cheat(key);
