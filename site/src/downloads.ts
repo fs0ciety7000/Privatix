@@ -12,6 +12,8 @@ import {
   formatSize,
   normalizeReleases,
   PLATFORMS,
+  REPO,
+  shortHash,
   stableFiles,
   type OsFamily,
   type Release,
@@ -125,17 +127,132 @@ function primaryButton(file: ReleaseFile, primary: boolean): HTMLAnchorElement {
   return a;
 }
 
+/** Copie dans le presse-papiers (API asynchrone, sinon sélection + execCommand). */
+async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const ta = el('textarea', { readonly: '', 'aria-hidden': 'true', style: 'position:fixed;opacity:0;pointer-events:none' });
+    ta.value = text;
+    document.body.append(ta);
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    ta.remove();
+    return ok;
+  }
+}
+
+/** Annonce discrète aux lecteurs d'écran (zone polie unique, créée à la demande). */
+function announce(msg: string): void {
+  let live = document.querySelector<HTMLElement>('[data-dl-announce]');
+  if (!live) {
+    live = el('p', { class: 'sr-only', 'aria-live': 'polite', 'data-dl-announce': '' });
+    document.body.append(live);
+  }
+  live.textContent = '';
+  window.setTimeout(() => {
+    if (live) live.textContent = msg;
+  }, 30);
+}
+
+/**
+ * Empreinte SHA-256 d'un fichier : abrégée (valeur complète au survol et dans un <details>), avec
+ * un bouton « Copier ». Rien si GitHub ne fournit pas d'empreinte (anciennes releases, repli).
+ */
+function hashLine(file: ReleaseFile): HTMLElement | null {
+  const hex = file.sha256;
+  if (!hex) return null;
+  const btn = el('button', { type: 'button', class: 'dl-hash__copy', 'aria-label': `Copier l'empreinte SHA-256 de ${file.name}` }, 'Copier');
+  let timer = 0;
+  btn.addEventListener('click', () => {
+    void copyText(hex).then((ok) => {
+      btn.textContent = ok ? 'Copié' : 'Échec';
+      btn.dataset.state = ok ? 'ok' : 'err';
+      announce(ok ? `Empreinte SHA-256 de ${file.name} copiée.` : 'Copie impossible : sélectionnez l\'empreinte complète.');
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        btn.textContent = 'Copier';
+        delete btn.dataset.state;
+      }, 2000);
+    });
+  });
+  return el(
+    'div',
+    { class: 'dl-hash' },
+    el(
+      'details',
+      { class: 'dl-hash__details' },
+      el('summary', { title: hex }, el('span', { class: 'dl-hash__label' }, 'SHA-256'), el('code', { class: 'dl-hash__short' }, shortHash(hex, 6))),
+      el('code', { class: 'dl-hash__full' }, hex),
+    ),
+    btn,
+  );
+}
+
 function fileTile(file: ReleaseFile, current: boolean): HTMLLIElement {
   const size = formatSize(file.size);
   return el(
     'li',
-    {},
+    { class: 'dl-item' },
     el(
       'a',
       { class: `dl-file${current ? ' dl-file--current' : ''}`, href: file.url },
       el('b', {}, file.platform.label),
       el('span', {}, size ? `${file.platform.detail} · ${size}` : file.platform.detail),
       el('code', {}, file.name),
+    ),
+    hashLine(file),
+  );
+}
+
+function cmd(label: string, line: string): HTMLLIElement {
+  return el('li', {}, el('span', {}, label), el('code', {}, line));
+}
+
+/** Encart « Vérifier votre téléchargement » : seulement si GitHub fournit des empreintes. */
+function verifyBox(release: Release, files: readonly ReleaseFile[]): HTMLElement | null {
+  if (!files.some((f) => f.sha256)) return null;
+  const sums = release.checksumsUrl;
+  const nameOf = (os: OsFamily, fallback: string): string => files.find((f) => f.platform.os === os)?.name ?? fallback;
+  return el(
+    'details',
+    { class: 'dl-verify' },
+    el('summary', {}, 'Vérifier votre téléchargement'),
+    el(
+      'div',
+      { class: 'dl-verify__body' },
+      el(
+        'p',
+        {},
+        "Calculez l'empreinte SHA-256 du fichier téléchargé et comparez-la à celle affichée sous son nom (ou dans ",
+        sums ? el('a', { class: 'link', href: sums }, 'SHA256SUMS.txt') : el('a', { class: 'link', href: release.url }, 'la page de la version'),
+        ') : elles doivent être identiques, caractère pour caractère.',
+      ),
+      el(
+        'ul',
+        { class: 'dl-verify__cmds', role: 'list' },
+        cmd('Windows (PowerShell)', `Get-FileHash .\\${nameOf('windows', 'Privatix-Setup.exe')} -Algorithm SHA256`),
+        cmd('macOS (Terminal)', `shasum -a 256 ${nameOf('mac', 'Privatix-mac-arm64.dmg')}`),
+        cmd('Linux', `sha256sum ${nameOf('linux', 'Privatix.AppImage')}`),
+      ),
+      el(
+        'p',
+        {},
+        'Chaque version publiée par le workflow GitHub porte aussi une attestation de provenance (Sigstore) : ',
+        el('code', {}, `gh attestation verify <fichier> -R ${REPO}`),
+        ' confirme que le fichier a été construit par le dépôt officiel.',
+      ),
+      el(
+        'p',
+        { class: 'dl-verify__note' },
+        "Les exécutables ne sont pas encore signés par un certificat d'éditeur : SmartScreen (Windows) et Gatekeeper (macOS) afficheront un avertissement au premier lancement (voir l'encart ci-dessous).",
+      ),
     ),
   );
 }
@@ -178,6 +295,8 @@ function renderLatest(root: HTMLElement, release: Release, os: OsFamily, source:
   const list = el('ul', { class: 'dl__files', role: 'list', 'aria-label': 'Tous les fichiers de cette version' });
   for (const f of files) list.append(fileTile(f, top.includes(f)));
   root.append(list);
+  const verify = verifyBox(release, files);
+  if (verify) root.append(verify);
 }
 
 function renderOlder(container: HTMLElement, list: HTMLElement, older: readonly Release[]): void {
@@ -193,6 +312,7 @@ function renderOlder(container: HTMLElement, list: HTMLElement, older: readonly 
             {},
             el('a', { class: 'link', href: f.url }, `${f.platform.label} · ${f.platform.detail}`),
             el('span', {}, size ? ` · ${size}` : ''),
+            hashLine(f),
           ),
         );
       }
@@ -226,19 +346,12 @@ function renderNone(root: HTMLElement): void {
   );
 }
 
-/** Met à jour le bouton « Télécharger » du hero et le badge de version. */
+/** Met à jour le bouton « Télécharger » du hero (OS du visiteur, version et date). */
 function updateHero(release: Release | null, os: OsFamily): void {
   const label = document.querySelector<HTMLElement>('[data-dl-hero-label]');
   const sub = document.querySelector<HTMLElement>('[data-dl-hero-sub]');
-  const version = document.querySelector<HTMLElement>('[data-version]');
   if (label && os !== 'other') label.textContent = `Télécharger pour ${OS_LABEL[os]}`;
-  if (release) {
-    if (sub) sub.textContent = `Version ${release.version}${release.date ? ` · ${formatDate(release.date)}` : ''}`;
-    if (version) {
-      version.replaceChildren(el('span', { class: 'badge badge--reglementaire' }, `v${release.version}`));
-      version.hidden = false;
-    }
-  }
+  if (release && sub) sub.textContent = `Version ${release.version}${release.date ? ` · ${formatDate(release.date)}` : ''}`;
 }
 
 export async function initDownloads(): Promise<void> {

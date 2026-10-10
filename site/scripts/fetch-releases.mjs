@@ -36,6 +36,8 @@ try {
         name: a.name,
         size: a.size,
         browser_download_url: a.browser_download_url,
+        // empreinte SHA-256 calculée par GitHub (« sha256:… »), affichée dans la section Télécharger
+        digest: a.digest ?? null,
       })),
     }));
   write(slim, 'instantané à jour');

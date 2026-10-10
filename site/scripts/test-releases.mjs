@@ -7,7 +7,9 @@ import {
   detectOs,
   formatSize,
   normalizeReleases,
+  parseSha256,
   pickFiles,
+  shortHash,
   stableFiles,
   summarizeNotes,
 } from '../src/releases-core.ts';
@@ -90,6 +92,50 @@ t('tailles', () => {
   assert.equal(formatSize(115125798), '115 Mo');
   assert.equal(formatSize(52_400_000), '52,4 Mo');
   assert.equal(formatSize(0), '');
+});
+
+t('empreintes SHA-256 : champ digest de l\'API GitHub', () => {
+  const hex = '92cb856ee228275764c5dc92b80961060f1381a860e28aeb4c0d41c99bdfe8ee';
+  assert.equal(parseSha256(`sha256:${hex}`), hex);
+  assert.equal(parseSha256(`SHA256:${hex.toUpperCase()}`), hex);
+  assert.equal(parseSha256(`  sha256:${hex}\n`), hex);
+  assert.equal(parseSha256(`sha512:${hex}`), null);
+  assert.equal(parseSha256(`sha256:${hex.slice(1)}`), null);
+  assert.equal(parseSha256(`sha256:${hex.slice(1)}z`), null);
+  assert.equal(parseSha256(null), null);
+  assert.equal(parseSha256(undefined), null);
+  assert.equal(parseSha256(42), null);
+  assert.equal(shortHash(hex), '92cb856e…9bdfe8ee');
+  assert.equal(shortHash('abcd'), 'abcd');
+});
+
+t('empreintes de la vraie v0.1.0, repli sans digest', () => {
+  const [latest, old] = normalizeReleases(sample);
+  const setup = latest.files.find((f) => f.platform.id === 'win-setup');
+  assert.equal(setup.sha256, '92cb856ee228275764c5dc92b80961060f1381a860e28aeb4c0d41c99bdfe8ee');
+  assert.ok(latest.files.every((f) => /^[0-9a-f]{64}$/.test(f.sha256)));
+  // release ancienne (pas de champ digest) : rien à afficher
+  assert.ok(old.files.every((f) => f.sha256 === null));
+  assert.equal(latest.checksumsUrl, null);
+  assert.ok(stableFiles().every((f) => f.sha256 === null));
+});
+
+t('fichier SHA256SUMS.txt de la release', () => {
+  const url = 'https://github.com/fs0ciety7000/Privatix/releases/download/v0.3.0/SHA256SUMS.txt';
+  const [r] = normalizeReleases([
+    {
+      tag_name: 'v0.3.0',
+      published_at: '2026-11-01T00:00:00Z',
+      assets: [
+        { name: 'Privatix-0.3.0-setup-x64.exe', size: 1, browser_download_url: 'https://x/setup.exe', digest: 'sha256:zz' },
+        { name: 'SHA256SUMS.txt', size: 500, browser_download_url: url, digest: null },
+        null,
+      ],
+    },
+  ]);
+  assert.equal(r.checksumsUrl, url);
+  assert.equal(r.files.length, 1);
+  assert.equal(r.files[0].sha256, null, 'digest malformé ignoré');
 });
 
 console.log(`${n} tests passés`);
