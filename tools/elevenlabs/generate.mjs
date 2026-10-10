@@ -18,6 +18,10 @@
 //                        pour ≤ 30 s, lyria-3.5 au-delà)
 //   --music-backend b    elevenlabs (défaut) ou lyria (API Gemini, clé GEMINI_API_KEY) pour le type music ;
 //                        la séparation en stems reste une opération ElevenLabs
+//   --tts-backend b      elevenlabs (défaut) ou gemini (Gemini TTS, clé GEMINI_API_KEY) pour voice-design
+//                        et tts ; les voix arrêtées sur ElevenLabs (voiceId du manifeste) y restent
+//   --variants "a|b|c"   Gemini : une voix par variante de timbre (ajoutée à la description) ; chaque
+//                        réplique est dite par chaque variante (sorties suffixées _v1, _v2…)
 //   --pick voix=n,…      aperçu de Voice Design retenu (1 à 3) avant création de la voix
 //   --create-voices      crée les voix choisies (POST /v1/text-to-voice) ; sans cette option, Voice
 //                        Design ne produit que les aperçus (le workspace est plein : 3/3 voix)
@@ -62,6 +66,21 @@ const GEMINI_KEY = process.env.GEMINI_API_KEY;
 const LYRIA_BASE = process.env.LYRIA_BASE_URL ?? 'https://generativelanguage.googleapis.com/v1beta';
 // Tarifs de l'API Gemini relevés sur ai.google.dev/gemini-api/docs/pricing le 2026-10-09 (par requête).
 const LYRIA_USD = { 'lyria-3-clip-preview': 0.04, 'lyria-3-pro-preview': 0.08, 'lyria-3.5': 0.08 };
+const TTS_BACKEND = opt('tts-backend', process.env.TTS_BACKEND ?? 'elevenlabs');
+if (!['elevenlabs', 'gemini'].includes(TTS_BACKEND))
+  throw new Error(`--tts-backend inconnu : ${TTS_BACKEND} (elevenlabs | gemini)`);
+const GEMINI_BASE = process.env.GEMINI_BASE_URL ?? LYRIA_BASE;
+const GEMINI_TTS_MODEL = 'gemini-3.8-flash-tts';
+// Gemini 3.8 Flash TTS : facturé à la durée d'audio produite (tarif 2026 : 0,00225 $ par 10 s ;
+// ≈ 0,0045 $ dès 2027). Durée estimée à 14 caractères de français par seconde ; un aperçu de
+// Voice Design compte pour 10 s (hypothèse : la doc ne chiffre pas l'échantillon renvoyé).
+const GEMINI_USD_PER_10S = new Date().getFullYear() >= 2027 ? 0.0045 : 0.00225;
+const GEMINI_CHARS_PER_SECOND = 14;
+const GEMINI_DESIGN_SECONDS = 10;
+const VARIANTS = opt('variants', '')
+  .split('|')
+  .map((v) => v.trim())
+  .filter(Boolean);
 const ONLY = opt('only', null)?.split(',').filter(Boolean) ?? null;
 const TYPES = opt('type', null)?.split(',').filter(Boolean) ?? null;
 const PICKS = Object.fromEntries(
@@ -111,11 +130,17 @@ const lyriaModel = (a) =>
 function estimate(list, samples = SAMPLES) {
   const r = MANIFEST.rates;
   const e = { calls: 0, ttsChars: 0, designChars: 0, sfxSeconds: 0, musicSeconds: 0, stems: 0 };
+  e.geminiSeconds = 0;
   for (const a of list) {
-    const n = a.type === 'voice-design' ? 1 : takesOf(a, samples);
+    const gem = (a.type === 'tts' || a.type === 'voice-design') && backendOf(a.voice) === 'gemini';
+    const nv = gem ? Math.max(1, VARIANTS.length) : 1;
+    const n = (a.type === 'voice-design' ? 1 : takesOf(a, samples)) * nv;
     e.calls += n;
-    if (a.type === 'tts') e.ttsChars += ttsText(a).length * n;
-    if (a.type === 'voice-design') e.designChars += (a.params.text?.length ?? 0) * 3;
+    if (gem && a.type === 'tts')
+      e.geminiSeconds += (geminiInput(a).text.length / GEMINI_CHARS_PER_SECOND) * n;
+    else if (gem) e.geminiSeconds += GEMINI_DESIGN_SECONDS * n;
+    else if (a.type === 'tts') e.ttsChars += ttsText(a).length * n;
+    if (a.type === 'voice-design' && !gem) e.designChars += (a.params.text?.length ?? 0) * 3;
     if (a.type === 'sfx') e.sfxSeconds += a.params.duration_seconds * n;
     if (a.type === 'music') {
       e.musicSeconds += musicSeconds(a) * n;
@@ -129,7 +154,8 @@ function estimate(list, samples = SAMPLES) {
   e.usd =
     ((e.ttsChars + e.designChars) / 1000) * r.ttsUsdPer1kChars +
     (e.sfxSeconds / 60) * r.sfxUsdPerMinute +
-    (LYRIA ? (e.lyriaUsd ?? 0) : (e.musicSeconds / 60) * r.musicUsdPerMinute);
+    (LYRIA ? (e.lyriaUsd ?? 0) : (e.musicSeconds / 60) * r.musicUsdPerMinute) +
+    (e.geminiSeconds / 10) * GEMINI_USD_PER_10S;
   return e;
 }
 function printEstimate(list, label, samples = SAMPLES) {
@@ -149,6 +175,10 @@ function printEstimate(list, label, samples = SAMPLES) {
   console.log(
     `  Musique       : ${e.musicSeconds.toFixed(0)} s (${(e.musicSeconds / 60).toFixed(1)} min)${LYRIA ? ` · Lyria ≈ ${(e.lyriaUsd ?? 0).toFixed(2)} $` : ''}`,
   );
+  if (e.geminiSeconds)
+    console.log(
+      `  Gemini TTS    : ≈ ${e.geminiSeconds.toFixed(0)} s d'audio (${GEMINI_USD_PER_10S} $ / 10 s) ≈ ${((e.geminiSeconds / 10) * GEMINI_USD_PER_10S).toFixed(3)} $`,
+    );
   console.log(`  Stems         : ${e.stems} séparations (coût non publié)`);
   console.log(
     `  ≈ ${e.credits.toLocaleString('fr-BE')} crédits hors musique · ≈ ${e.usd.toFixed(2)} $ au tarif « pay as you go »`,
@@ -158,15 +188,16 @@ function printEstimate(list, label, samples = SAMPLES) {
 
 // ─── Fichiers ────────────────────────────────────────────────────────────────
 const exts = FORMAT === 'both' ? ['ogg', 'webm'] : [FORMAT];
-const rawPath = (a, t) =>
-  path.join(OUT, 'raw', `${a.out}${a.takes > 1 || t > 1 ? `_t${t}` : ''}.mp3`);
-const finalPath = (a, t, ext) =>
-  path.join(
-    OUT,
-    FORMAT === 'both' ? ext : '',
-    `${a.out}${a.takes > 1 || t > 1 ? `_t${t}` : ''}.${ext}`,
-  );
-const done = (a, t) => exts.every((x) => fs.existsSync(finalPath(a, t, x)));
+// Variante de voix Gemini (--variants) : suffixe _v<n> ; Gemini renvoie du WAV, ElevenLabs du MP3.
+const suffix = (a, t, v) => `${a.takes > 1 || t > 1 ? `_t${t}` : ''}${v ? `_v${v}` : ''}`;
+const isGemini = (a) => a.type === 'tts' && backendOf(a.voice) === 'gemini';
+const rawPath = (a, t, v) =>
+  path.join(OUT, 'raw', `${a.out}${suffix(a, t, v)}.${isGemini(a) ? 'wav' : 'mp3'}`);
+const finalPath = (a, t, ext, v) =>
+  path.join(OUT, FORMAT === 'both' ? ext : '', `${a.out}${suffix(a, t, v)}.${ext}`);
+const variantsOf = (a) => (isGemini(a) && VARIANTS.length ? VARIANTS.map((_, i) => i + 1) : [0]);
+const done = (a, t) =>
+  variantsOf(a).every((v) => exts.every((x) => fs.existsSync(finalPath(a, t, x, v))));
 const mkdirFor = (f) => fs.mkdirSync(path.dirname(f), { recursive: true });
 
 const STATE = path.join(OUT, 'state', 'voices.json');
@@ -181,7 +212,20 @@ const MANIFEST_VOICES = Object.fromEntries(
     .filter((a) => a.type === 'voice-design' && a.voiceId)
     .map((a) => [a.voice, a.voiceId]),
 );
+/** Fournisseur d'une voix : les voix arrêtées sur ElevenLabs y restent, quel que soit --tts-backend. */
+const backendOf = (v) => (MANIFEST_VOICES[v] ? 'elevenlabs' : TTS_BACKEND);
+/** voice_id Gemini (`voice_…`) : variante n (1 par défaut, ou --pick), ou GEMINI_VOICE_<VOIX>. */
+function geminiVoiceId(v, n = PICKS[v] ?? 1) {
+  const g = voices[v]?.gemini;
+  return (
+    process.env[`GEMINI_VOICE_${v.toUpperCase()}`] ??
+    g?.variants?.[n - 1]?.voice_id ??
+    g?.voice_id ??
+    null
+  );
+}
 function voiceIdFor(v) {
+  if (backendOf(v) === 'gemini') return geminiVoiceId(v);
   return (
     process.env[`ELEVENLABS_VOICE_${v.toUpperCase()}`] ??
     MANIFEST_VOICES[v] ??
@@ -243,8 +287,8 @@ function peakDb(file) {
   const m = out.match(/max_volume:\s*(-?[\d.]+) dB/);
   return m ? Number(m[1]) : 0;
 }
-function convert(a, t) {
-  const raw = rawPath(a, t);
+function convert(a, t, v) {
+  const raw = rawPath(a, t, v);
   const post = a.post ?? {};
   const chain = filterChain(post);
   // Normalisation en crête (bruitages) : mesure après filtres, puis gain.
@@ -261,7 +305,7 @@ function convert(a, t) {
     tail.push('afade=t=in:d=0.003', 'areverse', 'afade=t=in:d=0.01', 'areverse');
   tail.push('aresample=48000');
   for (const ext of exts) {
-    const f = finalPath(a, t, ext);
+    const f = finalPath(a, t, ext, v);
     mkdirFor(f);
     const codec =
       ext === 'ogg' ? ['-c:a', 'libvorbis', '-q:a', '5'] : ['-c:a', 'libopus', '-b:a', '96k'];
@@ -422,17 +466,17 @@ function lyriaPrompt(a) {
     lyriaModel(a) === 'lyria-3-clip-preview' ? '' : `Total duration: about ${secs} seconds. `;
   return `${body}\n${len}Instrumental only, no vocals, no lyrics.`;
 }
-async function lyriaMusic(a) {
-  if (!GEMINI_KEY) throw new Error('GEMINI_API_KEY absente (backend lyria)');
-  const model = lyriaModel(a);
+/** Appel à l'API Gemini (Lyria, Gemini TTS) : débit partagé, reprises sur 429 / 5xx. */
+async function gemini(label, method, url, json) {
+  if (!GEMINI_KEY) throw new Error(`GEMINI_API_KEY absente (${label})`);
   for (let attempt = 1; ; attempt += 1) {
     await slot();
     let res;
     try {
-      res = await fetch(`${LYRIA_BASE}/interactions`, {
-        method: 'POST',
+      res = await fetch(`${GEMINI_BASE}${url}`, {
+        method,
         headers: { 'x-goog-api-key': GEMINI_KEY, 'content-type': 'application/json' },
-        body: JSON.stringify({ model, input: lyriaPrompt(a) }),
+        body: json ? JSON.stringify(json) : undefined,
       });
     } catch (err) {
       res = {
@@ -445,27 +489,139 @@ async function lyriaMusic(a) {
     } finally {
       release();
     }
-    if (res.ok) {
-      const data = await res.json();
-      const audio = (data.steps ?? [])
-        .filter((s) => s.type === 'model_output')
-        .flatMap((s) => s.content ?? [])
-        .filter((c) => c.type === 'audio' && c.data)
-        .at(-1);
-      if (!audio)
-        throw new Error(
-          `${a.id} : réponse Lyria sans bloc audio (${JSON.stringify(data).slice(0, 300)})`,
-        );
-      return new Response(Buffer.from(audio.data, 'base64'));
-    }
+    if (res.ok) return res.json();
     const body = await res.text();
     const retriable = [0, 429, 500, 502, 503, 504].includes(res.status);
-    if (!retriable || attempt >= 5)
-      throw new Error(`Lyria ${model} → ${res.status} ${res.statusText} ${body.slice(0, 400)}`);
+    if (!retriable || attempt >= 5) {
+      const err = new Error(`${label} → ${res.status} ${res.statusText} ${body.slice(0, 400)}`);
+      err.status = res.status;
+      throw err;
+    }
     const after = Number(res.headers.get('retry-after')) * 1000 || 2000 * 2 ** (attempt - 1);
-    console.warn(`  … Lyria ${res.status}, nouvel essai dans ${(after / 1000).toFixed(1)} s`);
+    console.warn(`  … ${label} ${res.status}, nouvel essai dans ${(after / 1000).toFixed(1)} s`);
     await new Promise((r) => setTimeout(r, after));
   }
+}
+/** Dernier bloc audio (base64) d'une réponse Interactions. */
+function interactionAudio(data, label) {
+  const audio = (data.steps ?? [])
+    .filter((s) => s.type === 'model_output')
+    .flatMap((s) => s.content ?? [])
+    .filter((c) => c.type === 'audio' && c.data)
+    .at(-1);
+  if (!audio)
+    throw new Error(`${label} : réponse sans bloc audio (${JSON.stringify(data).slice(0, 300)})`);
+  return Buffer.from(audio.data, 'base64');
+}
+async function lyriaMusic(a) {
+  const model = lyriaModel(a);
+  const data = await gemini(`Lyria ${model}`, 'POST', '/interactions', {
+    model,
+    input: lyriaPrompt(a),
+  });
+  return new Response(interactionAudio(data, a.id));
+}
+
+// Gemini TTS : la voix est conçue une fois (POST /voices, description en anglais : traits permanents),
+// puis chaque réplique passe par /interactions avec un `style` court pour l'émotion. Les balises
+// eleven_v3 « […] » sont retirées du texte et deviennent ce style.
+const TAG_STYLES = {
+  chuckles: 'amused, with a soft chuckle',
+  sighs: 'with a weary sigh',
+  'long sigh': 'with a long weary sigh',
+  'exhausted sigh': 'exhausted, sighing',
+  shouting: 'shouting',
+  quietly: 'quietly',
+  softly: 'softly',
+  warmly: 'warmly',
+  dry: 'dry, deadpan',
+  tired: 'tired',
+  smiling: 'smiling',
+  beat: 'with a short pause',
+  'long pause': 'with a long pause',
+  'deep breath': 'taking a deep breath first',
+};
+function geminiInput(a) {
+  const tags = [...a.params.text.matchAll(/\[([^\]]*)\]/g)].map((m) => m[1].trim());
+  const styles = [...new Set(tags.map((t) => TAG_STYLES[t] ?? t))];
+  return { text: stripTags(a.params.text), style: styles.join(', ') || a.meta?.emo || '' };
+}
+const genderOf = (a) =>
+  /^(female|woman|girl)\b/i.test(a.params.voice_description) ? 'female' : 'male';
+let geminiLanguage = 'fr-BE';
+async function geminiVoiceDesign(a) {
+  const variants = VARIANTS.length ? VARIANTS : [''];
+  const prev = voices[a.voice]?.gemini ?? {};
+  const list = FORCE ? [] : [...(prev.variants ?? [])];
+  const dir = path.join(OUT, path.dirname(a.out));
+  for (let i = 0; i < variants.length; i += 1) {
+    const input = `${a.params.voice_description}${variants[i] ? ` ${variants[i]}` : ''}`;
+    if (list[i]?.voice_id && list[i].description === input) continue;
+    const voice = (language_code) => ({
+      store: true,
+      voice: {
+        model: GEMINI_TTS_MODEL,
+        type: 'prompted',
+        display_name: `${a.name}${variants.length > 1 ? ` (${i + 1})` : ''}`.slice(0, 60),
+        gender: genderOf(a),
+        language_code,
+        prompted: { input },
+      },
+    });
+    let data;
+    try {
+      data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
+    } catch (err) {
+      // fr-BE refusé : repli fr-FR (l'accent reste porté par la description).
+      if (err.status !== 400 || geminiLanguage !== 'fr-BE') throw err;
+      console.warn(`  ${a.id} : fr-BE refusé (${err.message.slice(0, 160)}), repli fr-FR`);
+      geminiLanguage = 'fr-FR';
+      data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
+    }
+    const id = data.id ?? data.name?.split('/').pop();
+    if (!id)
+      throw new Error(`${a.id} : réponse /voices sans id (${JSON.stringify(data).slice(0, 300)})`);
+    if (data.sample_audio?.data) {
+      const f = path.join(dir, `gemini_apercu_${i + 1}.wav`);
+      mkdirFor(f);
+      fs.writeFileSync(f, Buffer.from(data.sample_audio.data, 'base64'));
+    }
+    list[i] = {
+      voice_id: id,
+      description: input,
+      language_code: geminiLanguage,
+      gender: genderOf(a),
+    };
+    voices[a.voice] = { ...(voices[a.voice] ?? {}), gemini: { ...prev, variants: list } };
+    saveVoices();
+    console.log(`  ${a.id} : voix Gemini ${i + 1}/${variants.length} → ${id}`);
+  }
+}
+async function geminiTts(a, t, v) {
+  const voiceId = geminiVoiceId(a.voice, v || undefined);
+  if (!voiceId)
+    throw new Error(`${a.id} : aucune voix Gemini pour « ${a.voice} » (variante ${v || 1})`);
+  const { text, style } = geminiInput(a);
+  const data = await gemini(`Gemini TTS ${a.id}`, 'POST', '/interactions', {
+    model: GEMINI_TTS_MODEL,
+    input: [
+      {
+        type: 'user_input',
+        content: [
+          {
+            type: 'text',
+            text,
+            ...(style ? { annotations: [{ type: 'speech_metadata', style }] } : {}),
+          },
+        ],
+      },
+    ],
+    response_format: { type: 'audio' },
+    generation_config: { speech_config: [{ voice: voiceId }] },
+  });
+  const f = rawPath(a, t, v);
+  mkdirFor(f);
+  fs.writeFileSync(f, interactionAudio(data, a.id));
 }
 
 async function music(a, t) {
@@ -515,21 +671,26 @@ async function stemSplit(a) {
 }
 
 async function run(a) {
-  if (a.type === 'voice-design') return voiceDesign(a);
+  if (a.type === 'voice-design')
+    return backendOf(a.voice) === 'gemini' ? geminiVoiceDesign(a) : voiceDesign(a);
   if (a.type === 'stem-split') return stemSplit(a);
   const jobs = [];
   for (let t = 1; t <= takesOf(a); t += 1) {
-    if (!FORCE && done(a, t)) continue;
-    jobs.push(
-      (async () => {
-        if (FORCE || !fs.existsSync(rawPath(a, t))) {
-          if (a.type === 'tts') await tts(a, t);
-          else await saveAudio(a.type === 'sfx' ? await sfx(a) : await music(a, t), rawPath(a, t));
-        }
-        convert(a, t);
-        console.log(`  ${a.id} prise ${t} → ${path.relative(OUT, finalPath(a, t, exts[0]))}`);
-      })(),
-    );
+    for (const v of variantsOf(a)) {
+      if (!FORCE && exts.every((x) => fs.existsSync(finalPath(a, t, x, v)))) continue;
+      jobs.push(
+        (async () => {
+          if (FORCE || !fs.existsSync(rawPath(a, t, v))) {
+            if (isGemini(a)) await geminiTts(a, t, v);
+            else if (a.type === 'tts') await tts(a, t);
+            else
+              await saveAudio(a.type === 'sfx' ? await sfx(a) : await music(a, t), rawPath(a, t));
+          }
+          convert(a, t, v);
+          console.log(`  ${a.id} prise ${t} → ${path.relative(OUT, finalPath(a, t, exts[0], v))}`);
+        })(),
+      );
+    }
   }
   await Promise.all(jobs);
 }
@@ -540,9 +701,12 @@ console.log(
 );
 const noVoice = [];
 function pending(a) {
+  if (a.type === 'voice-design' && backendOf(a.voice) === 'gemini')
+    return FORCE || (voices[a.voice]?.gemini?.variants ?? []).length < Math.max(1, VARIANTS.length);
   if (a.type === 'voice-design')
     return !voiceIdFor(a.voice) && (FORCE || CREATE_VOICES || !voices[a.voice]?.previews);
-  if (a.type === 'tts' && !voiceIdFor(a.voice) && !CREATE_VOICES) {
+  const geminiDesigning = backendOf(a.voice) === 'gemini' && todoDesign(a.voice);
+  if (a.type === 'tts' && !voiceIdFor(a.voice) && !CREATE_VOICES && !geminiDesigning) {
     noVoice.push(a);
     return false;
   }
@@ -553,6 +717,9 @@ function pending(a) {
   }
   return Array.from({ length: takesOf(a) }, (_, i) => i + 1).some((t) => !done(a, t));
 }
+// Une voix Gemini en cours de conception dans ce lancement rend ses répliques générables.
+const todoDesign = (v) =>
+  selected.some((x) => x.type === 'voice-design' && x.voice === v && pending(x));
 const todo = selected.filter(pending);
 if (skippedStatus.length)
   console.log(
@@ -573,15 +740,20 @@ if (DRY) {
     );
   process.exit(0);
 }
-const needsEleven = todo.some((a) => !(LYRIA && a.type === 'music'));
+const viaGemini = (a) =>
+  (LYRIA && a.type === 'music') ||
+  ((a.type === 'tts' || a.type === 'voice-design') && backendOf(a.voice) === 'gemini');
+const needsEleven = todo.some((a) => !viaGemini(a));
 if (needsEleven && !KEY) {
   console.error(
     '\nELEVENLABS_API_KEY absente : rien n’est généré (utiliser --dry-run pour estimer).',
   );
   process.exit(2);
 }
-if (LYRIA && todo.some((a) => a.type === 'music') && !GEMINI_KEY) {
-  console.error('\nGEMINI_API_KEY absente : la musique Lyria n’est pas générée.');
+if (todo.some(viaGemini) && !GEMINI_KEY) {
+  console.error(
+    '\nGEMINI_API_KEY absente : rien n’est généré via l’API Gemini (Lyria, Gemini TTS).',
+  );
   process.exit(2);
 }
 if (!YES) {
