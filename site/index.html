@@ -50,6 +50,7 @@
         </a>
         <nav class="site-nav" aria-label="Sections">
           <ul>
+            <li><a href="#trailer">Trailer</a></li>
             <li><a href="#jeu">Le jeu</a></li>
             <li><a href="#gameplay">Gameplay</a></li>
             <li><a href="#heros">Le héros</a></li>
@@ -106,9 +107,9 @@
             </a>
           </div>
           <p class="hero__trailer" data-hero>
-            <a class="btn btn--secondary" href="/trailer/privatix-trailer-720p.mp4" data-trailer-open>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" fill="currentColor" /></svg>
-              <span>Regarder avec le son<small>Trailer · 1 min</small></span>
+            <a class="btn btn--secondary" href="#trailer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor" /></svg>
+              <span>Voir le trailer<small>1 min · avec le son</small></span>
             </a>
           </p>
           <p class="hero__more" data-hero>
@@ -117,14 +118,29 @@
             <span class="hero__version" data-version hidden></span>
           </p>
         </div>
-        <!-- Trailer avec le son, en plein cadre (lecteur HTML5 natif ; sans JS, le lien ouvre le MP4). -->
-        <dialog class="trailer" data-trailer-dialog aria-label="Trailer de Privatix">
-          <form method="dialog"><button class="trailer__close btn btn--secondary" aria-label="Fermer le trailer">✕</button></form>
-          <video class="trailer__video" controls playsinline preload="none" width="1920" height="1080" poster="/trailer/privatix-trailer-poster.webp">
-            <source src="/trailer/privatix-trailer-16x9.webm" type="video/webm" />
-            <source src="/trailer/privatix-trailer-720p.mp4" type="video/mp4" />
-          </video>
-        </dialog>
+      </section>
+
+      <!-- ═══ Trailer ═══ -->
+      <section class="section trailer-section" id="trailer" aria-labelledby="trailer-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Bande-annonce</p>
+          <h2 id="trailer-title" class="section__title" data-reveal>Le Shift, en une minute</h2>
+          <div class="trailer-player" data-reveal>
+            <!-- Lecteur HTML5 natif, hébergé sur le site (aucun service tiers) : rien ne charge avant le clic. -->
+            <video class="trailer-player__video" controls playsinline preload="none" width="1920" height="1080"
+              poster="/trailer/privatix-trailer-poster.webp" data-trailer-player
+              aria-label="Trailer de Privatix, 1 minute">
+              <source src="/trailer/privatix-trailer-16x9.webm" type="video/webm" />
+              <source src="/trailer/privatix-trailer-720p.mp4" type="video/mp4" />
+              <a href="/trailer/privatix-trailer-720p.mp4">Télécharger le trailer (MP4)</a>
+            </video>
+          </div>
+          <p class="trailer-player__meta" data-reveal>
+            Gameplay réel capturé dans le jeu · 60 images/s · musique originale.
+            Autres formats (vertical, carré, 3:2, 1080p) :
+            <a class="link" href="https://github.com/fs0ciety7000/Privatix/releases/tag/trailer-v2" rel="noopener">télécharger le press kit vidéo</a>.
+          </p>
+        </div>
       </section>
 
       <!-- ═══ Pitch ═══ -->

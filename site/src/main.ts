@@ -41,33 +41,19 @@ function initHeroVideo(): void {
 }
 
 /**
- * « Regarder avec le son » : le trailer s'ouvre en plein cadre dans un <dialog>, avec le lecteur
- * natif et le son ; le fond du hero se met en pause pendant ce temps. Sans JS, le lien ouvre le MP4.
+ * Lecteur du trailer (section #trailer) : quand il joue avec le son, le trailer muet du fond du hero
+ * se met en pause, et reprend à la fin ou à la pause (hors mouvement réduit).
  */
 function initTrailer(): void {
-  const open = document.querySelector<HTMLAnchorElement>('[data-trailer-open]');
-  const dialog = document.querySelector<HTMLDialogElement>('[data-trailer-dialog]');
-  const video = dialog?.querySelector<HTMLVideoElement>('video');
+  const player = document.querySelector<HTMLVideoElement>('[data-trailer-player]');
   const bg = document.querySelector<HTMLVideoElement>('[data-trailer-bg]');
-  if (!open || !dialog || !video || typeof dialog.showModal !== 'function') return;
-  open.addEventListener('click', (e) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-    e.preventDefault();
-    bg?.pause();
-    dialog.showModal();
-    video.muted = false;
-    video.currentTime = 0;
-    void video.play().catch(() => {
-      /* lecture refusée : les contrôles natifs restent disponibles */
-    });
-  });
-  dialog.addEventListener('click', (e) => {
-    if (e.target === dialog) dialog.close();
-  });
-  dialog.addEventListener('close', () => {
-    video.pause();
+  if (!player) return;
+  player.addEventListener('play', () => bg?.pause());
+  const resume = (): void => {
     if (bg?.src && !reducedMotion.matches) void bg.play().catch(() => undefined);
-  });
+  };
+  player.addEventListener('pause', resume);
+  player.addEventListener('ended', resume);
 }
 
 initYear();

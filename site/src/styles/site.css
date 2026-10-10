@@ -1111,35 +1111,30 @@ code {
   height: 20px;
   flex: none;
 }
-.trailer {
-  width: 100vw;
-  max-width: 100vw;
-  height: 100dvh;
-  max-height: 100dvh;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: #000;
-  color: var(--px-text);
+/* Section trailer : lecteur natif 16:9, cadre néon discret. */
+.trailer-section {
+  padding-block-end: clamp(40px, 6vw, 80px);
+}
+.trailer-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
   overflow: hidden;
+  background: #000;
+  border: 1px solid var(--px-line);
+  box-shadow: 0 0 0 1px rgba(255, 62, 165, 0.18), 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 48px rgba(255, 62, 165, 0.12);
 }
-.trailer::backdrop {
-  background: rgba(6, 5, 18, 0.94);
-}
-.trailer__video {
+.trailer-player__video {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   background: #000;
 }
-.trailer__close {
-  position: absolute;
-  top: max(12px, env(safe-area-inset-top));
-  right: max(12px, env(safe-area-inset-right));
-  z-index: 1;
-  min-height: 44px;
-  padding: 0 var(--sp-3);
+.trailer-player__meta {
+  margin: var(--sp-4) 0 0;
+  color: var(--px-text-soft);
+  font-size: 0.95rem;
 }
 
 /* Révélations au scroll : l'état initial n'est posé que par motion.ts (contenu visible sans JS). */
