@@ -238,11 +238,14 @@ try {
   execFileSync('convert', [join(ICONS, '.masquable.png'), '-filter', 'Lanczos', '-resize', '512x512', '-strip', join(ICONS, 'privatix-icone-masquable-512.png')]);
   writeFileSync(join(ICONS, '.macos.svg'), icon({ inset: 100 / 1024, radius: 185 / 824 }));
   await png(join(ICONS, '.macos.svg'), join(ICONS, 'privatix-icone-macos-1024.png'), 1024);
+  writeIcns(join(ICONS, 'privatix.icns'), join(ICONS, 'privatix-icone-macos-1024.png'));
   for (const f of ['.plein.svg', '.plein.png', '.masquable.svg', '.masquable.png', '.macos.svg']) rmSync(join(ICONS, f));
 
   // Favicon SVG (emblème réduit embarqué) et ICO multi-tailles (PNG embarqués)
   writeFileSync(join(ICONS, 'favicon.svg'), icon({ size: 64, favicon: true, scale: 1.02, radius: 0.16 }));
   writeIco(join(ICONS, 'favicon.ico'), [16, 32, 48].map((s) => icoPng(small, s)));
+  // Appli de bureau : ICO Windows (16 → 256) et ICNS macOS (grille macOS, 16 → 1024)
+  writeIco(join(ICONS, 'privatix.ico'), [16, 24, 32, 48, 64, 128, 256].map((s) => icoPng(s <= 64 ? small : master, s)));
   rmSync(small);
   rmSync(join(ICONS, '.petit.svg'));
   made.push(`${ICONS}/ (1024 → 16, favicon.svg, favicon.ico, apple-touch-icon-180, masquable, macOS)`);
@@ -252,7 +255,9 @@ try {
 
 function icoPng(src, s) {
   const tmp = join(ICONS, `.ico-${s}.png`);
-  execFileSync('convert', [src, '-filter', 'Lanczos', '-resize', `${s}x${s}`, '-unsharp', '0x0.6+0.8+0', '-modulate', '108,115', '-strip', `PNG32:${tmp}`]);
+  // accentuation réservée aux petites tailles (même réglage que privatix-icone-16/32/64)
+  const sharpen = s <= 64 ? ['-unsharp', '0x0.6+0.8+0', '-modulate', '108,115'] : [];
+  execFileSync('convert', [src, '-filter', 'Lanczos', '-resize', `${s}x${s}`, ...sharpen, '-strip', `PNG32:${tmp}`]);
   const buf = readFileSync(tmp);
   rmSync(tmp);
   return [s, buf];
@@ -276,6 +281,26 @@ export function writeIco(path, entries) {
     off += buf.length;
   });
   writeFileSync(path, Buffer.concat([head, ...entries.map(([, b]) => b)]));
+}
+
+/** ICNS à entrées PNG (macOS 10.7 et suivants). */
+function writeIcns(path, src) {
+  const TYPES = [['icp4', 16], ['icp5', 32], ['icp6', 64], ['ic07', 128], ['ic08', 256], ['ic09', 512], ['ic10', 1024], ['ic11', 32], ['ic12', 64], ['ic13', 256], ['ic14', 512]];
+  const parts = TYPES.map(([type, s]) => {
+    const tmp = join(ICONS, `.icns-${s}.png`);
+    execFileSync('convert', [src, '-filter', 'Lanczos', '-resize', `${s}x${s}`, '-strip', `PNG32:${tmp}`]);
+    const png = readFileSync(tmp);
+    rmSync(tmp);
+    const head = Buffer.alloc(8);
+    head.write(type, 0, 'ascii');
+    head.writeUInt32BE(png.length + 8, 4);
+    return Buffer.concat([head, png]);
+  });
+  const body = Buffer.concat(parts);
+  const head = Buffer.alloc(8);
+  head.write('icns', 0, 'ascii');
+  head.writeUInt32BE(body.length + 8, 4);
+  writeFileSync(path, Buffer.concat([head, body]));
 }
 
 console.log(made.join('\n'));

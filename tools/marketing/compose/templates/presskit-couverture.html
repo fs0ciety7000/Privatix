@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- Couverture A4 du press kit : key art de l'affiche « Marquise » en haut, logo officiel
+     (lockup horizontal, fond sombre), accroche, crédits. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { font-size: {{width}}px; }
+  .canvas { font-size: 0.01em; background: var(--px-night); }
+  .art { height: 78%; object-position: 50% 60%; }
+  .fade {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10,8,24,.75) 0%, rgba(10,8,24,0) 12%),
+      linear-gradient(180deg, rgba(10,8,24,0) 60%, rgba(10,8,24,.8) 71%, var(--px-night) 78%);
+  }
+  .top {
+    position: absolute; top: 3.2%; left: 6%; right: 6%;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-cond); font-weight: 600; font-size: 2.1em;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--px-text);
+    text-shadow: 0 0.06em 0 var(--px-ink);
+  }
+  .top b { color: var(--px-hero); font-weight: 700; }
+  .top span:last-child { letter-spacing: 0.08em; text-transform: none; color: var(--px-text-soft); }
+  /* lockup horizontal 3:1 : le contenu occupe 90 % × 53 % du cadre, centré vers 80 % */
+  .logo { position: absolute; left: 8%; width: 84%; top: 70.4%; display: block; }
+  .tagline {
+    position: absolute; left: 0; right: 0; top: 87%;
+    display: flex; justify-content: center; align-items: center; gap: 0.9em;
+    font-family: var(--font-cond); font-weight: 600; font-size: 3.2em;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--px-cream);
+    text-shadow: 0 0.06em 0 var(--px-ink);
+  }
+  .tagline::before, .tagline::after {
+    content: ''; width: 2.2em; height: 0.09em; background: var(--px-hero);
+    box-shadow: 0 0.06em 0 var(--px-ink);
+  }
+  .credits { font-size: 1.9em; height: 8.6%; padding: 0 6%; background: none; }
+  .credits::before { top: 0; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <div class="fade"></div>
+  <div class="top"><span><b>Dossier de presse</b> · Press kit</span><span>privatix.fs0ciety.org</span></div>
+  <img class="logo" src="{{logoUrl}}" alt="PRIVATIX">
+  <div class="tagline">{{tagline}}</div>
+    <footer class="credits">
+    <div class="studio">
+      <img src="{{studioUrl}}" alt="">
+      <div><span class="studio__kicker">Développé par</span><span class="studio__name">OCC MONS Studios</span></div>
+    </div>
+    <div class="platforms">PC <i></i> Mac <i></i> Linux <i></i> Navigateur</div>
+    <div class="sncb"><img src="../assets/sncb-mono-blanc.png" alt="SNCB"></div>
+  </footer>
+</div>
+</body>
+</html>

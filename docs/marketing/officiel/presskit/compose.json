@@ -1,0 +1,32 @@
+{
+  "outDir": "docs/marketing/officiel/presskit",
+  "renders": [
+    {
+      "id": "privatix-presskit-couverture",
+      "template": "presskit-couverture.html",
+      "width": 1240,
+      "height": 1754,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-lockup-horizontal-sombre.svg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+      }
+    },
+    {
+      "id": "privatix-presskit-couverture-a4",
+      "template": "presskit-couverture.html",
+      "pdf": {
+        "width": 210,
+        "height": 297
+      },
+      "vars": {
+        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-lockup-horizontal-sombre.svg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+      }
+    }
+  ]
+}
