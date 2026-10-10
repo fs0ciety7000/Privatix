@@ -44,8 +44,9 @@ for (const name of fs.readdirSync(CLIPS).sort()) {
   ff([...input, '-c:v', 'libx264', '-crf', '27', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', mp4]);
   // GIF : palette commune à la séquence (mode diff : les couleurs qui bougent priment), tramage
   // Bayer (compresse mieux que Floyd-Steinberg en LZW), largeur réduite tant que > 4 Mo.
-  for (const width of [640, 576, 512, 448]) {
-    const vf = `fps=30,scale=${width}:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=160:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle`;
+  for (const width of [640, 576, 512, 480, 448, 400]) {
+    // hqdn3d : retire le grain de film du post-traitement (bruit qui ruine la compression LZW).
+    const vf = `fps=30,hqdn3d=4:3:8:8,scale=${width}:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle`;
     ff([...input, '-vf', vf, '-loop', '0', gif]);
     if (fs.statSync(gif).size <= MAX_GIF) break;
   }

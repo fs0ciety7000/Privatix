@@ -332,6 +332,11 @@ const STILL_TASKS = {
 
 const N = (s) => Math.round(s * 30);
 
+/** Bandeau central périmé (« QUAI 3 · PRISE DE SERVICE ») : la mise en place avance sans dessiner. */
+async function clearBanner(g) {
+  await g.page.evaluate(() => document.querySelectorAll('.hud-banner').forEach((b) => b.classList.remove('show')));
+}
+
 const CLIP_TASKS = {
   async 'hub-pnj'(g) {
     await g.click('button', 'Prendre son service');
@@ -340,6 +345,7 @@ const CLIP_TASKS = {
     await g.api('hubGoto', 'rudy');
     await g.api('advance', 300);
     await g.api('move', -1, 0.15);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'hub-pnj'), N(4.5));
     await g.api('release');
   },
@@ -347,12 +353,15 @@ const CLIP_TASKS = {
     await toRun(g, 0);
     await place(g, 0, 0);
     await spawnAll(g, [
-      ['consultant', -20, -52],
-      ['consultant', 26, -48],
-      ['consultant', 0, -80],
+      ['consultant', -24, -50],
+      ['consultant', 26, -46],
+      ['consultant', 0, -70],
+      ['consultant', -50, -80],
+      ['consultant', 46, -84],
     ]);
     await g.api('advance', 1600);
     await g.api('aim', -Math.PI / 2);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'combo'), N(4), async (i) => {
       if ([4, 16, 30, 70, 82, 96].includes(i)) await g.api('press', 'attack');
     });
@@ -367,6 +376,7 @@ const CLIP_TASKS = {
       ['consultant', -70, -40],
     ]);
     await g.api('advance', 1500);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'dash'), N(3.5), async (i) => {
       if (i === 2) {
         await g.api('attack', ids[0], 'quickwin');
@@ -390,6 +400,7 @@ const CLIP_TASKS = {
     const id = await g.api('spawn', 'furet', 0, -120);
     await g.api('advance', 1600);
     await g.api('attack', id, 'burrow');
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'furet-surgit'), N(4.5));
     await g.api('cheat', 'K');
     await g.api('advance', 2600);
@@ -398,6 +409,7 @@ const CLIP_TASKS = {
     await toRun(g, 0);
     await place(g, 0, 40);
     await g.api('advance', 300);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'drop-patrimoine'), N(4), async (i) => {
       if (i === 6) await g.api('lootDrop', 'wagon-bar', 0, -70);
       if (i === 75) {
@@ -417,6 +429,7 @@ const CLIP_TASKS = {
     const e = (await g.api('enemies')).find((x) => x.kind === 'auditeur');
     await g.api('teleport', e.x + 40, e.y + 140);
     await g.api('advance', 300);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'auditeur'), N(4.5), async (i) => {
       if (i === 2) await g.api('attack', e.id, 'stamp');
       if (i === 70) await g.api('attack', e.id, 'sweep');
@@ -434,6 +447,7 @@ const CLIP_TASKS = {
     await g.api('advance', 300);
     await g.api('hurt', e.id, 0.2);
     await g.api('advance', 2000);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'dirupo'), N(4.5), async (i) => {
       if (i === 2) await g.api('attack', e.id, 'bowtie');
       if (i === 75) await g.api('attack', e.id, 'scissors');
@@ -450,6 +464,7 @@ const CLIP_TASKS = {
     const e = (await g.api('enemies')).find((x) => x.kind === 'discosaure');
     await g.api('teleport', e.x, e.y + 150);
     await g.api('advance', 300);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'discosaure'), N(5), async (i) => {
       if (i === 2) await g.api('attack', e.id, 'spots');
       if (i === 95) await g.api('attack', e.id, 'stomp');
@@ -465,6 +480,7 @@ const CLIP_TASKS = {
     const e = (await g.api('enemies')).find((x) => LURCKE.includes(x.kind));
     await g.api('teleport', e.x + 30, e.y + 150);
     await g.api('advance', 300);
+    await clearBanner(g);
     await g.record(path.join(CLIPS, 'lurcke'), N(4.5), async (i) => {
       if (i === 2) await g.api('attack', e.id, 'bullets');
       if (i === 70) await g.api('attack', e.id, 'charts');
@@ -479,6 +495,8 @@ for (const session of sessions.length ? sessions : ['stills', 'clips']) {
   const size = session === 'stills' ? { width: 1920, height: 1080 } : { width: 960, height: 540 };
   console.log(`session ${session} (${size.width}×${size.height}) : ${names.join(', ')}`);
   const g = await openGame(size);
+  // Séquences : sans l'aide clavier du HUD (bruit visuel en boucle).
+  if (session === 'clips') await g.page.addStyleTag({ content: '.hud-help { display: none !important; }' });
   // Le titre se capture avant tout ; les autres tâches partent de l'écran titre ou d'un Shift.
   if (session === 'stills' && want('titre')) {
     await STILL_TASKS.titre(g);

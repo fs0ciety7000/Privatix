@@ -67,14 +67,14 @@
     },
     {
       "id": "decor-arenes", "layout": "grid", "accent": "#FF3EA5",
-      "eyebrow": "Décors · Arènes", "title": "Arènes des boss et Salles gardées", "subtitle": "Où l'on affronte les ressources de Privatix",
+      "eyebrow": "Décors · Arènes", "title": "Arènes des boss et ennemis majeurs", "subtitle": "Où l'on affronte les ressources de Privatix",
       "blocks": [
         { "title": "Boss", "cols": 3, "items": [
           { "src": "arene-auditeur", "title": "L'Auditeur des Quais", "sub": "Biome 1 · quai 2, voie, quai 3" },
           { "src": "arene-dirupo", "title": "Elio Di Rupo", "sub": "Biome 2 · tapis rouge de l'inauguration" },
           { "src": "arene-lurcke", "title": "Jean-Cul Lurcke", "sub": "Biome 3 · bureau du Directeur" }
         ] },
-        { "title": "Salles gardées", "cols": 3, "items": [
+        { "title": "Ennemis majeurs", "cols": 3, "items": [
           { "src": "arene-furet", "title": "Le Furet putride", "sub": "Biome 1 · voies" },
           { "src": "arene-fluidifieur", "title": "Le Fluidifieur", "sub": "Biome 2 · nœud central de la passerelle" },
           { "src": "arene-discosaure", "title": "Le Discosaure", "sub": "Biome 3 · afterwork du 2e étage" }
@@ -122,7 +122,7 @@
       "intro": "Smears de la clé, flash d'impact et hitstop côté héros ; côté ennemis, chaque attaque est annoncée au sol en magenta (au moins 300 ms, 500 ms pour un boss) avant de blesser.",
       "blocks": [
         { "title": "Le héros", "cols": 2, "items": [
-          { "src": "vfx-smear-coup1", "title": "Smear du coup 1", "sub": "Arc de traînée orange, squash de la figurine." },
+          { "src": "vfx-smear-coup1", "title": "Coup 1", "sub": "La clé part : flash blanc de l'impact, squash de la figurine." },
           { "src": "vfx-impact-coup3", "title": "Impact du coup 3", "sub": "Flash, étincelles, hitstop de 110 ms." }
         ] },
         { "title": "Télégraphes", "cols": 3, "items": [
