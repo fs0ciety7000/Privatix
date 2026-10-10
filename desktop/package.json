@@ -3,8 +3,11 @@
   "productName": "Privatix",
   "version": "0.1.0",
   "private": true,
-  "description": "Privatix - version de bureau (Electron) du jeu web.",
-  "author": "Privatix",
+  "description": "Privatix - version de bureau (Electron) du jeu web, par OCC Interactive (CARDOR Media).",
+  "author": {
+    "name": "OCC Interactive, une division de CARDOR Media",
+    "url": "https://interactive.cardormedia.com/"
+  },
   "license": "UNLICENSED",
   "type": "module",
   "main": "main/main.mjs",
@@ -30,7 +33,7 @@
   "build": {
     "appId": "eu.privatix.desktop",
     "productName": "Privatix",
-    "copyright": "Privatix",
+    "copyright": "© 2026 CARDOR Media — OCC Interactive",
     "directories": {
       "output": "dist",
       "buildResources": "build"

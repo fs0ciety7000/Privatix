@@ -1282,25 +1282,82 @@ code {
     grid-template-columns: auto 1fr auto;
   }
 }
+/*
+ * Lockup OCC Interactive et mention CARDOR Media (src/assets/brand/README.md) : signes de la charte
+ * https://cardormedia.com/marque reproduits tels quels, sans filtre, ombre ni recoloration.
+ * Proportions du lockup « Division · horizontal » pour un corps S = 40 px : Dragon 1,5 S (60 px,
+ * minimum 24 px), écart 0,4 S, mot-symbole 1,45 S. Zone de protection 2x (x = 1/10 de la hauteur
+ * du signe) laissée libre autour du Dragon. Au survol : le Dragon « glitche », la roue tourne.
+ */
 .studio {
-  display: inline-flex;
-  align-items: center;
+  display: grid;
+  justify-items: start;
   gap: var(--sp-3);
-  color: var(--px-text-soft);
+}
+.studio a {
+  color: var(--px-text-mute);
   text-decoration: none;
   border-radius: var(--r-sm);
 }
-.studio img {
-  width: 48px;
-  height: 48px;
-  transition: filter var(--dur-base) linear;
+.studio__lockup {
+  display: grid;
+  gap: 12px;
 }
-.studio:hover img {
-  filter: drop-shadow(0 0 10px rgba(255, 140, 43, 0.6));
+.studio__kicker {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
-.studio:hover strong {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.studio__mark {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-block: 12px 6px;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size var(--dur-slow) var(--ease-ballast);
+}
+.studio__dragon {
+  display: block;
+  width: 74px;
+  height: 60px;
+  overflow: visible;
+}
+.studio__wordmark {
+  display: block;
+  width: auto;
+  height: 58px;
+}
+.studio__holding {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  padding-bottom: 4px;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size var(--dur-slow) var(--ease-ballast);
+}
+.studio__wheel {
+  display: block;
+  width: 17px;
+  height: 17px;
+  margin-left: 4px;
+  overflow: visible;
+}
+.studio__holding-name {
+  display: block;
+  width: auto;
+  height: 16px;
+}
+.studio__lockup:hover .studio__mark,
+.studio__lockup:focus-visible .studio__mark,
+.studio__holding:hover,
+.studio__holding:focus-visible {
+  background-size: 100% 1px;
+}
+.studio a:hover,
+.studio a:focus-visible {
+  color: var(--px-text-soft);
 }
 .site-footer__meta {
   margin: 0;

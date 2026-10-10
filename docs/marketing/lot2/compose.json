@@ -9,8 +9,7 @@
       "scale": 2,
       "vars": {
         "art": "docs/marketing/lot2/keyart-affiche-a.jpg",
-        "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+        "tagline": "Le rail n’est pas à vendre."
       }
     },
     {
@@ -21,8 +20,7 @@
       "scale": 2,
       "vars": {
         "art": "docs/marketing/lot2/keyart-affiche-a.jpg",
-        "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+        "tagline": "Le rail n’est pas à vendre."
       }
     },
     {
@@ -34,7 +32,6 @@
       "vars": {
         "art": "docs/marketing/lot2/keyart-banniere.jpg",
         "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
         "artScale": "1.075",
         "artOrigin": "46% 38%"
       }

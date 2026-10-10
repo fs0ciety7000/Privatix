@@ -294,7 +294,7 @@ def header(img, title: str, eyebrow: str, sub: str | None, accent, x: int = 64, 
     return yy
 
 
-def footer(img, left: str, right: str = "PRIVATIX · ARTBOOK · NÉON & BALLAST · OCC MONS STUDIOS") -> None:
+def footer(img, left: str, right: str = "PRIVATIX · ARTBOOK · NÉON & BALLAST · OCC INTERACTIVE") -> None:
     w, h = img.size
     d = ImageDraw.Draw(img)
     d.line([(64, h - 72), (w - 64, h - 72)], fill=(255, 255, 255, 30), width=2)

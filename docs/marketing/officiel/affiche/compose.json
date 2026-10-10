@@ -9,8 +9,7 @@
       "scale": 2.5,
       "vars": {
         "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
-        "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+        "tagline": "Le rail n’est pas à vendre."
       }
     },
     {
@@ -23,7 +22,6 @@
       "vars": {
         "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
         "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
         "artPos": "50% 42%",
         "headTop": "2.2%",
         "titleSize": "14em"
@@ -39,7 +37,6 @@
       "vars": {
         "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
         "tagline": "Le rail n’est pas à vendre.",
-        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
         "artPos": "50% 42%",
         "headTop": "2.2%",
         "titleSize": "14em"

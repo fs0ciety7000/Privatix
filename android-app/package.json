@@ -2,8 +2,11 @@
   "name": "privatix-android",
   "version": "0.1.0",
   "private": true,
-  "description": "Privatix - application Android (tablette) du jeu web 3D, via Capacitor.",
-  "author": "Privatix",
+  "description": "Privatix - application Android (tablette) du jeu web 3D, via Capacitor, par OCC Interactive (CARDOR Media).",
+  "author": {
+    "name": "OCC Interactive, une division de CARDOR Media",
+    "url": "https://interactive.cardormedia.com/"
+  },
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {

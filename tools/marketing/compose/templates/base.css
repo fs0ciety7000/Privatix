@@ -96,7 +96,7 @@ body {
   margin-right: -0.1em;
 }
 
-/* Bande de crédits : logo du studio, plateformes, SNCB. */
+/* Bande de crédits : lockup OCC Interactive, plateformes, SNCB. */
 .credits {
   position: absolute;
   left: 0;
@@ -120,36 +120,47 @@ body {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(111, 243, 255, 0.55) 20%, rgba(111, 243, 255, 0.55) 80%, transparent);
 }
+/* Lockup OCC Interactive (charte https://cardormedia.com/marque, site/src/assets/brand/README.md) :
+   Dragon en couleur sur la bande sombre, sans filtre ni ombre ; mot-symbole vectorisé
+   (Instrument Serif, Geist Mono) ; mention « une division de CARDOR Media » en dessous. Écart
+   signe-texte 0,4 S et hauteur du Dragon 1,5 S (S = corps de « Interactive », mot-symbole 1,45 S). */
 .studio {
   display: flex;
   align-items: center;
-  gap: 0.7em;
+  gap: 0.55em;
 }
-.studio img {
+.studio__dragon {
   display: block;
-  height: 4.2em;
+  height: 2.07em;
   width: auto;
-  filter: drop-shadow(0 0 0.5em rgba(255, 122, 26, 0.35));
 }
-.studio__kicker {
+.studio__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2em;
+}
+.studio__wordmark {
   display: block;
+  height: 2em;
+  width: auto;
+}
+.studio__holding {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  white-space: nowrap;
   font-family: var(--font-cond);
   font-weight: 600;
   font-size: 0.78em;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
   color: var(--px-text-mute);
 }
-.studio__name {
+.studio__holding img {
   display: block;
-  white-space: nowrap;
-  font-family: var(--font-cond);
-  font-weight: 700;
-  font-size: 1.5em;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--px-text);
-  line-height: 1.05;
+  height: 1.25em;
+  width: auto;
 }
 .platforms {
   justify-self: center;

@@ -333,6 +333,8 @@ jobs:
           {
             echo "Privatix $TAG : applications de bureau (Windows, macOS, Linux) et APK Android (tablette)."
             echo
+            echo "Développé par [OCC Interactive](https://interactive.cardormedia.com/), une division de [CARDOR Media](https://cardormedia.com/)."
+            echo
             echo "**Vérifier un téléchargement** : comparez son empreinte SHA-256 avec \`SHA256SUMS.txt\` (ou la colonne « SHA-256 » du site)."
             echo "- Windows (PowerShell) : \`Get-FileHash .\\Privatix-Setup.exe -Algorithm SHA256\`"
             echo "- macOS : \`shasum -a 256 Privatix-mac-arm64.dmg\` · Linux : \`sha256sum Privatix.AppImage\`"
