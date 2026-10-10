@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- Affiche 2:3, direction « risographie bichrome » : logo mono blanc officiel (SVG incrusté)
+     réservé en blanc papier dans l'aplat rose fluo du haut ; texte en encre sarcelle, la
+     seconde couleur du tirage, posé en multiplication sur le papier du bas. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  @font-face { font-family: 'Inter Display'; src: url('../fonts/InterDisplay-Black.otf'); font-weight: 900; }
+  @font-face { font-family: 'Inter Display'; src: url('../fonts/InterDisplay-Bold.otf'); font-weight: 700; }
+  body { font-size: {{width}}px; background: #F4F0E8; }
+  .canvas { font-size: 0.01em; }
+  .logo { position: absolute; left: 50%; top: {{logoTop|3.4%}}; width: {{logoWidth|30%}}; transform: translateX(-50%); }
+  .foot {
+    position: absolute; left: 6%; right: 6%; bottom: 3.2%;
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 2em;
+    color: #00838F; mix-blend-mode: multiply; font-family: 'Inter Display', sans-serif;
+  }
+  .foot .l { font-weight: 900; font-size: 3.5em; line-height: 0.98; letter-spacing: -0.02em; max-width: 10.5em; }
+  .foot .r { font-weight: 700; font-size: 1.55em; line-height: 1.32; text-align: right; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <img class="logo" src="{{logoUrl}}" alt="PRIVATIX">
+  <div class="foot">
+    <div class="l">Un cheminot en 3x8 contre la privatisation du rail</div>
+    <div class="r">Gare de Mons · Quai 2 · 4 h 47<br>OCC MONS Studios<br>privatix.fs0ciety.org</div>
+  </div>
+</div>
+</body>
+</html>

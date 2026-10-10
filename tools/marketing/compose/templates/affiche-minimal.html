@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- Affiche 2:3, direction « une seule image forte » : la clé plantée dans le rail, rien
+     d'autre ; logo mono blanc officiel (SVG incrusté) centré en bas, une ligne de texte. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  @font-face { font-family: 'Inter Display'; src: url('../fonts/InterDisplay-Medium.otf'); font-weight: 500; }
+  body { font-size: {{width}}px; background: #0A0818; }
+  .canvas { font-size: 0.01em; }
+  .logo { position: absolute; left: 50%; bottom: {{logoBottom|7.6%}}; width: 26%; transform: translateX(-50%); }
+  .line span { text-transform: none; letter-spacing: 0.16em; }
+  .line {
+    position: absolute; left: 0; right: 0; bottom: 3.6%; text-align: center;
+    font-family: 'Inter Display', sans-serif; font-weight: 500; font-size: 1.45em;
+    letter-spacing: 0.32em; text-transform: uppercase; color: #A9A3C8;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <img class="logo" src="{{logoUrl}}" alt="PRIVATIX">
+  <div class="line">Le rail n’est pas à vendre · <span>privatix.fs0ciety.org</span></div>
+</div>
+</body>
+</html>

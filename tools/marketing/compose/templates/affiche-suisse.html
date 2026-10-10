@@ -1,0 +1,89 @@
+<!doctype html>
+<!-- Affiche 2:3, « Style typographique international » (Swiss style) : grille stricte de
+     12 colonnes, logo mono officiel (SVG incrusté tel quel) en haut à gauche, informations en
+     colonnes de grotesque (Inter Display) dans la bande du bas. Le fond géométrique vient du
+     générateur ; l'horloge (4 h 47) est redessinée en vectoriel par-dessus le disque généré,
+     dont les aiguilles ne sont pas fiables. Coordonnées de l'horloge en pixels de l'image ; clockR = 0 la désactive. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  @font-face { font-family: 'Inter Display'; src: url('../fonts/InterDisplay-Black.otf'); font-weight: 900; }
+  @font-face { font-family: 'Inter Display'; src: url('../fonts/InterDisplay-Bold.otf'); font-weight: 700; }
+  @font-face { font-family: 'Inter Display'; src: url('../fonts/InterDisplay-Medium.otf'); font-weight: 500; }
+  body { font-size: {{width}}px; background: {{paper}}; }
+  .canvas { font-size: 0.01em; color: {{ink}}; font-family: 'Inter Display', sans-serif; }
+  .overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* grille : marges de 6,25 % (1/16), 12 colonnes, gouttière 2 % */
+  .grid {
+    position: absolute; left: 6.25%; right: 6.25%;
+    display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 2em;
+  }
+  .head { top: 5.2%; }
+  .logo { grid-column: 1 / span {{logoSpan|7}}; width: 100%; display: block; }
+  .tagline {
+    grid-column: 1 / span {{tagSpan|6}}; margin-top: 2.6em;
+    font-weight: 700; font-size: 3.15em; line-height: 1.08; letter-spacing: -0.012em;
+  }
+  .foot { bottom: 4.6%; align-items: end; }
+  .year {
+    grid-column: 1 / span 7; font-weight: 900; font-size: 18.4em; line-height: 0.74;
+    letter-spacing: -0.055em; margin-left: -0.05em; color: {{accent}};
+  }
+  .side { grid-column: 8 / span 5; display: grid; row-gap: 2.2em; padding-bottom: 0.2em; }
+  .place { font-weight: 700; font-size: 2.55em; line-height: 1.12; letter-spacing: -0.01em; }
+  .place b { display: block; font-weight: 900; }
+  .credit { font-weight: 500; font-size: 1.5em; line-height: 1.3; }
+  .credit span { display: block; }
+  .credit .k { opacity: 0.72; }
+  .credit .u { margin-top: 0.8em; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <svg class="overlay" viewBox="0 0 {{artW}} {{artH}}" preserveAspectRatio="xMidYMid slice">
+    <g id="clock" data-x="{{clockX}}" data-y="{{clockY}}" data-r="{{clockR}}"
+       data-fill="{{clockFill}}" data-hand="{{handInk}}" data-sec="{{secInk}}"></g>
+  </svg>
+  <div class="grid head">
+    <img class="logo" src="{{logoUrl}}" alt="PRIVATIX">
+    <div class="tagline">Un cheminot en 3x8 contre la privatisation du rail</div>
+  </div>
+  <div class="grid foot">
+    <div class="year">2032</div>
+    <div class="side">
+    <div class="place"><b>Gare de Mons</b>Quai 2<br>4 h 47</div>
+    <div class="credit">
+      <span class="k">Développé par</span>
+      <span>OCC MONS Studios</span>
+      <span class="u">privatix.fs0ciety.org</span>
+    </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Horloge de quai à 4 h 47 (aiguilles pleines, trotteuse à palette, façon horloge de gare).
+  const g = document.getElementById('clock'), d = g.dataset, r = +d.r;
+  const NS = 'http://www.w3.org/2000/svg';
+  const add = (tag, attrs, parent = g) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    parent.appendChild(e); return e;
+  };
+  if (r > 0) {
+  g.setAttribute('transform', `translate(${d.x} ${d.y})`);
+  add('circle', { r: r + 2, fill: d.fill });
+  const hand = (deg, w, len, tail, fill) =>
+    add('rect', { x: -w / 2, y: -len, width: w, height: len + tail, fill, transform: `rotate(${deg})` });
+  hand((4 + 47 / 60) * 30, r * 0.085, r * 0.58, r * 0.16, d.hand);
+  hand(47 * 6, r * 0.06, r * 0.86, r * 0.18, d.hand);
+  const sec = add('g', { transform: 'rotate(312)', fill: d.sec });
+  add('rect', { x: -r * 0.012, y: -r * 0.62, width: r * 0.024, height: r * 0.86 }, sec);
+  add('circle', { cy: -r * 0.62, r: r * 0.085 }, sec);
+  add('circle', { r: r * 0.035, fill: d.hand });
+  }
+</script>
+</body>
+</html>
