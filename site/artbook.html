@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="fr-BE">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Artbook &amp; Press kit — Privatix</title>
+    <meta
+      name="description"
+      content="Artbook de Privatix : model sheets des personnages, décors des trois biomes et de l'OCC, loot, interface, VFX et palette « Néon &amp; Ballast », animations tirées du jeu 3D. Press kit à télécharger."
+    />
+    <meta name="theme-color" content="#0a0818" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://privatix.fs0ciety.org/artbook.html" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_BE" />
+    <meta property="og:site_name" content="Privatix" />
+    <meta property="og:title" content="Privatix — Artbook &amp; Press kit" />
+    <meta property="og:description" content="Model sheets, décors, VFX, palette et animations du jeu 3D, et le press kit de Privatix." />
+    <meta property="og:url" content="https://privatix.fs0ciety.org/artbook.html" />
+    <meta property="og:image" content="https://privatix.fs0ciety.org/artbook/presskit/privatix-capture-1.jpg" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="Le héros sur le quai 3 de la gare de Mons, sous le néon Privatix." />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" as="image" href="/artbook/anim/combo-poster.webp" fetchpriority="high" />
+    <script type="module" src="./src/artbook.ts"></script>
+  </head>
+  <body>
+    <a class="skip" href="#contenu">Aller au contenu</a>
+
+    <header class="site-header" id="haut">
+      <div class="wrap site-header__inner">
+        <a class="wordmark" href="./" aria-label="Privatix, retour à l'accueil">PRIVATIX</a>
+        <nav class="site-nav" aria-label="Sections">
+          <ul>
+            <li><a href="./#jeu">Le jeu</a></li>
+            <li><a href="./#galerie">Galerie</a></li>
+            <li><a href="./#bestiaire">Bestiaire</a></li>
+            <li><a href="./artbook.html" aria-current="page">Artbook</a></li>
+            <li><a href="#press-kit">Press kit</a></li>
+            <li><a href="./#telecharger">Télécharger</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn--primary site-header__cta" href="./jouer/play3d.html">Jouer</a>
+      </div>
+    </header>
+
+    <main id="contenu">
+      <!-- ═══ Ouverture ═══ -->
+      <section class="ab-hero" aria-labelledby="ab-title">
+        <div class="wrap ab-hero__grid">
+          <div class="ab-hero__text">
+            <p class="eyebrow">Artbook &amp; Press kit</p>
+            <h1 id="ab-title" class="ab-hero__title"><span class="neon" data-neon>ARTBOOK</span></h1>
+            <p class="ab-hero__lead">
+              Les coulisses de « Néon &amp; Ballast » : model sheets et turnarounds des personnages, décors
+              des trois biomes et de l'OCC, butin, interface, VFX et télégraphes, palette. Tout est tiré
+              du jeu 3D lui-même, figurines GLB et captures en temps réel.
+            </p>
+            <nav class="ab-toc" aria-label="Sommaire de l'artbook">
+              <ul role="list">
+                <li><a href="#animations">En mouvement</a></li>
+                <li><a href="#personnages">Personnages</a></li>
+                <li><a href="#decors">Décors</a></li>
+                <li><a href="#loot-ui">Loot &amp; UI</a></li>
+                <li><a href="#vfx">VFX</a></li>
+                <li><a href="#palette">Palette</a></li>
+                <li><a href="#press-kit">Press kit</a></li>
+              </ul>
+            </nav>
+          </div>
+          <figure class="ab-hero__media">
+            <video class="ab-hero__video" data-clip data-webm="/artbook/anim/combo.webm" data-mp4="/artbook/anim/combo.mp4" poster="/artbook/anim/combo-poster.webp" muted loop playsinline preload="none" width="960" height="540" aria-label="Combo à la clé à tire-fond sur trois consultants, capture du jeu."></video>
+            <figcaption>Combo à la clé à tire-fond, capture du jeu à 30 images par seconde.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ═══ Animations ═══ -->
+      <section class="section section--alt" id="animations" aria-labelledby="anim-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>En mouvement</p>
+          <h2 id="anim-title" class="section__title" data-reveal>Le jeu à 30 images par seconde</h2>
+          <p class="section__lead" data-reveal>
+            Séquences calculées image par image dans le jeu 3D (simulation à pas fixe), lues en boucle et
+            sans son. Chaque animation existe aussi en GIF, à télécharger.
+          </p>
+          <!-- artbook:animations:start -->
+          <ul class="ab-clips" role="list">
+          <li class="ab-clip" style="--rc: var(--px-hero)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/combo-poster.webp" data-webm="/artbook/anim/combo.webm" data-mp4="/artbook/anim/combo.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Combo à la clé à tire-fond : Trois coups, smears et hitstop sur un trio de consultants."></video>
+            <figcaption>
+              <h3>Combo à la clé à tire-fond</h3>
+              <p>Trois coups, smears et hitstop sur un trio de consultants.</p>
+              <a class="ab-dl" href="/artbook/anim/combo.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,6 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-rim)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/dash-poster.webp" data-webm="/artbook/anim/dash.webm" data-mp4="/artbook/anim/dash.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Dash « Retard SNCB » : Esquive à deux charges à travers les télégraphes magenta."></video>
+            <figcaption>
+              <h3>Dash « Retard SNCB »</h3>
+              <p>Esquive à deux charges à travers les télégraphes magenta.</p>
+              <a class="ab-dl" href="/artbook/anim/dash.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,4 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-violet-hi)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/furet-surgit-poster.webp" data-webm="/artbook/anim/furet-surgit.webm" data-mp4="/artbook/anim/furet-surgit.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Le Furet putride surgit : Plongée sous le quai, traînée de poussière, cercle magenta avant la sortie."></video>
+            <figcaption>
+              <h3>Le Furet putride surgit</h3>
+              <p>Plongée sous le quai, traînée de poussière, cercle magenta avant la sortie.</p>
+              <a class="ab-dl" href="/artbook/anim/furet-surgit.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,9 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--rar-patrimoine)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/drop-patrimoine-poster.webp" data-webm="/artbook/anim/drop-patrimoine.webm" data-mp4="/artbook/anim/drop-patrimoine.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Drop de Patrimoine : Le butin du Wagon-Bar tombe : faisceau orange de la rareté la plus haute."></video>
+            <figcaption>
+              <h3>Drop de Patrimoine</h3>
+              <p>Le butin du Wagon-Bar tombe : faisceau orange de la rareté la plus haute.</p>
+              <a class="ab-dl" href="/artbook/anim/drop-patrimoine.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,4 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-danger)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/auditeur-poster.webp" data-webm="/artbook/anim/auditeur.webm" data-mp4="/artbook/anim/auditeur.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="L&#x27;Auditeur des Quais : Tampon verrouillé sur le héros, puis bras-barrière."></video>
+            <figcaption>
+              <h3>L&#x27;Auditeur des Quais</h3>
+              <p>Tampon verrouillé sur le héros, puis bras-barrière.</p>
+              <a class="ab-dl" href="/artbook/anim/auditeur.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 4,0 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-danger)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/dirupo-poster.webp" data-webm="/artbook/anim/dirupo.webm" data-mp4="/artbook/anim/dirupo.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Elio Di Rupo : Nœud papillon boomerang et ciseaux d&#x27;inauguration (caricature bon enfant)."></video>
+            <figcaption>
+              <h3>Elio Di Rupo</h3>
+              <p>Nœud papillon boomerang et ciseaux d&#x27;inauguration (caricature bon enfant).</p>
+              <a class="ab-dl" href="/artbook/anim/dirupo.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,7 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-danger)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/discosaure-poster.webp" data-webm="/artbook/anim/discosaure.webm" data-mp4="/artbook/anim/discosaure.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Le Discosaure, piste de danse : Les taches tournent, se figent puis explosent ; piétinement en rythme."></video>
+            <figcaption>
+              <h3>Le Discosaure, piste de danse</h3>
+              <p>Les taches tournent, se figent puis explosent ; piétinement en rythme.</p>
+              <a class="ab-dl" href="/artbook/anim/discosaure.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,4 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-danger)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/lurcke-poster.webp" data-webm="/artbook/anim/lurcke.webm" data-mp4="/artbook/anim/lurcke.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="Jean-Cul Lurcke : Bullet points et piliers-graphiques dans le bureau du Directeur."></video>
+            <figcaption>
+              <h3>Jean-Cul Lurcke</h3>
+              <p>Bullet points et piliers-graphiques dans le bureau du Directeur.</p>
+              <a class="ab-dl" href="/artbook/anim/lurcke.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,8 Mo</a>
+            </figcaption>
+          </li>
+          <li class="ab-clip" style="--rc: var(--px-tungsten)" data-reveal>
+            <video data-clip data-poster="/artbook/anim/hub-pnj-poster.webp" data-webm="/artbook/anim/hub-pnj.webm" data-mp4="/artbook/anim/hub-pnj.mp4" muted loop playsinline preload="none" width="960" height="540" aria-label="L&#x27;OCC et les collègues : Salle des opérations : les PNJ à leur pupitre."></video>
+            <figcaption>
+              <h3>L&#x27;OCC et les collègues</h3>
+              <p>Salle des opérations : les PNJ à leur pupitre.</p>
+              <a class="ab-dl" href="/artbook/anim/hub-pnj.gif" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>GIF · 3,3 Mo</a>
+            </figcaption>
+          </li>
+          </ul>
+          <!-- artbook:animations:end -->
+        </div>
+      </section>
+
+      <!-- ═══ Personnages ═══ -->
+      <section class="section" id="personnages" aria-labelledby="perso-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Personnages</p>
+          <h2 id="perso-title" class="section__title" data-reveal>Model sheets et turnarounds</h2>
+          <p class="section__lead" data-reveal>
+            Une planche par figurine : face, trois-quarts, profil et dos à la même échelle, silhouette
+            noire (test de lisibilité), palette extraite du modèle, taille relative au héros et poses clés
+            de ses animations.
+          </p>
+          <!-- artbook:personnages:start -->
+          <div class="ab-group">
+          <h3 class="tier__title" data-reveal><span>Le héros</span></h3>
+          <ul class="ab-grid" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-hero.webp" style="--rc: var(--px-hero)" data-lightbox data-caption="Léon / Léa · Héros · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-hero-1200.webp" srcset="/artbook/planches/perso-hero-1200.webp 1200w, /artbook/planches/perso-hero.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Léon / Léa : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Léon / Léa</b><span>Héros · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-tenues.webp" style="--rc: var(--rar-patrimoine)" data-lightbox data-caption="Les cinq tenues · Raretés d&#x27;équipement sur le héros">
+              <img class="ab-thumb" src="/artbook/planches/perso-tenues-1200.webp" srcset="/artbook/planches/perso-tenues-1200.webp 1200w, /artbook/planches/perso-tenues.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="780" loading="lazy" decoding="async" alt="Planche « Les cinq tenues » : Raretés d&#x27;équipement sur le héros." />
+            </a>
+            <p class="ab-card__cap"><b>Les cinq tenues</b><span>Raretés d&#x27;équipement sur le héros</span></p>
+          </li>
+          </ul>
+          </div>
+          <div class="ab-group">
+          <h3 class="tier__title" data-reveal><span>Ressources de Privatix</span></h3>
+          <ul class="ab-grid" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-consultant.webp" style="--rc: var(--px-enemy)" data-lightbox data-caption="Consultant Junior · Ennemi · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-consultant-1200.webp" srcset="/artbook/planches/perso-consultant-1200.webp 1200w, /artbook/planches/perso-consultant.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Consultant Junior : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Consultant Junior</b><span>Ennemi · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-borne.webp" style="--rc: var(--px-enemy)" data-lightbox data-caption="Borne Automatique · Ennemi · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-borne-1200.webp" srcset="/artbook/planches/perso-borne-1200.webp 1200w, /artbook/planches/perso-borne.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Borne Automatique : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Borne Automatique</b><span>Ennemi · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-drone.webp" style="--rc: var(--px-enemy)" data-lightbox data-caption="Drone Optimètre · Ennemi · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-drone-1200.webp" srcset="/artbook/planches/perso-drone-1200.webp 1200w, /artbook/planches/perso-drone.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Drone Optimètre : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Drone Optimètre</b><span>Ennemi · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-manager.webp" style="--rc: var(--px-violet-hi)" data-lightbox data-caption="Manager KPI · Élite · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-manager-1200.webp" srcset="/artbook/planches/perso-manager-1200.webp 1200w, /artbook/planches/perso-manager.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Manager KPI : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Manager KPI</b><span>Élite · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-furet.webp" style="--rc: var(--px-violet-hi)" data-lightbox data-caption="Le Furet putride · Ennemi majeur · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-furet-1200.webp" srcset="/artbook/planches/perso-furet-1200.webp 1200w, /artbook/planches/perso-furet.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Le Furet putride : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Le Furet putride</b><span>Ennemi majeur · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-fluidifieur.webp" style="--rc: var(--px-violet-hi)" data-lightbox data-caption="Le Fluidifieur · Ennemi majeur · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-fluidifieur-1200.webp" srcset="/artbook/planches/perso-fluidifieur-1200.webp 1200w, /artbook/planches/perso-fluidifieur.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Le Fluidifieur : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Le Fluidifieur</b><span>Ennemi majeur · model sheet</span></p>
+          </li>
+          </ul>
+          </div>
+          <div class="ab-group">
+          <h3 class="tier__title" data-reveal><span>Boss</span></h3>
+          <ul class="ab-grid" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-discosaure.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Le Discosaure · Mini-boss · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-discosaure-1200.webp" srcset="/artbook/planches/perso-discosaure-1200.webp 1200w, /artbook/planches/perso-discosaure.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Le Discosaure : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Le Discosaure</b><span>Mini-boss · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-auditeur.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="L&#x27;Auditeur des Quais · Boss · biome 1 · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-auditeur-1200.webp" srcset="/artbook/planches/perso-auditeur-1200.webp 1200w, /artbook/planches/perso-auditeur.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de L&#x27;Auditeur des Quais : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>L&#x27;Auditeur des Quais</b><span>Boss · biome 1 · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-dirupo.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Elio Di Rupo · Boss · biome 2 · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-dirupo-1200.webp" srcset="/artbook/planches/perso-dirupo-1200.webp 1200w, /artbook/planches/perso-dirupo.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Elio Di Rupo : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Elio Di Rupo</b><span>Boss · biome 2 · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-lurcke.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Jean-Cul Lurcke · Boss final · fiche de travail">
+              <img class="ab-thumb" src="/artbook/planches/perso-lurcke-1200.webp" srcset="/artbook/planches/perso-lurcke-1200.webp 1200w, /artbook/planches/perso-lurcke.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="734" loading="lazy" decoding="async" alt="Planche « Jean-Cul Lurcke » : Directeur de la Transformation et de l&#x27;Excellence Opérationnelle." />
+            </a>
+            <p class="ab-card__cap"><b>Jean-Cul Lurcke</b><span>Boss final · fiche de travail</span></p>
+          </li>
+          </ul>
+          </div>
+          <div class="ab-group">
+          <h3 class="tier__title" data-reveal><span>Les collègues de l&#x27;OCC</span></h3>
+          <ul class="ab-grid" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-josiane.webp" style="--rc: var(--px-tungsten)" data-lightbox data-caption="Josiane Delhaye · PNJ · DPD · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-josiane-1200.webp" srcset="/artbook/planches/perso-josiane-1200.webp 1200w, /artbook/planches/perso-josiane.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Josiane Delhaye : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Josiane Delhaye</b><span>PNJ · DPD · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-bene.webp" style="--rc: var(--px-tungsten)" data-lightbox data-caption="Bénédicte « Béné » Wautier · PNJ · PACO · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-bene-1200.webp" srcset="/artbook/planches/perso-bene-1200.webp 1200w, /artbook/planches/perso-bene.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Bénédicte « Béné » Wautier : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Bénédicte « Béné » Wautier</b><span>PNJ · PACO · model sheet</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-kevin.webp" style="--rc: var(--px-tungsten)" data-lightbox data-caption="Kevin « Kéké » Lambot · PNJ · RTS · model sheet">
+              <img class="ab-thumb" src="/artbook/planches/perso-kevin-1200.webp" srcset="/artbook/planches/perso-kevin-1200.webp 1200w, /artbook/planches/perso-kevin.webp 2400w" sizes="(min-width: 1180px) 360px, (min-width: 760px) 30vw, 92vw" width="1200" height="860" loading="lazy" decoding="async" alt="Model sheet de Kevin « Kéké » Lambot : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés." />
+            </a>
+            <p class="ab-card__cap"><b>Kevin « Kéké » Lambot</b><span>PNJ · RTS · model sheet</span></p>
+          </li>
+          </ul>
+          </div>
+          <div class="ab-group">
+          <h3 class="tier__title" data-reveal><span>Casting</span></h3>
+          <ul class="ab-grid ab-grid--wide ab-grid--solo" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/perso-gamme-tailles.webp" style="--rc: var(--px-rim)" data-lightbox data-caption="Gamme des tailles · Tout le casting à l&#x27;échelle">
+              <img class="ab-thumb" src="/artbook/planches/perso-gamme-tailles-1200.webp" srcset="/artbook/planches/perso-gamme-tailles-1200.webp 1200w, /artbook/planches/perso-gamme-tailles.webp 2400w" sizes="(min-width: 1180px) 1100px, 94vw" width="1200" height="448" loading="lazy" decoding="async" alt="Planche « Gamme des tailles » : Tout le casting à l&#x27;échelle." />
+            </a>
+            <p class="ab-card__cap"><b>Gamme des tailles</b><span>Tout le casting à l&#x27;échelle</span></p>
+          </li>
+          </ul>
+          </div>
+          <!-- artbook:personnages:end -->
+        </div>
+      </section>
+
+      <!-- ═══ Décors ═══ -->
+      <section class="section section--alt" id="decors" aria-labelledby="decors-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Décors</p>
+          <h2 id="decors-title" class="section__title" data-reveal>Des quais au dernier étage du BAG</h2>
+          <p class="section__lead" data-reveal>
+            Trois biomes, le hub de l'OCC et les arènes des boss : captures larges et détails de néons,
+            de signalétique et de props.
+          </p>
+          <!-- artbook:decors:start -->
+          <div class="ab-group">
+          <ul class="ab-grid ab-grid--wide" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/decor-quais.webp" style="--rc: var(--px-sodium)" data-lightbox data-caption="Quais &amp; Voies · Biome 1">
+              <img class="ab-thumb" src="/artbook/planches/decor-quais-1200.webp" srcset="/artbook/planches/decor-quais-1200.webp 1200w, /artbook/planches/decor-quais.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1078" loading="lazy" decoding="async" alt="Planche « Quais &amp; Voies » : « Le 7h12 n&#x27;est pas venu »." />
+            </a>
+            <p class="ab-card__cap"><b>Quais &amp; Voies</b><span>Biome 1</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/decor-passerelle.webp" style="--rc: var(--px-sodium)" data-lightbox data-caption="La Passerelle « Calatrava » · Biome 2">
+              <img class="ab-thumb" src="/artbook/planches/decor-passerelle-1200.webp" srcset="/artbook/planches/decor-passerelle-1200.webp 1200w, /artbook/planches/decor-passerelle.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1078" loading="lazy" decoding="async" alt="Planche « La Passerelle « Calatrava » » : « Le vent tourne »." />
+            </a>
+            <p class="ab-card__cap"><b>La Passerelle « Calatrava »</b><span>Biome 2</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/decor-hall.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Hall &amp; BAG · Biome 3">
+              <img class="ab-thumb" src="/artbook/planches/decor-hall-1200.webp" srcset="/artbook/planches/decor-hall-1200.webp 1200w, /artbook/planches/decor-hall.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1078" loading="lazy" decoding="async" alt="Planche « Hall &amp; BAG » : « Terminus BAG »." />
+            </a>
+            <p class="ab-card__cap"><b>Hall &amp; BAG</b><span>Biome 3</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/decor-hub.webp" style="--rc: var(--px-sodium)" data-lightbox data-caption="L&#x27;OCC · Hub · salle des opérations, Cour du BAG, coin poubelles">
+              <img class="ab-thumb" src="/artbook/planches/decor-hub-1200.webp" srcset="/artbook/planches/decor-hub-1200.webp 1200w, /artbook/planches/decor-hub.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1078" loading="lazy" decoding="async" alt="Planche « L&#x27;OCC, « Operation Coffee Center » » : Salle des opérations, Cour du BAG, coin poubelles." />
+            </a>
+            <p class="ab-card__cap"><b>L&#x27;OCC</b><span>Hub · salle des opérations, Cour du BAG, coin poubelles</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/decor-arenes.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Arènes des boss · Et ennemis majeurs">
+              <img class="ab-thumb" src="/artbook/planches/decor-arenes-1200.webp" srcset="/artbook/planches/decor-arenes-1200.webp 1200w, /artbook/planches/decor-arenes.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1104" loading="lazy" decoding="async" alt="Planche « Arènes des boss et ennemis majeurs » : Où l&#x27;on affronte les ressources de Privatix." />
+            </a>
+            <p class="ab-card__cap"><b>Arènes des boss</b><span>Et ennemis majeurs</span></p>
+          </li>
+          </ul>
+          </div>
+          <!-- artbook:decors:end -->
+        </div>
+      </section>
+
+      <!-- ═══ Loot & UI ═══ -->
+      <section class="section" id="loot-ui" aria-labelledby="loot-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Loot &amp; UI</p>
+          <h2 id="loot-title" class="section__title" data-reveal>Le butin qui se voit, l'interface qui se lit</h2>
+          <!-- artbook:loot-ui:start -->
+          <div class="ab-group">
+          <ul class="ab-grid ab-grid--wide" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/loot.webp" style="--rc: var(--rar-patrimoine)" data-lightbox data-caption="Le butin qui se voit · Faisceaux, carte de comparaison, équipement">
+              <img class="ab-thumb" src="/artbook/planches/loot-1200.webp" srcset="/artbook/planches/loot-1200.webp 1200w, /artbook/planches/loot.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1023" loading="lazy" decoding="async" alt="Planche « Le butin qui se voit » : Faisceaux par rareté, carte de comparaison, équipement porté." />
+            </a>
+            <p class="ab-card__cap"><b>Le butin qui se voit</b><span>Faisceaux, carte de comparaison, équipement</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/ui.webp" style="--rc: var(--px-rim)" data-lightbox data-caption="HUD et menus · Interface DOM encrée">
+              <img class="ab-thumb" src="/artbook/planches/ui-1200.webp" srcset="/artbook/planches/ui-1200.webp 1200w, /artbook/planches/ui.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1023" loading="lazy" decoding="async" alt="Planche « HUD et menus » : Interface DOM encrée, lisible d&#x27;abord." />
+            </a>
+            <p class="ab-card__cap"><b>HUD et menus</b><span>Interface DOM encrée</span></p>
+          </li>
+          </ul>
+          </div>
+          <!-- artbook:loot-ui:end -->
+        </div>
+      </section>
+
+      <!-- ═══ VFX ═══ -->
+      <section class="section section--alt" id="vfx" aria-labelledby="vfx-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>VFX &amp; télégraphes</p>
+          <h2 id="vfx-title" class="section__title" data-reveal>Tout ce qui blesse est magenta</h2>
+          <p class="section__lead" data-reveal>
+            Smears et impacts du héros, télégraphes des ennemis et patterns des boss : la piste de danse du
+            Discosaure, le ruban d'Elio Di Rupo, les bullet points de Jean-Cul Lurcke.
+          </p>
+          <!-- artbook:vfx:start -->
+          <div class="ab-group">
+          <ul class="ab-grid ab-grid--wide" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/vfx-heros.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Coups, impacts et télégraphes · Héros, ennemis, élites">
+              <img class="ab-thumb" src="/artbook/planches/vfx-heros-1200.webp" srcset="/artbook/planches/vfx-heros-1200.webp 1200w, /artbook/planches/vfx-heros.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="941" loading="lazy" decoding="async" alt="Planche « Coups, impacts et télégraphes » : Tout ce qui blesse est magenta et annoncé." />
+            </a>
+            <p class="ab-card__cap"><b>Coups, impacts et télégraphes</b><span>Héros, ennemis, élites</span></p>
+          </li>
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/vfx-boss.webp" style="--rc: var(--px-danger)" data-lightbox data-caption="Patterns des boss · Piste de danse, ruban, tampon, bullet points">
+              <img class="ab-thumb" src="/artbook/planches/vfx-boss-1200.webp" srcset="/artbook/planches/vfx-boss-1200.webp 1200w, /artbook/planches/vfx-boss.webp 2400w" sizes="(min-width: 1180px) 540px, (min-width: 760px) 46vw, 92vw" width="1200" height="1038" loading="lazy" decoding="async" alt="Planche « Patterns des boss » : Piste de danse, ruban, tampon, bullet points." />
+            </a>
+            <p class="ab-card__cap"><b>Patterns des boss</b><span>Piste de danse, ruban, tampon, bullet points</span></p>
+          </li>
+          </ul>
+          </div>
+          <!-- artbook:vfx:end -->
+        </div>
+      </section>
+
+      <!-- ═══ Palette ═══ -->
+      <section class="section" id="palette" aria-labelledby="palette-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Palette &amp; DA</p>
+          <h2 id="palette-title" class="section__title" data-reveal>Néon &amp; Ballast</h2>
+          <p class="section__lead" data-reveal>
+            Un cel-shading ferroviaire nocturne. Chaque couleur a un rôle : l'orange est l'action du
+            joueur, le turquoise Privatix, le magenta le danger, le cyan l'information.
+          </p>
+          <ul class="ab-swatches" role="list" aria-label="Couleurs canoniques" data-reveal>
+            <li style="--sw: var(--px-hero)"><b>Orange héros</b><code>#FF7A1A</code></li>
+            <li style="--sw: var(--px-enemy)"><b>Turquoise</b><code>#19C3B1</code></li>
+            <li style="--sw: var(--px-danger)"><b>Magenta danger</b><code>#FF3EA5</code></li>
+            <li style="--sw: var(--px-rim)"><b>Cyan liseré</b><code>#6FF3FF</code></li>
+            <li style="--sw: var(--px-violet)"><b>Violet Privatix</b><code>#6B3FA0</code></li>
+            <li style="--sw: var(--px-gold)"><b>Or</b><code>#FFD200</code></li>
+            <li style="--sw: var(--px-sodium)"><b>Sodium</b><code>#FFB347</code></li>
+            <li style="--sw: var(--px-ink)"><b>Encre</b><code>#14101A</code></li>
+          </ul>
+          <!-- artbook:palette:start -->
+          <div class="ab-group">
+          <ul class="ab-grid ab-grid--wide ab-grid--solo" role="list">
+          <li class="ab-card" data-reveal>
+            <a class="ab-card__link" href="/artbook/planches/da-palette.webp" style="--rc: var(--px-rim)" data-lightbox data-caption="Palette &amp; direction artistique · Couleurs, lumières, rampe toon, typographie">
+              <img class="ab-thumb" src="/artbook/planches/da-palette-1200.webp" srcset="/artbook/planches/da-palette-1200.webp 1200w, /artbook/planches/da-palette.webp 2400w" sizes="(min-width: 1180px) 1100px, 94vw" width="1200" height="965" loading="lazy" decoding="async" alt="Planche « Palette &amp; direction artistique » : Couleurs, lumières, rampe toon, typographie." />
+            </a>
+            <p class="ab-card__cap"><b>Palette &amp; direction artistique</b><span>Couleurs, lumières, rampe toon, typographie</span></p>
+          </li>
+          </ul>
+          </div>
+          <!-- artbook:palette:end -->
+        </div>
+      </section>
+
+      <!-- ═══ Press kit ═══ -->
+      <section class="section section--alt" id="press-kit" aria-labelledby="press-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal>Press kit</p>
+          <h2 id="press-title" class="section__title" data-reveal>Pour la presse et les créateurs</h2>
+          <p class="section__lead" data-reveal>
+            Logo, captures, textes de présentation et fiche technique, libres d'utilisation pour parler du
+            jeu. Le kit complet tient dans une archive.
+          </p>
+          <div class="presskit">
+            <div class="presskit__main">
+              <a class="btn btn--primary btn--lg presskit__zip" href="/artbook/presskit/privatix-press-kit.zip" download data-reveal>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>Télécharger le press kit<small>Archive ZIP · logo, captures, textes, GIF</small></span>
+              </a>
+
+              <article class="card presskit__text" data-reveal>
+                <div class="presskit__head">
+                  <h3 class="card__title">Présentation courte</h3>
+                  <button class="btn btn--secondary presskit__copy" type="button" data-copy="#pk-court">Copier</button>
+                </div>
+                <p id="pk-court">
+                  Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio
+                  contre une armée de consultants qui veulent libéraliser et privatiser le rail ! Privatix est
+                  un hack 'n' slash roguelite satirique en 3D, gratuit, jouable dans le navigateur et sur
+                  Windows, macOS et Linux.
+                </p>
+              </article>
+
+              <article class="card presskit__text" data-reveal>
+                <div class="presskit__head">
+                  <h3 class="card__title">Présentation longue</h3>
+                  <button class="btn btn--secondary presskit__copy" type="button" data-copy="#pk-long">Copier</button>
+                </div>
+                <div id="pk-long">
+                  <p>
+                    Mons, 4 h 47, quai 2. L'écran des départs annonce que le train de 7 h 12 est supprimé.
+                    Motif : « Optimisation ». Le consortium Privatix Rail Solutions et son cabinet de conseil,
+                    Synergia Partners, veulent libéraliser et privatiser le rail : ouvrir le réseau à la
+                    concurrence, le découper en lots et les céder un par un. Mons est le lot n° 1.
+                  </p>
+                  <p>
+                    Léon, ou Léa, agent·e polyvalent·e en 3x8, prend la clé à tire-fond de son grand-père et
+                    remonte la gare à contre-courant : les Quais &amp; Voies, la Passerelle « Calatrava », puis
+                    le Hall &amp; BAG, jusqu'au bureau où Jean-Cul Lurcke tient le stylo. Chaque tentative est
+                    un Shift ; quand le héros tombe, les collègues le ramènent à l'OCC, le centre opérationnel
+                    rebaptisé « Operation Coffee Center ».
+                  </p>
+                  <p>
+                    Combat nerveux et lisible (tout ce qui blesse est magenta et télégraphié), Burnout qui rend
+                    plus fort et plus fragile, butin qui se voit sur le héros, rendu 3D toon « Néon &amp;
+                    Ballast ». Satirique dans les noms, sérieux dans les règles.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <aside class="presskit__side">
+              <figure class="card presskit__logo" data-reveal>
+                <img src="/artbook/presskit/privatix-logo-1200.webp" width="1200" height="400" loading="lazy" decoding="async" alt="Logotype PRIVATIX en néon magenta." />
+                <figcaption>
+                  Logo : <a class="link" href="/artbook/presskit/privatix-logo.png" download>PNG transparent</a> ·
+                  <a class="link" href="/artbook/presskit/privatix-logo-fond.png" download>PNG sur fond nuit</a>
+                </figcaption>
+              </figure>
+              <dl class="facts presskit__facts" data-reveal>
+                <div><dt>Titre</dt><dd>Privatix</dd></div>
+                <div><dt>Genre</dt><dd>Hack 'n' slash roguelite, vue de dessus</dd></div>
+                <div><dt>Plateformes</dt><dd>Web (navigateur, desktop et mobile en paysage) ; desktop Windows, macOS, Linux</dd></div>
+                <div><dt>Moteur</dt><dd>Three.js 0.186 (3D temps réel, rendu toon), TypeScript, Vite ; version de bureau Electron</dd></div>
+                <div><dt>Studio</dt><dd>OCC MONS Studios</dd></div>
+                <div><dt>Langue</dt><dd>Français (Belgique)</dd></div>
+                <div><dt>Prix</dt><dd>Gratuit</dd></div>
+                <div><dt>Site</dt><dd><a class="link" href="https://privatix.fs0ciety.org/">privatix.fs0ciety.org</a></dd></div>
+              </dl>
+            </aside>
+          </div>
+
+          <h3 class="tier__title presskit__shots-title" data-reveal><span>Quatre captures clés</span></h3>
+          <!-- artbook:presskit:start -->
+          <ul class="gallery" role="list">
+          <li data-reveal>
+            <a class="shot" href="/artbook/presskit/privatix-capture-1.jpg" data-lightbox>
+              <img src="/artbook/presskit/privatix-capture-1-960.webp" srcset="/artbook/presskit/privatix-capture-1-960.webp 960w, /artbook/presskit/privatix-capture-1.jpg 1920w" sizes="(min-width: 900px) 540px, 92vw" width="1920" height="1080" loading="lazy" decoding="async" alt="L&#x27;Auditeur des Quais, borne géante aux bras-barrières, face au héros sur le quai 2 de la gare de Mons." />
+            </a>
+            <p class="shot__cap">L&#x27;Auditeur des Quais · <a class="link" href="/artbook/presskit/privatix-capture-1.jpg" download>JPG 1920×1080 · 280 Kio</a></p>
+          </li>
+          <li data-reveal>
+            <a class="shot" href="/artbook/presskit/privatix-capture-2.jpg" data-lightbox>
+              <img src="/artbook/presskit/privatix-capture-2-960.webp" srcset="/artbook/presskit/privatix-capture-2-960.webp 960w, /artbook/presskit/privatix-capture-2.jpg 1920w" sizes="(min-width: 900px) 540px, 92vw" width="1920" height="1080" loading="lazy" decoding="async" alt="Le Discosaure, dinosaure violet à boule à facettes, sur une piste de danse lumineuse face au héros." />
+            </a>
+            <p class="shot__cap">Le Discosaure et sa piste de danse · <a class="link" href="/artbook/presskit/privatix-capture-2.jpg" download>JPG 1920×1080 · 274 Kio</a></p>
+          </li>
+          <li data-reveal>
+            <a class="shot" href="/artbook/presskit/privatix-capture-3.jpg" data-lightbox>
+              <img src="/artbook/presskit/privatix-capture-3-960.webp" srcset="/artbook/presskit/privatix-capture-3-960.webp 960w, /artbook/presskit/privatix-capture-3.jpg 1920w" sizes="(min-width: 900px) 540px, 92vw" width="1920" height="1080" loading="lazy" decoding="async" alt="Pièces d&#x27;équipement au sol sur le quai, chacune signalée par un faisceau vertical à la couleur de sa rareté." />
+            </a>
+            <p class="shot__cap">Le butin et ses faisceaux de rareté · <a class="link" href="/artbook/presskit/privatix-capture-3.jpg" download>JPG 1920×1080 · 298 Kio</a></p>
+          </li>
+          <li data-reveal>
+            <a class="shot" href="/artbook/presskit/privatix-capture-4.jpg" data-lightbox>
+              <img src="/artbook/presskit/privatix-capture-4-960.webp" srcset="/artbook/presskit/privatix-capture-4-960.webp 960w, /artbook/presskit/privatix-capture-4.jpg 1920w" sizes="(min-width: 900px) 540px, 92vw" width="1920" height="1080" loading="lazy" decoding="async" alt="La salle des opérations de l&#x27;OCC : mur synoptique vert, pupitres éclairés et collègues à leur poste." />
+            </a>
+            <p class="shot__cap">L&#x27;OCC, salle des opérations · <a class="link" href="/artbook/presskit/privatix-capture-4.jpg" download>JPG 1920×1080 · 261 Kio</a></p>
+          </li>
+          </ul>
+          <!-- artbook:presskit:end -->
+          <p class="ab-note" data-reveal>
+            Privatix est une œuvre de fiction satirique. Personnages, entreprises et répliques sont inventés,
+            hors exceptions autorisées par le porteur du projet (SNCB, « Calatrava », caricature bon enfant
+            d'Elio Di Rupo, sans citation réelle).
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap site-footer__inner">
+        <a class="studio" href="https://studios.fs0ciety.org/" rel="noopener">
+          <img src="./src/assets/img/occ-mons-studios.webp" width="48" height="48" alt="" loading="lazy" decoding="async" />
+          <span>Développé par <strong>OCC MONS Studios</strong></span>
+        </a>
+        <p class="site-footer__meta">
+          © <span data-year>2026</span> OCC MONS Studios · Privatix est une œuvre de fiction satirique.
+          <br />Images et animations capturées dans le jeu 3D (préréglage haut, temps virtuel à 30 images par seconde).
+        </p>
+        <ul class="site-footer__links" role="list">
+          <li><a class="link" href="./">Accueil</a></li>
+          <li><a class="link" href="./jouer/play3d.html">Jouer</a></li>
+          <li><a class="link" href="https://github.com/fs0ciety7000/Privatix/tree/main/docs/artbook">Artbook sur GitHub</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <dialog class="lightbox lightbox--wide" data-lightbox-dialog aria-label="Planche en grand">
+      <form method="dialog"><button class="lightbox__close btn btn--secondary" aria-label="Fermer">✕</button></form>
+      <img alt="" data-lightbox-img />
+      <p class="lightbox__cap" data-lightbox-cap></p>
+    </dialog>
+  </body>
+</html>

@@ -1,0 +1,234 @@
+{
+  "_doc": "Sommaire de l'artbook : sections, planches (site/public/artbook/planches/<id>.webp), animations (anim/<id>.webm|mp4|gif) et captures du press kit. Lu par page.py (site/artbook.html, docs/artbook/README.md).",
+  "sections": [
+    {
+      "id": "personnages",
+      "groups": [
+        {
+          "title": "Le héros",
+          "items": [
+            "perso-hero",
+            "perso-tenues"
+          ]
+        },
+        {
+          "title": "Ressources de Privatix",
+          "items": [
+            "perso-consultant",
+            "perso-borne",
+            "perso-drone",
+            "perso-manager",
+            "perso-furet",
+            "perso-fluidifieur"
+          ]
+        },
+        {
+          "title": "Boss",
+          "items": [
+            "perso-discosaure",
+            "perso-auditeur",
+            "perso-dirupo",
+            "perso-lurcke"
+          ]
+        },
+        {
+          "title": "Les collègues de l'OCC",
+          "items": [
+            "perso-josiane",
+            "perso-bene",
+            "perso-kevin"
+          ]
+        },
+        {
+          "title": "Casting",
+          "items": [
+            "perso-gamme-tailles"
+          ],
+          "wide": true
+        }
+      ]
+    },
+    {
+      "id": "decors",
+      "groups": [
+        {
+          "items": [
+            "decor-quais",
+            "decor-passerelle",
+            "decor-hall",
+            "decor-hub",
+            "decor-arenes"
+          ],
+          "wide": true
+        }
+      ]
+    },
+    {
+      "id": "loot-ui",
+      "groups": [
+        {
+          "items": [
+            "loot",
+            "ui"
+          ],
+          "wide": true
+        }
+      ]
+    },
+    {
+      "id": "vfx",
+      "groups": [
+        {
+          "items": [
+            "vfx-heros",
+            "vfx-boss"
+          ],
+          "wide": true
+        }
+      ]
+    },
+    {
+      "id": "palette",
+      "groups": [
+        {
+          "items": [
+            "da-palette"
+          ],
+          "wide": true
+        }
+      ]
+    }
+  ],
+  "titles": {
+    "perso-tenues": [
+      "Les cinq tenues",
+      "Raretés d'équipement sur le héros"
+    ],
+    "perso-gamme-tailles": [
+      "Gamme des tailles",
+      "Tout le casting à l'échelle"
+    ],
+    "perso-lurcke": [
+      "Jean-Cul Lurcke",
+      "Boss final · fiche de travail"
+    ],
+    "decor-quais": [
+      "Quais & Voies",
+      "Biome 1"
+    ],
+    "decor-passerelle": [
+      "La Passerelle « Calatrava »",
+      "Biome 2"
+    ],
+    "decor-hall": [
+      "Hall & BAG",
+      "Biome 3"
+    ],
+    "decor-hub": [
+      "L'OCC",
+      "Hub · salle des opérations, Cour du BAG, coin poubelles"
+    ],
+    "decor-arenes": [
+      "Arènes des boss",
+      "Et ennemis majeurs"
+    ],
+    "loot": [
+      "Le butin qui se voit",
+      "Faisceaux, carte de comparaison, équipement"
+    ],
+    "ui": [
+      "HUD et menus",
+      "Interface DOM encrée"
+    ],
+    "vfx-heros": [
+      "Coups, impacts et télégraphes",
+      "Héros, ennemis, élites"
+    ],
+    "vfx-boss": [
+      "Patterns des boss",
+      "Piste de danse, ruban, tampon, bullet points"
+    ],
+    "da-palette": [
+      "Palette & direction artistique",
+      "Couleurs, lumières, rampe toon, typographie"
+    ]
+  },
+  "anims": [
+    {
+      "id": "combo",
+      "title": "Combo à la clé à tire-fond",
+      "sub": "Trois coups, smears et hitstop sur un trio de consultants.",
+      "rc": "var(--px-hero)"
+    },
+    {
+      "id": "dash",
+      "title": "Dash « Retard SNCB »",
+      "sub": "Esquive à deux charges à travers les télégraphes magenta.",
+      "rc": "var(--px-rim)"
+    },
+    {
+      "id": "furet-surgit",
+      "title": "Le Furet putride surgit",
+      "sub": "Plongée sous le quai, traînée de poussière, cercle magenta avant la sortie.",
+      "rc": "var(--px-violet-hi)"
+    },
+    {
+      "id": "drop-patrimoine",
+      "title": "Drop de Patrimoine",
+      "sub": "Le butin du Wagon-Bar tombe : faisceau orange de la rareté la plus haute.",
+      "rc": "var(--rar-patrimoine)"
+    },
+    {
+      "id": "auditeur",
+      "title": "L'Auditeur des Quais",
+      "sub": "Tampon verrouillé sur le héros, puis bras-barrière.",
+      "rc": "var(--px-danger)"
+    },
+    {
+      "id": "dirupo",
+      "title": "Elio Di Rupo",
+      "sub": "Nœud papillon boomerang et ciseaux d'inauguration (caricature bon enfant).",
+      "rc": "var(--px-danger)"
+    },
+    {
+      "id": "discosaure",
+      "title": "Le Discosaure, piste de danse",
+      "sub": "Les taches tournent, se figent puis explosent ; piétinement en rythme.",
+      "rc": "var(--px-danger)"
+    },
+    {
+      "id": "lurcke",
+      "title": "Jean-Cul Lurcke",
+      "sub": "Bullet points et piliers-graphiques dans le bureau du Directeur.",
+      "rc": "var(--px-danger)"
+    },
+    {
+      "id": "hub-pnj",
+      "title": "L'OCC et les collègues",
+      "sub": "Salle des opérations : les PNJ à leur pupitre.",
+      "rc": "var(--px-tungsten)"
+    }
+  ],
+  "presskit": [
+    {
+      "src": "arene-auditeur",
+      "title": "L'Auditeur des Quais",
+      "alt": "L'Auditeur des Quais, borne géante aux bras-barrières, face au héros sur le quai 2 de la gare de Mons."
+    },
+    {
+      "src": "arene-discosaure",
+      "title": "Le Discosaure et sa piste de danse",
+      "alt": "Le Discosaure, dinosaure violet à boule à facettes, sur une piste de danse lumineuse face au héros."
+    },
+    {
+      "src": "loot-faisceaux",
+      "title": "Le butin et ses faisceaux de rareté",
+      "alt": "Pièces d'équipement au sol sur le quai, chacune signalée par un faisceau vertical à la couleur de sa rareté."
+    },
+    {
+      "src": "hub-salle-operations",
+      "title": "L'OCC, salle des opérations",
+      "alt": "La salle des opérations de l'OCC : mur synoptique vert, pupitres éclairés et collègues à leur poste."
+    }
+  ]
+}

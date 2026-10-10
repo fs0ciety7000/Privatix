@@ -453,6 +453,13 @@ code {
   font-size: var(--fs-sm);
 }
 
+.gallery__more {
+  margin: var(--sp-6) 0 0;
+}
+.gallery__more .btn {
+  text-align: left;
+}
+
 /* Bestiaire : trois paliers (terrain, cadres, têtes d'affiche), portraits 3D du jeu */
 .tier + .tier {
   margin-top: var(--sp-7);

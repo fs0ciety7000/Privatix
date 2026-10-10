@@ -25,3 +25,6 @@ prototypes/*/node_modules
 
 # Sorties de génération ElevenLabs (tools/elevenlabs/generate.mjs)
 tools/elevenlabs/out/
+# Artbook : rendus intermédiaires (tools/artbook/.cache) et archive du press kit (assemblée au build du site)
+tools/artbook/.cache/
+site/public/artbook/presskit/privatix-press-kit.zip
