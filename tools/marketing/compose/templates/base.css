@@ -1,0 +1,183 @@
+/* Socle commun des compositions marketing (affiches, bannières).
+   Polices : Archivo Black (titre, le plus proche en OFL de l'Arial Black du logotype du site)
+   et Barlow / Barlow Condensed (accroche, crédits). Licences dans ../fonts/OFL-*.txt. */
+@font-face {
+  font-family: 'Archivo Black';
+  src: url('../fonts/ArchivoBlack-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Barlow';
+  src: url('../fonts/Barlow-Medium.ttf') format('truetype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Barlow';
+  src: url('../fonts/Barlow-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'Barlow';
+  src: url('../fonts/Barlow-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('../fonts/BarlowCondensed-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('../fonts/BarlowCondensed-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+/* Tokens « Néon & Ballast » (docs/DESIGN_SYSTEM.md § 2). */
+:root {
+  --px-ink: #14101a;
+  --px-night: #0a0818;
+  --px-night-2: #120d24;
+  --px-hero: #ff7a1a;
+  --px-scarf: #e0302a;
+  --px-danger: #ff3ea5;
+  --px-rim: #6ff3ff;
+  --px-gold: #ffd200;
+  --px-text: #ffffff;
+  --px-text-soft: #dcd8ef;
+  --px-text-mute: #a9a3c8;
+  --px-cream: #fff3c8;
+  --font-title: 'Archivo Black', 'Arial Black', sans-serif;
+  --font-text: 'Barlow', 'Segoe UI', sans-serif;
+  --font-cond: 'Barlow Condensed', 'Barlow', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--px-night);
+  -webkit-font-smoothing: antialiased;
+}
+.canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Logotype néon : même recette que `.neon` du site (site/src/styles/site.css), état final
+   de l'allumage `neonIgnite` (tube tenu), avec l'ombre dure encrée du design system. */
+.neon {
+  font-family: var(--font-title);
+  font-weight: 400;
+  color: #ffe3f3;
+  letter-spacing: 0.1em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 0.04em #fff,
+    0 0 0.12em var(--px-danger),
+    0 0 0.3em var(--px-danger),
+    0 0 0.6em rgba(255, 62, 165, 0.45),
+    0 0.06em 0 var(--px-ink);
+  /* L'espacement final n'est pas compté dans le centrage. */
+  margin-right: -0.1em;
+}
+
+/* Bande de crédits : logo du studio, plateformes, SNCB. */
+.credits {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0 1.6em;
+  background: linear-gradient(180deg, rgba(10, 8, 24, 0) 0%, rgba(10, 8, 24, 0.9) 34%, var(--px-night) 62%);
+  color: var(--px-text-soft);
+  font-family: var(--font-text);
+}
+.credits::before {
+  /* liseré cyan des quais, comme le pied de page du site */
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 46%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(111, 243, 255, 0.55) 20%, rgba(111, 243, 255, 0.55) 80%, transparent);
+}
+.studio {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.studio img {
+  display: block;
+  height: 3.4em;
+  width: auto;
+  filter: drop-shadow(0 0 0.5em rgba(255, 122, 26, 0.35));
+}
+.studio__kicker {
+  display: block;
+  font-family: var(--font-cond);
+  font-weight: 600;
+  font-size: 0.78em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--px-text-mute);
+}
+.studio__name {
+  display: block;
+  font-family: var(--font-cond);
+  font-weight: 700;
+  font-size: 1.5em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--px-text);
+  line-height: 1.05;
+}
+.platforms {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  font-family: var(--font-cond);
+  font-weight: 600;
+  font-size: 1.1em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--px-text);
+}
+.platforms i {
+  /* séparateur : petit losange orange héros */
+  display: inline-block;
+  width: 0.32em;
+  height: 0.32em;
+  background: var(--px-hero);
+  transform: rotate(45deg);
+}
+.sncb {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  opacity: 0.82;
+}
+.sncb img {
+  display: block;
+  height: 2em;
+  width: auto;
+}

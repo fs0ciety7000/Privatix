@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- Affiche 2:3, composition « Manif » : titre néon calé à gauche, accroche sur une pancarte
+     syndicale jaune encrée (contour 2 px + ombre dure, le geste « figurine » du design system),
+     crédits centrés sur deux niveaux. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { font-size: {{width}}px; }
+  .canvas { font-size: 0.01em; }
+  .shade-top {
+    position: absolute; inset: 0 0 auto 0; height: 32%;
+    background: linear-gradient(170deg, rgba(10,8,24,.92) 0%, rgba(10,8,24,.6) 45%, rgba(10,8,24,0) 100%);
+  }
+  .head { position: absolute; top: 4.6%; left: 6.5%; right: 6.5%; }
+  .head .neon { font-size: 14.6em; letter-spacing: 0.06em; margin-right: -0.06em; }
+  .placard {
+    display: inline-block; margin-top: 2.6em; padding: 0.42em 0.8em 0.46em;
+    transform: rotate(-2.5deg); transform-origin: left center;
+    background: var(--px-gold); color: var(--px-ink);
+    border: 0.14em solid var(--px-ink); box-shadow: 0 0.2em 0 var(--px-ink);
+    font-family: var(--font-title); font-size: 3.5em; letter-spacing: 0.02em;
+  }
+  .credits {
+    font-size: 2.1em; height: 17%; padding: 2.4em 6% 0;
+    grid-template-columns: 1fr; justify-items: center; row-gap: 0.9em;
+  }
+  .credits::before { top: 58%; }
+  .studio { flex-direction: row; }
+  .platforms { font-size: 1.05em; }
+  .sncb { position: absolute; right: 6%; bottom: 13%; }
+  .sncb img { height: 1.7em; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <div class="shade-top"></div>
+  <div class="head">
+    <div class="neon">PRIVATIX</div>
+    <div class="placard">{{tagline}}</div>
+  </div>
+  <footer class="credits">
+    <div class="studio">
+      <img src="{{studioUrl}}" alt="">
+      <div><span class="studio__kicker">Développé par</span><span class="studio__name">OCC MONS Studios</span></div>
+    </div>
+    <div class="platforms">PC <i></i> Mac <i></i> Linux <i></i> Navigateur</div>
+    <div class="sncb"><img src="../assets/sncb-mono-blanc.png" alt="SNCB"></div>
+  </footer>
+</div>
+</body>
+</html>
