@@ -145,14 +145,14 @@ export function parallax(target: Element, trigger: Element, yPercent = 12): void
 
 /**
  * Preset « entrée du hero » : timeline courte. Rien n'y est masqué (le contenu du hero est déjà peint
- * et compte pour le LCP) : le logotype se rallume comme un néon, puis les actions font un léger
- * « pop » d'impact.
+ * et compte pour le LCP) : le logo (mono blanc, sans néon) monte d'un simple fondu, puis les actions
+ * font un léger « pop » d'impact.
  */
 export function heroIntro(root: ParentNode): gsap.core.Timeline {
   const tl = gsap.timeline();
-  const neon = root.querySelector('[data-neon]');
+  const logo = root.querySelector('[data-hero-logo]');
   const actions = Array.from(root.querySelectorAll('.hero__actions .btn'));
-  if (neon) tl.add(neonIgnite(neon), 0.1);
+  if (logo) tl.from(logo, { opacity: 0.2, y: 6, duration: DUR.slow, ease: EASE.ballast, clearProps: 'opacity,transform' }, 0.05);
   if (actions.length) {
     tl.from(actions, { scale: 0.94, duration: DUR.slow, ease: EASE.coup, stagger: 0.08, clearProps: 'transform' }, 0.25);
   }
@@ -179,7 +179,7 @@ export function initMotion(): void {
   // Mouvement réduit : rien n'est animé ni masqué, aucun clignotement. Les transitions CSS sont
   // ramenées à 0 par les tokens `--dur-*` (tokens.css).
   mm.add(REDUCED, () => {
-    gsap.set('[data-reveal], [data-neon]', { clearProps: 'opacity,visibility,transform' });
+    gsap.set('[data-reveal], [data-neon], [data-hero-logo]', { clearProps: 'opacity,visibility,transform' });
     gsap.set('.foe__img, .loadout__img, .mate__img, .kit__img', { clearProps: 'transform,filter' });
   });
 }

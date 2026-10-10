@@ -45,8 +45,7 @@
     <header class="site-header" id="haut">
       <div class="wrap site-header__inner">
         <a class="wordmark" href="#haut" aria-label="Privatix, retour en haut de page">
-          <img class="wordmark__emblem" src="./src/assets/img/privatix-embleme.webp" width="640" height="393" alt="" />
-          <img class="wordmark__word" src="./src/assets/img/privatix-wordmark.svg" width="695" height="173" alt="" />
+          <img class="wordmark__img" src="./src/assets/img/privatix-wordmark-mono-blanc.svg" width="588" height="74" alt="" />
         </a>
         <nav class="site-nav" aria-label="Sections">
           <ul>
@@ -87,10 +86,7 @@
         <div class="wrap hero__content">
           <p class="eyebrow hero__eyebrow" data-hero>Gare de Mons · Quai 2 · 4 h 47</p>
           <h1 id="hero-title" class="hero__title">
-            <span class="hero__logo">
-              <img class="hero__emblem" src="./src/assets/img/privatix-embleme.webp" width="640" height="393" alt="" fetchpriority="high" />
-              <img class="hero__wordmark" src="./src/assets/img/privatix-wordmark.svg" width="695" height="173" alt="PRIVATIX" data-neon />
-            </span>
+            <img class="hero__logo" src="./src/assets/img/privatix-logo-mono-blanc.svg" width="588" height="263" alt="PRIVATIX" fetchpriority="high" data-hero-logo />
           </h1>
           <p class="hero__tagline" data-hero>
             Un cheminot en 3x8, une clé à tire-fond, une cafetière de 1987 et des collègues à la radio
@@ -111,11 +107,6 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor" /></svg>
               <span>Voir le trailer<small>1 min · avec le son</small></span>
             </a>
-          </p>
-          <p class="hero__more" data-hero>
-            Aussi : <a class="link" href="./jouer/">la version classique (2D)</a> ·
-            <a class="link" href="./3d/">le prototype 3D</a> (Discosaure et butin)
-            <span class="hero__version" data-version hidden></span>
           </p>
         </div>
       </section>
@@ -323,7 +314,7 @@
         <div class="wrap">
           <p class="eyebrow" data-reveal>Galerie</p>
           <h2 id="galerie-title" class="section__title" data-reveal>Captures du jeu</h2>
-          <p class="section__lead" data-reveal>Images réelles, prises dans la version navigateur et dans le prototype 3D.</p>
+          <p class="section__lead" data-reveal>Images réelles, prises en jeu.</p>
           <ul class="gallery" role="list">
             <li data-reveal>
               <a class="shot" href="/galerie/jeu-telegraphes.webp" data-lightbox>
@@ -347,19 +338,19 @@
               <a class="shot" href="/galerie/proto-discosaure.webp" data-lightbox>
                 <img src="/galerie/proto-discosaure-640.webp" srcset="/galerie/proto-discosaure-640.webp 640w, /galerie/proto-discosaure.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Le Discosaure, dinosaure violet portant une boule à facettes sur le dos, fait face au héros sur un quai éclairé de confettis colorés." />
               </a>
-              <p class="shot__cap"><span class="badge badge--boss">Prototype</span> Le Discosaure entre en piste.</p>
+              <p class="shot__cap"><span class="badge badge--boss">Mini-boss</span> Le Discosaure entre en piste.</p>
             </li>
             <li data-reveal>
               <a class="shot" href="/galerie/proto-pietinement.webp" data-lightbox>
                 <img src="/galerie/proto-pietinement-640.webp" srcset="/galerie/proto-pietinement-640.webp 640w, /galerie/proto-pietinement.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Le Discosaure piétine en rythme et envoie une onde de choc magenta autour de lui." />
               </a>
-              <p class="shot__cap"><span class="badge badge--boss">Prototype</span> Piétinement en rythme : le tempo est le télégraphe.</p>
+              <p class="shot__cap"><span class="badge badge--boss">Mini-boss</span> Piétinement en rythme : le tempo est le télégraphe.</p>
             </li>
             <li data-reveal>
               <a class="shot" href="/galerie/proto-loot.webp" data-lightbox>
                 <img src="/galerie/proto-loot-640.webp" srcset="/galerie/proto-loot-640.webp 640w, /galerie/proto-loot.webp 1280w" sizes="(min-width: 900px) 580px, 100vw" width="1280" height="720" loading="lazy" decoding="async" alt="Une pièce d'équipement au sol, entourée d'un faisceau de lumière à la couleur de sa rareté, avec sa carte d'objet." />
               </a>
-              <p class="shot__cap"><span class="badge badge--patrimoine">Prototype</span> Le butin au sol et sa carte d'objet.</p>
+              <p class="shot__cap"><span class="badge badge--patrimoine">Butin</span> Le butin au sol et sa carte d'objet.</p>
             </li>
           </ul>
           <p class="gallery__more" data-reveal>
@@ -609,7 +600,6 @@
               <ul class="ticks">
                 <li>Choisie automatiquement au démarrage (Moyen sur écran tactile).</li>
                 <li>Forcée par l'adresse : <code>?q=bas</code>, <code>?q=moyen</code> ou <code>?q=haut</code>.</li>
-                <li>Dans le prototype : <kbd>F2</kbd> fait défiler les niveaux.</li>
                 <li><kbd>F3</kbd> affiche les mesures (images par seconde, appels de dessin).</li>
               </ul>
             </div>
@@ -618,7 +608,7 @@
               <h3 class="card__title">Réduction des mouvements</h3>
               <ul class="ticks">
                 <li>Suit le réglage de votre système (<em>prefers-reduced-motion</em>).</li>
-                <li>Bascule en jeu : <kbd>M</kbd> (prototype : <kbd>F4</kbd>), ou <code>?rm=1</code>.</li>
+                <li>Bascule en jeu : <kbd>M</kbd>, ou <code>?rm=1</code>.</li>
                 <li>Secousses réduites, plus aucun clignotement : la boule du Discosaure arrête de stroboscoper.</li>
                 <li>Les télégraphes restent lisibles par leurs contours et leurs remplissages.</li>
               </ul>
@@ -644,10 +634,6 @@
             <details data-reveal>
               <summary>Navigateur ou application de bureau ?</summary>
               <p>C'est le même jeu. L'application embarque son propre moteur de rendu et peut forcer la carte graphique dédiée : utile sur un portable ou si votre navigateur bride WebGL. Le navigateur, lui, se met à jour tout seul.</p>
-            </details>
-            <details data-reveal>
-              <summary>Pourquoi trois versions jouables ?</summary>
-              <p>Le jeu passe de la 2D à la 3D temps réel. La <a class="link" href="./jouer/play3d.html">version 3D</a> est la version principale ; la <a class="link" href="./jouer/">version classique</a> en pixel art reste jouable jusqu'à la bascule complète ; le <a class="link" href="./3d/">prototype 3D</a> montre le Discosaure et le butin d'équipement en avant-première.</p>
             </details>
             <details data-reveal>
               <summary>Ma progression est-elle sauvegardée ?</summary>
