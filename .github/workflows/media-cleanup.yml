@@ -1,0 +1,27 @@
+name: Media cleanup
+
+# Supprime une branche orpheline `media/…` une fois sa release publiée (les fichiers restent dans la
+# release ; l'étiquette garde le commit). Restreint aux branches `media/` par sécurité.
+on:
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: Branches à supprimer, séparées par des espaces (uniquement media/…)
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supprimer les branches media
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCHES: ${{ inputs.branches }}
+        run: |
+          for b in $BRANCHES; do
+            case "$b" in media/*) ;; *) echo "Refusé : $b (seules les branches media/… sont autorisées)" >&2; exit 1;; esac
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$b" && echo "supprimée : $b"
+          done
