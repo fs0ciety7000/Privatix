@@ -13,6 +13,7 @@
  */
 import type { EnemyKind } from '@/config/balance';
 import type { SimEvent } from '@/sim/events';
+import { FAMILIES } from '@/systems/meta/Avantages';
 import type { VoiceLineFile } from './assetIndex';
 import { VOICE_FILES } from './assetIndex';
 
@@ -58,6 +59,22 @@ const GAME_LINES: readonly (readonly [string, string])[] = [
   ['moins de monde plus de cadres', 'vo.yasmina.hub.01'],
   ['incident voyageur sur ta ligne', 'vo.yasmina.hub.02'],
   ['l auditeur est en voie d attente', 'vo.yasmina.hub.03'],
+  // Marcel (hub, Tableau des revendications ; radio après l'Invité d'honneur)
+  ['le retard on l appelait l aventure', 'vo.marcel.hub.01'],
+  ['tableau des revendications fieu', 'vo.marcel.hub.02'],
+  ['t as eu une aventure courte', 'vo.marcel.hub.03'],
+  ['tant qu ils reprogramment on existe', 'vo.marcel.hub.04'],
+  ['on inaugurait les gares', 'vo.marcel.radio.01'],
+  // Josiane (hub, DPD et Vestiaire)
+  ['ta dotation je la range', 'vo.josiane.hub.01'],
+  ['le mannequin la tape dedans', 'vo.josiane.hub.02'],
+  ['tu ne m appelles jamais', 'vo.josiane.hub.03'],
+  ['mon sanglier de', 'vo.josiane.hub.04'],
+  // Béné (hub, PACO) : la réplique après une mort finit par « Numéro suivant ! », elle passe avant.
+  ['elle t a imprime la borne', 'vo.bene.hub.03'],
+  ['un consultant n a pas de titre de transport', 'vo.bene.hub.01'],
+  ['numero suivant', 'vo.bene.hub.02'],
+  ['j ai archive ta victoire', 'vo.bene.hub.04'],
 ];
 
 /** Enregistrement d'une réplique affichée par le jeu, ou `null` (personnage pas encore doublé). */
@@ -176,7 +193,13 @@ export function voiceCuesFor(e: SimEvent, c: VoiceContext): VoiceCue[] {
     }
     case 'bossIntro':
       // Léon répond à Lurcke après sa réplique d'entrée.
-      return e.kind === 'lurcke' ? [{ id: 'vo.leon.boss.signature', kind: 'line' }] : [];
+      // Léon répond à Lurcke, puis Josiane à la radio (« Ces quatorze-là, ils ont un nom »).
+      return e.kind === 'lurcke'
+        ? [
+            { id: 'vo.leon.boss.signature', kind: 'line' },
+            { id: 'vo.josiane.radio.01', kind: 'radio', important: true, once: true },
+          ]
+        : [];
     case 'bossPhase':
       if (c.boss === 'lurcke' && e.phase === 2)
         return [{ id: 'vo.leon.boss.preuve', kind: 'line', once: true }];
@@ -209,7 +232,16 @@ export interface VoiceProbe {
   readonly gobelets: number;
   readonly heroState: string;
   readonly mobilisation: number;
+  /** Familles d'Avantage proposées dans la fenêtre de choix ouverte (couleurs), vide sinon. */
+  readonly choiceFamilies: readonly number[];
 }
+
+/** Radio du collègue dont l'Avantage est proposé (Marcel, Béné, Josiane). */
+const AVANTAGE_RADIO: readonly (readonly [number, string])[] = [
+  [FAMILIES.marcel.color, 'vo.marcel.radio.02'],
+  [FAMILIES.bene.color, 'vo.bene.radio.01'],
+  [FAMILIES.josiane.color, 'vo.josiane.radio.02'],
+];
 
 export function voiceCuesFromProbe(prev: VoiceProbe, next: VoiceProbe): VoiceCue[] {
   const cues: VoiceCue[] = [];
@@ -225,6 +257,10 @@ export function voiceCuesFromProbe(prev: VoiceProbe, next: VoiceProbe): VoiceCue
     cues.push({ id: 'vo.yasmina.radio.07', kind: 'radio', cooldown: 120 });
   if (next.mobilisation >= 100 && prev.mobilisation < 100)
     cues.push({ id: 'vo.yasmina.radio.06', kind: 'radio', cooldown: 90 });
+  if (next.choiceFamilies.length > 0 && prev.choiceFamilies.length === 0) {
+    const hit = AVANTAGE_RADIO.find(([color]) => next.choiceFamilies.includes(color));
+    if (hit) cues.push({ id: hit[1], kind: 'radio', cooldownKey: 'avantage', cooldown: 45 });
+  }
   return cues;
 }
 

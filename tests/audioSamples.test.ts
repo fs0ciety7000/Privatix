@@ -26,6 +26,7 @@ import {
 import { BIOMES, PHASE_LINES } from '@/sim/biomes';
 import type { SimEvent } from '@/sim/events';
 import { NPC_LINES } from '@/sim/hub/stations';
+import { FAMILIES } from '@/systems/meta/Avantages';
 
 // ─── AudioContext simulé (minimal : gains, filtres, sources, décodage factice) ─
 
@@ -109,7 +110,50 @@ class Filter extends Node {
 
 interface FakeBuffer {
   readonly duration: number;
+  readonly length: number;
+  readonly numberOfChannels: number;
   readonly tag: string;
+}
+
+/** Élément audio simulé (streaming de l'OST). */
+class FakeMedia {
+  public static all: FakeMedia[] = [];
+  public static refuse = false;
+  public src = '';
+  public preload = '';
+  public currentTime = 0;
+  public duration = 100;
+  public paused = true;
+  public ended = false;
+  public plays = 0;
+  private readonly listeners = new Map<string, (() => void)[]>();
+  public constructor() {
+    FakeMedia.all.push(this);
+  }
+  public play(): Promise<void> {
+    this.plays += 1;
+    if (FakeMedia.refuse) return Promise.reject(new Error('NotAllowedError'));
+    this.paused = false;
+    return Promise.resolve();
+  }
+  public pause(): void {
+    this.paused = true;
+  }
+  public load(): void {
+    // Rien à charger.
+  }
+  public addEventListener(type: string, cb: () => void): void {
+    this.listeners.set(type, [...(this.listeners.get(type) ?? []), cb]);
+  }
+  public removeEventListener(type: string, cb: () => void): void {
+    this.listeners.set(
+      type,
+      (this.listeners.get(type) ?? []).filter((f) => f !== cb),
+    );
+  }
+  public fire(type: string): void {
+    for (const cb of this.listeners.get(type) ?? []) cb();
+  }
 }
 
 class Ctx {
@@ -144,6 +188,9 @@ class Ctx {
   public createDynamicsCompressor(): Filter {
     return new Filter();
   }
+  public createMediaElementSource(): Node {
+    return new Node();
+  }
   public createStereoPanner(): Filter {
     return new Filter();
   }
@@ -160,7 +207,12 @@ class Ctx {
   public decodeAudioData(bytes: ArrayBuffer): Promise<FakeBuffer> {
     if (this.decodeFails) return Promise.reject(new Error('format non pris en charge'));
     const duration = new Float64Array(bytes)[0] ?? 1;
-    return Promise.resolve({ duration, tag: 'buffer' });
+    return Promise.resolve({
+      duration,
+      length: Math.round(duration * 48000),
+      numberOfChannels: 2,
+      tag: 'buffer',
+    });
   }
 }
 
@@ -314,7 +366,7 @@ describe('audio enregistré : sélection des répliques', () => {
     expect(lineIdFor(y.victory)).toBe('vo.yasmina.hub.03');
     // Personnages pas encore doublés : texte seul.
     expect(lineIdFor(BIOMES[0].boss.intro.text)).toBeNull();
-    expect(lineIdFor(NPC_LINES.marcel.death)).toBeNull();
+    expect(lineIdFor(NPC_LINES.kevin.death)).toBeNull();
   });
 
   it('chaque réplique enregistrée a son fichier ; les 6 manquantes de Lurcke restent muettes', () => {
@@ -375,6 +427,7 @@ describe('audio enregistré : sélection des répliques', () => {
       gobelets: 1,
       heroState: 'idle',
       mobilisation: 0,
+      choiceFamilies: [],
     };
     expect(
       voiceCuesFromProbe(probe, { ...probe, energy: 0.2, gobelets: 0 }).map((x) => x.id),
@@ -603,7 +656,9 @@ describe('audio enregistré : chargeur et repli sur la synthèse', () => {
 });
 
 describe('audio enregistré : directeur', () => {
-  async function director(opts: { fail?: boolean; decodeFails?: boolean } = {}): Promise<{
+  async function director(
+    opts: { fail?: boolean; decodeFails?: boolean; stream?: boolean } = {},
+  ): Promise<{
     d: AudioDirector;
     ctx: Ctx;
     asked: string[];
@@ -621,6 +676,7 @@ describe('audio enregistré : directeur', () => {
       samples: {
         baseUrl: 'audio/',
         enabled: true,
+        createMedia: opts.stream ? () => new FakeMedia() : null,
         fetchBytes: (u) => {
           asked.push(u);
           if (opts.fail) return Promise.reject(new Error('hors ligne'));
@@ -723,6 +779,194 @@ describe('audio enregistré : directeur', () => {
     if (!missing) throw new Error('réplique absente');
     d.frame([{ type: 'bossLine', ...missing }], probe);
     expect(d.subtitleFor(missing.text)).toBe(missing.text);
+    d.dispose();
+  });
+});
+
+describe('audio enregistré : OST en streaming', () => {
+  async function streamed(): Promise<{ d: AudioDirector; ctx: Ctx }> {
+    FakeMedia.all = [];
+    FakeMedia.refuse = false;
+    const box: { ctx: Ctx | null } = { ctx: null };
+    const d = new AudioDirector({
+      random: () => 0.5,
+      createContext: () => {
+        const made = new Ctx();
+        box.ctx = made;
+        return made as unknown as AudioContext;
+      },
+      samples: {
+        baseUrl: 'audio/',
+        enabled: true,
+        createMedia: () => new FakeMedia(),
+        fetchBytes: () => Promise.resolve(fakeBytes(1.5)),
+      },
+    });
+    d.engine.unlock();
+    await flush();
+    if (!box.ctx) throw new Error('pas de contexte');
+    return { d, ctx: box.ctx };
+  }
+  const media = (file: string): FakeMedia[] => FakeMedia.all.filter((m) => m.src.endsWith(file));
+
+  it('aucun morceau décodé : élément préchargé, branché, joué après le geste', async () => {
+    const { d } = await streamed();
+    const hub: AudioProbe = { ...EMPTY_PROBE, phase: 'hub' };
+    d.frame([], hub);
+    const [el] = media('music/02-occ-jour.webm');
+    if (!el) throw new Error('élément absent');
+    expect(el.preload).toBe('auto');
+    // Pas encore prêt : synthèse.
+    expect(d.trackPlaying).toBeNull();
+    expect(d.music.musicMuted).toBe(false);
+    el.fire('canplaythrough');
+    d.frame([], hub);
+    expect(d.trackPlaying).toBe('ost.02-occ-jour');
+    expect(el.paused).toBe(false);
+    expect(d.music.musicMuted).toBe(true);
+    // Seules les voix sont décodées ; la musique n'a aucun PCM en mémoire.
+    for (let i = 0; i < 60; i += 1) await flush();
+    const voicePcm = d.musicMemory.pcmMo;
+    expect(voicePcm).toBeLessThan(60);
+    expect(d.samples.status('music/02-occ-jour.webm')).toBe('idle');
+    d.dispose();
+  });
+
+  it('boucle : deux éléments alternés en fondu enchaîné au point de bouclage', async () => {
+    const { d, ctx } = await streamed();
+    const hub: AudioProbe = { ...EMPTY_PROBE, phase: 'hub' };
+    d.frame([], hub);
+    const [a] = media('music/02-occ-jour.webm');
+    a?.fire('canplaythrough');
+    d.frame([], hub);
+    const both = media('music/02-occ-jour.webm');
+    expect(both).toHaveLength(2);
+    const [, b] = both;
+    if (!a || !b) throw new Error('éléments absents');
+    expect(b.paused).toBe(true);
+    a.currentTime = TRACKS.hubDay.loopEnd - LOOP_CROSSFADE + 0.05;
+    ctx.currentTime += 1;
+    d.frame([], hub);
+    expect(b.paused).toBe(false);
+    expect(b.currentTime).toBe(TRACKS.hubDay.loopStart);
+    // Fin du fondu : l'ancien élément s'arrête.
+    ctx.currentTime += LOOP_CROSSFADE + 0.1;
+    d.frame([], hub);
+    expect(a.paused).toBe(true);
+    d.dispose();
+  });
+
+  it('lecture refusée (autoplay) : retour à la synthèse', async () => {
+    const { d } = await streamed();
+    FakeMedia.refuse = true;
+    const hub: AudioProbe = { ...EMPTY_PROBE, phase: 'hub' };
+    d.frame([], hub);
+    media('music/02-occ-jour.webm')[0]?.fire('canplaythrough');
+    d.frame([], hub);
+    await flush();
+    d.frame([], hub);
+    expect(d.trackPlaying).toBeNull();
+    expect(d.music.musicMuted).toBe(false);
+    d.dispose();
+  });
+
+  it('erreur de chargement : synthèse ; coup final : silence', async () => {
+    const { d } = await streamed();
+    const boss = run({ biome: 2, roomType: 'boss' });
+    d.frame([], boss);
+    media('music/11-boss-lurcke.webm')[0]?.fire('error');
+    d.frame([], boss);
+    expect(d.trackPlaying).toBeNull();
+    expect(d.music.mode).toBe('boss');
+    d.frame([{ type: 'fx', name: 'finalBlow', x: 0, y: 0 }], boss);
+    expect(d.music.mode).toBe('off');
+    d.dispose();
+  });
+
+  it('onglet caché : les éléments s’arrêtent, reprise au retour', async () => {
+    const { d } = await streamed();
+    const hub: AudioProbe = { ...EMPTY_PROBE, phase: 'hub' };
+    d.frame([], hub);
+    const [el] = media('music/02-occ-jour.webm');
+    el?.fire('canplaythrough');
+    d.frame([], hub);
+    d.setHidden(true);
+    expect(el?.paused).toBe(true);
+    d.setHidden(false);
+    expect(el?.paused).toBe(false);
+    d.dispose();
+  });
+});
+
+describe('audio enregistré : PNJ du hub (Marcel, Josiane, Béné)', () => {
+  it('leurs bulles retrouvent leur enregistrement', () => {
+    const m = NPC_LINES.marcel;
+    expect(lineIdFor(m.generic[0] ?? '')).toBe('vo.marcel.hub.01');
+    expect(lineIdFor(m.generic[1] ?? '')).toBe('vo.marcel.hub.02');
+    expect(lineIdFor(m.death)).toBe('vo.marcel.hub.03');
+    expect(lineIdFor(m.victory)).toBe('vo.marcel.hub.04');
+    const j = NPC_LINES.josiane;
+    expect(lineIdFor(j.generic[0] ?? '')).toBe('vo.josiane.hub.01');
+    expect(lineIdFor(j.generic[1] ?? '')).toBe('vo.josiane.hub.02');
+    expect(lineIdFor(j.death)).toBe('vo.josiane.hub.03');
+    expect(lineIdFor(j.victory)).toBe('vo.josiane.hub.04');
+    const b = NPC_LINES.bene;
+    expect(lineIdFor(b.generic[0] ?? '')).toBe('vo.bene.hub.01');
+    expect(lineIdFor(b.generic[1] ?? '')).toBe('vo.bene.hub.02');
+    expect(lineIdFor(b.death)).toBe('vo.bene.hub.03');
+    expect(lineIdFor(b.victory)).toBe('vo.bene.hub.04');
+    // Radio de Marcel après la défaite de l'Invité d'honneur.
+    expect(lineIdFor(BIOMES[1].boss.defeat[3]?.text ?? '')).toBe('vo.marcel.radio.01');
+    // Encore sans voix : Fatou, Kevin, Rudy.
+    expect(lineIdFor(NPC_LINES.fatou.death)).toBeNull();
+    for (const v of ['marcel', 'josiane', 'bene'])
+      expect(VOICE_FILES.filter((l) => l.voice === v).every((l) => l.file !== null)).toBe(true);
+  });
+
+  it('Avantage d’un collègue proposé : sa radio', () => {
+    const probe = {
+      roomType: 'combat',
+      energy: 1,
+      burnoutTier: 0,
+      meltdown: false,
+      gobelets: 1,
+      heroState: 'idle',
+      mobilisation: 0,
+      choiceFamilies: [] as number[],
+    };
+    const ids = (families: number[]): string[] =>
+      voiceCuesFromProbe(probe, { ...probe, choiceFamilies: families }).map((c) => c.id);
+    expect(ids([FAMILIES.marcel.color, FAMILIES.rudy.color])).toEqual(['vo.marcel.radio.02']);
+    expect(ids([FAMILIES.bene.color])).toEqual(['vo.bene.radio.01']);
+    expect(ids([FAMILIES.josiane.color])).toEqual(['vo.josiane.radio.02']);
+    expect(ids([FAMILIES.kevin.color])).toEqual([]);
+  });
+
+  it('le hub fait dire la bulle et affiche le texte enregistré', async () => {
+    const box: { ctx: Ctx | null } = { ctx: null };
+    const d = new AudioDirector({
+      createContext: () => {
+        box.ctx = new Ctx();
+        return box.ctx as unknown as AudioContext;
+      },
+      samples: {
+        baseUrl: '',
+        enabled: true,
+        createMedia: null,
+        fetchBytes: () => Promise.resolve(fakeBytes(1)),
+      },
+    });
+    d.engine.unlock();
+    await flush();
+    d.frame([], { ...EMPTY_PROBE, phase: 'hub' });
+    for (let i = 0; i < 200; i += 1) await flush();
+    const text = NPC_LINES.bene.victory;
+    expect(d.say(text)).toBe(
+      'J’ai archivé ta victoire. Classement : rare. Sous-classement : à renouveler.',
+    );
+    d.frame([], { ...EMPTY_PROBE, phase: 'hub' });
+    expect(d.voices.log).toContain('vo.bene.hub.04');
+    expect(d.say(NPC_LINES.fatou.death)).toBe(NPC_LINES.fatou.death);
     d.dispose();
   });
 });

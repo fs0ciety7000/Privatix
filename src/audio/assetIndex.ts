@@ -5,7 +5,7 @@
  * - Musique : OST, prise retenue t1, WebM/Opus 96 kb/s, silences de tête et de queue retirés.
  *   `loopEnd` : fin du dernier passage plein (s), le fondu enchaîné de la boucle se termine là.
  * - Voix : WebM/Opus 64 kb/s mono. `file: null` : réplique pas encore enregistrée (sous-titre seul).
- * Poids : musique 18.60 Mo, voix 2.28 Mo.
+ * Poids : musique 18.60 Mo, voix 3.23 Mo.
  */
 
 export interface MusicFile {
@@ -17,7 +17,7 @@ export interface MusicFile {
 
 export interface VoiceLineFile {
   readonly id: string;
-  readonly voice: 'leon' | 'yasmina' | 'invite' | 'lurcke';
+  readonly voice: 'leon' | 'yasmina' | 'invite' | 'lurcke' | 'marcel' | 'josiane' | 'bene';
   readonly file: string | null;
   /** Texte du catalogue sans les balises d'émotion. */
   readonly subtitle: string;
@@ -277,6 +277,79 @@ export const VOICE_FILES: readonly VoiceLineFile[] = [
     fictive: false,
   },
   {
+    id: 'vo.marcel.hub.01',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.01.webm',
+    subtitle:
+      'De mon temps, le retard, on l’appelait l’aventure. Maintenant, ils l’appellent un KPI.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.02',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.02.webm',
+    subtitle: 'Le Tableau des revendications, fieu. Chaque PS, c’est un acquis.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.03',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.03.webm',
+    subtitle: 'Ça va, fieu ? T’as eu une aventure courte. Allez, une tasse et on y retourne.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.04',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.04.webm',
+    subtitle: 'Ils ont reprogrammé ? Bien. Tant qu’ils reprogramment, on existe.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.05',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.05.webm',
+    subtitle:
+      'Battu par un gamin en baskets blanches ? De mon temps, ils avaient au moins des chaussures.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.06',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.06.webm',
+    subtitle:
+      'Il a signé ? … Non. Regarde l’écran : reprogrammé. Le Sondage est de notre côté, fieu. Pour l’instant.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.radio.01',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.radio.01.webm',
+    subtitle: 'De mon temps, on inaugurait les gares. Pas leur vente.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.07',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.07.webm',
+    subtitle: 'Tant que je respire, la porte s’ouvre.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.radio.02',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.radio.02.webm',
+    subtitle: 'De mon temps, on frappait d’abord. Tiens.',
+    fictive: false,
+  },
+  {
+    id: 'vo.marcel.hub.08',
+    voice: 'marcel',
+    file: 'vo/marcel/marcel.hub.08.webm',
+    subtitle: 'Assieds-toi deux minutes. Le Sondage attendra. Il attend toujours.',
+    fictive: false,
+  },
+  {
     id: 'vo.yasmina.hub.01',
     voice: 'yasmina',
     file: 'vo/yasmina/yasmina.hub.01.webm',
@@ -361,6 +434,100 @@ export const VOICE_FILES: readonly VoiceLineFile[] = [
     voice: 'yasmina',
     file: 'vo/yasmina/yasmina.hub.04.webm',
     subtitle: 'Quand je dis départ, tout le monde part.',
+    fictive: false,
+  },
+  {
+    id: 'vo.bene.hub.01',
+    voice: 'bene',
+    file: 'vo/bene/bene.hub.01.webm',
+    subtitle:
+      'Le Règlement, page trois cent douze : un consultant n’a pas de titre de transport. Je dis ça, je dis rien.',
+    fictive: false,
+  },
+  {
+    id: 'vo.bene.hub.02',
+    voice: 'bene',
+    file: 'vo/bene/bene.hub.02.webm',
+    subtitle: 'Numéro suivant !',
+    fictive: false,
+  },
+  {
+    id: 'vo.bene.hub.03',
+    voice: 'bene',
+    file: 'vo/bene/bene.hub.03.webm',
+    subtitle:
+      'Elle t’a imprimé, la borne ? On ne négocie pas avec ces machines-là. Numéro suivant !',
+    fictive: false,
+  },
+  {
+    id: 'vo.bene.hub.04',
+    voice: 'bene',
+    file: 'vo/bene/bene.hub.04.webm',
+    subtitle: 'J’ai archivé ta victoire. Classement : rare. Sous-classement : à renouveler.',
+    fictive: false,
+  },
+  {
+    id: 'vo.bene.hub.05',
+    voice: 'bene',
+    file: 'vo/bene/bene.hub.05.webm',
+    subtitle: 'Tant que j’ai un tampon, il y a un guichet.',
+    fictive: false,
+  },
+  {
+    id: 'vo.bene.radio.01',
+    voice: 'bene',
+    file: 'vo/bene/bene.radio.01.webm',
+    subtitle: 'File d’attente ouverte. Ils patienteront.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.hub.01',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.hub.01.webm',
+    subtitle: 'Ta dotation, je la range. Ce qui est réformé, je le réforme. Proprement.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.hub.02',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.hub.02.webm',
+    subtitle: 'Le mannequin, là. Tape dedans, il ne porte pas plainte.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.hub.03',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.hub.03.webm',
+    subtitle:
+      'Tu ne m’appelles jamais, à la radio. Ça, c’est pas dans le règlement, mais c’est dans le cœur.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.hub.04',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.hub.04.webm',
+    subtitle: 'Mon sanglier de deux mille neuf était plus coriace. Mais bravo, hein.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.radio.01',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.radio.01.webm',
+    subtitle: 'Ces quatorze-là, ils ont un nom.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.hub.05',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.hub.05.webm',
+    subtitle: 'Je contrôle les billets. Ce soir, je contrôle un contrat.',
+    fictive: false,
+  },
+  {
+    id: 'vo.josiane.radio.02',
+    voice: 'josiane',
+    file: 'vo/josiane/josiane.radio.02.webm',
+    subtitle: 'Titre non valable. Renvoie-leur.',
     fictive: false,
   },
   {

@@ -3,7 +3,8 @@
 //   - voix    : WebM/Opus 64 kb/s mono → public/audio/vo/<voix>/
 //   - index   : src/audio/assetIndex.ts (durées, point de bouclage, sous-titres, répliques manquantes)
 //
-//   node tools/audio/build-web-audio.mjs            (réencode tout)
+//   node tools/audio/build-web-audio.mjs            (encode les fichiers absents, réécrit l'index)
+//   node tools/audio/build-web-audio.mjs --force    (réencode tout)
 //   node tools/audio/build-web-audio.mjs --index    (réécrit seulement l'index depuis les fichiers web)
 //
 // Pas de doublon OGG : Chromium, Firefox, Electron et Safari ≥ 17 décodent WebM/Opus ; ailleurs, le
@@ -19,8 +20,10 @@ const DIALOGUES = path.join(root, 'docs/audio/dialogues');
 const OUT_MUSIC = path.join(root, 'public/audio/music');
 const OUT_VO = path.join(root, 'public/audio/vo');
 const INDEX = path.join(root, 'src/audio/assetIndex.ts');
-const VOICES = ['leon', 'yasmina', 'invite', 'lurcke'];
+const VOICES = ['leon', 'yasmina', 'invite', 'lurcke', 'marcel', 'josiane', 'bene'];
 const indexOnly = process.argv.includes('--index');
+const force = process.argv.includes('--force');
+const encode = (dst) => !indexOnly && (force || !fs.existsSync(dst));
 
 /** Morceaux du jeu (la musique du trailer reste hors du jeu). */
 const MUSIC = [
@@ -94,7 +97,7 @@ for (const slug of MUSIC) {
   const src = path.join(OST, `${slug}_t1.ogg`);
   const name = slug.replace(/^ost-/, '');
   const dst = path.join(OUT_MUSIC, `${name}.webm`);
-  if (!indexOnly) {
+  if (encode(dst)) {
     ffmpeg([
       '-i',
       src,
@@ -131,7 +134,7 @@ const manifest = JSON.parse(
 );
 const lines = [];
 for (const a of manifest.assets) {
-  const m = /^vo\.(leon|yasmina|invite|lurcke)\.(.+)$/.exec(a.id);
+  const m = new RegExp(`^vo\\.(${VOICES.join('|')})\\.(.+)$`).exec(a.id);
   if (!m || a.meta?.trailer) continue;
   const [, voice, rest] = m;
   const base = `${voice}.${rest}`;
@@ -141,7 +144,7 @@ for (const a of manifest.assets) {
   let bytes = 0;
   if (fs.existsSync(src)) {
     fs.mkdirSync(path.dirname(dst), { recursive: true });
-    if (!indexOnly) {
+    if (encode(dst)) {
       ffmpeg([
         '-i',
         src,
@@ -209,7 +212,7 @@ export interface MusicFile {
 
 export interface VoiceLineFile {
   readonly id: string;
-  readonly voice: 'leon' | 'yasmina' | 'invite' | 'lurcke';
+  readonly voice: ${VOICES.map((v) => `'${v}'`).join(' | ')};
   readonly file: string | null;
   /** Texte du catalogue sans les balises d'émotion. */
   readonly subtitle: string;

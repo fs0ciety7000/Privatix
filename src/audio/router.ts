@@ -245,6 +245,8 @@ export interface AudioProbe {
   readonly energy: number;
   /** Jauge de Mobilisation (0..100). */
   readonly mobilisation: number;
+  /** Familles d'Avantage (couleurs) de la fenêtre de choix ouverte, vide sinon. */
+  readonly choiceFamilies: readonly number[];
   /** Issue du Shift (écran des départs), `null` en cours de Shift. */
   readonly result: 'victoire' | 'mort' | null;
   readonly enemies: readonly ProbeEnemy[];
@@ -268,6 +270,7 @@ export const EMPTY_PROBE: AudioProbe = {
   shift: 'matin',
   energy: 1,
   mobilisation: 0,
+  choiceFamilies: [],
   result: null,
   enemies: [],
   hazards: [],

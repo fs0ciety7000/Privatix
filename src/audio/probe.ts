@@ -37,6 +37,9 @@ export function probeWorld(
     shift: shift ?? run.shift.id,
     energy: Math.max(0, Math.min(1, run.energy / Math.max(1, maxEnergy(run)))),
     mobilisation: run.mobilisation.value,
+    choiceFamilies: (director.choice?.options ?? [])
+      .map((o) => o.accent)
+      .filter((a): a is number => a !== undefined),
     result: director.result?.end ?? null,
     enemies: world.livingEnemies().map((e) => ({
       id: e.id,
