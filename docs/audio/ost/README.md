@@ -69,3 +69,44 @@ Validé par le porteur du projet le 2026-10-10 : prise 1 pour chaque morceau (le
 | `ost.13-departs-supprime` | t1 | Départs — Supprimé |
 | `ost.14-le-7h12` | t1 | Le 7h12 (générique) |
 | `trailer.musique-60s` | t1 | Trailer « Le Shift » |
+
+## Trailer v2 (musique pure)
+
+Généré le 2026-10-10 avec `node tools/trailer/lyria-music.mjs --takes 3` (modèle **`lyria-3.5`**, endpoint
+`interactions`, 3 appels indépendants, pas de seed). Demande du porteur du projet : **musique seule**, sans
+bruitage, sifflet, train, annonce, voix ni foley (la v1 `trailer-musique-60s_t*` en contenait, son plan les
+demandait). Post-production : OGG Vorbis q5, 48 kHz, gain linéaire vers −14 LUFS + limiteur suréchantillonné,
+crête vraie ≤ −1 dBTP. **Coût estimé ≈ 0,24 $** (3 × 0,08 $). Filigrane SynthID inaudible.
+
+Prompt exact :
+
+```text
+Instrumental video-game trailer score, exactly 60 seconds, one continuous cinematic piece. Style: neon synthwave meets Belgian brass band and lo-fi jazz, playful but epic.
+[0:00 - 0:08] Calm intro: warm Rhodes electric piano, F major 7th chords, 74 BPM, soft brushed drums, cozy night-shift mood.
+[0:08 - 0:20] Build-up: switch to D minor, 100 BPM, pulsing analog synth bass, kick drum enters around 0:12, hi-hats around 0:16, rising tension toward a drop.
+[0:20 - 0:34] Drop: full energetic combat groove in D minor at 104 BPM, marching snare, driving synth bass, bright neon synth arpeggio, punchy brass riff.
+[0:34 - 0:41] Climax: E-flat phrygian, tempo pushing from 112 to 120 BPM, heavy low brass on the downbeats, timpani, biggest moment of the piece, ending on a sharp final hit at 0:41.
+[0:41 - 0:45] Near silence: a single sustained low D note, very quiet.
+[0:45 - 0:55] Resolution: slow tender Rhodes at 60 BPM, F major 7 resolving to D major, relieved and hopeful.
+[0:55 - 1:00] Finale: short warm brass-band chord swelling then a clean held final D major chord, natural ending.
+Instrumental music only. No sound effects, no foley, no whistles, no train or railway sounds, no announcements, no voices, no vocals, no lyrics, no spoken word, no crowd, no samples of real-world sounds. Clean professional mix.
+```
+
+Repères mesurés sur l'enveloppe RMS par demi-seconde (non écoutés au casque) :
+
+| Prise | Durée | Montée | Drop (cible 20 s) | Coup / creux (cible 41–45 s) | Fin |
+|---|---|---|---|---|---|
+| [t1](trailer-musique-v2_t1.ogg) | 59,9 s | 13,0 s (saut net, +15 dB) | ≈ 20,5 s ; respiration 26–27,5 s | pas de coup à 41 s : plein régime jusqu'à ≈ 44,5 s | décrue douce 45–54 s, fondu, silence à ≈ 57,5 s |
+| [t2](trailer-musique-v2_t2.ogg) | 64,7 s | 7,5 s (tôt) | coupure 30,0 s puis tutti à 30,5 s (tard) | creux 46–49,5 s | reprise tutti 49,5–61 s, fin à ≈ 62,5 s |
+| [t3](trailer-musique-v2_t3.ogg) | 61,2 s | 12,5 s | ≈ 25,5 s (tard) ; cassure 32,5–33,5 s | vrai silence 43,5–46 s (≈ 2,5 s de retard) | reprise forte 46–58 s (pas le Rhodes tendre demandé), fondu 58,5–60,5 s |
+
+Contrôle « bruitages » : aucune attaque isolée hors grille (les seules attaques fortes détectées sont les
+entrées de section à 13,1 s, 7,7 s et 46,5 s) ; aucun son glissé type sifflet. Pics tonals étroits
+repérés et vérifiés : t2 47–49 s (notes tenues F6/E6/B6 calées sur le tempérament, avec fondamentale à
+l'octave inférieure : mélodie instrumentale) ; t1 55,5–56,6 s (petite arpège de sinusoïdes aiguës dans le
+fondu, ≈ −40 dB) et t3 59–60 s (sinusoïde G6 tenue dans la queue, ≈ −55 dB) : très faibles, probablement
+une résonance de synthé/cloche, à confirmer à l'écoute.
+
+Lyria suit le style et l'arc général mais pas les horodatages à la seconde : **t1** est la plus proche du
+montage (durée, montée, drop) ; il lui manque le coup sec à 41 s et le creux 41–45 s, à recréer au montage
+(coupe + queue de réverbe) si besoin.
