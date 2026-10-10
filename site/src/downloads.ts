@@ -91,6 +91,7 @@ const OS_LABEL: Record<Exclude<OsFamily, 'other'>, string> = {
   windows: 'Windows',
   mac: 'macOS',
   linux: 'Linux',
+  android: 'Android',
 };
 
 export function visitorOs(): OsFamily {
@@ -240,6 +241,9 @@ function verifyBox(release: Release, files: readonly ReleaseFile[]): HTMLElement
         cmd('Windows (PowerShell)', `Get-FileHash .\\${nameOf('windows', 'Privatix-Setup.exe')} -Algorithm SHA256`),
         cmd('macOS (Terminal)', `shasum -a 256 ${nameOf('mac', 'Privatix-mac-arm64.dmg')}`),
         cmd('Linux', `sha256sum ${nameOf('linux', 'Privatix.AppImage')}`),
+        files.some((f) => f.platform.os === 'android')
+          ? cmd('Android (sur ordinateur, avant de copier)', `sha256sum ${nameOf('android', 'Privatix-Android.apk')}`)
+          : null,
       ),
       el(
         'p',
@@ -251,7 +255,7 @@ function verifyBox(release: Release, files: readonly ReleaseFile[]): HTMLElement
       el(
         'p',
         { class: 'dl-verify__note' },
-        "Les exécutables ne sont pas encore signés par un certificat d'éditeur : SmartScreen (Windows) et Gatekeeper (macOS) afficheront un avertissement au premier lancement (voir l'encart ci-dessous).",
+        "Les exécutables de bureau ne sont pas encore signés par un certificat d'éditeur : SmartScreen (Windows) et Gatekeeper (macOS) afficheront un avertissement au premier lancement (voir l'encart ci-dessous). L'APK Android est signé par la clé du projet, toujours la même : les mises à jour s'installent par-dessus.",
       ),
     ),
   );
@@ -287,9 +291,18 @@ function renderLatest(root: HTMLElement, release: Release, os: OsFamily, source:
     if (os === 'mac') {
       root.append(el('p', { class: 'dl__status' }, 'Mac récent (puce M1, M2, M3…) : version Apple Silicon. Mac plus ancien : version Intel.'));
     }
+    if (os === 'android') {
+      root.append(
+        el(
+          'p',
+          { class: 'dl__status' },
+          "Pensé pour tablette, en paysage. À l'ouverture du fichier, Android demande d'autoriser l'installation depuis votre navigateur (voir l'encart ci-dessous). Sur téléphone, le navigateur reste le plus simple.",
+        ),
+      );
+    }
   } else if (os === 'other') {
     root.append(
-      el('p', { class: 'dl__status' }, 'Sur téléphone ou tablette, jouez directement dans le navigateur ; les applications sont pour ordinateur.'),
+      el('p', { class: 'dl__status' }, 'Sur iPhone, iPad ou Chromebook, jouez directement dans le navigateur ; les applications sont pour ordinateur et tablette Android.'),
     );
   }
   const list = el('ul', { class: 'dl__files', role: 'list', 'aria-label': 'Tous les fichiers de cette version' });

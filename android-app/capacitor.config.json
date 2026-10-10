@@ -1,0 +1,16 @@
+{
+  "appId": "org.fs0ciety.privatix",
+  "appName": "Privatix",
+  "webDir": "www",
+  "loggingBehavior": "debug",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "localhost"
+  },
+  "android": {
+    "backgroundColor": "#0a0818",
+    "allowMixedContent": false,
+    "captureInput": false,
+    "webContentsDebuggingEnabled": false
+  }
+}

@@ -1,5 +1,6 @@
-# Construit l'application de bureau Privatix (Electron) pour Windows, macOS et Linux,
-# et publie les exécutables comme artefacts du run (onglet Actions > run > « Artifacts »).
+# Construit l'application de bureau Privatix (Electron) pour Windows, macOS et Linux, ainsi que
+# l'APK Android (Capacitor, job « android », signé via les secrets ANDROID_*), et publie les
+# fichiers comme artefacts du run (onglet Actions > run > « Artifacts »).
 # Sur un tag v* (ex. v0.2.0) ou un lancement manuel avec « version », crée en plus une GitHub Release dont les fichiers ont deux noms :
 # versionné (Privatix-0.2.0-setup-x64.exe) et stable (Privatix-Setup.exe), pour que le site
 # pointe toujours vers releases/latest/download/<nom stable>.
@@ -154,9 +155,144 @@ jobs:
           retention-days: 7
           compression-level: 0
 
+  # APK Android (tablette) : le jeu web 3D dans Capacitor (android-app/README.md). Il rejoint la même
+  # release que les exécutables de bureau, couvert par SHA256SUMS.txt et l'attestation.
+  android:
+    name: android
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      IS_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') || github.event.inputs.version != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            android-app/package-lock.json
+
+      - name: Setup Java 21
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      # Contrôlé avant tout build : une release ne doit jamais partir signée par une autre clé
+      # (Android refuserait les mises à jour). Hors release, un APK non signé est produit en artefact.
+      - name: Clé de signature
+        shell: bash
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          missing=""
+          for v in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            [ -n "${!v}" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            if [ "$IS_RELEASE" = "true" ]; then
+              echo "::error title=Signature Android::Secret(s) manquant(s) :$missing. Voir android-app/README.md, section « Signature ». Aucun APK n'est publié avec une autre clé."
+              exit 1
+            fi
+            echo "::warning title=Signature Android::Secrets absents :$missing. APK non signé (artefact de test, non installable tel quel)."
+            exit 0
+          fi
+          KS="$RUNNER_TEMP/privatix-release.keystore"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KS"
+          {
+            echo "ANDROID_KEYSTORE_FILE=$KS"
+            echo "PRIVATIX_REQUIRE_SIGNING=1"
+          } >> "$GITHUB_ENV"
+
+      - name: Build du jeu (racine)
+        run: |
+          npm ci
+          npm run build
+
+      - name: Dépendances Capacitor
+        working-directory: android-app
+        run: npm ci
+
+      - name: Version de la release
+        if: env.IS_RELEASE == 'true'
+        working-directory: android-app
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          V="${INPUT_VERSION:-${GITHUB_REF_NAME#v}}"
+          npm version "${V#v}" --no-git-tag-version --allow-same-version
+
+      - name: SDK Android (plateforme 36)
+        shell: bash
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+
+      - name: Build de l'APK
+        working-directory: android-app
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          npm run sync
+          cd android
+          ./gradlew --no-daemon assembleRelease
+
+      - name: Vérification de l'APK
+        shell: bash
+        working-directory: android-app/android/app/build/outputs/apk/release
+        run: |
+          BT="$ANDROID_HOME/build-tools/36.0.0"
+          ls -la
+          APK=$(ls app-release*.apk | head -1)
+          "$BT/aapt" dump badging "$APK" | head -3
+          if [ "${PRIVATIX_REQUIRE_SIGNING:-}" = "1" ]; then
+            "$BT/apksigner" verify --print-certs "$APK"
+          fi
+          V=$(node -p "require(process.env.GITHUB_WORKSPACE + '/android-app/package.json').version")
+          OUT="$GITHUB_WORKSPACE/android-app/release"
+          mkdir -p "$OUT"
+          if [ "${PRIVATIX_REQUIRE_SIGNING:-}" = "1" ]; then
+            # Nom versionné + nom stable (le site pointe vers releases/latest/download/Privatix-Android.apk).
+            cp "$APK" "$OUT/Privatix-$V-android.apk"
+            cp "$APK" "$OUT/Privatix-Android.apk"
+          else
+            cp "$APK" "$OUT/Privatix-$V-android-unsigned.apk"
+          fi
+          ls -la "$GITHUB_WORKSPACE/android-app/release"
+
+      - name: Publication de l'artefact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: privatix-android
+          path: android-app/release/Privatix-*-android*.apk
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+      - name: Fichiers de release
+        if: env.IS_RELEASE == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-android
+          path: android-app/release/*
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
   release:
     name: GitHub Release
-    needs: build
+    needs: [build, android]
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.version != ''
     runs-on: ubuntu-latest
     permissions:
@@ -184,6 +320,7 @@ jobs:
             release/*.exe
             release/*.dmg
             release/*.AppImage
+            release/*.apk
 
       - name: Publication de la release
         env:
@@ -194,7 +331,7 @@ jobs:
           if [ -n "$INPUT_VERSION" ]; then TAG="v${INPUT_VERSION#v}"; else TAG="$GITHUB_REF_NAME"; fi
           ls -la release
           {
-            echo "Applications de bureau Privatix $TAG (Windows, macOS, Linux)."
+            echo "Privatix $TAG : applications de bureau (Windows, macOS, Linux) et APK Android (tablette)."
             echo
             echo "**Vérifier un téléchargement** : comparez son empreinte SHA-256 avec \`SHA256SUMS.txt\` (ou la colonne « SHA-256 » du site)."
             echo "- Windows (PowerShell) : \`Get-FileHash .\\Privatix-Setup.exe -Algorithm SHA256\`"
@@ -202,6 +339,15 @@ jobs:
             echo "- Provenance signée (Sigstore, construite par GitHub Actions depuis ce dépôt) : \`gh attestation verify <fichier> -R ${{ github.repository }}\`"
             echo
             echo "Les exécutables ne sont pas signés par un certificat d'éditeur : avertissement SmartScreen ou Gatekeeper au premier lancement."
+            echo
+            echo "### Android (tablette)"
+            echo
+            echo "\`Privatix-Android.apk\` : Android 7 ou plus récent, WebGL 2 (OpenGL ES 3.0), pensé pour une tablette en paysage."
+            echo "1. Téléchargez l'APK depuis la tablette (ou copiez-le dessus)."
+            echo "2. Ouvrez-le : Android demande d'autoriser l'installation d'applications inconnues pour le navigateur ou le gestionnaire de fichiers utilisé (Paramètres > Applications > Accès spécial > Installer des applications inconnues). Autorisez-la pour cette source uniquement, puis revenez en arrière."
+            echo "3. Installez. Les versions suivantes s'installent par-dessus et gardent la sauvegarde (même clé de signature)."
+            echo
+            echo "Play Protect peut avertir d'une application inconnue (hors Play Store) : comparez l'empreinte avec \`SHA256SUMS.txt\` avant d'installer."
             echo
             echo '```'
             cat release/SHA256SUMS.txt

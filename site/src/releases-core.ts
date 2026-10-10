@@ -12,8 +12,8 @@ export const REPO = 'fs0ciety7000/Privatix';
 export const RELEASES_PAGE = `https://github.com/${REPO}/releases`;
 export const API_URL = `https://api.github.com/repos/${REPO}/releases?per_page=10`;
 
-export type PlatformId = 'win-setup' | 'win-portable' | 'mac-arm64' | 'mac-x64' | 'linux-appimage';
-export type OsFamily = 'windows' | 'mac' | 'linux' | 'other';
+export type PlatformId = 'win-setup' | 'win-portable' | 'mac-arm64' | 'mac-x64' | 'linux-appimage' | 'android-apk';
+export type OsFamily = 'windows' | 'mac' | 'linux' | 'android' | 'other';
 
 export interface PlatformDef {
   readonly id: PlatformId;
@@ -24,13 +24,14 @@ export interface PlatformDef {
   readonly stable: string;
 }
 
-/** Ordre d'affichage : Windows, macOS, Linux. */
+/** Ordre d'affichage : Windows, macOS, Linux, Android. */
 export const PLATFORMS: readonly PlatformDef[] = [
   { id: 'win-setup', os: 'windows', label: 'Windows', detail: 'Installeur (x64)', stable: 'Privatix-Setup.exe' },
   { id: 'win-portable', os: 'windows', label: 'Windows', detail: 'Portable, sans installation (x64)', stable: 'Privatix-Portable.exe' },
   { id: 'mac-arm64', os: 'mac', label: 'macOS', detail: 'Apple Silicon (M1 et suivants)', stable: 'Privatix-mac-arm64.dmg' },
   { id: 'mac-x64', os: 'mac', label: 'macOS', detail: 'Intel', stable: 'Privatix-mac-x64.dmg' },
   { id: 'linux-appimage', os: 'linux', label: 'Linux', detail: 'AppImage (x86_64)', stable: 'Privatix.AppImage' },
+  { id: 'android-apk', os: 'android', label: 'Android', detail: 'APK (tablette)', stable: 'Privatix-Android.apk' },
 ];
 
 /** Sous-ensemble des champs de l'API GitHub que l'on utilise (aussi le format de releases.json). */
@@ -83,6 +84,8 @@ export function classifyAsset(name: string): PlatformId | null {
   const n = name.toLowerCase();
   if (n.endsWith('.blockmap') || n.endsWith('.yml') || n.endsWith('.yaml')) return null;
   if (n.endsWith('.appimage')) return 'linux-appimage';
+  // APK signé uniquement : un artefact de test « -unsigned » n'est pas installable.
+  if (n.endsWith('.apk')) return n.includes('unsigned') ? null : 'android-apk';
   if (n.endsWith('.dmg')) {
     if (/(arm64|aarch64|apple-?silicon)/.test(n)) return 'mac-arm64';
     if (/(x64|x86_64|intel|amd64)/.test(n)) return 'mac-x64';
@@ -202,13 +205,20 @@ export function stableFiles(): ReleaseFile[] {
   }));
 }
 
-/** Famille d'OS d'après l'agent utilisateur (les iPad récents se déclarent « Macintosh » : tactile ⇒ autre). */
+/**
+ * Famille d'OS d'après l'agent utilisateur. Les iPad récents se déclarent « Macintosh » : tactile ⇒
+ * autre. Chrome sur tablette Android demande par défaut la « version pour ordinateur » et se déclare
+ * alors « X11; Linux x86_64 » : un Linux tactile (plusieurs points de contact) est traité comme
+ * Android, l'erreur inverse (PC Linux à écran tactile) restant rare et sans conséquence (la liste
+ * complète des fichiers reste affichée).
+ */
 export function detectOs(ua: string, platform = '', touchPoints = 0): OsFamily {
   const s = `${ua} ${platform}`.toLowerCase();
-  if (/android|iphone|ipad|ipod|cros/.test(s)) return 'other';
+  if (s.includes('android')) return 'android';
+  if (/iphone|ipad|ipod|cros/.test(s)) return 'other';
   if (s.includes('win')) return 'windows';
   if (s.includes('mac')) return touchPoints > 1 ? 'other' : 'mac';
-  if (s.includes('linux') || s.includes('x11')) return 'linux';
+  if (s.includes('linux') || s.includes('x11')) return touchPoints > 1 ? 'android' : 'linux';
   return 'other';
 }
 

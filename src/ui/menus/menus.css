@@ -207,6 +207,11 @@
   font-size: var(--fs-xs);
   text-align: center;
 }
+/* Écran tactile (téléphone, tablette) : les raccourcis clavier n'ont pas de sens, les boutons
+   tactiles portent leurs propres libellés. */
+body.touch .px-help {
+  display: none;
+}
 .px-help kbd {
   padding: 1px 5px;
   border: 1px solid var(--px-line);

@@ -65,8 +65,13 @@ Une fois le run terminé, ouvre sa page et descends jusqu'à la section **Artifa
 | `privatix-desktop-macos` | `Privatix-x.y.z-mac-x64.dmg` (Intel) et `Privatix-x.y.z-mac-arm64.dmg` (Apple Silicon) |
 | `privatix-desktop-linux` | `Privatix-x.y.z-linux-x86_64.AppImage` |
 
+| `privatix-android` | `Privatix-x.y.z-android.apk` (job `android`, voir [android-app/README.md](../android-app/README.md)) |
+
 Les artefacts sont conservés 30 jours. Le job Linux lance aussi le smoke test sous écran
-virtuel.
+virtuel. Le même workflow construit l'APK Android (tablette) : il rejoint la même release
+`vX.Y.Z` (noms `Privatix-x.y.z-android.apk` et `Privatix-Android.apk`), couvert par
+`SHA256SUMS.txt` et l'attestation. Une release échoue entièrement si les secrets de signature
+Android manquent.
 
 ## Changer le contenu embarqué
 

@@ -1,0 +1,107 @@
+apply plugin: 'com.android.application'
+
+import groovy.json.JsonSlurper
+
+// ─── Version ────────────────────────────────────────────────────────────────────────────────────
+// versionName = version de android-app/package.json (la CI la fixe avec « npm version », comme pour
+// desktop/), surchargeable par -PprivatixVersion=x.y.z ou PRIVATIX_VERSION.
+// versionCode = majeur*10000 + mineur*100 + correctif (0.2.0 -> 200, 1.4.12 -> 10412) : il doit
+// croître à chaque release publiée, sinon Android refuse la mise à jour.
+def privatixVersion = (findProperty('privatixVersion') ?: System.getenv('PRIVATIX_VERSION') ?:
+        new JsonSlurper().parse(file('../../package.json')).version).toString().replaceFirst(/^v/, '')
+def versionMatch = (privatixVersion =~ /^(\d+)\.(\d+)\.(\d+)(?:[-+].*)?$/)
+if (!versionMatch.matches()) {
+    throw new GradleException("Version invalide « ${privatixVersion} » (attendu majeur.mineur.correctif)")
+}
+def vMajor = versionMatch.group(1) as int
+def vMinor = versionMatch.group(2) as int
+def vPatch = versionMatch.group(3) as int
+if (vMinor > 99 || vPatch > 99) {
+    throw new GradleException("Version ${privatixVersion} : mineur et correctif doivent rester < 100 (versionCode)")
+}
+def privatixVersionCode = Math.max(1, vMajor * 10000 + vMinor * 100 + vPatch)
+
+// ─── Signature de la release ────────────────────────────────────────────────────────────────────
+// Lue depuis l'environnement, jamais depuis le dépôt :
+//   ANDROID_KEYSTORE_FILE      chemin du keystore (.jks / .p12) ; en CI, décodé depuis le secret
+//                              ANDROID_KEYSTORE_BASE64 dans un fichier temporaire
+//   ANDROID_KEYSTORE_PASSWORD  mot de passe du keystore
+//   ANDROID_KEY_ALIAS          alias de la clé
+//   ANDROID_KEY_PASSWORD       mot de passe de la clé
+// Sans ANDROID_KEYSTORE_FILE, assembleRelease produit un APK non signé (app-release-unsigned.apk),
+// sauf si PRIVATIX_REQUIRE_SIGNING=1 (CI) : la construction échoue alors, plutôt que de publier un
+// APK signé avec une autre clé (les mises à jour par-dessus deviendraient impossibles).
+def signingEnv = [:]
+['ANDROID_KEYSTORE_FILE', 'ANDROID_KEYSTORE_PASSWORD', 'ANDROID_KEY_ALIAS', 'ANDROID_KEY_PASSWORD'].each {
+    signingEnv[it] = System.getenv(it) ?: ''
+}
+def releaseSigning = signingEnv.ANDROID_KEYSTORE_FILE != '' || System.getenv('PRIVATIX_REQUIRE_SIGNING') == '1'
+if (releaseSigning) {
+    def missing = signingEnv.findAll { it.value == '' }.keySet()
+    if (!missing.isEmpty()) {
+        throw new GradleException("Signature de la release : variable(s) manquante(s) : ${missing.join(', ')}")
+    }
+    if (!file(signingEnv.ANDROID_KEYSTORE_FILE).isFile()) {
+        throw new GradleException("Signature de la release : keystore introuvable (${signingEnv.ANDROID_KEYSTORE_FILE})")
+    }
+}
+
+android {
+    namespace = "org.fs0ciety.privatix"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "org.fs0ciety.privatix"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode privatixVersionCode
+        versionName privatixVersion
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        if (releaseSigning) {
+            release {
+                storeFile file(signingEnv.ANDROID_KEYSTORE_FILE)
+                storePassword signingEnv.ANDROID_KEYSTORE_PASSWORD
+                keyAlias signingEnv.ANDROID_KEY_ALIAS
+                keyPassword signingEnv.ANDROID_KEY_PASSWORD
+            }
+        }
+    }
+    buildTypes {
+        release {
+            if (releaseSigning) signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
