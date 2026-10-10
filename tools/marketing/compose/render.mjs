@@ -12,10 +12,14 @@
 //     "renders": [ { "id", "template": "affiche-marquee.html", "width", "height",
 //                    "scale"?: 2, "vars": { "art": "docs/…/key-art.jpg", "tagline": "…", … } } ] }
 // Les chemins sont relatifs à la racine du dépôt (dossier courant). Dans le gabarit,
-// {{nom}} est remplacé par vars.nom (échappé en HTML) ; une variable dont le nom finit
+// {{nom}} est remplacé par vars.nom (échappé en HTML), {{nom|défaut}} prend la valeur par défaut
+// si vars.nom manque ; une variable dont le nom finit
 // par « Url » ou vaut « art » est convertie en URL file:// absolue.
 // Sortie : <id>.jpg (qualité 92, taille width×scale × height×scale), <id>-1600.webp
 // (aperçu, ImageMagick facultatif) et, avec --png, <id>.png.
+// Impression : un rendu avec "pdf": { "width": 303, "height": 426 } (millimètres, fonds perdus
+// compris) produit <id>.pdf à ce format ; width et height du rendu sont alors ignorés (la mise
+// en page se fait à 96 px par pouce, le texte reste vectoriel).
 //
 // Playwright est pris dans node_modules s'il y est, sinon dans l'installation globale.
 
@@ -62,9 +66,12 @@ try {
   for (const r of spec.renders) {
     if (only && !only.has(r.id)) continue;
     const scale = r.scale ?? 2;
+    const mm = (v) => Math.round((v * 96) / 25.4);
+    if (r.pdf) Object.assign(r, { width: mm(r.pdf.width), height: mm(r.pdf.height) });
     const vars = { ...r.vars, width: r.width, height: r.height };
     let html = await readFile(join(here, 'templates', r.template), 'utf8');
-    html = html.replace(/\{\{(\w+)\}\}/g, (_, k) => {
+    html = html.replace(/\{\{(\w+)(?:\|([^}]*))?\}\}/g, (_, k, def) => {
+      if (!(k in vars) && def !== undefined) return esc(def);
       if (!(k in vars)) throw new Error(`${r.id} : variable {{${k}}} absente`);
       const v = vars[k];
       return k === 'art' || k.endsWith('Url') ? pathToFileURL(resolve(v)).href : esc(v);
@@ -84,6 +91,19 @@ try {
     if (missing.length) console.warn(`  polices en erreur : ${missing.join(', ')}`);
 
     const base = join(spec.outDir, r.id);
+    if (r.pdf) {
+      await page.pdf({
+        path: `${base}.pdf`,
+        width: `${r.pdf.width}mm`,
+        height: `${r.pdf.height}mm`,
+        printBackground: true,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+      });
+      await page.close();
+      await run('rm', ['-f', tmp]);
+      console.log(`✓ ${base}.pdf (${r.pdf.width} × ${r.pdf.height} mm)`);
+      continue;
+    }
     await page.screenshot({ path: `${base}.jpg`, type: 'jpeg', quality: 92 });
     if (keepPng) await page.screenshot({ path: `${base}.png`, type: 'png' });
     await page.close();

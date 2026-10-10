@@ -8,12 +8,13 @@
 <style>
   body { font-size: {{width}}px; }               /* 1em = largeur ; on travaille en fractions */
   .canvas { font-size: 0.01em; }                 /* 1em = 1 % de la largeur */
+  .art { object-position: {{artPos|50% 50%}}; }  /* calage du key art hors 2:3 (A3, A2…) */
   .shade-top {
     position: absolute; inset: 0 0 auto 0; height: 30%;
     background: linear-gradient(180deg, rgba(10,8,24,.88) 0%, rgba(10,8,24,.55) 55%, rgba(10,8,24,0) 100%);
   }
-  .head { position: absolute; top: 3.4%; left: 0; right: 0; text-align: center; }
-  .head .neon { font-size: 15.2em; }
+  .head { position: absolute; top: {{headTop|3.4%}}; left: 0; right: 0; text-align: center; }
+  .head .neon { font-size: {{titleSize|15.2em}}; }
   .tagline {
     display: inline-flex; align-items: center; gap: 0.9em; margin-top: 0.6em;
     font-family: var(--font-cond); font-weight: 600; font-size: 3.1em;

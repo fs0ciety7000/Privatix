@@ -1,0 +1,49 @@
+{
+  "outDir": "docs/marketing/officiel/affiche",
+  "renders": [
+    {
+      "id": "privatix-affiche-marquise-4k",
+      "template": "affiche-marquee.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2.5,
+      "vars": {
+        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
+      }
+    },
+    {
+      "id": "privatix-affiche-marquise-a3-fonds-perdus",
+      "template": "affiche-marquee.html",
+      "pdf": {
+        "width": 303,
+        "height": 426
+      },
+      "vars": {
+        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "artPos": "50% 42%",
+        "headTop": "2.2%",
+        "titleSize": "14em"
+      }
+    },
+    {
+      "id": "privatix-affiche-marquise-a2-fonds-perdus",
+      "template": "affiche-marquee.html",
+      "pdf": {
+        "width": 426,
+        "height": 600
+      },
+      "vars": {
+        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "artPos": "50% 42%",
+        "headTop": "2.2%",
+        "titleSize": "14em"
+      }
+    }
+  ]
+}
