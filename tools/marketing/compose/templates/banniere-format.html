@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Déclinaisons de la bannière officielle (key art de la bannière, titre néon, accroche et
+<!-- Déclinaisons de la bannière officielle (key art de la bannière, logo monochrome blanc, accroche et
      crédits facultatifs) pour les formats web, réseaux et Steam. Tout est paramétrable par
      variables avec valeurs par défaut ; les tailles sont en % de la largeur (1em = 1 %). -->
 <html lang="fr">
@@ -19,7 +19,11 @@
     position: absolute; top: {{headTop|9%}}; left: {{headLeft|auto}}; right: {{headRight|6%}};
     text-align: {{align|right}}; display: {{titleDisplay|block}};
   }
-  .head .neon { font-size: {{titleSize|8.4em}}; }
+  /* le logo (2,17:1) prend la place de l'ancien titre : largeur ≈ 4,1 × l'ancienne taille de titre */
+  .head .logo-mono {
+    display: inline-block; width: calc({{titleSize|8.4em}} * 4.1);
+    filter: drop-shadow(0 0.3em 0.8em rgba(10,8,24,.85));
+  }
   .tagline {
     display: {{taglineDisplay|block}};
     margin-top: 0.7em; font-family: var(--font-cond); font-weight: 600; font-size: {{taglineSize|1.9em}};
@@ -47,7 +51,7 @@
   <img class="art" src="{{art}}" alt="">
   <div class="shade"></div>
   <div class="head">
-    <div class="neon">PRIVATIX</div>
+    <img class="logo-mono" src="{{logoUrl}}" alt="PRIVATIX"><br>
     <div class="tagline">{{tagline}}</div>
   </div>
   <footer class="credits">

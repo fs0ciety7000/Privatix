@@ -310,7 +310,7 @@
 }
 .presskit__poster {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--sp-3);
   margin: 0;
   padding: var(--sp-4);
@@ -326,6 +326,14 @@
 }
 .presskit__shots-title {
   margin-bottom: var(--sp-5);
+}
+/* Affiches 2:3, trois par rangée sur grand écran */
+.gallery--posters {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  margin-bottom: var(--sp-7);
+}
+.shot--poster {
+  aspect-ratio: 2 / 3;
 }
 .ab-note {
   max-width: 48rem;

@@ -21,14 +21,9 @@ const COPIES = [
   // Press kit (site/public/artbook/presskit/, repris dans l'archive ZIP au build)
   [O('presskit/privatix-presskit-couverture-a4.pdf'), R('site/public/artbook/presskit/privatix-presskit-couverture.pdf')],
   [O('presskit/privatix-presskit-couverture.jpg'), R('site/public/artbook/presskit/privatix-presskit-couverture.jpg')],
-  [O('affiche/privatix-affiche-marquise-4k.jpg'), R('site/public/artbook/presskit/privatix-affiche.jpg')],
-  [O('affiche/keyart-affiche-marquise-4k.jpg'), R('site/public/artbook/presskit/privatix-affiche-sans-texte.jpg')],
   [O('bannieres/site-hero-2560x1440.jpg'), R('site/public/artbook/presskit/privatix-banniere.jpg')],
-  [O('logo/privatix-lockup-vertical-sombre.png'), R('site/public/artbook/presskit/logo/privatix-logo-vertical.png')],
-  [O('logo/privatix-lockup-vertical-clair.png'), R('site/public/artbook/presskit/logo/privatix-logo-vertical-fond-clair.png')],
-  [O('logo/privatix-lockup-horizontal-sombre.png'), R('site/public/artbook/presskit/logo/privatix-logo-horizontal.png')],
-  [O('logo/privatix-lockup-horizontal-clair.png'), R('site/public/artbook/presskit/logo/privatix-logo-horizontal-fond-clair.png')],
-  [O('logo/privatix-wordmark-sombre.svg'), R('site/public/artbook/presskit/logo/privatix-wordmark.svg')],
+  [O('logo/privatix-logo-mono-blanc.png'), R('site/public/artbook/presskit/logo/privatix-logo-mono-blanc.png')],
+  [O('logo/privatix-logo-mono-noir.png'), R('site/public/artbook/presskit/logo/privatix-logo-mono-noir.png')],
   [O('logo/privatix-logo-mono-blanc.svg'), R('site/public/artbook/presskit/logo/privatix-logo-mono-blanc.svg')],
   [O('logo/privatix-logo-mono-noir.svg'), R('site/public/artbook/presskit/logo/privatix-logo-mono-noir.svg')],
   [O('logo/icone/privatix-icone-1024.png'), R('site/public/artbook/presskit/logo/privatix-icone-1024.png')],
@@ -50,11 +45,17 @@ const COPIES = [
   [O('logo/icone/privatix.icns'), R('desktop/icons/icon.icns')],
 ];
 
+/** Affiches au logo mono (docs/marketing/affiches-logo-mono/) : JPG 2048 × 3072 et aperçu 960 px. */
+export const AFFICHES = ['suisse-jaune', 'suisse-jeu', 'constructiviste', 'film-70s', 'riso', 'minimal-cle'];
+const A = (id) => join(root, 'docs/marketing/affiches-logo-mono', `affiche-${id}.jpg`);
+const AD = (f) => R(`site/public/artbook/presskit/affiches/${f}`);
+for (const id of AFFICHES) COPIES.push([A(id), AD(`privatix-affiche-${id}.jpg`)]);
+
 /** Aperçus WebP : [source, destination, largeur]. */
 const PREVIEWS = [
   [O('presskit/privatix-presskit-couverture.jpg'), R('site/public/artbook/presskit/privatix-presskit-couverture-960.webp'), 960],
-  [O('affiche/privatix-affiche-marquise-4k.jpg'), R('site/public/artbook/presskit/privatix-affiche-960.webp'), 960],
 ];
+for (const id of AFFICHES) PREVIEWS.push([A(id), AD(`privatix-affiche-${id}-960.webp`), 960]);
 // Affiche de la vidéo du hero (image LCP) : key art de la bannière SANS texte, le titre HTML du
 // hero se pose dessus ; même format que l'ancienne affiche (960 × 540), la boucle vidéo garde sa place.
 const HERO_POSTER = [O('refs/keyart-banniere-recadre.jpg'), R('site/src/assets/img/hero-poster.webp')];
@@ -92,10 +93,3 @@ console.log('→ site/src/assets/img/hero-poster.webp (960 × 540)');
 // Icône 192 px du manifeste (site/public/site.webmanifest)
 execFileSync('convert', [O('logo/icone/privatix-icone-1024.png'), '-filter', 'Lanczos', '-resize', '192x192', '-strip', R('site/public/icon-192.png')]);
 console.log('→ site/public/icon-192.png');
-// Aperçu du logo pour l'artbook : lockup vertical sur fond nuit, 1200 × 600
-execFileSync('convert', [
-  O('logo/privatix-lockup-vertical-sombre.png'), '-resize', '1100x560',
-  '-background', '#0A0818', '-gravity', 'center', '-extent', '1200x600',
-  '-quality', '86', R('site/public/artbook/presskit/logo/privatix-logo-1200.webp'),
-]);
-console.log('→ site/public/artbook/presskit/logo/privatix-logo-1200.webp');

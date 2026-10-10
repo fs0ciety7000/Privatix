@@ -26,6 +26,8 @@ Pour chaque mise en page, quatre versions : **`-sombre`** (néon du site, sur fo
 
 Le **wordmark est du vrai vectoriel** : les contours d'**Archivo Black** (OFL), l'équivalent libre le plus proche de l'Arial Black du logotype du site (`docs/DESIGN_SYSTEM.md` § 2.4), mis en forme avec le crénage de la police et une approche de 0,1 em, comme `.hero__title`. Le néon reprend la recette de `.neon` (`site/src/styles/site.css`) traduite en filtre SVG : tube `#FFE3F3`, halos magenta `#FF3EA5`, ombre dure encrée `#14101A`. Le texte est converti en tracés : aucune police n'est requise pour ouvrir les SVG. Les SVG des lockups couleur embarquent l'emblème en PNG (1024 px), c'est pourquoi ils pèsent ≈ 1 Mo ; les versions mono sont entièrement vectorielles (≈ 45 Ko).
 
+> **Octobre 2026** : le logo monochrome (`logo/privatix-logo-mono-blanc.svg` / `-noir.svg`) remplace le néon partout : site, bannières (titre néon remplacé par le logo mono blanc, gabarits `banniere*.html`), couverture du press kit. Les six affiches au logo mono sont dans [`../affiches-logo-mono/`](../affiches-logo-mono/README.md).
+
 ### Affiche « Marquise » (`affiche/`)
 
 | Fichier | Format | Usage |
@@ -49,7 +51,7 @@ Tous les formats partent du **key art de la bannière officielle**, recadré ave
 | `steam-main-capsule-1232x706.jpg` | Capsule principale | Titre seul | ≥ 6 % |
 | `steam-vertical-748x896.jpg` | Capsule verticale | Titre seul, cadrage sur le héros | Titre centré en tête |
 | `steam-library-hero-3840x1240.jpg` | Library hero | **Sans texte** | Personnages hors des bords |
-| `steam-library-logo-1280x720.png` | Library logo | Lockup vertical (fond sombre), transparent | — |
+| `steam-library-logo-1280x720.png` | Library logo | Logo monochrome blanc, transparent | — |
 | `youtube-2560x1440.jpg` | Bannière de chaîne | Titre + accroche **dans la zone sûre centrale de 1546 × 423** | Vérifiée |
 | `x-twitter-1500x500.jpg` | En-tête X | Titre + accroche à droite (l'avatar recouvre le bas gauche) | Texte à droite |
 | `discord-960x540.jpg` | Bannière de serveur | Titre + accroche | ≥ 6 % |
@@ -66,14 +68,14 @@ Le 3,1:1 du library hero et le 3:1 de X coupaient le héros et les consultants d
 | `privatix-presskit-couverture-a4.pdf` | A4, texte vectoriel |
 | `privatix-presskit-couverture.jpg` | 2480 × 3508 (A4 à 300 ppp) |
 
-La couverture reprend le key art de l'affiche (héros entier, gare, Discosaure), le **lockup horizontal** sur la bande nuit, l'accroche et les crédits. Elle est versée au press kit du site.
+La couverture reprend le key art sans texte de l'affiche « film 70s » (`presskit/keyart-presskit.jpg`, recadré sans le bord papier : le héros, le Discosaure, l'Invité d'honneur, Jean-Cul Lurcke, les consultants et la passerelle), le **logo monochrome blanc** sur la bande nuit, l'accroche et les crédits. Elle est versée au press kit du site.
 
 ## Intégration
 
 `node tools/marketing/sync-site.mjs` recopie les livrables là où ils servent : le build du site ne voit que `site/`, les fichiers y sont donc versionnés une seconde fois.
 
 - **Site vitrine** : en-tête avec le lockup horizontal (emblème WebP + wordmark SVG) ; hero avec le lockup vertical (même principe, le wordmark garde l'allumage néon `data-neon`). L'affiche de la vidéo du hero est maintenant le **key art de la bannière sans texte**. Il sert d'image LCP et de repli en mouvement réduit, et la boucle vidéo garde sa place. Le site reçoit aussi `favicon.ico`/`.svg`, `apple-touch-icon.png`, `site.webmanifest` (icônes 192, 512 et masquable) et la nouvelle image Open Graph/Twitter (`og-image.jpg` = `open-graph-1200x630.jpg`).
-- **Artbook › Press kit** : carte du logo (vertical, horizontal, fond clair, wordmark SVG, icône), carte affiche + couverture (JPG 4K, sans texte, PDF A4, bannière). L'archive ZIP assemblée au build (`site/scripts/presskit.mjs`) contient la couverture, `logo/`, l'affiche, l'affiche sans texte et la bannière. L'ancien logotype (`privatix-logo*.png/webp`) n'est plus lié : il reste en place comme référence des jobs des lots 1 et 2.
+- **Artbook › Press kit** : carte du logo monochrome (SVG et PNG 2048 px, blanc et noir, icône), carte de la couverture (PDF A4, JPG, bannière) et galerie des six affiches au logo mono (`docs/marketing/affiches-logo-mono/`). L'archive ZIP assemblée au build (`site/scripts/presskit.mjs`) contient la couverture, `logo/`, `affiches/` et la bannière. L'affiche « Marquise » et les lockups néon ne sont plus servis par le site ; ils restent dans ce dossier comme archive. L'ancien logotype (`privatix-logo*.png/webp`) n'est plus lié : il reste en place comme référence des jobs des lots 1 et 2.
 - **Jeu** : favicon de `play3d.html` (`public/favicon.svg`, `public/favicon.ico`). L'écran titre affiche « PRIVATIX » en texte, sans image : il n'a pas été modifié.
 - **Appli Electron** : `desktop/icons/` (PNG 1024 et 512, ICO 16 → 256, ICNS grille macOS) recopiés dans `build/` par `npm run icon`. `package.json` pointe Windows vers `icon.ico` et macOS vers `icon.icns`.
 
@@ -131,4 +133,4 @@ node tools/marketing/compose/render.mjs docs/marketing/officiel/presskit/compose
 node tools/marketing/sync-site.mjs
 ```
 
-Les key arts agrandis (`affiche/keyart-affiche-marquise-4k.jpg`, `bannieres/keyart-banniere-4k.jpg`, `bannieres/keyart-banniere-21x9-4k.jpg`) viennent d'ImageMagick : `convert <source> -filter Lanczos -resize … -unsharp 0x0.8+0.4+0.01 -quality 92`. Le library logo Steam est `privatix-lockup-vertical-sombre.png` ajusté dans 1280 × 720.
+Les key arts agrandis (`affiche/keyart-affiche-marquise-4k.jpg`, `bannieres/keyart-banniere-4k.jpg`, `bannieres/keyart-banniere-21x9-4k.jpg`) viennent d'ImageMagick : `convert <source> -filter Lanczos -resize … -unsharp 0x0.8+0.4+0.01 -quality 92`. Le library logo Steam est `logo/privatix-logo-mono-blanc.svg` rendu par Chromium dans 1280 × 720 (marges de 80 px) ; `logo/privatix-logo-mono-blanc.png` et `-noir.png` (2048 px) sont rendus de la même façon.

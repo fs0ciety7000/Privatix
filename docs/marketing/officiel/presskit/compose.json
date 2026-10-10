@@ -8,8 +8,8 @@
       "height": 1754,
       "scale": 2,
       "vars": {
-        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
-        "logoUrl": "docs/marketing/officiel/logo/privatix-lockup-horizontal-sombre.svg",
+        "art": "docs/marketing/officiel/presskit/keyart-presskit.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg",
         "tagline": "Le rail n’est pas à vendre.",
         "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
       }
@@ -22,8 +22,8 @@
         "height": 297
       },
       "vars": {
-        "art": "docs/marketing/officiel/affiche/keyart-affiche-marquise-4k.jpg",
-        "logoUrl": "docs/marketing/officiel/logo/privatix-lockup-horizontal-sombre.svg",
+        "art": "docs/marketing/officiel/presskit/keyart-presskit.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg",
         "tagline": "Le rail n’est pas à vendre.",
         "studioUrl": "site/src/assets/img/occ-mons-studios.webp"
       }

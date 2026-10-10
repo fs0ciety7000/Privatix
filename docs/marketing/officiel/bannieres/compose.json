@@ -12,7 +12,8 @@
         "tagline": "Le rail n’est pas à vendre.",
         "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
         "artScale": "1.075",
-        "artOrigin": "46% 38%"
+        "artOrigin": "46% 38%",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -26,7 +27,8 @@
         "tagline": "Le rail n’est pas à vendre.",
         "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
         "artScale": "1.075",
-        "artOrigin": "46% 38%"
+        "artOrigin": "46% 38%",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -43,7 +45,8 @@
         "headTop": "12%",
         "titleSize": "9em",
         "taglineSize": "2.2em",
-        "creditsDisplay": "none"
+        "creditsDisplay": "none",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -61,7 +64,8 @@
         "titleSize": "9.6em",
         "taglineDisplay": "none",
         "creditsDisplay": "none",
-        "artPos": "50% 40%"
+        "artPos": "50% 40%",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -78,7 +82,8 @@
         "headTop": "10%",
         "titleSize": "9.4em",
         "taglineDisplay": "none",
-        "creditsDisplay": "none"
+        "creditsDisplay": "none",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -99,7 +104,8 @@
         "titleSize": "13.5em",
         "taglineDisplay": "none",
         "creditsDisplay": "none",
-        "artPos": "6% 50%"
+        "artPos": "6% 50%",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -116,7 +122,8 @@
         "titleDisplay": "none",
         "creditsDisplay": "none",
         "artPos": "50% 80%",
-        "artScale": "1"
+        "artScale": "1",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -137,7 +144,8 @@
         "titleSize": "8.2em",
         "taglineSize": "1.7em",
         "taglineAfter": "inline-block",
-        "creditsDisplay": "none"
+        "creditsDisplay": "none",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -156,7 +164,8 @@
         "taglineSize": "1.7em",
         "creditsDisplay": "none",
         "artPos": "50% 70%",
-        "artScale": "1"
+        "artScale": "1",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -173,7 +182,8 @@
         "headTop": "9%",
         "titleSize": "9.4em",
         "taglineSize": "2.3em",
-        "creditsDisplay": "none"
+        "creditsDisplay": "none",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     },
     {
@@ -195,7 +205,8 @@
         "taglineSize": "3.2em",
         "taglineAfter": "inline-block",
         "creditsDisplay": "none",
-        "artPos": "4% 50%"
+        "artPos": "4% 50%",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
       }
     }
   ]

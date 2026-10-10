@@ -1,6 +1,6 @@
 <!doctype html>
-<!-- Couverture A4 du press kit : key art de l'affiche « Marquise » en haut, logo officiel
-     (lockup horizontal, fond sombre), accroche, crédits. -->
+<!-- Couverture A4 du press kit : key art de l'affiche « film 70s » (sans texte) en haut, logo
+     monochrome blanc (emblème + PRIVATIX, 2,17:1), accroche, crédits. -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -8,12 +8,12 @@
 <style>
   body { font-size: {{width}}px; }
   .canvas { font-size: 0.01em; background: var(--px-night); }
-  .art { height: 78%; object-position: 50% 60%; }
+  .art { height: 76%; object-position: 50% 30%; }
   .fade {
     position: absolute; inset: 0;
     background:
       linear-gradient(180deg, rgba(10,8,24,.75) 0%, rgba(10,8,24,0) 12%),
-      linear-gradient(180deg, rgba(10,8,24,0) 60%, rgba(10,8,24,.8) 71%, var(--px-night) 78%);
+      linear-gradient(180deg, rgba(10,8,24,0) 52%, rgba(10,8,24,.85) 66%, var(--px-night) 76%);
   }
   .top {
     position: absolute; top: 3.2%; left: 6%; right: 6%;
@@ -24,10 +24,13 @@
   }
   .top b { color: var(--px-hero); font-weight: 700; }
   .top span:last-child { letter-spacing: 0.08em; text-transform: none; color: var(--px-text-soft); }
-  /* lockup horizontal 3:1 : le contenu occupe 90 % × 53 % du cadre, centré vers 80 % */
-  .logo { position: absolute; left: 8%; width: 84%; top: 70.4%; display: block; }
+  /* logo mono 2,17:1 : 44 % de large → 11,6 % de haut ; ombre portée pour le détacher du key art */
+  .logo {
+    position: absolute; left: 28%; width: 44%; top: 68.6%; display: block;
+    filter: drop-shadow(0 0.5em 1.2em rgba(10,8,24,.9));
+  }
   .tagline {
-    position: absolute; left: 0; right: 0; top: 87%;
+    position: absolute; left: 0; right: 0; top: 84.6%;
     display: flex; justify-content: center; align-items: center; gap: 0.9em;
     font-family: var(--font-cond); font-weight: 600; font-size: 3.2em;
     letter-spacing: 0.2em; text-transform: uppercase; color: var(--px-cream);

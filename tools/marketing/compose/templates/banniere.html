@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Bannière 16:9 : titre néon et accroche dans le tiers droit (laissé dégagé par le key art),
+<!-- Bannière 16:9 : logo monochrome blanc et accroche dans le tiers droit (laissé dégagé par le key art),
      crédits en une ligne discrète en pied ; marges de recadrage de 6 % respectées. -->
 <html lang="fr">
 <head>
@@ -14,8 +14,11 @@
     position: absolute; inset: 0 0 0 auto; width: 52%;
     background: linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 55%, rgba(10,8,24,0) 100%);
   }
-  .head { position: absolute; top: 9%; right: 6%; text-align: right; }
-  .head .neon { font-size: 8.4em; }
+  .head { position: absolute; top: 7%; right: 6%; text-align: right; }
+  .head .logo-mono {
+    display: block; width: 34em; margin-left: auto;
+    filter: drop-shadow(0 0.3em 0.8em rgba(10,8,24,.85));
+  }
   .tagline {
     margin-top: 0.7em; font-family: var(--font-cond); font-weight: 600; font-size: 1.9em;
     letter-spacing: 0.2em; text-transform: uppercase; color: var(--px-cream);
@@ -37,7 +40,7 @@
   <img class="art" src="{{art}}" alt="">
   <div class="shade-right"></div>
   <div class="head">
-    <div class="neon">PRIVATIX</div>
+    <img class="logo-mono" src="{{logoUrl}}" alt="PRIVATIX">
     <div class="tagline">{{tagline}}</div>
   </div>
   <footer class="credits">
