@@ -172,7 +172,7 @@ export function initMotion(): void {
     const neon = document.querySelector('[data-neon]');
     if (neon) neonFlicker(neon);
     reveal(Array.from(document.querySelectorAll('[data-reveal]')));
-    portraitIgnite(Array.from(document.querySelectorAll('.foe__img, .loadout__img, .mate__img, .kit__img')));
+    portraitIgnite(Array.from(document.querySelectorAll('.foe__img, .loadout__img, .mate__img')));
     document.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
     document.querySelectorAll('[data-gauge]').forEach(fillGauge);
   });
@@ -180,6 +180,6 @@ export function initMotion(): void {
   // ramenées à 0 par les tokens `--dur-*` (tokens.css).
   mm.add(REDUCED, () => {
     gsap.set('[data-reveal], [data-neon], [data-hero-logo]', { clearProps: 'opacity,visibility,transform' });
-    gsap.set('.foe__img, .loadout__img, .mate__img, .kit__img', { clearProps: 'transform,filter' });
+    gsap.set('.foe__img, .loadout__img, .mate__img', { clearProps: 'transform,filter' });
   });
 }
