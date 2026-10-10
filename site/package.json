@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "node scripts/fetch-releases.mjs && tsc --noEmit && vite build",
-    "build:offline": "tsc --noEmit && vite build",
+    "build": "node scripts/fetch-releases.mjs && node scripts/presskit.mjs && tsc --noEmit && vite build",
+    "build:offline": "node scripts/presskit.mjs && tsc --noEmit && vite build",
     "preview": "vite preview --host --port 4174",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/test-releases.mjs",
-    "check": "npm run typecheck && npm test"
+    "test": "node scripts/test-releases.mjs && node scripts/test-presskit.mjs",
+    "check": "npm run typecheck && npm test",
+    "presskit": "node scripts/presskit.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
