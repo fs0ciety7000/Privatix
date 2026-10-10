@@ -257,9 +257,21 @@
       <section class="section heros" id="heros" aria-labelledby="heros-title">
         <div class="wrap">
           <div class="kit">
-            <figure class="kit__media" data-reveal>
-              <img class="kit__img" src="/bestiaire/hero-equipe-480.webp" srcset="/bestiaire/hero-equipe-480.webp 480w, /bestiaire/hero-equipe.webp 960w" sizes="(min-width: 900px) 460px, 92vw" width="960" height="960" loading="lazy" decoding="async" alt="Le héros équipé de pièces rares : casque doré « Acquis historique » à crête, gilet porte-outils et clé à tire-fond épique à tête lumineuse." />
-              <figcaption>Paquetage « Patrimoine » : chaque pièce se voit sur le héros.</figcaption>
+            <!-- Hologramme du héros (tools/hologram) : WebP animé à fond transparent, teinté et balayé en
+                 CSS ; en mouvement réduit, l'affiche fixe (aucune animation n'est téléchargée). -->
+            <figure class="kit__media holo" data-reveal>
+              <div class="holo__stage">
+                <span class="holo__beam" aria-hidden="true"></span>
+                <span class="holo__base" aria-hidden="true"></span>
+                <div class="holo__fig">
+                  <picture>
+                    <source media="(prefers-reduced-motion: reduce)" srcset="/hologram/hero-holo-poster.webp" />
+                    <img class="holo__img" src="/hologram/hero-holo.webp" width="724" height="480" loading="lazy" decoding="async" alt="Hologramme cyan de Léon, le héros, en casque de chantier, gilet haute visibilité et clé à tire-fond, qui tourne lentement sur lui-même au-dessus d'un projecteur." />
+                  </picture>
+                </div>
+                <span class="holo__scan" aria-hidden="true"></span>
+              </div>
+              <figcaption>Projection de l'OCC : Léon en dotation de départ, avant le premier butin.</figcaption>
             </figure>
             <div class="kit__text" data-reveal>
               <p class="eyebrow">Le héros et son équipement</p>
