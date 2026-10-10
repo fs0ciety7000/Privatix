@@ -87,13 +87,6 @@ export async function loadReleases(): Promise<Loaded | null> {
   return null;
 }
 
-const OS_LABEL: Record<Exclude<OsFamily, 'other'>, string> = {
-  windows: 'Windows',
-  mac: 'macOS',
-  linux: 'Linux',
-  android: 'Android',
-};
-
 export function visitorOs(): OsFamily {
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
   return detectOs(navigator.userAgent, nav.userAgentData?.platform ?? navigator.platform, navigator.maxTouchPoints);
@@ -359,19 +352,10 @@ function renderNone(root: HTMLElement): void {
   );
 }
 
-/** Met à jour le bouton « Télécharger » du hero (OS du visiteur, version et date). */
-function updateHero(release: Release | null, os: OsFamily): void {
-  const label = document.querySelector<HTMLElement>('[data-dl-hero-label]');
-  const sub = document.querySelector<HTMLElement>('[data-dl-hero-sub]');
-  if (label && os !== 'other') label.textContent = `Télécharger pour ${OS_LABEL[os]}`;
-  if (release && sub) sub.textContent = `Version ${release.version}${release.date ? ` · ${formatDate(release.date)}` : ''}`;
-}
-
 export async function initDownloads(): Promise<void> {
   const root = document.querySelector<HTMLElement>('[data-dl]');
   if (!root) return;
   const os = visitorOs();
-  updateHero(null, os);
   const loaded = await loadReleases();
   if (!loaded) {
     // Rien n'a répondu : le HTML statique (liens stables) reste en place, avec l'OS mis en avant.
@@ -387,12 +371,9 @@ export async function initDownloads(): Promise<void> {
   const latest = all.find((r) => !r.prerelease) ?? all[0];
   if (!latest) {
     renderNone(root);
-    const sub = document.querySelector<HTMLElement>('[data-dl-hero-sub]');
-    if (sub) sub.textContent = 'Applications de bureau bientôt disponibles';
     return;
   }
   renderLatest(root, latest, os, loaded.source);
-  updateHero(latest, os);
   const olderBox = document.querySelector<HTMLElement>('[data-dl-older]');
   const olderList = document.querySelector<HTMLElement>('[data-dl-older-list]');
   if (olderBox && olderList) renderOlder(olderBox, olderList, all.filter((r) => r !== latest));
