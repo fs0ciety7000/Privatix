@@ -62,6 +62,7 @@ const voiceAssets = VOICES.filter((v) => !v.alias).map((v, i) => {
     ...(v.saved
       ? { status: 'sauvegardée', voiceId: v.saved.voiceId, workspaceName: v.saved.workspaceName }
       : {}),
+    ...(v.geminiVoiceId ? { geminiVoiceId: v.geminiVoiceId } : {}),
     ...(v.pending
       ? {
           status: 'en attente',
@@ -412,11 +413,13 @@ sections.voices = VOICES.map((v) => {
       ? v.saved.library
         ? `- **État** : **arrêtée** : voix de bibliothèque (\`voice_id\` \`${v.saved.voiceId}\`, « ${v.saved.workspaceName} ») ; le prompt Voice Design ci-dessous reste la référence de jeu, il n’est pas à produire.`
         : `- **État** : **validée et sauvegardée** (\`voice_id\` \`${v.saved.voiceId}\`, nom actuel dans le workspace « ${v.saved.workspaceName} », à renommer « Privatix — … »).`
-      : v.pending
-        ? `- **État** : **aperçu validé, en attente** (\`generated_voice_id\` \`${v.pending.generatedVoiceId}\`) : ${v.pending.reason}. Aucune réplique produite tant que la voix n’est pas sauvegardée.`
-        : v.alias
-          ? ''
-          : '- **État** : à concevoir (Voice Design), en attente d’un emplacement de voix libre.',
+      : v.geminiVoiceId
+        ? `- **État** : **arrêtée sur Gemini TTS** (\`voice_id\` \`${v.geminiVoiceId}\`, backend \`--tts-backend gemini\`) ; répliques produites, essai d’écoute dans \`docs/audio/samples/gemini/\`.`
+        : v.pending
+          ? `- **État** : **aperçu validé, en attente** (\`generated_voice_id\` \`${v.pending.generatedVoiceId}\`) : ${v.pending.reason}. Aucune réplique produite tant que la voix n’est pas sauvegardée.`
+          : v.alias
+            ? ''
+            : '- **État** : à concevoir (Voice Design), en attente d’un emplacement de voix libre.',
     `- **Âge** : ${f.age} · **Timbre** : ${f.timbre} · **Accent** : ${f.accent} · **Débit** : ${f.debit} · **Émotion** : ${f.emotion}`,
     `- **Direction** : ${f.direction}`,
     v.design

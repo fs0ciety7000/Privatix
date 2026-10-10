@@ -125,6 +125,7 @@
         "personnage": "marcel"
       },
       "select": 0,
+      "geminiVoiceId": "voice_jwjfxi0g20l6",
       "post": {
         "loudnorm": -18
       }
@@ -197,6 +198,7 @@
         "personnage": "bene"
       },
       "select": 0,
+      "geminiVoiceId": "voice_k4b4wmmwy1d8",
       "post": {
         "loudnorm": -18
       }
@@ -248,6 +250,7 @@
         "personnage": "josiane"
       },
       "select": 0,
+      "geminiVoiceId": "voice_fekejacozsb7",
       "post": {
         "loudnorm": -18
       }

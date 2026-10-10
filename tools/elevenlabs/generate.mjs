@@ -213,14 +213,26 @@ const MANIFEST_VOICES = Object.fromEntries(
     .filter((a) => a.type === 'voice-design' && a.voiceId)
     .map((a) => [a.voice, a.voiceId]),
 );
+/** Voix Gemini arrêtées par le porteur du projet (manifeste : `geminiVoiceId` des assets voice-design). */
+const MANIFEST_GEMINI_VOICES = Object.fromEntries(
+  MANIFEST.assets
+    .filter((a) => a.type === 'voice-design' && a.geminiVoiceId)
+    .map((a) => [a.voice, a.geminiVoiceId]),
+);
 /** Fournisseur d'une voix : les voix arrêtées sur ElevenLabs y restent, quel que soit --tts-backend. */
 const backendOf = (v) => (MANIFEST_VOICES[v] ? 'elevenlabs' : TTS_BACKEND);
-/** voice_id Gemini (`voice_…`) : variante n (1 par défaut, ou --pick), ou GEMINI_VOICE_<VOIX>. */
-function geminiVoiceId(v, n = PICKS[v] ?? 1) {
+/**
+ * voice_id Gemini (`voice_…`) : GEMINI_VOICE_<VOIX>, sinon la variante n demandée (--variants / --pick),
+ * sinon la voix arrêtée du manifeste, sinon la variante 1 de l'état local.
+ */
+function geminiVoiceId(v, n) {
   const g = voices[v]?.gemini;
+  const want = n ?? PICKS[v];
   return (
     process.env[`GEMINI_VOICE_${v.toUpperCase()}`] ??
-    g?.variants?.[n - 1]?.voice_id ??
+    (want ? g?.variants?.[want - 1]?.voice_id : null) ??
+    MANIFEST_GEMINI_VOICES[v] ??
+    g?.variants?.[0]?.voice_id ??
     g?.voice_id ??
     null
   );
