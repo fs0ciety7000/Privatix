@@ -1,0 +1,914 @@
+{
+  "fond-suisse-jaune": {
+    "model": "gemini-nano-banana-2.1",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-noir-2048.png"
+    ],
+    "usage": {
+      "total_tokens": 5739,
+      "total_input_tokens": 1536,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 416
+        },
+        {
+          "modality": "image",
+          "tokens": 1120
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 2924,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1680
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1279,
+      "raw_prompt_token": 2075,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 955
+            },
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 579
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1279
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2837
+            },
+            {
+              "modality": "image",
+              "tokens": 2158
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 607
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 765
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 4233
+            },
+            {
+              "modality": "image",
+              "tokens": 3238
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 76
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 273
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 955
+            },
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 579
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1279
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2837
+            },
+            {
+              "modality": "image",
+              "tokens": 2158
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 607
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 765
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 4233
+            },
+            {
+              "modality": "image",
+              "tokens": 3238
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 76
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 273
+            }
+          ]
+        }
+      ]
+    },
+    "note": "An artwork for a Swiss International Typographic Style exhibition poster, satisfying all layout constraints, geometric shape placements, and color specifications, is presented below. No text, letters, numbers, or logos were used, leaving designated blank areas as requested.",
+    "date": "2026-10-10T09:23:00.437Z"
+  },
+  "fond-suisse-jeu": {
+    "model": "gemini-nano-banana-2.1",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png",
+      "site/public/artbook/planches/da-palette-1200.webp"
+    ],
+    "usage": {
+      "total_tokens": 5651,
+      "total_input_tokens": 2684,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 2240
+        },
+        {
+          "modality": "text",
+          "tokens": 444
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 2459,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1680
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 508,
+      "raw_prompt_token": 3234,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 994
+            },
+            {
+              "modality": "image",
+              "tokens": 2240
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 679
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 508
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2205
+            },
+            {
+              "modality": "image",
+              "tokens": 3268
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 112
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 116
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 994
+            },
+            {
+              "modality": "image",
+              "tokens": 2240
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 679
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 508
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2205
+            },
+            {
+              "modality": "image",
+              "tokens": 3268
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 112
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 116
+            }
+          ]
+        }
+      ]
+    },
+    "note": "I have generated the artwork based on your exact layout, colour palette, and stylistic requirements for a Swiss International Typographic Style exhibition poster. The geometric shapes suggesting a railway station at night (such as the 4:47 clock, diagonal rails with sleepers, and signals) have been carefully arranged with the necessary top-left and bottom negative spaces. No text, logos, or non-essential elements have been included.",
+    "date": "2026-10-10T09:23:24.077Z"
+  },
+  "fond-constructiviste": {
+    "model": "gemini-nano-banana-2.1",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "site/public/bestiaire/hero.webp",
+      "site/public/bestiaire/consultant.webp",
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-noir-2048.png"
+    ],
+    "usage": {
+      "total_tokens": 7974,
+      "total_input_tokens": 4901,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 421
+        },
+        {
+          "modality": "image",
+          "tokens": 4480
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 2269,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1680
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 804,
+      "raw_prompt_token": 5473,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 993
+            },
+            {
+              "modality": "image",
+              "tokens": 4480
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 468
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 804
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2289
+            },
+            {
+              "modality": "image",
+              "tokens": 5414
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 133
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 253
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 993
+            },
+            {
+              "modality": "image",
+              "tokens": 4480
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 468
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 804
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2289
+            },
+            {
+              "modality": "image",
+              "tokens": 5414
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 133
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 253
+            }
+          ]
+        }
+      ]
+    },
+    "note": "Here is the 1920s constructivist-style Union propaganda poster reimagined for \"PRIVATIX\". It captures the specified low-angle diagonal dynamic, featuring the worker with his signature track wrench, tiny consultants scattering from a bold diagonal wedge, and the exact aged cream, red, black, and orange palette with a vintage printed paper look. The layout maintains the requested empty spaces in the top-left (for a logo) and the bottom 15% (for a slogan) with no text.",
+    "date": "2026-10-10T09:23:46.959Z"
+  },
+  "fond-film-70s": {
+    "model": "gemini-nano-banana-2.1",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "site/public/bestiaire/hero.webp",
+      "site/public/bestiaire/discosaure.webp",
+      "site/public/bestiaire/dirupo.webp",
+      "site/public/bestiaire/lurcke.webp",
+      "site/public/bestiaire/consultant.webp",
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png"
+    ],
+    "usage": {
+      "total_tokens": 11432,
+      "total_input_tokens": 8274,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 434
+        },
+        {
+          "modality": "image",
+          "tokens": 7840
+        }
+      ],
+      "total_cached_tokens": 3414,
+      "cached_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 179
+        },
+        {
+          "modality": "image",
+          "tokens": 3235
+        }
+      ],
+      "total_output_tokens": 2285,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1680
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 873,
+      "raw_prompt_token": 8879,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1039
+            },
+            {
+              "modality": "image",
+              "tokens": 7840
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 589
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 873
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2525
+            },
+            {
+              "modality": "image",
+              "tokens": 8681
+            }
+          ],
+          "cache_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1847
+            },
+            {
+              "modality": "image",
+              "tokens": 6345
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 28
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 367
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1039
+            },
+            {
+              "modality": "image",
+              "tokens": 7840
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 589
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 873
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2525
+            },
+            {
+              "modality": "image",
+              "tokens": 8681
+            }
+          ],
+          "cache_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1847
+            },
+            {
+              "modality": "image",
+              "tokens": 6345
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 28
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 367
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T09:24:13.038Z"
+  },
+  "fond-riso": {
+    "model": "gemini-nano-banana-2.1",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "site/public/bestiaire/hero.webp",
+      "site/public/bestiaire/consultant.webp",
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png"
+    ],
+    "usage": {
+      "total_tokens": 8261,
+      "total_input_tokens": 4860,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 380
+        },
+        {
+          "modality": "image",
+          "tokens": 4480
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 2216,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1680
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 1185,
+      "raw_prompt_token": 5432,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 952
+            },
+            {
+              "modality": "image",
+              "tokens": 4480
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 520
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1185
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2681
+            },
+            {
+              "modality": "image",
+              "tokens": 5414
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 28
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 116
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 952
+            },
+            {
+              "modality": "image",
+              "tokens": 4480
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 520
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1185
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 2681
+            },
+            {
+              "modality": "image",
+              "tokens": 5414
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 28
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 116
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T09:24:36.296Z"
+  },
+  "fond-minimal-cle": {
+    "model": "gemini-nano-banana-2.1",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "2:3",
+    "image_size": "2K",
+    "refs": [
+      "docs/marketing/lot2/refs/cle-tire-fond.webp",
+      "site/public/artbook/planches/da-palette-1200.webp",
+      "docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png"
+    ],
+    "usage": {
+      "total_tokens": 6341,
+      "total_input_tokens": 3740,
+      "input_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 3360
+        },
+        {
+          "modality": "text",
+          "tokens": 380
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 2107,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1680
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 494,
+      "raw_prompt_token": 4301,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 941
+            },
+            {
+              "modality": "image",
+              "tokens": 3360
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 411
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 494
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1870
+            },
+            {
+              "modality": "image",
+              "tokens": 4346
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 28
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 203
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 941
+            },
+            {
+              "modality": "image",
+              "tokens": 3360
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 411
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 494
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1870
+            },
+            {
+              "modality": "image",
+              "tokens": 4346
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 28
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 203
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T09:24:53.996Z"
+  }
+}

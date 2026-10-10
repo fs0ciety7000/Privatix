@@ -1,6 +1,6 @@
 # Visuels marketing — prompts Nano Banana
 
-Prompts envoyés à la génération d'images Gemini (Nano Banana) par `tools/marketing/nanobanana.mjs`. Ils sont rédigés en anglais pour le modèle ; chaque entrée a un résumé en français et la liste des images de référence passées dans la requête. Les sources exécutables sont `lot1/jobs.json` et `lot2/jobs.json` : ce document en est la copie lisible, à tenir synchronisée.
+Prompts envoyés à la génération d'images Gemini (Nano Banana) par `tools/marketing/nanobanana.mjs`. Ils sont rédigés en anglais pour le modèle ; chaque entrée a un résumé en français et la liste des images de référence passées dans la requête. Les sources exécutables sont `lot1/jobs.json`, `lot2/jobs.json` et `affiches-logo-mono/jobs.json` : ce document en est la copie lisible, à tenir synchronisée.
 
 ## Règles communes
 
@@ -399,4 +399,137 @@ CENTRE-RIGHT, BIG AND PRESENT: the purple Discosaure (discosaure reference: purp
 ABSOLUTELY NO TEXT anywhere in the image: no title, no letters, no words, no numbers, no signage text, no watermark. Only allowed graphic mark: the small blue-and-white SNCB logo (last reference) on one platform pillar sign, without any lettering next to it. No other brands.
 
 Palette: violet dusk-to-night sky (#0A0818 to deep violet, warm orange glow on the horizon), hero orange #FF7A1A, magenta neon #FF3EA5 on Privatix elements, turquoise enemies #19C3B1, cyan rim light #6FF3FF, yellow sparks #FFD200.
+```
+
+## Affiches avec le logo mono
+
+Série construite sur le logo mono officiel (`officiel/logo/privatix-logo-mono-{blanc,noir}.svg`), voir `affiches-logo-mono/README.md`. Le logo, rasterisé en PNG de 2048 px, est passé en référence pour que la composition s'équilibre autour de lui, mais **le modèle ne le dessine jamais** : chaque prompt réserve sa zone, et le vrai SVG est incrusté à la composition typographique avec le texte. Les prompts laissent volontairement plus de liberté créative au modèle sur les quatre directions libres.
+
+### `fond-suisse-jaune`
+
+- **Modèle** : `gemini-nano-banana-2.1` · **Format** : 2:3, 2K
+- **Résumé** : Fond d'affiche style suisse, palette de l'inspiration (jaune `#FFD200`, noir, vert `#1E8C4E` sur papier `#F2EFE6`) : rails en diagonale, horloge à 4 h 47 (aiguilles redessinées à la composition), signal à trois feux, bordure de quai, éventail de côtes ; haut gauche (logo) et bas (colonnes) réservés. Affiche : `affiche-suisse-jaune.jpg`.
+- **Références** :
+  - `docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-noir-2048.png`
+
+```text
+Artwork for a Swiss International Typographic Style exhibition poster, portrait 2:3, WITHOUT ANY TEXT: no letters, no numbers, no logo (all typography and the logo are added later by a designer).
+
+MEDIUM: flat offset-printed poster on warm off-white paper (#F2EFE6) with a very subtle paper grain. Only three flat inks on the paper: signal yellow (#FFD200), deep black (#111111) and railway green (#1E8C4E). Perfectly flat colour, sharp edges, no gradients, no shading, no perspective, no illustration, no people.
+
+SHAPES: minimalist abstract geometric shapes that evoke a railway station, arranged on a strict modular grid (12 columns; the grid is felt through alignments only, never drawn), bold and asymmetric like Josef Muller-Brockmann and Armin Hofmann posters: two long thick parallel black bars running diagonally at about 15 degrees like rails, crossed by short evenly spaced bars like sleepers; one large perfect circle in yellow evoking a station clock, with two straight black hands showing 4:47 (short hand just before the 5, long hand on the 47-minute position), no numerals; a vertical stack of three circles like a railway signal (green, yellow, black); a long thin horizontal green rectangle like a platform edge; a quarter-circle fan of thin black radiating lines evoking the steel ribs of a modern station. Generous empty paper between shapes; shapes may bleed off the right edge.
+
+LAYOUT (very important): the TOP 30 % of the image, from the left edge to about 70 % of the width, is EMPTY plain paper (the reference logo will be placed there later: do NOT draw it). The BOTTOM 20 %, full width, is EMPTY plain paper (text columns go there). All shapes live between these zones and in the top-right corner.
+
+No text, no letters, no numbers, no logo, no signature, no watermark.
+```
+
+### `fond-suisse-jeu`
+
+- **Modèle** : `gemini-nano-banana-2.1` · **Format** : 2:3, 2K
+- **Résumé** : Même grille, palette du jeu (magenta, turquoise, orange, cyan sur nuit `#0A0818`) : horloge orange géante, rails turquoise à traverses magenta, éventail magenta. Affiche : `affiche-suisse-jeu.jpg`.
+- **Références** :
+  - `docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png`
+  - `site/public/artbook/planches/da-palette-1200.webp`
+
+```text
+Artwork for a Swiss International Typographic Style exhibition poster, portrait 2:3, WITHOUT ANY TEXT: no letters, no numbers, no logo (all typography and the logo are added later by a designer).
+
+MEDIUM: flat screen-printed poster on deep night-violet paper (#0A0818, never pure black) with a very subtle print grain. Only four flat inks, taken from the palette of the second reference image: neon magenta (#FF3EA5), turquoise (#19C3B1), high-visibility orange (#FF7A1A) and a little cyan (#6FF3FF). Perfectly flat colour, sharp edges, no gradients, no glow, no shading, no perspective, no illustration, no people.
+
+SHAPES: minimalist abstract geometric shapes that evoke a railway station at night, arranged on a strict modular grid (12 columns; felt through alignments only, never drawn), bold and asymmetric like Josef Muller-Brockmann posters: one very large orange circle evoking a station clock, cut by two straight night-violet hands showing 4:47 (short hand just before the 5, long hand on the 47-minute position), no numerals; three long parallel turquoise bars crossing the page diagonally like rails, with short magenta sleeper bars; a vertical stack of three small circles like a railway signal (magenta, orange, cyan); a long thin horizontal cyan line like a platform edge; a half fan of thin magenta radiating lines evoking the white steel ribs of the Calatrava station in Mons. Generous empty space between shapes; shapes may bleed off the right and bottom-right edges.
+
+LAYOUT (very important): the TOP 30 % of the image, from the left edge to about 70 % of the width, is EMPTY plain night-violet paper (the white reference logo will be placed there later: do NOT draw it). The BOTTOM 20 %, full width, is EMPTY plain night-violet paper (text columns go there). All shapes live between these zones and in the top-right corner.
+
+No text, no letters, no numbers, no logo, no signature, no watermark.
+```
+
+### `fond-constructiviste`
+
+- **Modèle** : `gemini-nano-banana-2.1` · **Format** : 2:3, 2K
+- **Résumé** : Propagande syndicale constructiviste (Lissitzky, Rodtchenko, Stenberg, Klutsis) : héros en contre-plongée brandissant la clé, coin rouge enfonçant un cercle noir, consultants éparpillés ; papier crème, rouge, noir. Haut gauche et bande rouge du bas réservés. Affiche : `affiche-constructiviste.jpg`.
+- **Références** :
+  - `site/public/bestiaire/hero.webp`
+  - `site/public/bestiaire/consultant.webp`
+  - `docs/marketing/lot2/refs/cle-tire-fond.webp`
+  - `docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-noir-2048.png`
+
+```text
+Artwork for a 1920s constructivist union propaganda poster (Rodchenko, El Lissitzky, Stenberg brothers, Klutsis) reimagined for the satirical video game PRIVATIX, where a railway worker on rotating 24/7 shifts fights consultants who want to privatise the railway. Portrait 2:3, WITHOUT ANY TEXT (typography and logo are added later). You have creative freedom on the composition.
+
+PALETTE: printed look on aged cream paper (#EFE4CC) with only flat red (#D62718), black and a touch of hero orange (#FF7A1A), coarse halftone and paper texture.
+
+SUBJECT: the railway worker hero of the first reference image (orange hard hat with a small headlamp, orange hi-vis vest with white stripes, red scarf, navy trousers, brown moustache), seen from a dramatic low angle on a steep diagonal, raising his railway track wrench high like a flag. THE WRENCH is the tool of the third reference image: a long straight steel shaft, a short RED crossbar handle forming a T at one end, a chunky blue-grey cylindrical socket at the other end; it is not a hammer, not a spanner. Keep him clearly our stylized toon character (chunky figurine proportions, ink outlines) translated into the flat constructivist print style, never photorealistic. A huge red wedge drives diagonally into a black circle, in homage to Lissitzky; tiny grey consultants in suits with briefcases and laptops (second reference) scatter away from the wedge. Converging rails and radiating beams behind the hero.
+
+LAYOUT (very important): keep the TOP-LEFT area, about 60 % of the width and the top 20 % of the height, as EMPTY cream paper (the black reference logo is placed there later: do NOT draw it). Keep the BOTTOM 15 %, full width, as an EMPTY flat red band (the slogan is set there later).
+
+No text, no letters, no numbers, no logo, no watermark.
+```
+
+### `fond-film-70s`
+
+- **Modèle** : `gemini-nano-banana-2.1` · **Format** : 2:3, 2K
+- **Résumé** : Affiche de film d'aventure des années 70 peinte à l'aérographe : héros géant, Discosaure et boule à facettes, caricatures toon bon enfant de Di Rupo et Lurcke en vignettes, ruée de consultants, gare de Mons au couchant. Ciel du haut et sol du bas réservés. Affiche : `affiche-film-70s.jpg`.
+- **Références** :
+  - `site/public/bestiaire/hero.webp`
+  - `site/public/bestiaire/discosaure.webp`
+  - `site/public/bestiaire/dirupo.webp`
+  - `site/public/bestiaire/lurcke.webp`
+  - `site/public/bestiaire/consultant.webp`
+  - `docs/marketing/lot2/refs/cle-tire-fond.webp`
+  - `docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png`
+
+```text
+Artwork for a hand-painted 1970s adventure movie poster (airbrush and gouache, montage composition in the spirit of the great 70s disaster and adventure one-sheets) for the satirical video game PRIVATIX. Portrait 2:3, WITHOUT ANY TEXT (title logo and billing block are added later). You have creative freedom on the montage.
+
+CAST, always as our stylized toon designs from the reference images, painted in 70s poster style but keeping cartoon proportions, never photorealistic, no real people: the railway worker hero (first reference: orange hard hat with headlamp, orange hi-vis vest, red scarf, moustache) huge in the centre, heroic, holding his railway track wrench (sixth reference: long steel shaft, RED T crossbar handle, blue-grey socket; not a hammer); the Discosaure, a disco dinosaur boss under a glittering mirror ball (second reference), looming large; the two caricatures of the third and fourth references (a friendly, dignified bon-enfant toon caricature of a Belgian politician in his signature bow tie, and the smug CEO with the fountain pen), as painted portrait vignettes in the sky, funny and good-natured, never mocking; a stampede of consultants in suits with briefcases and laptops (fifth reference).
+
+SETTING at the bottom: the Mons railway station by Santiago Calatrava at sunset, translated into the painted style: a giant white tilted oval ring arch over the entrance, dozens of slender white steel ribs fanning out like wings along a long glazed footbridge over many tracks, a train with its headlights on. Warm orange and pink sunset, magenta and cyan neon accents, dramatic light rays, slightly faded 70s print colours and paper wear.
+
+LAYOUT (very important): keep the TOP 18 % as calm dark painted sky without any element (the white reference logo is placed there later: do NOT draw it). Keep the BOTTOM 18 % as dark, almost flat shadowed ground (the billing block is set there later).
+
+No text, no letters, no numbers, no logo, no watermark.
+```
+
+### `fond-riso`
+
+- **Modèle** : `gemini-nano-banana-2.1` · **Format** : 2:3, 2K
+- **Résumé** : Risographie bichrome rose fluo + sarcelle : quai 2 de nuit sous les côtes de la passerelle, horloge à 4 h 47, héros seul, consultants sur la passerelle. Aplat rose du haut (logo réservé en blanc) et papier du bas réservés. Affiche : `affiche-riso.jpg`.
+- **Références** :
+  - `site/public/bestiaire/hero.webp`
+  - `site/public/bestiaire/consultant.webp`
+  - `docs/marketing/lot2/refs/cle-tire-fond.webp`
+  - `docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png`
+
+```text
+Artwork for a two-colour risograph poster, indie zine and gig-poster spirit, for the satirical video game PRIVATIX. Portrait 2:3, WITHOUT ANY TEXT (logo and text are added later). You have creative freedom on the framing.
+
+PRINT: exactly two riso inks, fluorescent pink (#FF48B0) and teal (#00838F), on off-white recycled paper (#F4F0E8); where the two inks overprint they make a deep violet. Visible riso grain, coarse halftone dots, slight misregistration between the two layers, uneven ink coverage. No other colours, no black ink.
+
+SUBJECT: night on platform 2 of the Mons railway station by Santiago Calatrava, seen from the tracks: above, the long glazed footbridge with its slender white steel ribs fanning out like the spine of a prehistoric animal (the ribs are left as bare paper), a round station clock hanging from the footbridge showing 4:47. On the platform, small and alone, the railway worker hero of the first reference image (hard hat with headlamp, hi-vis vest, scarf, moustache), his railway track wrench on his shoulder (third reference: long shaft, T crossbar handle, cylindrical socket). On the footbridge above, a row of consultants in suits (second reference) staring at their laptops. Stylized toon shapes, never photorealistic.
+
+LAYOUT (very important): the TOP 22 %, full width, is a FLAT, EVEN area of solid fluorescent pink ink with riso texture only (the reference logo will be knocked out of it in white later: do NOT draw it). The BOTTOM 12 %, full width, is EMPTY bare paper (text is set there later).
+
+No text, no letters, no numbers, no logo, no watermark.
+```
+
+### `fond-minimal-cle`
+
+- **Modèle** : `gemini-nano-banana-2.1` · **Format** : 2:3, 2K
+- **Résumé** : Une seule image forte : la clé à tire-fond plantée dans un rail comme l'épée dans le rocher, une étincelle, nuit violette, immense vide. Bas réservé au logo. Affiche : `affiche-minimal-cle.jpg`.
+- **Références** :
+  - `docs/marketing/lot2/refs/cle-tire-fond.webp`
+  - `site/public/artbook/planches/da-palette-1200.webp`
+  - `docs/marketing/affiches-logo-mono/refs/privatix-logo-mono-blanc-2048.png`
+
+```text
+Artwork for a minimalist poster built on ONE single strong image, for the satirical video game PRIVATIX (a railway worker on rotating 24/7 shifts fights consultants who want to privatise the railway). Portrait 2:3, WITHOUT ANY TEXT (logo and text are added later). You have creative freedom on the light and the staging, as long as the image stays radically simple.
+
+IMAGE: a single railway track wrench (the tool of the first reference image: a long straight light-steel shaft, a short RED cylindrical crossbar handle forming a T at the top, a chunky blue-grey cylindrical socket at the bottom; not a hammer, not a spanner, not a pickaxe) planted vertically into one short section of railway rail on a few ballast stones, like a sword in the stone. A single tiny hot yellow spark (#FFD200) where the socket meets the rail. One warm orange light (#FF7A1A) from above, one thin cyan rim light (#6FF3FF), a long soft shadow. Stylized toon figurine rendering: cel shading, bold dark ink outlines (#14101A), palette of the second reference. The object sits in the lower-middle of the frame and occupies about a third of the height.
+
+BACKGROUND: an almost flat deep night-violet (#0A0818, never pure black) with a very subtle grain and a faint magenta haze (#FF3EA5) far behind the object. Huge negative space everywhere else.
+
+LAYOUT (very important): the TOP 40 % is EMPTY flat background (nothing in it). The BOTTOM 16 % is EMPTY flat background (the white reference logo and a line of text are placed there later: do NOT draw the logo).
+
+No text, no letters, no numbers, no logo, no watermark.
 ```

@@ -1,0 +1,95 @@
+{
+  "outDir": "docs/marketing/affiches-logo-mono",
+  "renders": [
+    {
+      "id": "affiche-suisse-jaune",
+      "template": "affiche-suisse.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/affiches-logo-mono/fond-suisse-jaune.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-noir.svg",
+        "paper": "#F0ECE1",
+        "ink": "#111111",
+        "accent": "#111111",
+        "artW": 1696,
+        "artH": 2528,
+        "clockX": 1113.5,
+        "clockY": 1078.5,
+        "clockR": 270,
+        "clockFill": "#FFCD02",
+        "handInk": "#111111",
+        "secInk": "#1E8C4E"
+      }
+    },
+    {
+      "id": "affiche-suisse-jeu",
+      "template": "affiche-suisse.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/affiches-logo-mono/fond-suisse-jeu.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg",
+        "paper": "#0E0B1C",
+        "ink": "#FFFFFF",
+        "accent": "#FF7A1A",
+        "artW": 1696,
+        "artH": 2528,
+        "clockX": 1239,
+        "clockY": 612,
+        "clockR": 389,
+        "clockFill": "#FF7111",
+        "handInk": "#0E0B1C",
+        "secInk": "#6FF3FF",
+        "logoSpan": 5,
+        "tagSpan": 6
+      }
+    },
+    {
+      "id": "affiche-constructiviste",
+      "template": "affiche-constructiviste.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/affiches-logo-mono/fond-constructiviste.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-noir.svg"
+      }
+    },
+    {
+      "id": "affiche-film-70s",
+      "template": "affiche-film.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/affiches-logo-mono/fond-film-70s.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
+      }
+    },
+    {
+      "id": "affiche-riso",
+      "template": "affiche-riso.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/affiches-logo-mono/fond-riso.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
+      }
+    },
+    {
+      "id": "affiche-minimal-cle",
+      "template": "affiche-minimal.html",
+      "width": 1024,
+      "height": 1536,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/affiches-logo-mono/fond-minimal-cle.jpg",
+        "logoUrl": "docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg"
+      }
+    }
+  ]
+}

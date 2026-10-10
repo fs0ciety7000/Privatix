@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- Affiche 2:3, direction « film d'aventure des années 70 » : logo mono blanc officiel (SVG
+     incrusté) centré dans le ciel du haut, accroche et bloc de générique condensé façon
+     « billing block » dans le sol sombre du bas. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { font-size: {{width}}px; }
+  .canvas { font-size: 0.01em; }
+  .shade { position: absolute; inset: 0 0 auto 0; height: 16%; background: linear-gradient(180deg, rgba(14,12,30,.55), rgba(14,12,30,0)); }
+  .logo { position: absolute; left: 50%; top: 3.1%; width: 31%; transform: translateX(-50%); filter: drop-shadow(0 0.3em 0.6em rgba(0,0,0,.55)); }
+  .bottom {
+    position: absolute; left: 9%; right: 9%; bottom: 4.1%;
+    text-align: center; color: #F3E6CF; font-family: var(--font-cond); text-transform: uppercase;
+  }
+  .tag { font-family: var(--font-title); font-size: 2.02em; letter-spacing: 0.02em; white-space: nowrap; color: #FFD27A; text-shadow: 0 0.08em 0 #14101A; }
+  .billing {
+    margin-top: 0.9em; font-weight: 600; font-size: 1.32em; line-height: 1.25; letter-spacing: 0.06em;
+    transform: scaleY(1.35); transform-origin: top center; color: #D9CDB6;
+  }
+  .billing b { color: #FFFFFF; font-weight: 700; }
+  .url { margin-top: 1.7em; font-weight: 700; font-size: 1.55em; letter-spacing: 0.14em; text-transform: none; color: #FFD27A; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <div class="shade"></div>
+  <img class="logo" src="{{logoUrl}}" alt="PRIVATIX">
+  <div class="bottom">
+    <div class="tag">Un cheminot en 3x8 contre la privatisation du rail</div>
+    <div class="billing">
+      <b>OCC MONS Studios</b> présente un jeu de cheminots en colère · avec <b>le Discosaure</b>
+      · <b>l’Invité d’honneur</b> · <b>Jean-Cul Lurcke</b> · et une armée de consultants de
+      <b>Synergia Partners</b> · tourné en gare de Mons, quai 2, à 4 h 47 · horizon 2032
+    </div>
+    <div class="url">privatix.fs0ciety.org</div>
+  </div>
+</div>
+</body>
+</html>
