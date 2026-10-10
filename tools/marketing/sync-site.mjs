@@ -7,7 +7,7 @@
 //
 // ImageMagick (`convert`) produit les aperçus WebP.
 
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,11 +29,10 @@ const COPIES = [
   [O('logo/privatix-lockup-horizontal-sombre.png'), R('site/public/artbook/presskit/logo/privatix-logo-horizontal.png')],
   [O('logo/privatix-lockup-horizontal-clair.png'), R('site/public/artbook/presskit/logo/privatix-logo-horizontal-fond-clair.png')],
   [O('logo/privatix-wordmark-sombre.svg'), R('site/public/artbook/presskit/logo/privatix-wordmark.svg')],
-  [O('logo/privatix-lockup-vertical-mono-blanc.svg'), R('site/public/artbook/presskit/logo/privatix-logo-mono-blanc.svg')],
-  [O('logo/privatix-lockup-vertical-mono-noir.svg'), R('site/public/artbook/presskit/logo/privatix-logo-mono-noir.svg')],
+  [O('logo/privatix-logo-mono-blanc.svg'), R('site/public/artbook/presskit/logo/privatix-logo-mono-blanc.svg')],
+  [O('logo/privatix-logo-mono-noir.svg'), R('site/public/artbook/presskit/logo/privatix-logo-mono-noir.svg')],
   [O('logo/icone/privatix-icone-1024.png'), R('site/public/artbook/presskit/logo/privatix-icone-1024.png')],
-  // Site vitrine : logo d'en-tête, favicons, partage
-  [O('logo/privatix-wordmark-sombre.svg'), R('site/src/assets/img/privatix-wordmark.svg')],
+  // Site vitrine : favicons, partage (le logo est recadré plus bas)
   [O('logo/icone/favicon.svg'), R('site/public/favicon.svg')],
   [O('logo/icone/favicon.ico'), R('site/public/favicon.ico')],
   [O('logo/icone/privatix-icone-32.png'), R('site/public/favicon-32.png')],
@@ -71,10 +70,25 @@ for (const [src, dst, w] of PREVIEWS) {
 }
 execFileSync('convert', [HERO_POSTER[0], '-resize', '960x540^', '-gravity', 'center', '-extent', '960x540', '-quality', '75', '-define', 'webp:method=6', HERO_POSTER[1]]);
 console.log('→ site/src/assets/img/hero-poster.webp (960 × 540)');
-// Emblème du logo pour l'en-tête et le hero du site (le lockup se recompose en HTML : emblème
-// WebP + wordmark SVG, plutôt que le SVG du lockup qui embarque l'emblème en PNG)
-execFileSync('convert', [O('logo/embleme.png'), '-filter', 'Lanczos', '-resize', '640x', '-quality', '86', '-define', 'webp:alpha-quality=90', R('site/src/assets/img/privatix-embleme.webp')]);
-console.log('→ site/src/assets/img/privatix-embleme.webp (640 px)');
+// Logo du site : le logo mono blanc officiel, viewBox resserré sur l'encre (même tracé). Le hero
+// prend le logo complet ; l'en-tête, le mot seul (sans le premier chemin, l'emblème clé + rail).
+// Encre mesurée (getBBox) : emblème x 1666–4245, y −2582–−1025 ; mot x 74–5908, y −688–0.
+{
+  const svg = readFileSync(O('logo/privatix-logo-mono-blanc.svg'), 'utf8');
+  const PAD = 24;
+  const box = (x0, y0, x1, y1) => {
+    const [x, y, w, h] = [x0 - PAD, y0 - PAD, x1 - x0 + 2 * PAD, y1 - y0 + 2 * PAD];
+    return `viewBox="${x} ${y} ${w} ${h}" width="${w / 10}" height="${h / 10}"`;
+  };
+  const head = /viewBox="[^"]*" width="[^"]*" height="[^"]*"/;
+  const full = svg.replace(head, box(74, -2582, 5908, 0));
+  const paths = svg.match(/<path[^>]*\/>/g) ?? [];
+  if (paths.length !== 2) throw new Error('logo mono blanc : 2 chemins attendus (emblème, mot)');
+  const word = svg.replace(head, box(74, -688, 5908, 0)).replace(`${paths[0]}\n`, '');
+  writeFileSync(R('site/src/assets/img/privatix-logo-mono-blanc.svg'), full);
+  writeFileSync(R('site/src/assets/img/privatix-wordmark-mono-blanc.svg'), word);
+  console.log('→ site/src/assets/img/privatix-logo-mono-blanc.svg, privatix-wordmark-mono-blanc.svg (recadrés)');
+}
 // Icône 192 px du manifeste (site/public/site.webmanifest)
 execFileSync('convert', [O('logo/icone/privatix-icone-1024.png'), '-filter', 'Lanczos', '-resize', '192x192', '-strip', R('site/public/icon-192.png')]);
 console.log('→ site/public/icon-192.png');

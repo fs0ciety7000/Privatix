@@ -11,52 +11,62 @@
    {
     "name": "Privatix-0.1.0-linux-x86_64.AppImage",
     "size": 125863593,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-linux-x86_64.AppImage"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-linux-x86_64.AppImage",
+    "digest": "sha256:2f6fa8a67af264be897294783863fc644a518fb682eaa309cffaac6e1d766438"
    },
    {
     "name": "Privatix-0.1.0-mac-arm64.dmg",
     "size": 121290977,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-mac-arm64.dmg"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-mac-arm64.dmg",
+    "digest": "sha256:358374f6ae5e7c27f173fa9435560750896f93718f433946135274d880b3a0af"
    },
    {
     "name": "Privatix-0.1.0-mac-x64.dmg",
     "size": 124993988,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-mac-x64.dmg"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-mac-x64.dmg",
+    "digest": "sha256:de78cbe14a2a1be71d35dfffbc32fa3d2e2bf7c0bfcb6864d14aeeac186c55b7"
    },
    {
     "name": "Privatix-0.1.0-portable-x64.exe",
     "size": 114886659,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-portable-x64.exe"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-portable-x64.exe",
+    "digest": "sha256:aa51a582659d007cfc41bc40879483579dcb67d479b2cbaf7d3626a294f42bbb"
    },
    {
     "name": "Privatix-0.1.0-setup-x64.exe",
     "size": 115125798,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-setup-x64.exe"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-0.1.0-setup-x64.exe",
+    "digest": "sha256:92cb856ee228275764c5dc92b80961060f1381a860e28aeb4c0d41c99bdfe8ee"
    },
    {
     "name": "Privatix-mac-arm64.dmg",
     "size": 121290977,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-mac-arm64.dmg"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-mac-arm64.dmg",
+    "digest": "sha256:358374f6ae5e7c27f173fa9435560750896f93718f433946135274d880b3a0af"
    },
    {
     "name": "Privatix-mac-x64.dmg",
     "size": 124993988,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-mac-x64.dmg"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-mac-x64.dmg",
+    "digest": "sha256:de78cbe14a2a1be71d35dfffbc32fa3d2e2bf7c0bfcb6864d14aeeac186c55b7"
    },
    {
     "name": "Privatix-Portable.exe",
     "size": 114886659,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-Portable.exe"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-Portable.exe",
+    "digest": "sha256:aa51a582659d007cfc41bc40879483579dcb67d479b2cbaf7d3626a294f42bbb"
    },
    {
     "name": "Privatix-Setup.exe",
     "size": 115125798,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-Setup.exe"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix-Setup.exe",
+    "digest": "sha256:92cb856ee228275764c5dc92b80961060f1381a860e28aeb4c0d41c99bdfe8ee"
    },
    {
     "name": "Privatix.AppImage",
     "size": 125863593,
-    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix.AppImage"
+    "browser_download_url": "https://github.com/fs0ciety7000/Privatix/releases/download/v0.1.0/Privatix.AppImage",
+    "digest": "sha256:2f6fa8a67af264be897294783863fc644a518fb682eaa309cffaac6e1d766438"
    }
   ]
  },

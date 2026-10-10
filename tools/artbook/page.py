@@ -41,7 +41,7 @@ def title_of(pid: str) -> tuple[str, str, str]:
         return c["name"], f"{c['kind']} · model sheet", ROLE_VAR[c["role"]]
     t = CAT["titles"].get(pid)
     if t:
-        rc = "var(--px-danger)" if pid.startswith(("vfx", "decor-arenes", "decor-hall", "perso-lurcke")) else "var(--px-rim)"
+        rc = "var(--px-danger)" if pid.startswith(("vfx", "decor-arenes", "decor-hall")) else "var(--px-rim)"
         if pid.startswith(("loot", "perso-tenues")):
             rc = "var(--rar-patrimoine)"
         if pid.startswith(("decor-quais", "decor-hub", "decor-passerelle")):
@@ -182,7 +182,6 @@ def readme() -> str:
         "- **Rendus des personnages** : visionneuse toon de `tools/render3d/viewer/` en mode portrait (fond transparent, contre-jours colorés) ; turnarounds à l'échelle commune, caméra frontale à 6° d'élévation ; poses clés au moment des événements du manifeste (`active`, `land`).",
         "- **Captures du jeu** : `play3d.html?demo&cheat` en Chromium SwiftShader, piloté en **temps virtuel** (horloge et `requestAnimationFrame` remplacés dans la page) : chaque image est calculée à pas fixe de 1000/30 ms, le rendu logiciel lent n'altère ni le rythme ni la fluidité.",
         "- **Éclairage de présentation** : dans les Shifts, l'énergie des lampes de salle (lumières ponctuelles de 11 m et leurs flaques additives) est ramenée au budget du preset bas (2 lampes sur 6). En preset haut tel quel, les flaques additives et le bloom (seuil 0,96, force 0,9) voilent les quais et le hall ; à corriger dans le jeu (normaliser l'énergie par nombre de lampes, seuil de bloom > 1,0 comme le prévoit la DA).",
-        "- **Jean-Cul Lurcke** n'a pas encore de modèle dédié : sa fiche réunit les captures de sa version de travail (Manager KPI ×1,4) et les notes de modèle du LORE.",
         "",
     ]
     return "\n".join(lines)

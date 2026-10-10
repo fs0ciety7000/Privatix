@@ -16,7 +16,7 @@
 | 1 | **La nuit, jamais le noir** | Fonds violet nuit (`--px-night` `#0A0818`). Aucune ombre ni aucun fond en noir pur : les ombres tirent vers le violet (`#2A2148`) ou le prune (`#3A1E22`), comme dans le rendu toon. |
 | 2 | **Encré comme une figurine** | Tout élément d'interface a un **contour encré de 2 px** (`--px-ink` `#14101A`), un **liseré coloré** (outline de 2 px, souvent rentré de 6 px) et une **ombre portée dure** (`0 4px 0`), sans flou. C'est le geste « BD » de Hades appliqué au DOM. |
 | 3 | **Chaque couleur a un rôle** | Orange héros = l'action du joueur. Turquoise = Privatix et ses ennemis. Magenta = néon Privatix et danger, **jamais** une action positive. Cyan = information, focus, dash. Couleurs de rareté = uniquement le butin. |
-| 4 | **Les néons sont des émissifs** | Une lueur (`text-shadow`, `box-shadow` flou) signale une source de lumière : logotype, nom d'élite, objet rare. Deux émissifs au plus par écran, sinon plus rien ne brille. |
+| 4 | **Les néons sont des émissifs** | Une lueur (`text-shadow`, `box-shadow` flou) signale une source de lumière : titre néon (artbook), nom d'élite, objet rare. Le logo, lui, ne brille pas (§ 2.9). Deux émissifs au plus par écran, sinon plus rien ne brille. |
 | 5 | **Lisible d'abord** | Contrastes AA au minimum (AAA pour le texte courant), focus toujours visible, mouvement réductible et aucun clignotement en mouvement réduit. Comme dans le jeu : si ce n'est pas lisible, ce n'est pas juste. |
 
 ---
@@ -35,7 +35,7 @@ Tous les tokens sont des propriétés CSS sur `:root` (`site/src/styles/tokens.c
 | `--px-scarf` | `#E0302A` | Écharpe syndicale | Accent rare (illustration), jamais pour une erreur |
 | `--px-enemy` | `#19C3B1` | Turquoise ennemi / Privatix | Bestiaire, badges « Ennemi », étapes du Shift |
 | `--px-enemy-ink` | `#06302C` | Contour ennemi | Contour d'une figure ennemie |
-| `--px-danger` | `#FF3EA5` | Magenta | **Néons Privatix** (logotype) et **danger** (télégraphes, badge « Boss »). Jamais sur un bouton d'action. |
+| `--px-danger` | `#FF3EA5` | Magenta | **Néons Privatix** (titres néon) et **danger** (télégraphes, badge « Boss »). Jamais sur un bouton d'action. |
 | `--px-violet` | `#6B3FA0` | Violet Privatix (désaturé) | Halos de fond, autocollants Privatix |
 | `--px-violet-hi` | `#B05CFF` | Liseré d'élite | Cartes d'élite, FAQ |
 | `--px-rim` | `#6FF3FF` | Liseré cyan des quais | **Focus**, liens, liseré du bouton secondaire, puces de dash |
@@ -75,7 +75,7 @@ Aucune police n'est téléchargée : on reprend les piles du jeu, rendues par le
 
 | Token | Pile | Usage |
 |---|---|---|
-| `--font-display` | `'Arial Black', 'Helvetica Neue', Arial, system-ui, sans-serif`, graisse **900** | Logotype, titres, libellés en capitales, boutons |
+| `--font-display` | `'Arial Black', 'Helvetica Neue', Arial, system-ui, sans-serif`, graisse **900** | Titres, libellés en capitales, boutons |
 | `--font-text` | `'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif` | Texte courant, valeurs de jauge |
 | `--font-mono` | `ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace` | Code des pupitres (PACO, RTS), noms de fichiers, mesures F3 |
 
@@ -86,7 +86,7 @@ Aucune police n'est téléchargée : on reprend les piles du jeu, rendues par le
 | `--fs-base` / `--fs-md` | 16 / 18 px | Texte courant / chapeau |
 | `--fs-lg` | 22 px | Nom d'objet, combo |
 | `--fs-xl` / `--fs-2xl` | `clamp(24 → 36 px)` / `clamp(32 → 56 px)` | Titres de section |
-| `--fs-display` | `clamp(44 → 112 px)` | Logotype PRIVATIX |
+| `--fs-display` | `clamp(44 → 112 px)` | Échelle du logo du hero (largeur max. 5,4 × `--fs-display`), titre « ARTBOOK » |
 
 Espacement des lettres : `--tracking-label` 0,12 em (ÉNERGIE), `--tracking-title` 0,18 em (PRIVATIX), `--tracking-wide` 0,22 em (nom d'élite, surtitres). Les libellés en capitales sont **toujours** espacés ; le texte courant ne l'est jamais.
 
@@ -102,7 +102,7 @@ Espacement des lettres : `--tracking-label` 0,12 em (ÉNERGIE), `--tracking-titl
 
 | Token | Valeur | Usage |
 |---|---|---|
-| `--glow-magenta` | `0 0 14px #FF3EA5, 0 0 2px #FF3EA5, 0 2px 0 #000` | Logotype, nom d'élite (repris de `#title b` du prototype) |
+| `--glow-magenta` | `0 0 14px #FF3EA5, 0 0 2px #FF3EA5, 0 2px 0 #000` | Titre néon, nom d'élite (repris de `#title b` du prototype) |
 | `--glow-cyan` | `0 0 10px #6FF3FF, 0 0 2px #6FF3FF` | Survol d'un lien |
 | `--glow-orange` | `0 0 10px #FF8A1A, 0 3px 0 #14101A` | Combo, devise (« Satirique dans les noms… ») |
 | `--glow-box-cyan` | `0 0 8px #6FF3FF` | Puce de dash active |
@@ -134,6 +134,20 @@ Espacement des lettres : `--tracking-label` 0,12 em (ÉNERGIE), `--tracking-titl
 | — | — | `EASE.sifflet` = `elastic.out(1, .5)` | Réservé au Coup de sifflet (un seul usage par écran) |
 
 En `prefers-reduced-motion: reduce`, tous les `--dur-*` valent 0 ms (transitions CSS coupées) et `motion.ts` n'anime rien (§ 4.3).
+
+### 2.9 Logo
+
+Le site utilise le **logo mono blanc officiel** fourni par le porteur du projet : [`docs/marketing/officiel/logo/privatix-logo-mono-blanc.svg`](marketing/officiel/logo/privatix-logo-mono-blanc.svg) (emblème clé à tire-fond + rail au-dessus du mot PRIVATIX, tout blanc, vectoriel). Plus de néon sur le logo : ni lueur, ni allumage, ni clignotement.
+
+| Emplacement | Fichier | Règle |
+|---|---|---|
+| Hero (`h1`) | `site/src/assets/img/privatix-logo-mono-blanc.svg` : logo complet, viewBox resserré sur l'encre (marge 24 unités) | Aligné à gauche sur le texte du hero ; largeur `min(100 %, 5,4 × --fs-display)` (≈ 240 px sur mobile, 605 px sur grand écran) ; `alt="PRIVATIX"` ; ombre portée douce (`drop-shadow`) pour la lisibilité sur la vidéo ; entrée en simple fondu (`heroIntro`, § 4.2). |
+| En-tête (index, artbook) | `site/src/assets/img/privatix-wordmark-mono-blanc.svg` : le mot seul, recadré du même SVG (même tracé, sans l'emblème) | Hauteur 22 px. Le logo complet à la hauteur de l'en-tête donnerait des lettres de 10 px : illisible. |
+| Press kit | `site/public/artbook/presskit/logo/privatix-logo-mono-blanc.svg` et `-mono-noir.svg`, copies exactes des fichiers officiels | Le blanc sur fond sombre, le noir sur fond clair ; les PNG couleur (lockups) restent disponibles. |
+
+- **Jamais** recoloré, déformé, ni augmenté d'une lueur ; pas de version « néon » du logo sur le site.
+- Les copies du site sont produites par `node tools/marketing/sync-site.mjs` (recadrage par viewBox, aucune retouche du tracé).
+- Favicons et icônes d'application : inchangés (icône officielle `docs/marketing/officiel/logo/icone/`).
 
 ---
 
@@ -203,9 +217,9 @@ Panneau à liseré gauche coloré et pictogramme, pour une information à ne pas
 
 | Preset | Fonction | Comportement | Règles |
 |---|---|---|---|
-| **Entrée du hero** | `heroIntro(root)` | Timeline : le logotype se rallume comme un néon (`neonIgnite`), puis les boutons font un pop d'impact (`scale .94 → 1`, `EASE.coup`). | Rien n'est masqué : le contenu du hero est déjà peint et compte pour le LCP. |
+| **Entrée du hero** | `heroIntro(root)` | Timeline : le logo monte d'un simple fondu (`opacity .2 → 1`, 6 px, `EASE.ballast`, `DUR.slow`), puis les boutons font un pop d'impact (`scale .94 → 1`, `EASE.coup`). | Rien n'est masqué : le contenu du hero est déjà peint et compte pour le LCP. |
 | **Révélation au scroll** | `reveal(elements)` | `ScrollTrigger.batch`, une fois : `y 24 → 0`, opacité 0 → 1, `DUR.slow`, `EASE.ballast`, décalage 80 ms. | L'état masqué n'est posé que par JS et seulement **sous la ligne de flottaison** : sans JS, tout est visible. |
-| **Allumage néon** | `neonIgnite(el)` | Coupures nettes (`EASE.neon`) : 15 % → 100 % → 30 % → 100 % → 55 % → 100 %, en 0,4 s. | Une fois, à l'apparition. |
+| **Allumage néon** | `neonIgnite(el)` (titres néon, plus jamais le logo) | Coupures nettes (`EASE.neon`) : 15 % → 100 % → 30 % → 100 % → 55 % → 100 %, en 0,4 s. | Une fois, à l'apparition. |
 | **Allumage des portraits** | `portraitIgnite(images)` | Portraits 3D (bestiaire, équipement, collègues) : `scale 1.1 → 1`, luminosité 25 % → 100 %, `DUR.xslow`, `EASE.ballast`, par lot au scroll, décalage 120 ms ; propriétés rendues au CSS à la fin (survol). | Sous la ligne de flottaison seulement ; rien en mouvement réduit. |
 | **Néon fatigué** | `neonFlicker(el)` | Micro-coupure de 0,15 s toutes les 6 à 12 s. | Un seul élément par page. Désactivé en mouvement réduit. |
 | **Survol** | CSS (tokens) | Boutons : monte de 2 px, `--ease-coup`, `--dur-fast`. Cartes : monte de 4 px, lueur `--rc`, `--ease-ballast`, `--dur-base`. | En CSS pour rester instantané ; GSAP n'est pas nécessaire. |
@@ -235,7 +249,7 @@ mm.add('(prefers-reduced-motion: reduce)', () => {
 
 - **Contrastes** : texte courant ≥ 7:1 (AAA) sur `--px-night` ; texte sur bouton primaire (encre sur orange) ≈ 7:1 ; liens cyan ≈ 15:1.
 - **Focus** : anneau cyan de 3 px sur tout élément interactif ; lien d'évitement « Aller au contenu ».
-- **Structure** : un `h1` (le logotype), un `h2` par section, listes sémantiques (`role="list"` quand le style retire les puces), `aria-live="polite"` sur la zone de téléchargement mise à jour par JS.
+- **Structure** : un `h1` (le logo, `alt="PRIVATIX"`), un `h2` par section, listes sémantiques (`role="list"` quand le style retire les puces), `aria-live="polite"` sur la zone de téléchargement mise à jour par JS.
 - **Images** : texte alternatif descriptif pour les captures, `alt=""` pour les décorations ; dimensions déclarées (pas de décalage de mise en page), `loading="lazy"` hors du premier écran.
 - **Couleur** : jamais seule porteuse de sens (raretés et rôles écrits en toutes lettres).
 - **Responsive** : dès 360 px de large, sans défilement horizontal ; cibles tactiles ≥ 48 px.

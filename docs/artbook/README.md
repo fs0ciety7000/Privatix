@@ -35,7 +35,7 @@ Tout est régénéré par `node tools/artbook/build.mjs` (voir [`tools/artbook/R
 | **Le Discosaure**<br>Mini-boss · model sheet<br>[`perso-discosaure.webp`](../../site/public/artbook/planches/perso-discosaure.webp) | <img src="../../site/public/artbook/planches/perso-discosaure-1200.webp" width="480" alt="Model sheet de Le Discosaure : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés."> |
 | **L'Auditeur des Quais**<br>Boss · biome 1 · model sheet<br>[`perso-auditeur.webp`](../../site/public/artbook/planches/perso-auditeur.webp) | <img src="../../site/public/artbook/planches/perso-auditeur-1200.webp" width="480" alt="Model sheet de L&#x27;Auditeur des Quais : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés."> |
 | **Elio Di Rupo**<br>Boss · biome 2 · model sheet<br>[`perso-dirupo.webp`](../../site/public/artbook/planches/perso-dirupo.webp) | <img src="../../site/public/artbook/planches/perso-dirupo-1200.webp" width="480" alt="Model sheet de Elio Di Rupo : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés."> |
-| **Jean-Cul Lurcke**<br>Boss final · fiche de travail<br>[`perso-lurcke.webp`](../../site/public/artbook/planches/perso-lurcke.webp) | <img src="../../site/public/artbook/planches/perso-lurcke-1200.webp" width="480" alt="Planche « Jean-Cul Lurcke » : Directeur de la Transformation et de l&#x27;Excellence Opérationnelle."> |
+| **Jean-Cul Lurcke**<br>Boss final · biome 3 · model sheet<br>[`perso-lurcke.webp`](../../site/public/artbook/planches/perso-lurcke.webp) | <img src="../../site/public/artbook/planches/perso-lurcke-1200.webp" width="480" alt="Model sheet de Jean-Cul Lurcke : turnaround face, trois-quarts, profil et dos, silhouette, palette extraite, taille relative au héros et poses clés."> |
 
 ### Les collègues de l'OCC
 
@@ -145,7 +145,7 @@ Bullet points et piliers-graphiques dans le bureau du Directeur.
 
 ![Jean-Cul Lurcke](../../site/public/artbook/anim/lurcke.gif)
 
-[GIF](../../site/public/artbook/anim/lurcke.gif) (3,8 Mo) · [WebM](../../site/public/artbook/anim/lurcke.webm) · [MP4](../../site/public/artbook/anim/lurcke.mp4)
+[GIF](../../site/public/artbook/anim/lurcke.gif) (3,7 Mo) · [WebM](../../site/public/artbook/anim/lurcke.webm) · [MP4](../../site/public/artbook/anim/lurcke.mp4)
 
 ### L'OCC et les collègues
 
@@ -169,4 +169,3 @@ Salle des opérations : les PNJ à leur pupitre.
 - **Rendus des personnages** : visionneuse toon de `tools/render3d/viewer/` en mode portrait (fond transparent, contre-jours colorés) ; turnarounds à l'échelle commune, caméra frontale à 6° d'élévation ; poses clés au moment des événements du manifeste (`active`, `land`).
 - **Captures du jeu** : `play3d.html?demo&cheat` en Chromium SwiftShader, piloté en **temps virtuel** (horloge et `requestAnimationFrame` remplacés dans la page) : chaque image est calculée à pas fixe de 1000/30 ms, le rendu logiciel lent n'altère ni le rythme ni la fluidité.
 - **Éclairage de présentation** : dans les Shifts, l'énergie des lampes de salle (lumières ponctuelles de 11 m et leurs flaques additives) est ramenée au budget du preset bas (2 lampes sur 6). En preset haut tel quel, les flaques additives et le bloom (seuil 0,96, force 0,9) voilent les quais et le hall ; à corriger dans le jeu (normaliser l'énergie par nombre de lampes, seuil de bloom > 1,0 comme le prévoit la DA).
-- **Jean-Cul Lurcke** n'a pas encore de modèle dédié : sa fiche réunit les captures de sa version de travail (Manager KPI ×1,4) et les notes de modèle du LORE.

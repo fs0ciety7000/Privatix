@@ -38,6 +38,8 @@ export interface ApiAsset {
   readonly name: string;
   readonly size: number;
   readonly browser_download_url: string;
+  /** Empreinte calculée par GitHub (« sha256:<hex> ») ; absente des anciennes releases. */
+  readonly digest?: string | null;
 }
 export interface ApiRelease {
   readonly tag_name: string;
@@ -55,6 +57,8 @@ export interface ReleaseFile {
   readonly name: string;
   readonly size: number;
   readonly url: string;
+  /** Empreinte SHA-256 en hexadécimal minuscule (64 caractères), null si GitHub n'en fournit pas. */
+  readonly sha256: string | null;
 }
 export interface Release {
   readonly tag: string;
@@ -65,6 +69,8 @@ export interface Release {
   readonly url: string;
   readonly prerelease: boolean;
   readonly files: readonly ReleaseFile[];
+  /** Fichier `SHA256SUMS.txt` publié avec la release (workflow desktop), null sinon. */
+  readonly checksumsUrl: string | null;
 }
 
 const STABLE_NAMES = new Set(PLATFORMS.map((p) => p.stable.toLowerCase()));
@@ -88,6 +94,21 @@ export function classifyAsset(name: string): PlatformId | null {
     return null;
   }
   return null;
+}
+
+/** Nom du fichier d'empreintes publié par le workflow desktop dans chaque release. */
+export const CHECKSUMS_NAME = 'SHA256SUMS.txt';
+
+/** « sha256:<64 hex> » (champ `digest` de l'API) → hex minuscule ; tout autre format → null. */
+export function parseSha256(digest: unknown): string | null {
+  if (typeof digest !== 'string') return null;
+  const m = /^sha256:([0-9a-f]{64})$/i.exec(digest.trim());
+  return m?.[1] ? m[1].toLowerCase() : null;
+}
+
+/** Empreinte abrégée pour l'affichage : 8 premiers et 8 derniers caractères. */
+export function shortHash(hex: string, keep = 8): string {
+  return hex.length <= keep * 2 + 1 ? hex : `${hex.slice(0, keep)}…${hex.slice(-keep)}`;
 }
 
 export function isStableName(name: string): boolean {
@@ -116,6 +137,7 @@ export function pickFiles(assets: readonly ApiAsset[]): ReleaseFile[] {
         name: hit.asset.name,
         size: hit.asset.size,
         url: hit.asset.browser_download_url,
+        sha256: parseSha256(hit.asset.digest),
       });
     }
   }
@@ -152,6 +174,7 @@ export function normalizeReleases(raw: unknown): Release[] {
     // Seules les versions du jeu (v1.2.3) : les releases d'assets (trailer-…, presskit-…) sont ignorées.
     if (!/^v\d/i.test(r.tag_name)) continue;
     const date = r.published_at ? new Date(r.published_at) : null;
+    const assets = Array.isArray(r.assets) ? r.assets.filter((a) => typeof a === 'object' && a !== null && typeof a.name === 'string') : [];
     out.push({
       tag: r.tag_name,
       version: r.tag_name.replace(/^v/i, ''),
@@ -160,7 +183,8 @@ export function normalizeReleases(raw: unknown): Release[] {
       notes: summarizeNotes(r.body),
       url: r.html_url ?? `${RELEASES_PAGE}/tag/${encodeURIComponent(r.tag_name)}`,
       prerelease: r.prerelease === true,
-      files: pickFiles(Array.isArray(r.assets) ? r.assets : []),
+      files: pickFiles(assets),
+      checksumsUrl: assets.find((a) => a.name.toLowerCase() === CHECKSUMS_NAME.toLowerCase())?.browser_download_url ?? null,
     });
   }
   out.sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
@@ -174,6 +198,7 @@ export function stableFiles(): ReleaseFile[] {
     name: platform.stable,
     size: 0,
     url: `${RELEASES_PAGE}/latest/download/${platform.stable}`,
+    sha256: null,
   }));
 }
 

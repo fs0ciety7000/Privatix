@@ -23,7 +23,7 @@ export const ANIMS = {
   auditeur: { poster: 40 },
   dirupo: { poster: 40 },
   discosaure: { poster: 60 },
-  lurcke: { poster: 50 },
+  lurcke: { poster: 22 },
   'hub-pnj': { poster: 30 },
 };
 
