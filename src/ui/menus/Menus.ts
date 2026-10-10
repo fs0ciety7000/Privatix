@@ -140,7 +140,7 @@ export class Menus {
   private readonly bossName: HTMLDivElement;
   private readonly intro: HTMLDivElement;
   private readonly captions: HTMLDivElement;
-  private introTimer: ReturnType<typeof setTimeout> | null = null;
+  private introTimer: gsap.core.Tween | null = null;
   private readonly pauseBtn: HTMLButtonElement;
   private screen: Screen = 'none';
   /** Boutons navigables de l'écran courant et sélection clavier. */
@@ -591,8 +591,9 @@ export class Menus {
         { opacity: 0, y: -16 },
         { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' },
       );
-    if (this.introTimer) clearTimeout(this.introTimer);
-    this.introTimer = setTimeout(() => {
+    this.introTimer?.kill();
+    // Minuteries sur l'horloge de GSAP (et non `setTimeout`) : le mode capture la pilote image par image.
+    this.introTimer = gsap.delayedCall(seconds, () => {
       this.introTimer = null;
       if (this.reduced) {
         box.hidden = true;
@@ -605,7 +606,7 @@ export class Menus {
           box.hidden = true;
         },
       });
-    }, seconds * 1000);
+    });
   }
 
   /** Réplique en sous-titre (au plus trois à l'écran) ; « réplique fictive » si c'est le cas. */
@@ -616,7 +617,7 @@ export class Menus {
     if (v.fictive) el('span', 'px-fictive', row, FICTIVE_TAG);
     while (this.captions.children.length > 3) this.captions.firstElementChild?.remove();
     if (!this.reduced) gsap.fromTo(row, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.25 });
-    setTimeout(() => {
+    gsap.delayedCall(seconds, () => {
       if (this.reduced) {
         row.remove();
         return;
@@ -628,12 +629,12 @@ export class Menus {
           row.remove();
         },
       });
-    }, seconds * 1000);
+    });
   }
 
   /** Efface la carte d'intro et les sous-titres (changement d'écran). */
   public clearCaptions(): void {
-    if (this.introTimer) clearTimeout(this.introTimer);
+    this.introTimer?.kill();
     this.introTimer = null;
     this.intro.hidden = true;
     this.captions.innerHTML = '';
@@ -698,7 +699,7 @@ export class Menus {
     this.fader.remove();
     this.promptEl.remove();
     this.boss.remove();
-    if (this.introTimer) clearTimeout(this.introTimer);
+    this.introTimer?.kill();
     this.intro.remove();
     this.captions.remove();
     this.pauseBtn.remove();

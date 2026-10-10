@@ -2,11 +2,12 @@ import '@/ui/hud/hud3d.css';
 import '@/ui/menus/menus.css';
 import '@/ui/hub/hub.css';
 import '@/ui/loot/loot.css';
+import '@/ui/trailer.css';
 import { browserStorage } from '@/platform/storage';
 import { Game3D, storedQuality } from '@/scenes3d/Game3D';
 import { Loop } from '@/engine/Loop';
-import type { QualityId } from '@/view/quality';
-import { isQualityId, QUALITY } from '@/view/quality';
+import type { QualityId, ViewSettings } from '@/view/quality';
+import { captureFraming, isQualityId, QUALITY } from '@/view/quality';
 import { installModelLibrary, ModelLibrary } from '@/view/models/ModelLibrary';
 
 /**
@@ -17,6 +18,9 @@ import { installModelLibrary, ModelLibrary } from '@/view/models/ModelLibrary';
  *   ?procedural        personnages procéduraux (sans les GLB de public/models), son synthétisé seul
  *   ?cheat             (dev) K tue tout, G invincible, N salle suivante, B boss
  *   ?demo              (dev) outil de pilotage pour les captures automatisées
+ *   ?trailer           (dev, avec ?demo) mode capture du trailer : HUD masqué, qualité haute, pixel
+ *                      ratio 1, rendu image par image sur l'horloge de la sim (`scenes3d/trailer.ts`)
+ *   ?aspect=16x9|3x2|1x1|9x16  (avec ?trailer) cadrage de la caméra par format
  */
 
 const REDUCED_KEY = 'privatix.3d.reducedMotion';
@@ -98,9 +102,31 @@ async function boot(): Promise<void> {
   const seedParam = Number(params.get('seed'));
   const seed =
     Number.isFinite(seedParam) && seedParam > 0 ? Math.floor(seedParam) : Date.now() % 100_000;
-  const reducedMotion = pickReducedMotion(params);
+  const trailer = import.meta.env.DEV && params.has('demo') && params.has('trailer');
+  if (trailer) {
+    const { seedRandom } = await import('@/scenes3d/trailer');
+    seedRandom(seed);
+    document.body.classList.add('trailer');
+  }
+  const reducedMotion = trailer ? params.get('rm') === '1' : pickReducedMotion(params);
   document.body.classList.toggle('reduced-motion', reducedMotion);
-  const quality = pickQuality(params);
+  const quality = trailer ? 'haut' : pickQuality(params);
+  const settings: ViewSettings = trailer
+    ? {
+        quality: {
+          ...QUALITY.haut,
+          pixelRatioCap: 1,
+          dynamicResolution: false,
+          // Réglages fins du rendu logiciel des captures (coût par image) : `?msaa=`, `?shadow=`.
+          msaa: Number(params.get('msaa') ?? QUALITY.haut.msaa),
+          shadowMapSize: Number(params.get('shadow') ?? QUALITY.haut.shadowMapSize),
+          bloomScale: Number(params.get('bloom') ?? QUALITY.haut.bloomScale),
+          fxaa: params.has('fxaa'),
+        },
+        reducedMotion,
+        capture: captureFraming(params.get('aspect')),
+      }
+    : { quality: QUALITY[quality], reducedMotion };
   if (!params.has('procedural')) await preloadModels(loading, quality === 'bas');
   const scene = new Game3D(
     {
@@ -116,7 +142,7 @@ async function boot(): Promise<void> {
         special: byId('btn-special'),
       },
     },
-    { quality: QUALITY[quality], reducedMotion },
+    settings,
     params.has('safe'),
     seed,
     (on) => {
@@ -138,12 +164,14 @@ async function boot(): Promise<void> {
       scene.setHidden(hidden);
     },
   );
-  loop.start();
+  // Mode capture : pas de boucle temps réel, chaque image est demandée par `__privatix3d.frame`.
+  if (!trailer) loop.start();
   loading.classList.add('hide');
 
   if (import.meta.env.DEV && params.has('demo')) {
-    void import('@/scenes3d/demoApi').then((m) => {
+    void import('@/scenes3d/demoApi').then(async (m) => {
       m.installDemoApi(scene);
+      if (trailer) (await import('@/scenes3d/trailer')).installTrailer(scene);
     });
   }
 }

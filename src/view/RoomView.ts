@@ -1310,6 +1310,7 @@ export class RoomView {
     }
     const flick =
       this.flickerOn &&
+      this.neonFlicker &&
       (Math.sin(time * 37) > 0.97 || (Math.sin(time * 0.7) > 0.995 && Math.sin(time * 53) > 0));
     this.neon.color.setScalar(flick ? 0.6 : this.neonBright);
     this.neonLight.intensity = flick ? 6 : this.neonPower;
@@ -1387,6 +1388,18 @@ export class RoomView {
 
   public setReducedMotion(on: boolean): void {
     this.flickerOn = !on;
+  }
+
+  /** Grésillement de l'enseigne (coupé en mode capture : pas de clignotement au-dessus de 3 Hz). */
+  private neonFlicker = true;
+
+  /**
+   * Mode capture du trailer : enseigne stable et moins saturée (lisible sous le bloom), les autres
+   * animations de la salle (piste de danse) restent actives.
+   */
+  public steadyNeon(scale: number): void {
+    this.neonFlicker = false;
+    this.neonBright *= scale;
   }
 
   public dispose(): void {

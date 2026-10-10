@@ -69,15 +69,17 @@
       <!-- ═══ Hero ═══ -->
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__media" aria-hidden="true">
+          <!-- Trailer en fond : muet, en boucle, lancé par JS (jamais en mouvement réduit ni en économie de données). -->
           <video
             class="hero__video"
-            poster="./src/assets/img/hero-poster.webp"
+            poster="/trailer/privatix-trailer-poster.webp"
             muted
             loop
             playsinline
             preload="none"
-            width="960"
-            height="540"
+            width="1280"
+            height="720"
+            data-trailer-bg
           ></video>
           <div class="hero__scrim"></div>
         </div>
@@ -103,12 +105,26 @@
               <span><span data-dl-hero-label>Télécharger</span><small data-dl-hero-sub>Windows · macOS · Linux</small></span>
             </a>
           </div>
+          <p class="hero__trailer" data-hero>
+            <a class="btn btn--secondary" href="/trailer/privatix-trailer-720p.mp4" data-trailer-open>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" fill="currentColor" /></svg>
+              <span>Regarder avec le son<small>Trailer · 1 min</small></span>
+            </a>
+          </p>
           <p class="hero__more" data-hero>
             Aussi : <a class="link" href="./jouer/">la version classique (2D)</a> ·
             <a class="link" href="./3d/">le prototype 3D</a> (Discosaure et butin)
             <span class="hero__version" data-version hidden></span>
           </p>
         </div>
+        <!-- Trailer avec le son, en plein cadre (lecteur HTML5 natif ; sans JS, le lien ouvre le MP4). -->
+        <dialog class="trailer" data-trailer-dialog aria-label="Trailer de Privatix">
+          <form method="dialog"><button class="trailer__close btn btn--secondary" aria-label="Fermer le trailer">✕</button></form>
+          <video class="trailer__video" controls playsinline preload="none" width="1920" height="1080" poster="/trailer/privatix-trailer-poster.webp">
+            <source src="/trailer/privatix-trailer-16x9.webm" type="video/webm" />
+            <source src="/trailer/privatix-trailer-720p.mp4" type="video/mp4" />
+          </video>
+        </dialog>
       </section>
 
       <!-- ═══ Pitch ═══ -->

@@ -258,10 +258,13 @@ export class HeroSim {
     );
   }
 
+  /** Outil de capture (trailer) : aucun coup ennemi ne touche le héros (le dash parfait reste possible). */
+  public untouchable = false;
+
   public isInvulnerable(): boolean {
     const now = this.world.now();
     const dashIframes = this.fsm.is('dash') && now - this.dashStartedAt <= DASH.IFRAMES_MS;
-    return this.isDead || dashIframes || now < this.iframesUntil;
+    return this.isDead || this.untouchable || dashIframes || now < this.iframesUntil;
   }
 
   /** Coup reçu (appelé par le monde via `SimWorld.damageHero`). */
