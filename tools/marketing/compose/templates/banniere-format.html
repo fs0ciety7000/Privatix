@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- Déclinaisons de la bannière officielle (key art de la bannière, titre néon, accroche et
+     crédits facultatifs) pour les formats web, réseaux et Steam. Tout est paramétrable par
+     variables avec valeurs par défaut ; les tailles sont en % de la largeur (1em = 1 %). -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { font-size: {{width}}px; }
+  .canvas { font-size: 0.01em; }
+  /* recadrage : rogne le cadre translucide parasite sur les bords du key art */
+  .art {
+    object-position: {{artPos|50% 50%}};
+    transform: scale({{artScale|1.075}}); transform-origin: {{artOrigin|46% 38%}};
+  }
+  .shade { position: absolute; inset: 0; background: {{shade|none}}; }
+  .head {
+    position: absolute; top: {{headTop|9%}}; left: {{headLeft|auto}}; right: {{headRight|6%}};
+    text-align: {{align|right}}; display: {{titleDisplay|block}};
+  }
+  .head .neon { font-size: {{titleSize|8.4em}}; }
+  .tagline {
+    display: {{taglineDisplay|block}};
+    margin-top: 0.7em; font-family: var(--font-cond); font-weight: 600; font-size: {{taglineSize|1.9em}};
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--px-cream);
+    text-shadow: 0 0.06em 0 var(--px-ink), 0 0 0.6em rgba(10,8,24,.9);
+    /* l'espacement final n'est pas compté dans l'alignement */
+    margin-right: -0.2em;
+  }
+  .tagline::before, .tagline::after {
+    content: ''; display: inline-block; vertical-align: middle; width: 2em; height: 0.09em;
+    background: var(--px-hero); box-shadow: 0 0.06em 0 var(--px-ink);
+  }
+  .tagline::before { margin-right: 0.8em; }
+  .tagline::after { margin-left: 0.6em; display: {{taglineAfter|none}}; }
+  .credits {
+    display: {{creditsDisplay|grid}};
+    font-size: {{creditsSize|1.12em}}; height: {{creditsHeight|13%}}; padding: 2.6em 6% 0;
+    background: linear-gradient(180deg, rgba(10,8,24,0) 0%, rgba(10,8,24,.85) 55%, rgba(10,8,24,.95) 100%);
+  }
+  .credits::before { display: none; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <img class="art" src="{{art}}" alt="">
+  <div class="shade"></div>
+  <div class="head">
+    <div class="neon">PRIVATIX</div>
+    <div class="tagline">{{tagline}}</div>
+  </div>
+  <footer class="credits">
+    <div class="studio">
+      <img src="{{studioUrl}}" alt="">
+      <div><span class="studio__kicker">Développé par</span><span class="studio__name">OCC MONS Studios</span></div>
+    </div>
+    <div class="platforms">PC <i></i> Mac <i></i> Linux <i></i> Navigateur</div>
+    <div class="sncb"><img src="../assets/sncb-mono-blanc.png" alt="SNCB"></div>
+  </footer>
+</div>
+</body>
+</html>

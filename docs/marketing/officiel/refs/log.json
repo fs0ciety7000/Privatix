@@ -134,5 +134,141 @@
       ]
     },
     "date": "2026-10-10T01:35:15.980Z"
+  },
+  "keyart-banniere-21x9": {
+    "model": "gemini-3-pro-image",
+    "type": "image",
+    "mime_type": "image/jpeg",
+    "aspect_ratio": "21:9",
+    "image_size": "2K",
+    "refs": [
+      "docs/marketing/officiel/refs/keyart-banniere-recadre.jpg"
+    ],
+    "usage": {
+      "total_tokens": 2304,
+      "total_input_tokens": 770,
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 210
+        },
+        {
+          "modality": "image",
+          "tokens": 560
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_output_tokens": 1314,
+      "output_tokens_by_modality": [
+        {
+          "modality": "image",
+          "tokens": 1120
+        }
+      ],
+      "total_tool_use_tokens": 0,
+      "total_thought_tokens": 220,
+      "raw_prompt_token": 1227,
+      "model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 667
+            },
+            {
+              "modality": "image",
+              "tokens": 560
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 184
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 220
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1095
+            },
+            {
+              "modality": "image",
+              "tokens": 1067
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 22
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 81
+            }
+          ]
+        }
+      ],
+      "non_grounding_model_invocation_token_counts": [
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 667
+            },
+            {
+              "modality": "image",
+              "tokens": 560
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 184
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 220
+            }
+          ]
+        },
+        {
+          "prompt_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 1095
+            },
+            {
+              "modality": "image",
+              "tokens": 1067
+            }
+          ],
+          "candidates_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 22
+            }
+          ],
+          "thoughts_tokens_details": [
+            {
+              "modality": "text",
+              "tokens": 81
+            }
+          ]
+        }
+      ]
+    },
+    "date": "2026-10-10T01:45:00.822Z"
   }
 }

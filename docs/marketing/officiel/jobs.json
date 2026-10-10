@@ -1,14 +1,30 @@
 {
   "outDir": "docs/marketing/officiel/refs",
-  "defaults": { "model": "gemini-3-pro-image", "aspect_ratio": "1:1", "image_size": "2K" },
+  "defaults": {
+    "model": "gemini-3-pro-image",
+    "aspect_ratio": "1:1",
+    "image_size": "2K"
+  },
   "jobs": [
     {
       "id": "embleme-a1-2k",
       "model": "gemini-3-pro-image",
       "aspect_ratio": "1:1",
       "image_size": "2K",
-      "refs": ["docs/marketing/officiel/refs/embleme-a1-detoure-vert.png"],
+      "refs": [
+        "docs/marketing/officiel/refs/embleme-a1-detoure-vert.png"
+      ],
       "prompt": "Faithful high-resolution redraw of the reference illustration. This is a clean-up and upscale, NOT a new design: reproduce exactly the same object, same three-quarter top-down angle, same composition and proportions, same number of sleepers, rails, rail clips and ballast stones in the same places, same colours and the same bold dark ink outlines (#14101A).\n\nThe object: a short section of railway track (two dark steel rails with cyan rim-light edges, dark brown wooden sleepers, grey-brown ballast stones underneath) with the hero's railway track wrench laid diagonally across it: a long straight orange shaft, a short red cylindrical crossbar handle forming a T at the upper-left end, a chunky blue-grey cylindrical socket at the other end touching the right rail, and a small yellow spark burst where the socket meets the rail.\n\nStyle: clean toon cel-shaded rendering like a painted figurine, hard shading, crisp uniform ink outlines, sharp edges, no blur, no texture noise. Centred, filling about 80 % of the frame width, isolated on a perfectly flat, uniform pure green background (#00FF00) with no gradient, no shadow on the background, no glow, no vignette. No text, no letters, no logo, no watermark, nothing else in the image."
+    },
+    {
+      "id": "keyart-banniere-21x9",
+      "model": "gemini-3-pro-image",
+      "aspect_ratio": "21:9",
+      "image_size": "2K",
+      "refs": [
+        "docs/marketing/officiel/refs/keyart-banniere-recadre.jpg"
+      ],
+      "prompt": "Outpainting. Extend the reference illustration sideways into a wider 21:9 panorama. The reference image must stay EXACTLY as it is, unchanged and at the same scale, in the centre of the new frame, keeping its full height: same characters, same poses, same positions, same colours, same line work. Only add new scenery on the left and on the right edges to fill the wider frame, seamlessly continuing what touches those edges: on the left, more of the radiating white steel ribs and glass roof of the station, the brick town houses and the platform with its lamps and the rail tracks in the foreground; on the right, more of the station footbridge, the glass roof ribs, the platforms and tracks receding into the dusk. Do NOT add any new character, creature, person, sign, logo or text. Same clean toon cel-shaded style with bold dark ink outlines, same dusk violet-pink palette with magenta and cyan neon accents. No text, no letters, no watermark, no frame, no border."
     }
   ]
 }

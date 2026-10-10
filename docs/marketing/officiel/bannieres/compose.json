@@ -1,0 +1,202 @@
+{
+  "outDir": "docs/marketing/officiel/bannieres",
+  "renders": [
+    {
+      "id": "site-hero-1920x1080",
+      "template": "banniere.html",
+      "width": 1280,
+      "height": 720,
+      "scale": 1.5,
+      "vars": {
+        "art": "docs/marketing/lot2/keyart-banniere.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "artScale": "1.075",
+        "artOrigin": "46% 38%"
+      }
+    },
+    {
+      "id": "site-hero-2560x1440",
+      "template": "banniere.html",
+      "width": 1280,
+      "height": 720,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/lot2/keyart-banniere.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "artScale": "1.075",
+        "artOrigin": "46% 38%"
+      }
+    },
+    {
+      "id": "open-graph-1200x630",
+      "template": "banniere-format.html",
+      "width": 1200,
+      "height": 630,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 28%, rgba(10,8,24,0) 52%)",
+        "headTop": "12%",
+        "titleSize": "9em",
+        "taglineSize": "2.2em",
+        "creditsDisplay": "none"
+      }
+    },
+    {
+      "id": "steam-header-920x430",
+      "template": "banniere-format.html",
+      "width": 920,
+      "height": 430,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 28%, rgba(10,8,24,0) 52%)",
+        "headTop": "10%",
+        "titleSize": "9.6em",
+        "taglineDisplay": "none",
+        "creditsDisplay": "none",
+        "artPos": "50% 40%"
+      }
+    },
+    {
+      "id": "steam-main-capsule-1232x706",
+      "template": "banniere-format.html",
+      "width": 1232,
+      "height": 706,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 28%, rgba(10,8,24,0) 52%)",
+        "headTop": "10%",
+        "titleSize": "9.4em",
+        "taglineDisplay": "none",
+        "creditsDisplay": "none"
+      }
+    },
+    {
+      "id": "steam-vertical-748x896",
+      "template": "banniere-format.html",
+      "width": 748,
+      "height": 896,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(180deg, rgba(10,8,24,.88) 0%, rgba(10,8,24,.55) 20%, rgba(10,8,24,0) 42%)",
+        "align": "center",
+        "headLeft": "0",
+        "headRight": "0",
+        "headTop": "5%",
+        "titleSize": "13.5em",
+        "taglineDisplay": "none",
+        "creditsDisplay": "none",
+        "artPos": "6% 50%"
+      }
+    },
+    {
+      "id": "steam-library-hero-3840x1240",
+      "template": "banniere-format.html",
+      "width": 1920,
+      "height": 620,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-21x9-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "none",
+        "titleDisplay": "none",
+        "creditsDisplay": "none",
+        "artPos": "50% 80%",
+        "artScale": "1"
+      }
+    },
+    {
+      "id": "youtube-2560x1440",
+      "template": "banniere-format.html",
+      "width": 1280,
+      "height": 720,
+      "scale": 2,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "radial-gradient(ellipse 42% 26% at 50% 50%, rgba(10,8,24,.72), rgba(10,8,24,0))",
+        "align": "center",
+        "headLeft": "0",
+        "headRight": "0",
+        "headTop": "38.5%",
+        "titleSize": "8.2em",
+        "taglineSize": "1.7em",
+        "taglineAfter": "inline-block",
+        "creditsDisplay": "none"
+      }
+    },
+    {
+      "id": "x-twitter-1500x500",
+      "template": "banniere-format.html",
+      "width": 1500,
+      "height": 500,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-21x9-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 28%, rgba(10,8,24,0) 52%)",
+        "headTop": "12%",
+        "titleSize": "7.4em",
+        "taglineSize": "1.7em",
+        "creditsDisplay": "none",
+        "artPos": "50% 70%",
+        "artScale": "1"
+      }
+    },
+    {
+      "id": "discord-960x540",
+      "template": "banniere-format.html",
+      "width": 960,
+      "height": 540,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(270deg, rgba(10,8,24,.8) 0%, rgba(10,8,24,.45) 28%, rgba(10,8,24,0) 52%)",
+        "headTop": "9%",
+        "titleSize": "9.4em",
+        "taglineSize": "2.3em",
+        "creditsDisplay": "none"
+      }
+    },
+    {
+      "id": "itch-cover-630x500",
+      "template": "banniere-format.html",
+      "width": 630,
+      "height": 500,
+      "scale": 1,
+      "vars": {
+        "art": "docs/marketing/officiel/bannieres/keyart-banniere-4k.jpg",
+        "tagline": "Le rail n’est pas à vendre.",
+        "studioUrl": "site/src/assets/img/occ-mons-studios.webp",
+        "shade": "linear-gradient(180deg, rgba(10,8,24,.88) 0%, rgba(10,8,24,.55) 20%, rgba(10,8,24,0) 42%)",
+        "align": "center",
+        "headLeft": "0",
+        "headRight": "0",
+        "headTop": "6%",
+        "titleSize": "13em",
+        "taglineSize": "3.2em",
+        "taglineAfter": "inline-block",
+        "creditsDisplay": "none",
+        "artPos": "4% 50%"
+      }
+    }
+  ]
+}
