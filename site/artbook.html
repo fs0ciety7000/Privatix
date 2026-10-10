@@ -11,9 +11,10 @@
     <meta name="theme-color" content="#0a0818" />
     <meta name="color-scheme" content="dark" />
     <link rel="canonical" href="https://privatix.fs0ciety.org/artbook.html" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_BE" />
@@ -35,7 +36,10 @@
 
     <header class="site-header" id="haut">
       <div class="wrap site-header__inner">
-        <a class="wordmark" href="./" aria-label="Privatix, retour à l'accueil">PRIVATIX</a>
+        <a class="wordmark" href="./" aria-label="Privatix, retour à l'accueil">
+          <img class="wordmark__emblem" src="./src/assets/img/privatix-embleme.webp" width="640" height="393" alt="" />
+          <img class="wordmark__word" src="./src/assets/img/privatix-wordmark.svg" width="695" height="173" alt="" />
+        </a>
         <nav class="site-nav" aria-label="Sections">
           <ul>
             <li><a href="./#jeu">Le jeu</a></li>
@@ -449,14 +453,14 @@
           <p class="eyebrow" data-reveal>Press kit</p>
           <h2 id="press-title" class="section__title" data-reveal>Pour la presse et les créateurs</h2>
           <p class="section__lead" data-reveal>
-            Logo, captures, textes de présentation et fiche technique, libres d'utilisation pour parler du
-            jeu. Le kit complet tient dans une archive.
+            Logo, affiche, captures, textes de présentation et fiche technique, libres d'utilisation pour
+            parler du jeu. Le kit complet tient dans une archive.
           </p>
           <div class="presskit">
             <div class="presskit__main">
               <a class="btn btn--primary btn--lg presskit__zip" href="/artbook/presskit/privatix-press-kit.zip" download data-reveal>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4.5-4.5M12 14l4.5-4.5M4 17v3h16v-3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                <span>Télécharger le press kit<small>Archive ZIP · logo, captures, textes, GIF</small></span>
+                <span>Télécharger le press kit<small>Archive ZIP · couverture, logo, affiche, captures, textes, GIF</small></span>
               </a>
 
               <article class="card presskit__text" data-reveal>
@@ -502,10 +506,28 @@
 
             <aside class="presskit__side">
               <figure class="card presskit__logo" data-reveal>
-                <img src="/artbook/presskit/privatix-logo-1200.webp" width="1200" height="400" loading="lazy" decoding="async" alt="Logotype PRIVATIX en néon magenta." />
+                <img src="/artbook/presskit/logo/privatix-logo-1200.webp" width="1200" height="600" loading="lazy" decoding="async" alt="Logo officiel de Privatix : une clé à tire-fond orange posée sur un tronçon de rail, au-dessus du mot PRIVATIX en néon magenta." />
                 <figcaption>
-                  Logo : <a class="link" href="/artbook/presskit/privatix-logo.png" download>PNG transparent</a> ·
-                  <a class="link" href="/artbook/presskit/privatix-logo-fond.png" download>PNG sur fond nuit</a>
+                  Logo (PNG 2048 px transparents) :
+                  <a class="link" href="/artbook/presskit/logo/privatix-logo-vertical.png" download>vertical</a> ·
+                  <a class="link" href="/artbook/presskit/logo/privatix-logo-horizontal.png" download>horizontal</a> ·
+                  <a class="link" href="/artbook/presskit/logo/privatix-logo-vertical-fond-clair.png" download>sur fond clair</a> ·
+                  <a class="link" href="/artbook/presskit/logo/privatix-wordmark.svg" download>wordmark SVG</a> ·
+                  <a class="link" href="/artbook/presskit/logo/privatix-icone-1024.png" download>icône</a>
+                </figcaption>
+              </figure>
+              <figure class="card presskit__poster" data-reveal>
+                <a class="presskit__poster-img" href="/artbook/presskit/privatix-affiche.jpg" data-lightbox>
+                  <img src="/artbook/presskit/privatix-affiche-960.webp" width="960" height="1440" loading="lazy" decoding="async" alt="Affiche officielle de Privatix : vue aérienne de la gare de Mons au crépuscule, le héros brandit sa clé à tire-fond devant une foule de consultants, sous le titre néon PRIVATIX et l'accroche « Le rail n'est pas à vendre. »" />
+                </a>
+                <a class="presskit__poster-img" href="/artbook/presskit/privatix-presskit-couverture.jpg" data-lightbox>
+                  <img src="/artbook/presskit/privatix-presskit-couverture-960.webp" width="960" height="1358" loading="lazy" decoding="async" alt="Couverture du press kit : le key art de l'affiche, le logo officiel et l'accroche." />
+                </a>
+                <figcaption>
+                  Affiche : <a class="link" href="/artbook/presskit/privatix-affiche.jpg" download>JPG 2560 × 3840</a> ·
+                  <a class="link" href="/artbook/presskit/privatix-affiche-sans-texte.jpg" download>sans texte</a><br />
+                  Couverture : <a class="link" href="/artbook/presskit/privatix-presskit-couverture.pdf" download>PDF A4</a> ·
+                  <a class="link" href="/artbook/presskit/privatix-banniere.jpg" download>bannière 2560 × 1440</a>
                 </figcaption>
               </figure>
               <dl class="facts presskit__facts" data-reveal>

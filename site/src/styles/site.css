@@ -112,12 +112,23 @@ code {
   gap: var(--sp-4);
   min-height: 60px;
 }
+/* Logo officiel en lockup horizontal : emblème (clé + rail, WebP) et wordmark néon (SVG, docs/marketing/officiel/logo). */
 .wordmark {
-  color: #ffd6ee;
-  font: 900 var(--fs-md) / 1 var(--font-display);
-  letter-spacing: var(--tracking-title);
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
   text-decoration: none;
-  text-shadow: var(--glow-magenta);
+}
+.wordmark__emblem {
+  width: auto;
+  height: 30px;
+}
+.wordmark__word {
+  width: auto;
+  height: 34px;
+  /* le SVG garde 0,52 em de marge pour la lueur : on la rend au texte voisin */
+  margin-inline: -9px;
 }
 .site-nav {
   margin-left: auto;
@@ -195,6 +206,29 @@ code {
   margin: 0 0 var(--sp-4);
   font: 900 var(--fs-display) / 0.95 var(--font-display);
   letter-spacing: 0.1em;
+}
+/* Lockup vertical du logo officiel : emblème centré au-dessus du wordmark, comme le logo A1.
+   1 em de la police du wordmark = --fs-display ; le mot mesure 5,91 em d'encre et le SVG garde
+   0,52 em de marge (lueur) de chaque côté. */
+.hero__logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(var(--fs-display) * 5.91);
+  max-width: 100%;
+  /* l'ancien titre en texte gardait l'interligne sous la ligne de base */
+  margin-bottom: calc(var(--fs-display) * 0.18);
+}
+.hero__emblem {
+  width: 45%;
+  height: auto;
+  margin-bottom: calc(var(--fs-display) * 0.3);
+}
+.hero__wordmark {
+  width: calc(100% * 6948 / 5908);
+  max-width: none;
+  height: auto;
+  margin: calc(var(--fs-display) * -0.52);
 }
 .neon {
   display: inline-block;

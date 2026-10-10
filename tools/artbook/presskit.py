@@ -1,6 +1,11 @@
-"""Press kit : logotype néon (PNG transparent et sur fond nuit, aperçu WebP), quatre captures clés
-(JPG 1920×1080 et WebP 960), textes de présentation et fiche technique (Markdown). L'archive ZIP est
-assemblée au build du site par site/scripts/presskit.mjs à partir de ce dossier.
+"""Press kit : quatre captures clés (JPG 1920×1080 et WebP 960), textes de présentation et fiche
+technique (Markdown). L'archive ZIP est assemblée au build du site par site/scripts/presskit.mjs à
+partir de ce dossier.
+
+Le logo, l'affiche, la bannière et la couverture viennent des visuels officiels
+(docs/marketing/officiel/), recopiés ici par `node tools/marketing/sync-site.mjs`. Les anciens
+privatix-logo.png / -fond.png / -1200.webp ne sont plus produits ni liés par le site : ils restent
+dans le dépôt comme références des lots 1 et 2 (docs/marketing/lot*/jobs.json).
 
     python3 tools/artbook/presskit.py
 """
@@ -9,7 +14,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from draw import DANGER, NIGHT, NIGHT2, Image, ImageDraw, ImageFilter, font, glow, text
+from draw import Image
 
 HERE = Path(__file__).parent
 ROOT = HERE.parent.parent
@@ -49,7 +54,10 @@ Combat nerveux et lisible (tout ce qui blesse est magenta et télégraphié), Bu
 
 ## Contenu de l'archive
 
-- `privatix-logo.png` (transparent) et `privatix-logo-fond.png` (fond nuit), 2400 × 800
+- `privatix-presskit-couverture.pdf` (A4) et `.jpg` (2480 × 3508), couverture du press kit
+- `logo/` : logo officiel en PNG 2048 px transparents (`privatix-logo-vertical.png`, `privatix-logo-horizontal.png`, versions `-fond-clair`), `privatix-wordmark.svg`, logos monochromes `privatix-logo-mono-blanc.svg` et `-mono-noir.svg`, icône `privatix-icone-1024.png`
+- `privatix-affiche.jpg` (affiche officielle, 2560 × 3840) et `privatix-affiche-sans-texte.jpg` (key art seul)
+- `privatix-banniere.jpg`, bannière officielle 2560 × 1440
 - `privatix-capture-1.jpg` à `privatix-capture-4.jpg`, 1920 × 1080
 - `occ-mons-studios.webp`, logo du studio
 - `animations/` : GIF tirés du jeu (combo, Discosaure, drop de Patrimoine)
@@ -58,46 +66,8 @@ Privatix est une œuvre de fiction satirique. Personnages, entreprises et répli
 """
 
 
-def logo(w: int = 2400, h: int = 800, bg: bool = False) -> Image.Image:
-    img = Image.new("RGBA", (w, h), (*NIGHT, 255) if bg else (0, 0, 0, 0))
-    if bg:
-        g = Image.new("RGB", (1, 256))
-        for y in range(256):
-            t = y / 255
-            g.putpixel((0, y), tuple(int(a + (b - a) * t) for a, b in zip(NIGHT2, NIGHT)))
-        img = g.resize((w, h), Image.BILINEAR).convert("RGBA")
-        img.alpha_composite(glow((w, h), (w / 2, h / 2), (w * 0.42, h * 0.38), DANGER, 70, w * 0.06))
-    f = font("display", int(h * 0.36))
-    s = "PRIVATIX"
-    tracking = h * 0.045
-    layer = Image.new("RGBA", (w, h), (*DANGER, 0))
-    text(layer, (w / 2, h / 2), s, f, (*DANGER, 255), tracking=tracking, anchor="mm")
-    # halo néon (plusieurs flous), tube clair par-dessus, ombre dure en dessous
-    fat = layer.copy()
-    fat.putalpha(layer.getchannel("A").filter(ImageFilter.MaxFilter(int(h * 0.008) | 1)))
-    for blur, gain in ((h * 0.13, 0.75), (h * 0.045, 1.0), (h * 0.012, 1.2)):
-        g = fat.filter(ImageFilter.GaussianBlur(blur))
-        g.putalpha(g.getchannel("A").point(lambda v, k=gain: min(255, int(v * k))))
-        img.alpha_composite(g)
-    shadow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    text(shadow, (w / 2, h / 2 + h * 0.012), s, f, (0, 0, 0, 255), tracking=tracking, anchor="mm")
-    img.alpha_composite(shadow)
-    text(img, (w / 2, h / 2), s, f, (255, 214, 238, 255), tracking=tracking, anchor="mm")
-    core = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    text(core, (w / 2, h / 2), s, f, (255, 255, 255, 255), tracking=tracking, anchor="mm")
-    core = core.filter(ImageFilter.GaussianBlur(h * 0.004))
-    core.putalpha(core.getchannel("A").point(lambda v: int(v * 0.6)))
-    img.alpha_composite(core)
-    return img
-
-
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    lt = logo()
-    lt.save(OUT / "privatix-logo.png", optimize=True)
-    lb = logo(bg=True)
-    lb.convert("RGB").save(OUT / "privatix-logo-fond.png", optimize=True)
-    lb.convert("RGB").resize((1200, 400), Image.LANCZOS).save(OUT / "privatix-logo-1200.webp", "WEBP", quality=86, method=6)
     for i, p in enumerate(CAT["presskit"], 1):
         im = Image.open(STILLS / f"{p['src']}.png").convert("RGB")
         im.save(OUT / f"privatix-capture-{i}.jpg", "JPEG", quality=88, optimize=True, progressive=True)

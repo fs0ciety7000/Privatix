@@ -300,9 +300,26 @@
   height: auto;
   margin-bottom: var(--sp-3);
 }
-.presskit__logo figcaption {
+.presskit__logo figcaption,
+.presskit__poster figcaption {
   color: var(--px-text-mute);
   font-size: var(--fs-sm);
+}
+.presskit__poster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+  margin: 0;
+  padding: var(--sp-4);
+}
+.presskit__poster figcaption {
+  grid-column: 1 / -1;
+}
+.presskit__poster-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-sm);
 }
 .presskit__shots-title {
   margin-bottom: var(--sp-5);

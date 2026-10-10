@@ -30,7 +30,10 @@ Combat nerveux et lisible (tout ce qui blesse est magenta et télégraphié), Bu
 
 ## Contenu de l'archive
 
-- `privatix-logo.png` (transparent) et `privatix-logo-fond.png` (fond nuit), 2400 × 800
+- `privatix-presskit-couverture.pdf` (A4) et `.jpg` (2480 × 3508), couverture du press kit
+- `logo/` : logo officiel en PNG 2048 px transparents (`privatix-logo-vertical.png`, `privatix-logo-horizontal.png`, versions `-fond-clair`), `privatix-wordmark.svg`, logos monochromes `privatix-logo-mono-blanc.svg` et `-mono-noir.svg`, icône `privatix-icone-1024.png`
+- `privatix-affiche.jpg` (affiche officielle, 2560 × 3840) et `privatix-affiche-sans-texte.jpg` (key art seul)
+- `privatix-banniere.jpg`, bannière officielle 2560 × 1440
 - `privatix-capture-1.jpg` à `privatix-capture-4.jpg`, 1920 × 1080
 - `occ-mons-studios.webp`, logo du studio
 - `animations/` : GIF tirés du jeu (combo, Discosaure, drop de Patrimoine)
