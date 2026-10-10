@@ -14,7 +14,7 @@ import { installModelLibrary, ModelLibrary } from '@/view/models/ModelLibrary';
  * jeu Phaser (`index.html`, en production jusqu'à la parité). Paramètres d'URL :
  *   ?q=bas|moyen|haut  preset de qualité      ?rm=1 / ?rm=0  réduction des mouvements
  *   ?safe              sans post-traitement   ?seed=N        graine du Shift
- *   ?procedural        personnages procéduraux (sans les GLB de public/models)
+ *   ?procedural        personnages procéduraux (sans les GLB de public/models), son synthétisé seul
  *   ?cheat             (dev) K tue tout, G invincible, N salle suivante, B boss
  *   ?demo              (dev) outil de pilotage pour les captures automatisées
  */
@@ -124,6 +124,8 @@ async function boot(): Promise<void> {
       browserStorage()?.setItem(REDUCED_KEY, on ? '1' : '0');
     },
     import.meta.env.DEV && params.has('cheat'),
+    // ?procedural : synthèse seule (ni GLB, ni OST, ni dialogues enregistrés).
+    !params.has('procedural'),
   );
   addEventListener('resize', () => {
     scene.resize(innerWidth, innerHeight);

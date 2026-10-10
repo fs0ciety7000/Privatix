@@ -66,7 +66,7 @@ Le jeu se passe **la nuit, dans une gare**, et raconte des gens qui tiennent un 
 
 ## 2. Architecture : synthèse + échantillons
 
-Le jeu est aujourd'hui **entièrement synthétisé** (Web Audio, aucun fichier). La production ElevenLabs **s'ajoute** sans rien casser :
+Les effets sont **synthétisés** (Web Audio) ; l'**OST (prises t1) et les dialogues** sont branchés depuis `public/audio/` (chargement par biome, synthèse en repli ; table contexte → morceau, poids et choix : `docs/ARCHITECTURE.md` § 15.9). La production ElevenLabs **s'ajoute** sans rien casser :
 
 - **Chargeur d'échantillons à côté de la synthèse**, avec **repli sur la synthèse** si un fichier manque ou n'est pas encore chargé (plan détaillé : `tools/elevenlabs/integrate.md`).
 - Chaque bruitage a un mode : **`replace`** (l'échantillon remplace la synthèse quand il est chargé), **`layer`** (il s'ajoute à la synthèse, ex. le BONG du `slam`), **`synth`** (la synthèse reste prioritaire ; l'échantillon est une option : `telegraph`, `uiHover`).

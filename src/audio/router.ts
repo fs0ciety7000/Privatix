@@ -237,6 +237,18 @@ export interface AudioProbe {
   readonly meltdown: boolean;
   readonly roomType: string;
   readonly bossPhase: number;
+  /** Biome en cours (0 Quais & Voies, 1 Passerelle, 2 Hall & BAG). */
+  readonly biome: number;
+  /** Roulement (`matin`, `apres-midi`, `nuit`) : musique de jour ou de nuit du hub. */
+  readonly shift: string;
+  /** Énergie du héros, 0..1. */
+  readonly energy: number;
+  /** Jauge de Mobilisation (0..100). */
+  readonly mobilisation: number;
+  /** Familles d'Avantage (couleurs) de la fenêtre de choix ouverte, vide sinon. */
+  readonly choiceFamilies: readonly number[];
+  /** Issue du Shift (écran des départs), `null` en cours de Shift. */
+  readonly result: 'victoire' | 'mort' | null;
   readonly enemies: readonly ProbeEnemy[];
   readonly hazards: readonly ProbeHazard[];
 }
@@ -254,6 +266,12 @@ export const EMPTY_PROBE: AudioProbe = {
   meltdown: false,
   roomType: 'combat',
   bossPhase: 1,
+  biome: 0,
+  shift: 'matin',
+  energy: 1,
+  mobilisation: 0,
+  choiceFamilies: [],
+  result: null,
   enemies: [],
   hazards: [],
 };

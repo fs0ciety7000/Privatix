@@ -123,6 +123,13 @@ export class MusicDirector {
   public tempoScale = 1;
   /** Constante de temps (s) du lissage des couches (0,6 en jeu ; plus court pour un « drop »). */
   public layerTau = 0.6;
+  /**
+   * Musique synthétisée muette (un morceau enregistré joue) : seuls l'ambiance et ses événements
+   * continuent. Les couches de combat restent calculées pour pouvoir reprendre à tout moment.
+   */
+  public musicMuted = false;
+  /** Réduction des mouvements : pas de crépitement de néon (« flash sonore », AUDIO_BIBLE § 1.3). */
+  public reduceFlashes = false;
   /** Grille d'accords du hub (celle du jeu par défaut ; le trailer la réharmonise). */
   public hubChords: readonly (readonly number[])[] = HUB_CHORDS;
 
@@ -239,6 +246,7 @@ export class MusicDirector {
   }
 
   private scheduleStep(step: number, t: number, sd: number): void {
+    if (this.musicMuted) return;
     const m = this.modeRef;
     if (m === 'combat' || m === 'boss') this.combatStep(step, t, sd, m === 'boss' ? BOSS : COMBAT);
     else if (m === 'hub') this.hubStep(step, t, sd);
@@ -363,7 +371,7 @@ export class MusicDirector {
     if (!ctx || !out) return;
     while (this.ambientAt < horizon) {
       const t = Math.max(now, this.ambientAt);
-      const n = 2 + Math.floor(this.rnd() * 4);
+      const n = this.reduceFlashes ? 0 : 2 + Math.floor(this.rnd() * 4);
       for (let i = 0; i < n; i += 1)
         noise(ctx, out, t + i * (0.03 + this.rnd() * 0.06), {
           filter: 'bandpass',

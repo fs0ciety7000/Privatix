@@ -93,8 +93,11 @@ export class Game3D {
   private readonly cheats: boolean;
   private cheatQueue: string[] = [];
   private readonly cheatHandler: (e: KeyboardEvent) => void;
-  /** Audio (src/audio) : s'abonne aux événements de la sim, déverrouillé au premier geste. */
-  public readonly audio = new AudioDirector({ storage: browserStorage() });
+  /**
+   * Audio (src/audio) : s'abonne aux événements de la sim, déverrouillé au premier geste. OST et
+   * dialogues enregistrés (public/audio) chargés à la demande, synthèse en repli.
+   */
+  public readonly audio: AudioDirector;
 
   public constructor(
     private readonly dom: SceneDom,
@@ -103,7 +106,23 @@ export class Game3D {
     seed: number,
     private readonly onReducedMotion: (on: boolean) => void,
     cheats: boolean,
+    audioSamples = true,
   ) {
+    this.audio = new AudioDirector({
+      storage: browserStorage(),
+      samples: {
+        baseUrl: `${import.meta.env.BASE_URL}audio/`,
+        enabled: audioSamples,
+        ...(import.meta.env.DEV
+          ? {
+              warn: (m: string) => {
+                console.warn(m);
+              },
+            }
+          : {}),
+      },
+    });
+    this.audio.reducedMotion = settings.reducedMotion;
     this.settings = settings;
     this.seed = seed;
     this.meta = loadMeta();
@@ -260,6 +279,7 @@ export class Game3D {
         openOptions: (back) => {
           this.openOptions(back);
         },
+        say: (text) => this.audio.say(text),
         quitToTitle: () => {
           this.leaveHub();
           this.world = this.backdropWorld();
@@ -373,6 +393,7 @@ export class Game3D {
     this.menus.reducedMotion = next.reducedMotion;
     this.hubUi.reducedMotion = next.reducedMotion;
     this.lootCard.reducedMotion = next.reducedMotion;
+    this.audio.reducedMotion = next.reducedMotion;
     browserStorage()?.setItem(QUALITY_KEY, quality.id);
     this.rebuildView();
   }
@@ -557,7 +578,10 @@ export class Game3D {
 
   private hearEvents(events: readonly SimEvent[]): void {
     const menu = this.menus.current;
-    this.audio.frame(events, probeWorld(this.world, this.phase, menu, this.world.time.paused));
+    this.audio.frame(
+      events,
+      probeWorld(this.world, this.phase, menu, this.world.time.paused, this.hub?.sim.shift),
+    );
     for (const e of events) if (e.type === 'lootDropped') this.audio.loot(e.rank, e.x, e.y);
   }
 
@@ -646,13 +670,17 @@ export class Game3D {
             this.menus.showBossIntro({
               name: e.name,
               title: e.title,
-              line: e.line,
+              line: this.audio.subtitleFor(e.line),
               fictive: e.fictive,
             });
           break;
         case 'bossLine':
           if (this.phase === 'run')
-            this.menus.showLine({ speaker: e.speaker, text: e.text, fictive: e.fictive });
+            this.menus.showLine({
+              speaker: e.speaker,
+              text: this.audio.subtitleFor(e.text),
+              fictive: e.fictive,
+            });
           break;
         case 'biomeEntered':
           if (this.phase === 'run' && e.biome > 0)
