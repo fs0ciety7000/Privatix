@@ -1,4 +1,3 @@
-import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 /**
@@ -18,8 +17,8 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       input: {
-        index: fileURLToPath(new URL('./index.html', import.meta.url)),
-        artbook: fileURLToPath(new URL('./artbook.html', import.meta.url)),
+        index: decodeURI(new URL('./index.html', import.meta.url).pathname),
+        artbook: decodeURI(new URL('./artbook.html', import.meta.url).pathname),
       },
     },
   },

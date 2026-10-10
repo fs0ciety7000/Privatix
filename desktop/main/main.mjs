@@ -186,10 +186,15 @@ async function serveApp(request) {
     }
     return new Response(body.subarray(start, end + 1), {
       status: 206,
-      headers: { ...headers, 'content-range': `bytes ${start}-${end}/${size}` },
+      headers: {
+        ...headers,
+        'content-range': `bytes ${start}-${end}/${size}`,
+        'content-length': String(end - start + 1),
+      },
     });
   }
-  return new Response(body, { status: 200, headers });
+  // content-length : sans lui, Chromium tient un média pour non « seekable » (pas de saut, pas de boucle).
+  return new Response(body, { status: 200, headers: { ...headers, 'content-length': String(body.length) } });
 }
 
 // ---------------------------------------------------------------------------

@@ -39,6 +39,8 @@ export interface HubHost {
   depart(shift: ShiftId, meta: MetaState): void;
   /** Options (retour : `back`). */
   openOptions(back: () => void): void;
+  /** Réplique d'un PNJ : la fait dire si elle est enregistrée ; renvoie le texte à afficher. */
+  say?(text: string): string;
   quitToTitle(): void;
 }
 
@@ -152,7 +154,7 @@ export class HubController {
   private handle(a: HubAction): void {
     switch (a.type) {
       case 'talk':
-        this.ui.say(a.speaker, a.text);
+        this.ui.say(a.speaker, this.host.say?.(a.text) ?? a.text);
         this.bubbleAt = { x: a.x, y: a.y };
         if (a.npc !== 'vieille-dame') this.decor?.talk(a.npc);
         break;
