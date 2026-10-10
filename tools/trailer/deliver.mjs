@@ -13,7 +13,7 @@ const opt = (name, def) => {
 };
 const out = path.resolve(opt('out', 'trailer-out'));
 const site = opt('site', null);
-const posterAt = opt('poster', '33.0');
+const posterAt = opt('poster', '31.6');
 const src = path.join(out, 'privatix-trailer-16x9.mp4');
 const ff = (a) => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...a], { stdio: 'inherit' });
 const mb = (f) => (statSync(f).size / 1e6).toFixed(2);

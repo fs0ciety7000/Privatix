@@ -1056,6 +1056,11 @@ code {
   }
 }
 
+/* Trailer en fond du hero : atténué, ses cartons ne doivent pas concurrencer le titre. */
+.hero__video[data-trailer-bg] {
+  filter: brightness(0.55) saturate(1.05);
+}
+
 /* Trailer : bouton « Regarder avec le son » du hero et lecteur plein cadre (élément <dialog> natif). */
 .hero__trailer {
   margin: var(--sp-4) 0 0;
