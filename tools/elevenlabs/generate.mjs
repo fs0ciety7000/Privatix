@@ -73,10 +73,11 @@ const GEMINI_BASE = process.env.GEMINI_BASE_URL ?? LYRIA_BASE;
 const GEMINI_TTS_MODEL = 'gemini-3.8-flash-tts';
 // Gemini 3.8 Flash TTS : facturé à la durée d'audio produite (tarif 2026 : 0,00225 $ par 10 s ;
 // ≈ 0,0045 $ dès 2027). Durée estimée à 14 caractères de français par seconde ; un aperçu de
-// Voice Design compte pour 10 s (hypothèse : la doc ne chiffre pas l'échantillon renvoyé).
+// Voice Design compte pour 30 s : l'échantillon renvoyé a duré 14 à 71 s (32 s en moyenne) lors de
+// l'essai du 2026-10-10 ; hypothèse : il est facturé comme une sortie audio.
 const GEMINI_USD_PER_10S = new Date().getFullYear() >= 2027 ? 0.0045 : 0.00225;
 const GEMINI_CHARS_PER_SECOND = 14;
-const GEMINI_DESIGN_SECONDS = 10;
+const GEMINI_DESIGN_SECONDS = 30;
 const VARIANTS = opt('variants', '')
   .split('|')
   .map((v) => v.trim())
@@ -569,14 +570,21 @@ async function geminiVoiceDesign(a) {
       },
     });
     let data;
-    try {
-      data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
-    } catch (err) {
-      // fr-BE refusé : repli fr-FR (l'accent reste porté par la description).
-      if (err.status !== 400 || geminiLanguage !== 'fr-BE') throw err;
-      console.warn(`  ${a.id} : fr-BE refusé (${err.message.slice(0, 160)}), repli fr-FR`);
-      geminiLanguage = 'fr-FR';
-      data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
+    for (let attempt = 1; !data; attempt += 1) {
+      try {
+        data = await gemini(`Gemini voice ${a.voice}`, 'POST', '/voices', voice(geminiLanguage));
+      } catch (err) {
+        if (err.status !== 400 || attempt >= 3) throw err;
+        // fr-BE refusé : repli fr-FR (l'accent reste porté par la description).
+        if (/language/i.test(err.message) && geminiLanguage === 'fr-BE') {
+          console.warn(`  ${a.id} : fr-BE refusé, repli fr-FR`);
+          geminiLanguage = 'fr-FR';
+        } else if (/flagged by safety/i.test(err.message))
+          // « Generated voice prompt was flagged by safety policies. » : le filtre porte sur la voix
+          // générée, pas sur la description ; un nouvel essai passe en général (constaté le 2026-10-10).
+          console.warn(`  ${a.id} : voix générée refusée par le filtre de sécurité, nouvel essai`);
+        else throw err;
+      }
     }
     const id = data.id ?? data.name?.split('/').pop();
     if (!id)
