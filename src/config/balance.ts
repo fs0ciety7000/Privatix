@@ -867,7 +867,7 @@ export const DIRUPO = {
 } as const satisfies EnemyStats & Record<string, unknown>;
 
 /**
- * Boss du biome 3 : Jean-Cul Lurcke (LORE § 7.3). **Version de travail** (placeholder cohérent,
+ * Boss du biome 3 : Jean-Cul Lurcke (LORE § 7.3). Mécanique simplifiée (placeholder cohérent,
  * en attendant la jauge de signature, les Preuves et la Salle du Conseil du GDD § 7.9) : phase 1
  * « Méga-Deck 2032 » (lignes de bullet points à trou, « Je vous mets en copie », piliers-graphiques),
  * phase 2 « Conseil d'Administration en visio » (tout plus vite, Reporting géant), coup final

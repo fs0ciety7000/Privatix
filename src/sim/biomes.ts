@@ -136,7 +136,7 @@ export const BIOMES: Readonly<Record<BiomeIndex, BiomeDef>> = {
     boss: {
       kind: 'lurcke',
       name: 'Jean-Cul Lurcke',
-      title: 'Directeur de la Transformation (version de travail)',
+      title: 'Directeur de la Transformation',
       intro: {
         speaker: 'Jean-Cul Lurcke',
         text: 'Ah. L’équipe terrain. Entrez. Je lance la présentation. Quatre cent douze slides.',
