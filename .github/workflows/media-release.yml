@@ -1,0 +1,42 @@
+name: Media release
+
+# Publie des fichiers médias (trailer, press kit…) en GitHub Release sans les garder dans la branche
+# principale : les fichiers vivent sur une branche orpheline `media/…` (dossier `files/` + notes),
+# ce workflow crée la release à partir de son contenu. Jamais « latest » : le site ne liste que les `v*`.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Étiquette de la release (ex. trailer-v1 ; jamais v*)
+        required: true
+      source_ref:
+        description: Branche contenant files/ et RELEASE_NOTES.md (ex. media/trailer-v1)
+        required: true
+      title:
+        description: Titre de la release
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+      - name: Créer la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+          TITLE: ${{ inputs.title }}
+        run: |
+          case "$TAG" in v[0-9]*) echo "Les étiquettes v* sont réservées aux versions du jeu" >&2; exit 1;; esac
+          ls -la files/
+          gh release create "$TAG" files/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$(git rev-parse HEAD)" \
+            --title "$TITLE" \
+            --notes-file RELEASE_NOTES.md \
+            --latest=false
